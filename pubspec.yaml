@@ -17,3 +17,17 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: CalSans
+      fonts:
+        - asset: fonts/CalSans-SemiBold.otf
+          weight: 600
+    - family: Geist
+      fonts:
+        - asset: fonts/Geist-Regular.ttf
+        - asset: fonts/Geist-Medium.ttf
+          weight: 500
+        - asset: fonts/Geist-SemiBold.ttf
+          weight: 600
+        - asset: fonts/Geist-Bold.ttf
+          weight: 700
