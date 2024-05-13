@@ -363,7 +363,7 @@ class MaterialTheme {
         useMaterial3: true,
         brightness: colorScheme.brightness,
         colorScheme: colorScheme,
-        textTheme: (textTheme ?? const TextTheme()).apply(
+        textTheme: textTheme.apply(
           fontFamily: 'Geist',
           bodyColor: colorScheme.onSurface,
           displayColor: colorScheme.onSurface,
