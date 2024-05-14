@@ -1,0 +1,8 @@
+targets:
+  $default:
+    builders:
+      riverpod_generator:
+        generate_for:
+          - lib/drivers/*.dart
+          - lib/routing/*.dart
+          - lib/features**/data/*.dart

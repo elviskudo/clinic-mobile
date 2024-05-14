@@ -1,3 +1,3 @@
-# clinic_app
+# Clinic
 
 A new Flutter project.

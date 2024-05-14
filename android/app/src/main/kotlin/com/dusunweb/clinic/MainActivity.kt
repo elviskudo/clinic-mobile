@@ -1,4 +1,4 @@
-package com.dusunweb.clinic.clinic_app
+package com.dusunweb.clinic
 
 import io.flutter.embedding.android.FlutterActivity
 
