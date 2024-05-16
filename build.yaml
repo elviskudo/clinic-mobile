@@ -5,4 +5,4 @@ targets:
         generate_for:
           - lib/drivers/*.dart
           - lib/app**/*.dart
-          - lib/l10n/*.dart
+          - lib/features**/*.dart

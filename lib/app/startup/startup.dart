@@ -1,6 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../constants/sizes.dart';
+import '../l10n/l10n.dart';
 import '../theme/theme.dart';
+import '../../drivers/local_storage.dart';
 
 part 'startup.g.dart';
 
@@ -9,8 +14,80 @@ Future<void> startup(StartupRef ref) async {
   // await for all initialization code to be complete before returning
   ref.onDispose(() {
     // ensure we invalidate all the providers we depend on
-    ref.invalidate(appThemeProvider);
+    ref.invalidate(sharedStorageProvider);
+    ref.invalidate(appLocaleProvider);
+    ref.invalidate(appLocaleProvider);
   });
 
+  await ref.watch(sharedStorageProvider.future);
   await ref.watch(appThemeProvider.future);
+  await ref.watch(appLocaleProvider.future);
+}
+
+class AppStartupWidget extends ConsumerWidget {
+  const AppStartupWidget({super.key, required this.onLoaded});
+
+  final WidgetBuilder onLoaded;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appStartupState = ref.watch(startupProvider);
+
+    return appStartupState.when(
+      data: (_) => onLoaded(context),
+      loading: () => const AppStartupLoadingWidget(),
+      error: (e, st) => AppStartupErrorWidget(
+        message: e.toString(),
+        onRetry: () {
+          ref.invalidate(startupProvider);
+        },
+      ),
+    );
+  }
+}
+
+class AppStartupLoadingWidget extends StatelessWidget {
+  const AppStartupLoadingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator.adaptive(),
+      ),
+    );
+  }
+}
+
+class AppStartupErrorWidget extends StatelessWidget {
+  const AppStartupErrorWidget({
+    super.key,
+    required this.message,
+    required this.onRetry,
+  });
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              message,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            gapH16,
+            OutlinedButton(
+              onPressed: onRetry,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

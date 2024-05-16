@@ -8,20 +8,26 @@ part 'theme.g.dart';
 @Riverpod(keepAlive: true)
 class AppTheme extends _$AppTheme {
   @override
-  Future<ThemeMode> build() async {
-    final mode = ref.watch(sharedStorageProvider).getString('app_theme');
-    if (mode == 'light') {
-      return ThemeMode.light;
-    } else if (mode == 'dark') {
-      return ThemeMode.dark;
-    } else {
-      return ThemeMode.system;
-    }
+  FutureOr<ThemeMode> build() {
+    return ref.read(sharedStorageProvider.future).then((prefs) {
+      final mode = prefs.getString('app_theme');
+
+      if (mode == 'light') {
+        return ThemeMode.light;
+      } else if (mode == 'dark') {
+        return ThemeMode.dark;
+      } else {
+        return ThemeMode.system;
+      }
+    });
   }
 
-  void setMode(ThemeMode mode) {
-    ref.read(sharedStorageProvider).setString('app_theme', mode.name);
-    state = AsyncValue.data(mode);
+  void setMode(ThemeMode mode) async {
+    await ref
+        .read(sharedStorageProvider)
+        .requireValue
+        .setString('app_theme', mode.name);
+    state = AsyncData(mode);
   }
 }
 
@@ -386,6 +392,7 @@ class MaterialTheme {
 
   ThemeData theme(ColorScheme colorScheme) => ThemeData(
         useMaterial3: true,
+        visualDensity: VisualDensity.comfortable,
         brightness: colorScheme.brightness,
         colorScheme: colorScheme,
         textTheme: textTheme.apply(
@@ -395,6 +402,9 @@ class MaterialTheme {
         ),
         scaffoldBackgroundColor: colorScheme.background,
         canvasColor: colorScheme.surface,
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
       );
 
   List<ExtendedColor> get extendedColors => [];
