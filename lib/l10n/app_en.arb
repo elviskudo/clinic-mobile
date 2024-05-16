@@ -1,0 +1,31 @@
+{
+  "@@locale": "en",
+  "pageOnboardingTitle": "{page, select, first{Check your health anywhere and anytime} second{Schedule doctor's appointments easily} other{}}",
+  "@pageOnboardingTitle": {
+    "description": "pageOnboardingTitle",
+    "placeholders": {
+      "page": {
+        "type": "String",
+        "example": "first"
+      }
+    }
+  },
+  "pageOnboardingDescription": "{page, select, first{Order examination tickets anywhere and anytime for the sake of your future health!} second{Health is important, make a schedule easily without any obstacles.} other{}}",
+  "@pageOnboardingDescription": {
+    "description": "pageOnboardingDescription",
+    "placeholders": {
+      "page": {
+        "type": "String",
+        "example": "first"
+      }
+    }
+  },
+  "signIn": "Sign in",
+  "@signIn": {
+    "description": "signIn"
+  },
+  "signUp": "Create an account",
+  "@signUp": {
+    "description": "signUp"
+  }
+}

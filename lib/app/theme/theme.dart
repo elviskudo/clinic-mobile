@@ -1,4 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../drivers/local_storage.dart';
+
+part 'theme.g.dart';
+
+@Riverpod(keepAlive: true)
+class AppTheme extends _$AppTheme {
+  @override
+  Future<ThemeMode> build() async {
+    final mode = ref.watch(sharedStorageProvider).getString('app_theme');
+    if (mode == 'light') {
+      return ThemeMode.light;
+    } else if (mode == 'dark') {
+      return ThemeMode.dark;
+    } else {
+      return ThemeMode.system;
+    }
+  }
+
+  void setMode(ThemeMode mode) {
+    ref.read(sharedStorageProvider).setString('app_theme', mode.name);
+    state = AsyncValue.data(mode);
+  }
+}
 
 class MaterialTheme {
   final TextTheme textTheme;

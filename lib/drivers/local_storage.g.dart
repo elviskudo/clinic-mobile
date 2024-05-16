@@ -6,11 +6,11 @@ part of 'local_storage.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sharedStorageHash() => r'84537f9448e1ffad7d9cb55d6460ef4e3dc6733b';
+String _$sharedStorageHash() => r'b6d42900cb00b0367a58a9d3f67ec0eeafe4e24f';
 
 /// See also [sharedStorage].
 @ProviderFor(sharedStorage)
-final sharedStorageProvider = AutoDisposeProvider<SharedPreferences>.internal(
+final sharedStorageProvider = Provider<SharedPreferences>.internal(
   sharedStorage,
   name: r'sharedStorageProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -20,13 +20,12 @@ final sharedStorageProvider = AutoDisposeProvider<SharedPreferences>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef SharedStorageRef = AutoDisposeProviderRef<SharedPreferences>;
-String _$secureStorageHash() => r'3e5177aefc9c0d43d9cb4fdca3bdc2dfcb36f13e';
+typedef SharedStorageRef = ProviderRef<SharedPreferences>;
+String _$secureStorageHash() => r'db6c9f3b2c0f5615fcf2b7d1451ea65c67256082';
 
 /// See also [secureStorage].
 @ProviderFor(secureStorage)
-final secureStorageProvider =
-    AutoDisposeProvider<FlutterSecureStorage>.internal(
+final secureStorageProvider = Provider<FlutterSecureStorage>.internal(
   secureStorage,
   name: r'secureStorageProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -36,6 +35,6 @@ final secureStorageProvider =
   allTransitiveDependencies: null,
 );
 
-typedef SecureStorageRef = AutoDisposeProviderRef<FlutterSecureStorage>;
+typedef SecureStorageRef = ProviderRef<FlutterSecureStorage>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

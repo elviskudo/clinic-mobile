@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class Verification extends StatelessWidget {
+class VerificationScreen extends StatelessWidget {
   final bool showCallback;
 
-  const Verification({super.key, this.showCallback = false});
+  const VerificationScreen({super.key, this.showCallback = false});
 
   @override
   Widget build(BuildContext context) {

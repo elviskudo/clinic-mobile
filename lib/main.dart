@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'constants/theme.dart';
-import 'app.dart';
+import 'app/app.dart';
+import 'app/theme/theme.dart';
 import 'drivers/local_storage.dart';
 
 void main() async {
@@ -20,7 +20,7 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
-        sharedStorageProvider.overrideWith((ref) => sharedPreferences)
+        sharedStorageProvider.overrideWith((ref) => sharedPreferences),
       ],
       child: const MainApp(),
     ),

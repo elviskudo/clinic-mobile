@@ -22,6 +22,9 @@ dependencies:
   dio: ^5.4.3+1
   riverpod: ^2.5.1
   flutter_secure_storage: ^9.1.1
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:
@@ -35,6 +38,7 @@ dev_dependencies:
   freezed: ^2.5.2
 
 flutter:
+  generate: true
   uses-material-design: true
   fonts:
     - family: CalSans

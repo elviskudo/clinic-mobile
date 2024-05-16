@@ -4,5 +4,5 @@ targets:
       riverpod_generator:
         generate_for:
           - lib/drivers/*.dart
-          - lib/routing/*.dart
-          - lib/features**/data/*.dart
+          - lib/app**/*.dart
+          - lib/l10n/*.dart

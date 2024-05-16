@@ -1,0 +1,31 @@
+{
+  "@@locale": "id",
+  "pageOnboardingTitle": "{page, select, first{Cek kesehatanmu kapanpun dimanapun} second{Jadwalkan konsultasi dokter dengan mudah} other{}}",
+  "@pageOnboardingTitle": {
+    "description": "pageOnboardingTitle",
+    "placeholders": {
+      "page": {
+        "type": "String",
+        "example": "first"
+      }
+    }
+  },
+  "pageOnboardingDescription": "{page, select, first{Pesan tiket antrian di manapun dan kapanpun demi kesehatan kamu di masa depan} second{Kesehatan itu penting, buat jadwal konsultasi dokter dengan mudah tanpa ada kendala.} other{}}",
+  "@pageOnboardingDescription": {
+    "description": "pageOnboardingDescription",
+    "placeholders": {
+      "page": {
+        "type": "String",
+        "example": "first"
+      }
+    }
+  },
+  "signIn": "Masuk",
+  "@signIn": {
+    "description": "signIn"
+  },
+  "signUp": "Buat akun",
+  "@signUp": {
+    "description": "signUp"
+  }
+}

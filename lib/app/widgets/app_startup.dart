@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../constants/sizes.dart';
-import '../routing/app_startup.dart';
+import '../../constants/sizes.dart';
+import '../startup/startup.dart';
 
 class AppStartupWidget extends ConsumerWidget {
   const AppStartupWidget({super.key, required this.onLoaded});
@@ -11,7 +11,7 @@ class AppStartupWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appStartupState = ref.watch(appStartupProvider);
+    final appStartupState = ref.watch(startupProvider);
 
     return appStartupState.when(
       data: (_) => onLoaded(context),
@@ -19,7 +19,7 @@ class AppStartupWidget extends ConsumerWidget {
       error: (e, st) => AppStartupErrorWidget(
         message: e.toString(),
         onRetry: () {
-          ref.invalidate(appStartupProvider);
+          ref.invalidate(startupProvider);
         },
       ),
     );

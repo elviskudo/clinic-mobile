@@ -1,19 +1,22 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:go_router/go_router.dart';
 
-import '../pages/onboarding.dart';
+import '../screens/onboarding.dart';
+import '../screens/signin.dart';
+import '../screens/signup.dart';
+import '../startup/startup.dart';
 import '../widgets/app_startup.dart';
-import 'app_startup.dart';
 
-part 'app_router.g.dart';
+part 'router.g.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 @riverpod
-GoRouter goRouter(GoRouterRef ref) {
+GoRouter router(RouterRef ref) {
   // rebuild GoRouter when app startup state changes
-  final appStartupState = ref.watch(appStartupProvider);
+  final appStartupState = ref.watch(startupProvider);
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
@@ -40,7 +43,21 @@ GoRouter goRouter(GoRouterRef ref) {
         path: '/onboarding',
         name: 'onbarding',
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: Onboarding(),
+          child: OnboardingScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/signin',
+        name: 'signin',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: SignInScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/signup',
+        name: 'signup',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: SignUpScreen(),
         ),
       ),
     ],
