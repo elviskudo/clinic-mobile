@@ -1,24 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'l10n.dart';
+part of 'theme.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appLocaleHash() => r'f5d3e291284bc08a9315df97b0786abfef0e197a';
+String _$appThemeHash() => r'4b6f7a004ff375017115f6db4647be893e15bff3';
 
-/// See also [AppLocale].
-@ProviderFor(AppLocale)
-final appLocaleProvider = AsyncNotifierProvider<AppLocale, Locale>.internal(
-  AppLocale.new,
-  name: r'appLocaleProvider',
+/// See also [AppTheme].
+@ProviderFor(AppTheme)
+final appThemeProvider =
+    AutoDisposeNotifierProvider<AppTheme, ThemeMode>.internal(
+  AppTheme.new,
+  name: r'appThemeProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$appLocaleHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$appThemeHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AppLocale = AsyncNotifier<Locale>;
+typedef _$AppTheme = AutoDisposeNotifier<ThemeMode>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

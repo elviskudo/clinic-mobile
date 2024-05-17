@@ -3,9 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../constants/sizes.dart';
-import '../l10n/l10n.dart';
-import '../theme/theme.dart';
-import '../../drivers/local_storage.dart';
+import '../../features/auth/auth.dart';
 
 part 'startup.g.dart';
 
@@ -14,14 +12,10 @@ Future<void> startup(StartupRef ref) async {
   // await for all initialization code to be complete before returning
   ref.onDispose(() {
     // ensure we invalidate all the providers we depend on
-    ref.invalidate(sharedStorageProvider);
-    ref.invalidate(appLocaleProvider);
-    ref.invalidate(appLocaleProvider);
+    ref.invalidate(isAuthenticatedProvider);
   });
 
-  await ref.watch(sharedStorageProvider.future);
-  await ref.watch(appThemeProvider.future);
-  await ref.watch(appLocaleProvider.future);
+  await ref.watch(isAuthenticatedProvider.future);
 }
 
 class AppStartupWidget extends ConsumerWidget {
@@ -31,9 +25,9 @@ class AppStartupWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appStartupState = ref.watch(startupProvider);
+    final state = ref.watch(startupProvider);
 
-    return appStartupState.when(
+    return state.when(
       data: (_) => onLoaded(context),
       loading: () => const AppStartupLoadingWidget(),
       error: (e, st) => AppStartupErrorWidget(

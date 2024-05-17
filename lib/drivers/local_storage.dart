@@ -5,8 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'local_storage.g.dart';
 
 @Riverpod(keepAlive: true)
-Future<SharedPreferences> sharedStorage(SharedStorageRef ref) {
-  return SharedPreferences.getInstance();
+SharedPreferences sharedStorage(SharedStorageRef ref) {
+  throw UnimplementedError();
 }
 
 @Riverpod(keepAlive: true)

@@ -6,11 +6,11 @@ part of 'local_storage.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sharedStorageHash() => r'9f40ab5c8d3762b11f708078764b08cff8a48109';
+String _$sharedStorageHash() => r'b6d42900cb00b0367a58a9d3f67ec0eeafe4e24f';
 
 /// See also [sharedStorage].
 @ProviderFor(sharedStorage)
-final sharedStorageProvider = FutureProvider<SharedPreferences>.internal(
+final sharedStorageProvider = Provider<SharedPreferences>.internal(
   sharedStorage,
   name: r'sharedStorageProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -20,7 +20,7 @@ final sharedStorageProvider = FutureProvider<SharedPreferences>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef SharedStorageRef = FutureProviderRef<SharedPreferences>;
+typedef SharedStorageRef = ProviderRef<SharedPreferences>;
 String _$secureStorageHash() => r'db6c9f3b2c0f5615fcf2b7d1451ea65c67256082';
 
 /// See also [secureStorage].

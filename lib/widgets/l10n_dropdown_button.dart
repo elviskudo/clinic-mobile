@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../constants/sizes.dart';
+import '../constants/sizes.dart';
 import '../l10n/l10n.dart';
 
 class L10nDropdownButton extends ConsumerWidget {
@@ -10,7 +10,7 @@ class L10nDropdownButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locale = ref.watch(appLocaleProvider).requireValue;
+    final locale = ref.watch(appLocaleProvider);
 
     return DropdownButtonFormField<Locale>(
       value: locale,

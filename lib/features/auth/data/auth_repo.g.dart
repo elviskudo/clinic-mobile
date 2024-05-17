@@ -1,24 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'theme.dart';
+part of 'auth_repo.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appThemeHash() => r'ebf1e43026d90fa568938825cd107502a0fbac08';
+String _$authRepoHash() => r'85ac0de2308b4df44dc93d1ccfbbf525627df3fa';
 
-/// See also [AppTheme].
-@ProviderFor(AppTheme)
-final appThemeProvider = AsyncNotifierProvider<AppTheme, ThemeMode>.internal(
-  AppTheme.new,
-  name: r'appThemeProvider',
+/// See also [authRepo].
+@ProviderFor(authRepo)
+final authRepoProvider = AutoDisposeProvider<AuthRepository>.internal(
+  authRepo,
+  name: r'authRepoProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$appThemeHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$authRepoHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AppTheme = AsyncNotifier<ThemeMode>;
+typedef AuthRepoRef = AutoDisposeProviderRef<AuthRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

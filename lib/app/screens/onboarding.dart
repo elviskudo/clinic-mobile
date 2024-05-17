@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../constants/sizes.dart';
 import '../../context.dart';
-import '../widgets/l10n_dropdown_button.dart';
+import '../../widgets/l10n_dropdown_button.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
