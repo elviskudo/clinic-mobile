@@ -1,6 +1,6 @@
 {
   "@@locale": "id",
-  "pageOnboardingTitle": "{page, select, first{Cek kesehatanmu kapanpun dimanapun} second{Jadwalkan konsultasi dokter dengan mudah} other{}}",
+  "pageOnboardingTitle": "{page, select, first{Periksa kesehatanmu dimanapun dan kapanpun} second{Jadwalkan konsultasi dokter dengan mudah} other{}}",
   "@pageOnboardingTitle": {
     "description": "pageOnboardingTitle",
     "placeholders": {

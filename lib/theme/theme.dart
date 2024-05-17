@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../drivers/local_storage.dart';
@@ -89,7 +90,13 @@ class MaterialTheme {
   }
 
   ThemeData light() {
-    return theme(lightScheme().toColorScheme());
+    return theme(lightScheme().toColorScheme()).copyWith(
+      appBarTheme: AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+        ),
+      ),
+    );
   }
 
   static MaterialScheme lightMediumContrastScheme() {
@@ -266,7 +273,13 @@ class MaterialTheme {
   }
 
   ThemeData dark() {
-    return theme(darkScheme().toColorScheme());
+    return theme(darkScheme().toColorScheme()).copyWith(
+      appBarTheme: AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+        ),
+      ),
+    );
   }
 
   static MaterialScheme darkMediumContrastScheme() {
@@ -389,7 +402,6 @@ class MaterialTheme {
 
   ThemeData theme(ColorScheme colorScheme) => ThemeData(
         useMaterial3: true,
-        visualDensity: VisualDensity.comfortable,
         brightness: colorScheme.brightness,
         colorScheme: colorScheme,
         textTheme: textTheme.apply(
