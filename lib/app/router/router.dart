@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/auth/auth.dart';
-import '../../features/onboarding/onboarding.dart';
 import '../screens/onboarding.dart';
 import '../screens/signin.dart';
 import '../screens/signup.dart';
@@ -27,13 +26,10 @@ GoRouter router(RouterRef ref) {
       final path = state.uri.path;
 
       final isAuthenticated = ref.watch(isAuthenticatedProvider).requireValue;
-      final didRequireOnboarding = ref.watch(onboardingStateProvider);
 
       if (!isAuthenticated) {
-        if (path.startsWith('/auth')) return null;
-        if (path.startsWith('/app')) return '/auth/signin';
-        if (didRequireOnboarding) {
-          return path != '/onboarding' ? '/onboarding' : null;
+        if (path.startsWith('/') || path.startsWith('/app')) {
+          return path.startsWith('/auth') ? path : '/onboarding';
         }
       }
 

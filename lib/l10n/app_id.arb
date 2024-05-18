@@ -1,24 +1,12 @@
 {
   "@@locale": "id",
-  "pageOnboardingTitle": "{page, select, first{Periksa kesehatanmu dimanapun dan kapanpun} second{Jadwalkan konsultasi dokter dengan mudah} other{}}",
+  "pageOnboardingTitle": "Selamat Datang di Clinic!",
   "@pageOnboardingTitle": {
-    "description": "pageOnboardingTitle",
-    "placeholders": {
-      "page": {
-        "type": "String",
-        "example": "first"
-      }
-    }
+    "description": "pageOnboardingTitle"
   },
-  "pageOnboardingDescription": "{page, select, first{Pesan tiket antrian di manapun dan kapanpun demi kesehatan kamu di masa depan} second{Kesehatan itu penting, buat jadwal konsultasi dokter dengan mudah tanpa ada kendala.} other{}}",
+  "pageOnboardingDescription": "Rasakan kemudahan membuat jadwal pemeriksaan medis kapan saja, dimana saja dengan aplikasi kami.",
   "@pageOnboardingDescription": {
-    "description": "pageOnboardingDescription",
-    "placeholders": {
-      "page": {
-        "type": "String",
-        "example": "first"
-      }
-    }
+    "description": "pageOnboardingDescription"
   },
   "signIn": "Masuk",
   "@signIn": {
@@ -27,5 +15,13 @@
   "signUp": "Buat akun",
   "@signUp": {
     "description": "signUp"
+  },
+  "pageSignUpDescription": "Start with make an account and then you can start  to check your health anytime, anywhere!",
+  "@pageSignUpDescription": {
+    "description": "pageSignUpDescription"
+  },
+  "pageSignInDescription": "Hello, how are you? not feeling great? Don't worry we got you covered, check your health easily!",
+  "@pageSignInDescription": {
+    "description": "pageSignInDescription"
   }
 }

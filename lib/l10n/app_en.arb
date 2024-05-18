@@ -1,24 +1,12 @@
 {
   "@@locale": "en",
-  "pageOnboardingTitle": "{page, select, first{Check your health anywhere and anytime} second{Schedule doctor's appointments easily} other{}}",
+  "pageOnboardingTitle": "Welcome to Clinic!",
   "@pageOnboardingTitle": {
-    "description": "pageOnboardingTitle",
-    "placeholders": {
-      "page": {
-        "type": "String",
-        "example": "first"
-      }
-    }
+    "description": "pageOnboardingTitle"
   },
-  "pageOnboardingDescription": "{page, select, first{Order examination tickets anywhere and anytime for the sake of your future health!} second{Health is important, make a schedule easily without any obstacles.} other{}}",
+  "pageOnboardingDescription": "Experience the ease of scheduling medical checkup anytime, anywhere with our app.",
   "@pageOnboardingDescription": {
-    "description": "pageOnboardingDescription",
-    "placeholders": {
-      "page": {
-        "type": "String",
-        "example": "first"
-      }
-    }
+    "description": "pageOnboardingDescription"
   },
   "signIn": "Sign in",
   "@signIn": {
@@ -27,5 +15,13 @@
   "signUp": "Create an account",
   "@signUp": {
     "description": "signUp"
+  },
+  "pageSignUpDescription": "Start with make an account and then you can start  to check your health anytime, anywhere!",
+  "@pageSignUpDescription": {
+    "description": "pageSignUpDescription"
+  },
+  "pageSignInDescription": "Hello, how are you? not feeling great? Don't worry we got you covered, check your health easily!",
+  "@pageSignInDescription": {
+    "description": "pageSignInDescription"
   }
 }
