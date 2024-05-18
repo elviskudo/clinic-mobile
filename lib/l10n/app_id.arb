@@ -16,11 +16,15 @@
   "@signUp": {
     "description": "signUp"
   },
-  "pageSignUpDescription": "Start with make an account and then you can start  to check your health anytime, anywhere!",
+  "pageSignUpDescription": "Mulai dengan membuat akun dan kamu bisa cek kesehatan kapanpun, dimanapun!",
   "@pageSignUpDescription": {
     "description": "pageSignUpDescription"
   },
-  "pageSignInDescription": "Hello, how are you? not feeling great? Don't worry we got you covered, check your health easily!",
+  "pageSignInTitle": "Hi, Selamat Datang!",
+  "@pageSignInTitle": {
+    "description": "pageSignInTitle"
+  },
+  "pageSignInDescription": "Halo, apakabar? kurang enak badan? Jangan khawatir, cek kesehatanmu dengan mudah!",
   "@pageSignInDescription": {
     "description": "pageSignInDescription"
   }

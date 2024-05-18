@@ -16,7 +16,7 @@ class SignInScreen extends StatelessWidget {
         shrinkWrap: true,
         children: [
           Text(
-            context.locale.signIn,
+            context.locale.pageSignInTitle,
             style: Theme.of(context)
                 .textTheme
                 .headlineMedium!

@@ -16,9 +16,13 @@
   "@signUp": {
     "description": "signUp"
   },
-  "pageSignUpDescription": "Start with make an account and then you can start  to check your health anytime, anywhere!",
+  "pageSignUpDescription": "Start with make an account and then you can check your health anytime, anywhere!",
   "@pageSignUpDescription": {
     "description": "pageSignUpDescription"
+  },
+  "pageSignInTitle": "Hi, Welcome!",
+  "@pageSignInTitle": {
+    "description": "pageSignInTitle"
   },
   "pageSignInDescription": "Hello, how are you? not feeling great? Don't worry we got you covered, check your health easily!",
   "@pageSignInDescription": {
