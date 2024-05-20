@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../constants/sizes.dart';
 import '../drivers/local_storage.dart';
 
 part 'theme.g.dart';
@@ -411,8 +412,17 @@ class MaterialTheme {
         ),
         scaffoldBackgroundColor: colorScheme.background,
         canvasColor: colorScheme.surface,
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(),
+        inputDecorationTheme: InputDecorationTheme(
+          border: const OutlineInputBorder(),
+          errorMaxLines: 3,
+          hintStyle: textTheme
+              .apply(fontFamily: 'Geist')
+              .bodyLarge
+              ?.copyWith(color: colorScheme.outlineVariant),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: Sizes.p12,
+            vertical: Sizes.p8,
+          ),
         ),
       );
 

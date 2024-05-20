@@ -1,39 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:websafe_svg/websafe_svg.dart';
 
 import '../../../../constants/sizes.dart';
+import '../../../../context.dart';
 
 class AuthForm extends StatelessWidget {
-  const AuthForm({super.key, required this.children});
+  const AuthForm({super.key, required this.formKey, required this.children});
 
+  final GlobalKey<FormState> formKey;
   final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: PhosphorIcon(
-                    PhosphorIcons.appleLogo(PhosphorIconsStyle.duotone),
-                  ),
+                  onPressed: null,
+                  icon: WebsafeSvg.asset('assets/icons/apple.svg', height: 16),
                   label: const Text('Apple'),
                 ),
               ),
               gapW16,
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: PhosphorIcon(
-                    PhosphorIcons.googleLogo(PhosphorIconsStyle.duotone),
-                  ),
+                  onPressed: null,
+                  icon: WebsafeSvg.asset('assets/icons/google.svg', height: 16),
                   label: const Text('Google'),
                 ),
               ),
@@ -46,7 +47,7 @@ class AuthForm extends StatelessWidget {
               const Expanded(child: Divider()),
               gapW8,
               Text(
-                'OR',
+                context.locale.or.toUpperCase(),
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall!

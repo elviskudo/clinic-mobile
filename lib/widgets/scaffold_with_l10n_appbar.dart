@@ -14,6 +14,8 @@ class ScaffoldWithL10nAppBar extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        forceMaterialTransparency: true,
         title: Text(
           'Logo',
           style: Theme.of(context)

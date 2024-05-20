@@ -1,6 +1,9 @@
 targets:
   $default:
     builders:
+      envied_generator:
+        generate_for:
+          - lib/constants/env.dart
       riverpod_generator:
         generate_for:
           - lib/drivers/*.dart

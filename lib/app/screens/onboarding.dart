@@ -18,6 +18,15 @@ class OnboardingScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            Expanded(
+              child: Image.asset(
+                'assets/images/onboarding_illustration.png',
+                height: 180,
+                isAntiAlias: true,
+                filterQuality: FilterQuality.high,
+              ),
+            ),
+            gapH24,
             Text(
               context.locale.pageOnboardingTitle,
               style: Theme.of(context).textTheme.headlineMedium!.copyWith(
