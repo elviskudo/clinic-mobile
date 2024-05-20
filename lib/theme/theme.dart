@@ -1,4 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../constants/sizes.dart';
+import '../drivers/local_storage.dart';
+
+part 'theme.g.dart';
+
+@riverpod
+class AppTheme extends _$AppTheme {
+  @override
+  ThemeMode build() {
+    final prefs = ref.watch(sharedStorageProvider);
+    setMode(ThemeMode.light); // DEV: prefer lightmode
+    final mode = prefs.getString('app_theme');
+
+    if (mode == 'light') {
+      return ThemeMode.light;
+    } else if (mode == 'dark') {
+      return ThemeMode.dark;
+    } else {
+      return ThemeMode.system;
+    }
+  }
+
+  void setMode(ThemeMode mode) async {
+    await ref.read(sharedStorageProvider).setString('app_theme', mode.name);
+    state = mode;
+  }
+}
 
 class MaterialTheme {
   final TextTheme textTheme;
@@ -61,7 +91,13 @@ class MaterialTheme {
   }
 
   ThemeData light() {
-    return theme(lightScheme().toColorScheme());
+    return theme(lightScheme().toColorScheme()).copyWith(
+      appBarTheme: AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+        ),
+      ),
+    );
   }
 
   static MaterialScheme lightMediumContrastScheme() {
@@ -238,7 +274,13 @@ class MaterialTheme {
   }
 
   ThemeData dark() {
-    return theme(darkScheme().toColorScheme());
+    return theme(darkScheme().toColorScheme()).copyWith(
+      appBarTheme: AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+        ),
+      ),
+    );
   }
 
   static MaterialScheme darkMediumContrastScheme() {
@@ -370,6 +412,18 @@ class MaterialTheme {
         ),
         scaffoldBackgroundColor: colorScheme.background,
         canvasColor: colorScheme.surface,
+        inputDecorationTheme: InputDecorationTheme(
+          border: const OutlineInputBorder(),
+          errorMaxLines: 3,
+          hintStyle: textTheme
+              .apply(fontFamily: 'Geist')
+              .bodyLarge
+              ?.copyWith(color: colorScheme.outlineVariant),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: Sizes.p12,
+            vertical: Sizes.p8,
+          ),
+        ),
       );
 
   List<ExtendedColor> get extendedColors => [];

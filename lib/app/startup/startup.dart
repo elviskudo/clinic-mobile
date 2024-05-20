@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../constants/sizes.dart';
-import '../routing/app_startup.dart';
+import '../../constants/sizes.dart';
+import '../../features/auth/auth.dart';
+
+part 'startup.g.dart';
+
+@Riverpod(keepAlive: true)
+Future<void> startup(StartupRef ref) async {
+  // await for all initialization code to be complete before returning
+  ref.onDispose(() {
+    // ensure we invalidate all the providers we depend on
+    ref.invalidate(isAuthenticatedProvider);
+  });
+
+  await ref.watch(isAuthenticatedProvider.future);
+}
 
 class AppStartupWidget extends ConsumerWidget {
   const AppStartupWidget({super.key, required this.onLoaded});
@@ -11,15 +25,15 @@ class AppStartupWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appStartupState = ref.watch(appStartupProvider);
+    final state = ref.watch(startupProvider);
 
-    return appStartupState.when(
+    return state.when(
       data: (_) => onLoaded(context),
       loading: () => const AppStartupLoadingWidget(),
       error: (e, st) => AppStartupErrorWidget(
         message: e.toString(),
         onRetry: () {
-          ref.invalidate(appStartupProvider);
+          ref.invalidate(startupProvider);
         },
       ),
     );
@@ -52,7 +66,6 @@ class AppStartupErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
