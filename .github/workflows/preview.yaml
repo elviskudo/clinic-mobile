@@ -51,4 +51,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: clinic_app_preview_build
-          path: build/app/outputs/release
+          path: build/app/outputs/flutter-apk
