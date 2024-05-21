@@ -7,8 +7,8 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../constants/regex.dart';
 import '../../constants/sizes.dart';
-import '../../context.dart';
 import '../../features/auth/view/widgets/form.dart';
+import '../../l10n/generated/l10n.dart';
 import '../../widgets/scaffold_with_l10n_appbar.dart';
 
 class SignInScreen extends HookConsumerWidget {
@@ -35,7 +35,7 @@ class SignInScreen extends HookConsumerWidget {
           shrinkWrap: true,
           children: [
             Text(
-              context.locale.pageSignInTitle,
+              S.of(context).pageSignInTitle,
               style: Theme.of(context)
                   .textTheme
                   .headlineMedium!
@@ -43,7 +43,7 @@ class SignInScreen extends HookConsumerWidget {
             ),
             gapH8,
             Text(
-              context.locale.pageSignInDescription,
+              S.of(context).pageSignInDescription,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -57,15 +57,15 @@ class SignInScreen extends HookConsumerWidget {
                   controller: email,
                   decoration: InputDecoration(
                     label: const Text('Email*'),
-                    hintText: context.locale.inputEmailPlaceholder,
+                    hintText: S.of(context).inputEmailPlaceholder,
                   ),
                   validator: (str) {
                     if ((str ?? '').isNotEmpty) {
                       return emailRegex.hasMatch(str!)
                           ? null
-                          : context.locale.errorEmailValidationInvalid;
+                          : S.of(context).errorEmailValidationInvalid;
                     }
-                    return context.locale.errorEmailValidationEmpty;
+                    return S.of(context).errorEmailValidationEmpty;
                   },
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
@@ -75,7 +75,7 @@ class SignInScreen extends HookConsumerWidget {
                   controller: password,
                   decoration: InputDecoration(
                     label: const Text('Password*'),
-                    hintText: context.locale.inputPasswordPlaceholder,
+                    hintText: S.of(context).inputPasswordPlaceholder,
                     suffixIcon: GestureDetector(
                       onTap: () {
                         passwordObscure.value = !passwordObscure.value;
@@ -91,9 +91,9 @@ class SignInScreen extends HookConsumerWidget {
                   obscureText: passwordObscure.value,
                   validator: (str) {
                     if ((str ?? '').isEmpty) {
-                      return context.locale.errorPasswordValidationEmpty;
+                      return S.of(context).errorPasswordValidationEmpty;
                     } else if ((str ?? '').length < 8) {
-                      return context.locale.errorPasswordValidationInvalid;
+                      return S.of(context).errorPasswordValidationInvalid;
                     }
                     return null;
                   },
@@ -105,7 +105,7 @@ class SignInScreen extends HookConsumerWidget {
                   onPressed: () {
                     formKey.currentState!.validate();
                   },
-                  child: Text(context.locale.signIn),
+                  child: Text(S.of(context).signIn),
                 )
               ],
             ),
@@ -113,10 +113,10 @@ class SignInScreen extends HookConsumerWidget {
             Center(
               child: Text.rich(
                 TextSpan(
-                  text: context.locale.pageSignInNoAccount,
+                  text: S.of(context).pageSignInNoAccount,
                   children: [
                     TextSpan(
-                      text: ' ${context.locale.signUp}',
+                      text: ' ${S.of(context).signUp}',
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => context.push('/auth/signup'),
                       style: TextStyle(

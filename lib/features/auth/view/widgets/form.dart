@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 
 import '../../../../constants/sizes.dart';
-import '../../../../context.dart';
+import '../../../../l10n/generated/l10n.dart';
 
 class AuthForm extends StatelessWidget {
   const AuthForm({super.key, required this.formKey, required this.children});
@@ -47,7 +47,7 @@ class AuthForm extends StatelessWidget {
               const Expanded(child: Divider()),
               gapW8,
               Text(
-                context.locale.or.toUpperCase(),
+                S.of(context).or.toUpperCase(),
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall!

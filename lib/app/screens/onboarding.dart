@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../constants/sizes.dart';
-import '../../context.dart';
+import '../../l10n/generated/l10n.dart';
 import '../../widgets/scaffold_with_l10n_appbar.dart';
 
 class OnboardingScreen extends ConsumerWidget {
@@ -28,7 +28,7 @@ class OnboardingScreen extends ConsumerWidget {
             ),
             gapH24,
             Text(
-              context.locale.pageOnboardingTitle,
+              S.of(context).pageOnboardingTitle,
               style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w600,
@@ -36,21 +36,21 @@ class OnboardingScreen extends ConsumerWidget {
             ),
             gapH8,
             Text(
-              context.locale.pageOnboardingDescription,
+              S.of(context).pageOnboardingDescription,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
             gapH24,
             FilledButton(
-              child: Text(context.locale.signIn),
+              child: Text(S.of(context).signIn),
               onPressed: () {
                 context.push('/auth/signin');
               },
             ),
             gapH8,
             OutlinedButton(
-              child: Text(context.locale.signUp),
+              child: Text(S.of(context).signUp),
               onPressed: () {
                 context.push('/auth/signup');
               },

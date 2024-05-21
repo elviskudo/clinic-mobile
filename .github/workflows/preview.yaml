@@ -40,9 +40,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Generate codes with build_runner
-        run: |
-          flutter gen-l10n
-          dart run build_runner build -d
+        run: dart run build_runner build -d
       
       # Build the app for Android
       - name: Build apk (Android)
