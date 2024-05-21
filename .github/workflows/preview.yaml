@@ -1,0 +1,24 @@
+name: Flutter build preview release app pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  
+jobs:
+  runs-on: ubuntu-latest
+  steps:
+    # Checkout github repo
+    - uses: actions/checkout@v4
+
+    # Setup flutter, install dependencies, and generated codes
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        flutter-version-file: pubspec.yaml
+    - name: Install Dependencies
+      run: flutter pub get
+    - name: Build Generated Codes
+      run: dart run build_runner build -d
