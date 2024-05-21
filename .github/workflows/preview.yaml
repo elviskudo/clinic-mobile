@@ -1,0 +1,54 @@
+name: Flutter build preview release app pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout github repo
+      - uses: actions/checkout@v4
+
+      # Create env file later used by build_runner envied
+      - name: Create env file
+        run: |
+          touch .env
+          echo API_BASE_URL=${{ secrets.API_BASE_URL }} >> .env
+      
+      # Setup java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      
+      # TODO: Self-sign apk with gradle keystore
+
+      # Setup flutter, install dependencies, and generated codes from build_runner
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          architecture: x64
+      - run: |
+          git config --global --add safe.directory /opt/hostedtoolcache/flutter/${{ steps.flutter-action.outputs.CHANNEL }}-${{ steps.flutter-action.outputs.VERSION }}-${{ steps.flutter-action.outputs.ARCHITECTURE }}
+          flutter --version
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Generate codes with build_runner
+        run: dart run build_runner build -d
+      
+      # Build the app for Android
+      - name: Build apk (Android)
+        run: flutter build apk --split-per-abi
+      
+      # Export app to Github Action artifact (for now)
+      - name: Upload to Github Action artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: clinic_app_preview_build
+          path: build/app/outputs/flutter-apk

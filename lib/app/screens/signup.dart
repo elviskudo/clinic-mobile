@@ -8,8 +8,8 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../constants/regex.dart';
 import '../../constants/sizes.dart';
-import '../../context.dart';
 import '../../features/auth/view/widgets/form.dart';
+import '../../l10n/generated/l10n.dart';
 import '../../widgets/scaffold_with_l10n_appbar.dart';
 
 class SignUpScreen extends HookConsumerWidget {
@@ -44,7 +44,7 @@ class SignUpScreen extends HookConsumerWidget {
           padding: const EdgeInsets.all(Sizes.p24),
           children: [
             Text(
-              context.locale.signUp,
+              S.of(context).signUp,
               style: Theme.of(context)
                   .textTheme
                   .headlineMedium!
@@ -52,7 +52,7 @@ class SignUpScreen extends HookConsumerWidget {
             ),
             gapH8,
             Text(
-              context.locale.pageSignUpDescription,
+              S.of(context).pageSignUpDescription,
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -65,13 +65,13 @@ class SignUpScreen extends HookConsumerWidget {
                   controller: name,
                   autofocus: true,
                   decoration: InputDecoration(
-                    label: Text('${context.locale.inputNameLabel}*'),
-                    hintText: context.locale.inputNamePlaceholder,
+                    label: Text('${S.of(context).inputNameLabel}*'),
+                    hintText: S.of(context).inputNamePlaceholder,
                   ),
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.name,
                   validator: (str) => (str ?? '').isEmpty
-                      ? context.locale.errorNameValidationEmpty
+                      ? S.of(context).errorNameValidationEmpty
                       : null,
                 ),
                 gapH16,
@@ -79,15 +79,15 @@ class SignUpScreen extends HookConsumerWidget {
                   controller: email,
                   decoration: InputDecoration(
                     label: const Text('Email*'),
-                    hintText: context.locale.inputEmailPlaceholder,
+                    hintText: S.of(context).inputEmailPlaceholder,
                   ),
                   validator: (str) {
                     if ((str ?? '').isNotEmpty) {
                       return emailRegex.hasMatch(str!)
                           ? null
-                          : context.locale.errorEmailValidationInvalid;
+                          : S.of(context).errorEmailValidationInvalid;
                     }
-                    return context.locale.errorEmailValidationEmpty;
+                    return S.of(context).errorEmailValidationEmpty;
                   },
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
@@ -101,7 +101,7 @@ class SignUpScreen extends HookConsumerWidget {
                   onInputValidated: (validated) {
                     if (!validated) {
                       phoneErrorMessage.value =
-                          context.locale.errorPhoneValidationInvalid;
+                          S.of(context).errorPhoneValidationInvalid;
                     }
                     phoneErrorMessage.value = null;
                   },
@@ -111,8 +111,8 @@ class SignUpScreen extends HookConsumerWidget {
                   errorMessage: phoneErrorMessage.value,
                   formatInput: true,
                   inputDecoration: InputDecoration(
-                    label: Text('${context.locale.inputPhoneLabel}*'),
-                    hintText: context.locale.inputPhonePlaceholder,
+                    label: Text('${S.of(context).inputPhoneLabel}*'),
+                    hintText: S.of(context).inputPhonePlaceholder,
                   ),
                   keyboardType: const TextInputType.numberWithOptions(
                     signed: true,
@@ -130,7 +130,7 @@ class SignUpScreen extends HookConsumerWidget {
                   controller: password,
                   decoration: InputDecoration(
                     label: const Text('Password*'),
-                    hintText: context.locale.inputPasswordPlaceholder,
+                    hintText: S.of(context).inputPasswordPlaceholder,
                     suffixIcon: GestureDetector(
                       onTap: () {
                         passwordObscure.value = !passwordObscure.value;
@@ -146,9 +146,9 @@ class SignUpScreen extends HookConsumerWidget {
                   obscureText: passwordObscure.value,
                   validator: (str) {
                     if ((str ?? '').isEmpty) {
-                      return context.locale.errorPasswordValidationEmpty;
+                      return S.of(context).errorPasswordValidationEmpty;
                     } else if ((str ?? '').length < 8) {
-                      return context.locale.errorPasswordValidationInvalid;
+                      return S.of(context).errorPasswordValidationInvalid;
                     }
                     return null;
                   },
@@ -161,8 +161,8 @@ class SignUpScreen extends HookConsumerWidget {
                   obscureText: confirmationPasswordObscure.value,
                   decoration: InputDecoration(
                     label: Text(
-                        '${context.locale.inputConfirmationPasswordLabel}*'),
-                    hintText: context.locale.inputConfirmationPasswordLabel,
+                        '${S.of(context).inputConfirmationPasswordLabel}*'),
+                    hintText: S.of(context).inputConfirmationPasswordLabel,
                     suffixIcon: GestureDetector(
                       onTap: () {
                         confirmationPasswordObscure.value =
@@ -178,12 +178,13 @@ class SignUpScreen extends HookConsumerWidget {
                   ),
                   validator: (str) {
                     if ((str ?? '').isEmpty) {
-                      return context.locale.errorPasswordValidationEmpty;
+                      return S.of(context).errorPasswordValidationEmpty;
                     } else if ((str ?? '').length < 8) {
-                      return context.locale.errorPasswordValidationInvalid;
+                      return S.of(context).errorPasswordValidationInvalid;
                     } else if ((str ?? '') != password.text) {
-                      return context
-                          .locale.errorConfirmationPasswordValidationInvalid;
+                      return S
+                          .of(context)
+                          .errorConfirmationPasswordValidationInvalid;
                     }
                     return null;
                   },
@@ -195,7 +196,7 @@ class SignUpScreen extends HookConsumerWidget {
                   onPressed: () {
                     formKey.currentState!.validate();
                   },
-                  child: Text(context.locale.signUp),
+                  child: Text(S.of(context).signUp),
                 )
               ],
             ),
@@ -203,10 +204,10 @@ class SignUpScreen extends HookConsumerWidget {
             Center(
               child: Text.rich(
                 TextSpan(
-                  text: context.locale.pageSignUpHadAccount,
+                  text: S.of(context).pageSignUpHadAccount,
                   children: [
                     TextSpan(
-                      text: ' ${context.locale.signIn}',
+                      text: ' ${S.of(context).signIn}',
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => context.push('/auth/signin'),
                       style: TextStyle(
