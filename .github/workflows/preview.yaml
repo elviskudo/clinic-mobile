@@ -13,6 +13,12 @@ jobs:
       # Checkout github repo
       - uses: actions/checkout@v4
 
+      # Create env file later used by build_runner envied
+      - name: Create env file
+        run: |
+          touch .env
+          echo API_BASE_URL=${{ secrets.API_BASE_URL }} >> .env
+
       # Setup flutter, install dependencies, and generated codes
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
