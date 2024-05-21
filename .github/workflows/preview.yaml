@@ -44,7 +44,7 @@ jobs:
       
       # Build the app for Android
       - name: Build apk (Android)
-        run: flutter build apk --split-per-abi -v
+        run: flutter build apk --split-per-abi
       
       # Export app to Github Action artifact (for now)
       - name: Upload to Github Action artifact
