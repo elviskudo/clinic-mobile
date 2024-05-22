@@ -3,9 +3,7 @@ name: Flutter build preview release app pipeline
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  
+ 
 jobs:
   build:
     runs-on: ubuntu-latest
