@@ -28,11 +28,11 @@
   "@pageSignInTitle": {
     "description": "pageSignInTitle"
   },
-  "pageSignInDescription": "Hello, how are you? not feeling great? Don' 't worry we got you covered, check your health easily!",
+  "pageSignInDescription": "Hello, how are you? not feeling great? Don't worry we got you covered, check your health easily!",
   "@pageSignInDescription": {
     "description": "pageSignInDescription"
   },
-  "pageSignInNoAccount": "Don' 't have an account yet?",
+  "pageSignInNoAccount": "Don't have an account yet?",
   "@pageSignInNoAccount": {
     "description": "pageSignInNoAccount"
   },
@@ -95,5 +95,29 @@
   "errorConfirmationPasswordValidationInvalid": "Confirmation password must be same as password.",
   "@errorConfirmationPasswordValidationInvalid": {
     "description": "errorConfirmationPasswordValidationEmpty"
+  },
+  "verification": "Verification",
+  "@verification": {
+    "description": "verification"
+  },
+  "verificationButtonText": "Verify",
+  "@verificationButtonText": {
+    "description": "verificationButtonText"
+  },
+  "pageVerificationDescription": "Enter the verification code (OTP) that we have sent to your email.",
+  "@pageVerificationDescription": {
+    "description": "pageVerificationDescription"
+  },
+  "pageVerificationResendNotice": "Did'nt recieve the verification code yet?",
+  "@pageVerificationResendNotice": {
+    "description": "pageVerificationResendNotice"
+  },
+  "resend": "Resend",
+  "@resend": {
+    "description": "resend"
+  },
+  "errorVerificationEmpty": "Please enter a valid verification code.",
+  "@errorVerificationEmpty": {
+    "description": "errorVerificationEmpty"
   }
 }

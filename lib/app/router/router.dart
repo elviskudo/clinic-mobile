@@ -6,6 +6,7 @@ import '../../features/auth/auth.dart';
 import '../screens/onboarding.dart';
 import '../screens/signin.dart';
 import '../screens/signup.dart';
+import '../screens/verification.dart';
 import '../startup/startup.dart';
 
 part 'router.g.dart';
@@ -65,6 +66,13 @@ GoRouter router(RouterRef ref) {
         name: 'signup',
         pageBuilder: (context, state) => const MaterialPage(
           child: SignUpScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/auth/verification',
+        name: 'verification',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: VerificationScreen(),
         ),
       ),
     ],

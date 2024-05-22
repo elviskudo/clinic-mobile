@@ -37,6 +37,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Password must be at least 8 characters or more."),
         "errorPhoneValidationInvalid": MessageLookupByLibrary.simpleMessage(
             "Please enter a valid phone number."),
+        "errorVerificationEmpty": MessageLookupByLibrary.simpleMessage(
+            "Please enter a valid verification code."),
         "inputConfirmationPasswordLabel":
             MessageLookupByLibrary.simpleMessage("Confirmation Password"),
         "inputEmailPlaceholder":
@@ -55,15 +57,22 @@ class MessageLookup extends MessageLookupByLibrary {
         "pageOnboardingTitle":
             MessageLookupByLibrary.simpleMessage("Welcome to Clinic!"),
         "pageSignInDescription": MessageLookupByLibrary.simpleMessage(
-            "Hello, how are you? not feeling great? Don\' \'t worry we got you covered, check your health easily!"),
-        "pageSignInNoAccount": MessageLookupByLibrary.simpleMessage(
-            "Don\' \'t have an account yet?"),
+            "Hello, how are you? not feeling great? Don\'t worry we got you covered, check your health easily!"),
+        "pageSignInNoAccount":
+            MessageLookupByLibrary.simpleMessage("Don\'t have an account yet?"),
         "pageSignInTitle": MessageLookupByLibrary.simpleMessage("Hi, Welcome!"),
         "pageSignUpDescription": MessageLookupByLibrary.simpleMessage(
             "Start with make an account and then you can check your health anytime, anywhere!"),
         "pageSignUpHadAccount": MessageLookupByLibrary.simpleMessage(
             "Already have an account yet?"),
+        "pageVerificationDescription": MessageLookupByLibrary.simpleMessage(
+            "Enter the verification code (OTP) that we have sent to your email."),
+        "pageVerificationResendNotice": MessageLookupByLibrary.simpleMessage(
+            "Did\'nt recieve the verification code yet?"),
+        "resend": MessageLookupByLibrary.simpleMessage("Resend"),
         "signIn": MessageLookupByLibrary.simpleMessage("Sign in"),
-        "signUp": MessageLookupByLibrary.simpleMessage("Create an account")
+        "signUp": MessageLookupByLibrary.simpleMessage("Create an account"),
+        "verification": MessageLookupByLibrary.simpleMessage("Verification"),
+        "verificationButtonText": MessageLookupByLibrary.simpleMessage("Verify")
       };
 }
