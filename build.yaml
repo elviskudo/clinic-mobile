@@ -7,3 +7,4 @@ targets:
           - lib/app**/*.dart
           - lib/features**/*.dart
           - lib/theme/*.dart
+          - lib/l10n/*.dart

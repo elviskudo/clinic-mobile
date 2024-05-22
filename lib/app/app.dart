@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../l10n/generated/l10n.dart';
+import '../l10n/l10n.dart';
 import '../theme/theme.dart';
 import 'router/router.dart';
 
@@ -13,6 +14,7 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final routerConfig = ref.watch(routerProvider);
     final themeMode = ref.watch(appThemeProvider);
+    final locale = ref.watch(appLocaleProvider);
 
     return MaterialApp.router(
       routerConfig: routerConfig,
@@ -28,6 +30,7 @@ class MainApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
+      locale: locale,
       debugShowCheckedModeBanner: false,
     );
   }

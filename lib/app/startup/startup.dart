@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../constants/sizes.dart';
-import '../../drivers/local_storage.dart';
 import '../../features/auth/auth.dart';
-import '../../l10n/generated/l10n.dart';
 
 part 'startup.g.dart';
 
@@ -19,11 +16,6 @@ Future<void> startup(StartupRef ref) async {
   });
 
   await ref.watch(isAuthenticatedProvider.future);
-
-  final currentLocale =
-      ref.read(sharedStorageProvider).getString('app_locale') ??
-          Intl.getCurrentLocale();
-  await S.load(Locale(currentLocale));
 }
 
 class AppStartupWidget extends ConsumerWidget {
@@ -55,7 +47,7 @@ class AppStartupLoadingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: CircularProgressIndicator.adaptive(),
+        child: CircularProgressIndicator(),
       ),
     );
   }

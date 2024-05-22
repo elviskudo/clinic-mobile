@@ -65,7 +65,15 @@ class MessageLookup extends MessageLookupByLibrary {
             "Mulai dengan membuat akun dan kamu bisa cek kesehatan kapanpun, dimanapun!"),
         "pageSignUpHadAccount":
             MessageLookupByLibrary.simpleMessage("Sudah punya akun?"),
+        "pageVerificationDescription": MessageLookupByLibrary.simpleMessage(
+            "Masukkan kode verifikasi (OTP) yang sudah kami kirimkan ke email kamu."),
+        "pageVerificationResendNotice": MessageLookupByLibrary.simpleMessage(
+            "Belum menerima kode verifikasi?"),
+        "resend": MessageLookupByLibrary.simpleMessage("Kirim ulang"),
         "signIn": MessageLookupByLibrary.simpleMessage("Masuk"),
-        "signUp": MessageLookupByLibrary.simpleMessage("Buat akun")
+        "signUp": MessageLookupByLibrary.simpleMessage("Buat akun"),
+        "verification": MessageLookupByLibrary.simpleMessage("Verifikasi"),
+        "verificationButtonText":
+            MessageLookupByLibrary.simpleMessage("Verifikasi")
       };
 }
