@@ -194,7 +194,9 @@ class SignUpScreen extends HookConsumerWidget {
                 gapH24,
                 FilledButton(
                   onPressed: () {
-                    formKey.currentState!.validate();
+                    if (formKey.currentState!.validate()) {
+                      context.push('/auth/verification');
+                    }
                   },
                   child: Text(S.of(context).signUp),
                 )

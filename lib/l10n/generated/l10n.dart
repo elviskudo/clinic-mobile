@@ -120,20 +120,20 @@ class S {
     );
   }
 
-  /// `Hello, how are you? not feeling great? Don' 't worry we got you covered, check your health easily!`
+  /// `Hello, how are you? not feeling great? Don't worry we got you covered, check your health easily!`
   String get pageSignInDescription {
     return Intl.message(
-      'Hello, how are you? not feeling great? Don\' \'t worry we got you covered, check your health easily!',
+      'Hello, how are you? not feeling great? Don\'t worry we got you covered, check your health easily!',
       name: 'pageSignInDescription',
       desc: 'pageSignInDescription',
       args: [],
     );
   }
 
-  /// `Don' 't have an account yet?`
+  /// `Don't have an account yet?`
   String get pageSignInNoAccount {
     return Intl.message(
-      'Don\' \'t have an account yet?',
+      'Don\'t have an account yet?',
       name: 'pageSignInNoAccount',
       desc: 'pageSignInNoAccount',
       args: [],
@@ -286,6 +286,66 @@ class S {
       'Confirmation password must be same as password.',
       name: 'errorConfirmationPasswordValidationInvalid',
       desc: 'errorConfirmationPasswordValidationEmpty',
+      args: [],
+    );
+  }
+
+  /// `Verification`
+  String get verification {
+    return Intl.message(
+      'Verification',
+      name: 'verification',
+      desc: 'verification',
+      args: [],
+    );
+  }
+
+  /// `Verify`
+  String get verificationButtonText {
+    return Intl.message(
+      'Verify',
+      name: 'verificationButtonText',
+      desc: 'verificationButtonText',
+      args: [],
+    );
+  }
+
+  /// `Enter the verification code (OTP) that we have sent to your email.`
+  String get pageVerificationDescription {
+    return Intl.message(
+      'Enter the verification code (OTP) that we have sent to your email.',
+      name: 'pageVerificationDescription',
+      desc: 'pageVerificationDescription',
+      args: [],
+    );
+  }
+
+  /// `Did'nt recieve the verification code yet?`
+  String get pageVerificationResendNotice {
+    return Intl.message(
+      'Did\'nt recieve the verification code yet?',
+      name: 'pageVerificationResendNotice',
+      desc: 'pageVerificationResendNotice',
+      args: [],
+    );
+  }
+
+  /// `Resend`
+  String get resend {
+    return Intl.message(
+      'Resend',
+      name: 'resend',
+      desc: 'resend',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid verification code.`
+  String get errorVerificationEmpty {
+    return Intl.message(
+      'Please enter a valid verification code.',
+      name: 'errorVerificationEmpty',
+      desc: 'errorVerificationEmpty',
       args: [],
     );
   }
