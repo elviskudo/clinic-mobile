@@ -32,8 +32,6 @@ dependencies:
   path_provider: ^2.1.3
   flutter_secure_storage: ^9.1.1
   shared_preferences: ^2.2.3
-  tuple8: ^0.1.6
-  dartz: ^0.10.1
 
 dev_dependencies:
   flutter_test:
@@ -46,7 +44,6 @@ dev_dependencies:
   json_serializable: ^6.8.0
   freezed: ^2.5.2
   envied_generator: ^0.5.4+1
-  retrofit_generator: ^8.1.0
 
 flutter:
   generate: true
