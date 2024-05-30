@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../l10n/generated/l10n.dart';
 import '../l10n/l10n.dart';
 import '../theme/theme.dart';
+import '../widgets/toast.dart';
 import 'router/router.dart';
 
 class MainApp extends ConsumerWidget {
@@ -20,6 +21,7 @@ class MainApp extends ConsumerWidget {
       routerConfig: routerConfig,
       title: 'Clinic',
       restorationScopeId: 'app',
+      scaffoldMessengerKey: toaster,
       theme: MaterialTheme(Theme.of(context).textTheme).light(),
       darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
       themeMode: themeMode,

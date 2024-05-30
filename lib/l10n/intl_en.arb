@@ -12,9 +12,21 @@
   "@signIn": {
     "description": "signIn"
   },
+  "signInError": "Failed to sign in. Make sure your credentials is valid before trying again.",
+  "@signInError": {
+    "description": "signInError"
+  },
   "signUp": "Create an account",
   "@signUp": {
     "description": "signUp"
+  },
+  "signUpError": "Failed to create an account. Make sure your credentials is valid before trying again.",
+  "@signUpError": {
+    "description": "signUpError"
+  },
+  "verificationError": "Account verification failed. Try to resend otp code.",
+  "@verificationError": {
+    "description": "verificationError"
   },
   "pageSignUpDescription": "Start with make an account and then you can check your health anytime, anywhere!",
   "@pageSignUpDescription": {
@@ -80,11 +92,15 @@
   "@inputPasswordPlaceholder": {
     "description": "inputPasswordPlaceholder"
   },
+  "inputPasswordDescription": "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n • Should contain at least one Special character",
+  "@inputPasswordDescription": {
+    "description": "inputPasswordDescription"
+  },
   "errorPasswordValidationEmpty": "Please enter your password.",
   "@errorPasswordValidationEmpty": {
     "description": "errorPasswordValidationEmpty"
   },
-  "errorPasswordValidationInvalid": "Password must be at least 8 characters or more.",
+  "errorPasswordValidationInvalid": "Password must be at least 8 characters or more & make sure to match the requirements.",
   "@errorPasswordValidationInvalid": {
     "description": "errorPasswordValidationEmpty"
   },

@@ -26,12 +26,19 @@ GoRouter router(RouterRef ref) {
 
       final path = state.uri.path;
 
-      final isAuthenticated = ref.watch(isAuthenticatedProvider).requireValue;
+      final authCred = ref.watch(authControllerProvider).requireValue;
+      final isAuthenticated = authCred != null ? authCred.isVerified : false;
 
       if (!isAuthenticated) {
-        if (path.startsWith('/') || path.startsWith('/app')) {
+        if (path == '/' || path.startsWith('/app')) {
+          if (authCred != null && !authCred.isVerified) {
+            return '/auth/verification';
+          }
+
           return path.startsWith('/auth') ? path : '/onboarding';
         }
+      } else {
+        return path == '/' || path.startsWith('/auth') ? '/app' : path;
       }
 
       return null;

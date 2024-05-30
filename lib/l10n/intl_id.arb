@@ -12,9 +12,21 @@
   "@signIn": {
     "description": "signIn"
   },
+  "signInError": "Gagal masuk. Pastikan kredensial kamu valid sebelum mengulangi pembuatan akun.",
+  "@signInError": {
+    "description": "signInError"
+  },
   "signUp": "Buat akun",
   "@signUp": {
     "description": "signUp"
+  },
+  "signUpError": "Gagal membuat akun. Pastikan kredensial kamu valid sebelum mengulangi pembuatan akun.",
+  "@signUpError": {
+    "description": "signUpError"
+  },
+  "verificationError": "Verifikasi akun gagal. Coba untuk kirim ulang kode otp.",
+  "@verificationError": {
+    "description": "verificationError"
   },
   "pageSignUpDescription": "Mulai dengan membuat akun dan kamu bisa cek kesehatan kapanpun, dimanapun!",
   "@pageSignUpDescription": {
@@ -80,11 +92,15 @@
   "@inputPasswordPlaceholder": {
     "description": "inputPasswordPlaceholder"
   },
+  "inputPasswordDescription": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus",
+  "@inputPasswordDescription": {
+    "description": "inputPasswordDescription"
+  },
   "errorPasswordValidationEmpty": "Silahkan masukkan password kamu.",
   "@errorPasswordValidationEmpty": {
     "description": "errorPasswordValidationEmpty"
   },
-  "errorPasswordValidationInvalid": "Password harus sedikitnya 8 karakter atau lebih.",
+  "errorPasswordValidationInvalid": "Password harus sedikitnya 8 karakter atau lebih & pastikan sesuai dengan kriteria.",
   "@errorPasswordValidationInvalid": {
     "description": "errorPasswordValidationEmpty"
   },

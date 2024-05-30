@@ -7,8 +7,11 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../constants/sizes.dart';
+import '../../features/auth/auth.dart'
+    show authControllerProvider, VerificationRequestBody;
 import '../../l10n/generated/l10n.dart';
 import '../../widgets/scaffold_with_l10n_appbar.dart';
+import '../../widgets/toast.dart';
 
 class VerificationScreen extends StatefulHookConsumerWidget {
   const VerificationScreen({super.key});
@@ -20,6 +23,14 @@ class VerificationScreen extends StatefulHookConsumerWidget {
 class _VerificationScreenState extends ConsumerState<VerificationScreen> {
   @override
   Widget build(BuildContext context) {
+    ref.listen(authControllerProvider, (previous, next) {
+      if (next is AsyncError) {
+        toaster.currentState!.showSnackBar(
+          toast(S.of(context).verificationError, type: ToastType.error),
+        );
+      }
+    });
+
     final resendInSeconds = useState(60);
     final resendEnabled = useState(false);
 
@@ -39,10 +50,14 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
     final loading = useState(false);
     final errorMessage = useState('');
 
-    void onSubmit(String value) {
+    void onSubmit(String value) async {
       errorMessage.value = '';
       if (value.isEmpty || value.length < 6) {
         errorMessage.value = S.of(context).errorVerificationEmpty;
+      } else {
+        await ref
+            .read(authControllerProvider.notifier)
+            .verify(VerificationRequestBody(code: otpCode.value.join('')));
       }
     }
 
@@ -110,9 +125,19 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                       text: ' ${S.of(context).resend}',
                       recognizer: TapGestureRecognizer()
                         ..onTap = resendEnabled.value
-                            ? () {
+                            ? () async {
                                 resendInSeconds.value = 60;
                                 resendEnabled.value = false;
+                                final res = await ref
+                                    .read(authControllerProvider.notifier)
+                                    .resendOtp();
+                                res.whenOrNull(
+                                  error: (error, stackTrace) {
+                                    toaster.currentState!.showSnackBar(
+                                      toast('Something went wrong...'),
+                                    );
+                                  },
+                                );
                               }
                             : null,
                       style: TextStyle(

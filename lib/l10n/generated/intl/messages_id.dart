@@ -34,7 +34,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "errorPasswordValidationEmpty": MessageLookupByLibrary.simpleMessage(
             "Silahkan masukkan password kamu."),
         "errorPasswordValidationInvalid": MessageLookupByLibrary.simpleMessage(
-            "Password harus sedikitnya 8 karakter atau lebih."),
+            "Password harus sedikitnya 8 karakter atau lebih & pastikan sesuai dengan kriteria."),
         "errorPhoneValidationInvalid": MessageLookupByLibrary.simpleMessage(
             "Silahkan masukkan no. hp yang valid."),
         "inputConfirmationPasswordLabel":
@@ -44,6 +44,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "inputNameLabel": MessageLookupByLibrary.simpleMessage("Nama lengkap"),
         "inputNamePlaceholder":
             MessageLookupByLibrary.simpleMessage("Nama lengkap kamu."),
+        "inputPasswordDescription": MessageLookupByLibrary.simpleMessage(
+            "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus"),
         "inputPasswordPlaceholder": MessageLookupByLibrary.simpleMessage(
             "Masukkan password kamu (minimal 8 karakter)."),
         "inputPhoneLabel":
@@ -71,9 +73,15 @@ class MessageLookup extends MessageLookupByLibrary {
             "Belum menerima kode verifikasi?"),
         "resend": MessageLookupByLibrary.simpleMessage("Kirim ulang"),
         "signIn": MessageLookupByLibrary.simpleMessage("Masuk"),
+        "signInError": MessageLookupByLibrary.simpleMessage(
+            "Gagal masuk. Pastikan kredensial kamu valid sebelum mengulangi pembuatan akun."),
         "signUp": MessageLookupByLibrary.simpleMessage("Buat akun"),
+        "signUpError": MessageLookupByLibrary.simpleMessage(
+            "Gagal membuat akun. Pastikan kredensial kamu valid sebelum mengulangi pembuatan akun."),
         "verification": MessageLookupByLibrary.simpleMessage("Verifikasi"),
         "verificationButtonText":
-            MessageLookupByLibrary.simpleMessage("Verifikasi")
+            MessageLookupByLibrary.simpleMessage("Verifikasi"),
+        "verificationError": MessageLookupByLibrary.simpleMessage(
+            "Verifikasi akun gagal. Coba untuk kirim ulang kode otp.")
       };
 }

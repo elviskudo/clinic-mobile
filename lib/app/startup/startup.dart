@@ -12,10 +12,10 @@ Future<void> startup(StartupRef ref) async {
   // await for all initialization code to be complete before returning
   ref.onDispose(() {
     // ensure we invalidate all the providers we depend on
-    ref.invalidate(isAuthenticatedProvider);
+    ref.invalidate(authControllerProvider);
   });
 
-  await ref.watch(isAuthenticatedProvider.future);
+  await ref.watch(authControllerProvider.future);
 }
 
 class AppStartupWidget extends ConsumerWidget {

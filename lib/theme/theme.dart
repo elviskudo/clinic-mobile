@@ -91,13 +91,7 @@ class MaterialTheme {
   }
 
   ThemeData light() {
-    return theme(lightScheme().toColorScheme()).copyWith(
-      appBarTheme: AppBarTheme(
-        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
-          statusBarColor: Colors.transparent,
-        ),
-      ),
-    );
+    return theme(lightScheme().toColorScheme());
   }
 
   static MaterialScheme lightMediumContrastScheme() {
@@ -274,13 +268,7 @@ class MaterialTheme {
   }
 
   ThemeData dark() {
-    return theme(darkScheme().toColorScheme()).copyWith(
-      appBarTheme: AppBarTheme(
-        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
-          statusBarColor: Colors.transparent,
-        ),
-      ),
-    );
+    return theme(darkScheme().toColorScheme());
   }
 
   static MaterialScheme darkMediumContrastScheme() {
@@ -412,6 +400,26 @@ class MaterialTheme {
         ),
         scaffoldBackgroundColor: colorScheme.background,
         canvasColor: colorScheme.surface,
+        appBarTheme: AppBarTheme(
+          systemOverlayStyle: colorScheme.brightness == Brightness.dark
+              ? SystemUiOverlayStyle.light
+                  .copyWith(statusBarColor: Colors.transparent)
+              : SystemUiOverlayStyle.dark
+                  .copyWith(statusBarColor: Colors.transparent),
+        ),
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: colorScheme.brightness == Brightness.dark
+              ? MaterialTheme.lightScheme().background
+              : MaterialTheme.darkScheme().background,
+          behavior: SnackBarBehavior.floating,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: Sizes.p8,
+            vertical: Sizes.p4,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
         inputDecorationTheme: InputDecorationTheme(
           border: const OutlineInputBorder(),
           errorMaxLines: 3,

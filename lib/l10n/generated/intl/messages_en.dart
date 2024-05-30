@@ -34,7 +34,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "errorPasswordValidationEmpty":
             MessageLookupByLibrary.simpleMessage("Please enter your password."),
         "errorPasswordValidationInvalid": MessageLookupByLibrary.simpleMessage(
-            "Password must be at least 8 characters or more."),
+            "Password must be at least 8 characters or more & make sure to match the requirements."),
         "errorPhoneValidationInvalid": MessageLookupByLibrary.simpleMessage(
             "Please enter a valid phone number."),
         "errorVerificationEmpty": MessageLookupByLibrary.simpleMessage(
@@ -46,6 +46,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "inputNameLabel": MessageLookupByLibrary.simpleMessage("Fullname"),
         "inputNamePlaceholder":
             MessageLookupByLibrary.simpleMessage("Your full name here."),
+        "inputPasswordDescription": MessageLookupByLibrary.simpleMessage(
+            "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n • Should contain at least one Special character"),
         "inputPasswordPlaceholder": MessageLookupByLibrary.simpleMessage(
             "Enter your password (min 8 characters)."),
         "inputPhoneLabel": MessageLookupByLibrary.simpleMessage("Phone Number"),
@@ -71,8 +73,15 @@ class MessageLookup extends MessageLookupByLibrary {
             "Did\'nt recieve the verification code yet?"),
         "resend": MessageLookupByLibrary.simpleMessage("Resend"),
         "signIn": MessageLookupByLibrary.simpleMessage("Sign in"),
+        "signInError": MessageLookupByLibrary.simpleMessage(
+            "Failed to sign in. Make sure your credentials is valid before trying again."),
         "signUp": MessageLookupByLibrary.simpleMessage("Create an account"),
+        "signUpError": MessageLookupByLibrary.simpleMessage(
+            "Failed to create an account. Make sure your credentials is valid before trying again."),
         "verification": MessageLookupByLibrary.simpleMessage("Verification"),
-        "verificationButtonText": MessageLookupByLibrary.simpleMessage("Verify")
+        "verificationButtonText":
+            MessageLookupByLibrary.simpleMessage("Verify"),
+        "verificationError": MessageLookupByLibrary.simpleMessage(
+            "Account verification failed. Try to resend otp code.")
       };
 }

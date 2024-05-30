@@ -7,20 +7,31 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../constants/regex.dart';
 import '../../constants/sizes.dart';
-import '../../features/auth/view/widgets/form.dart';
+import '../../features/auth/auth.dart'
+    show AuthForm, SigninRequestBody, authControllerProvider;
 import '../../l10n/generated/l10n.dart';
 import '../../widgets/scaffold_with_l10n_appbar.dart';
+import '../../widgets/toast.dart';
 
 class SignInScreen extends HookConsumerWidget {
   const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(authControllerProvider, (previous, next) {
+      if (next is AsyncError) {
+        toaster.currentState!.showSnackBar(
+          toast(S.of(context).signInError, type: ToastType.error),
+        );
+      }
+    });
+
     final formKey = useMemoized(() => GlobalKey<FormState>());
+    final loading = useState(false);
 
     final email = useTextEditingController.fromValue(TextEditingValue.empty);
-    final password = useTextEditingController.fromValue(TextEditingValue.empty);
 
+    final password = useTextEditingController.fromValue(TextEditingValue.empty);
     final passwordObscure = useState(true);
 
     return PopScope(
@@ -60,12 +71,12 @@ class SignInScreen extends HookConsumerWidget {
                     hintText: S.of(context).inputEmailPlaceholder,
                   ),
                   validator: (str) {
-                    if ((str ?? '').isNotEmpty) {
-                      return emailRegex.hasMatch(str!)
-                          ? null
-                          : S.of(context).errorEmailValidationInvalid;
+                    if ((str ?? '').isEmpty) {
+                      return S.of(context).errorEmailValidationEmpty;
+                    } else if (emailRegex.hasMatch(str ?? '')) {
+                      return S.of(context).errorEmailValidationInvalid;
                     }
-                    return S.of(context).errorEmailValidationEmpty;
+                    return null;
                   },
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
@@ -92,7 +103,8 @@ class SignInScreen extends HookConsumerWidget {
                   validator: (str) {
                     if ((str ?? '').isEmpty) {
                       return S.of(context).errorPasswordValidationEmpty;
-                    } else if ((str ?? '').length < 8) {
+                    } else if ((str ?? '').length < 8 ||
+                        passwordRegex.hasMatch(str ?? '')) {
                       return S.of(context).errorPasswordValidationInvalid;
                     }
                     return null;
@@ -102,10 +114,38 @@ class SignInScreen extends HookConsumerWidget {
                 ),
                 gapH24,
                 FilledButton(
-                  onPressed: () {
-                    formKey.currentState!.validate();
-                  },
-                  child: Text(S.of(context).signIn),
+                  onPressed: loading.value
+                      ? null
+                      : () async {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState!.reset();
+                            loading.value = true;
+
+                            final data = SigninRequestBody(
+                              email: email.text,
+                              password: password.text,
+                            );
+
+                            await ref
+                                .read(authControllerProvider.notifier)
+                                .signin(data)
+                                .catchError(
+                              (_) {
+                                toaster.currentState!.showSnackBar(
+                                  toast(
+                                    S.of(context).signUpError,
+                                    type: ToastType.error,
+                                  ),
+                                );
+                              },
+                            ).whenComplete(() {
+                              loading.value = false;
+                            });
+                          }
+                        },
+                  child: loading.value
+                      ? const CircularProgressIndicator()
+                      : Text(S.of(context).signIn),
                 )
               ],
             ),

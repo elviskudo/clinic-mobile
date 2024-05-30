@@ -80,12 +80,42 @@ class S {
     );
   }
 
+  /// `Failed to sign in. Make sure your credentials is valid before trying again.`
+  String get signInError {
+    return Intl.message(
+      'Failed to sign in. Make sure your credentials is valid before trying again.',
+      name: 'signInError',
+      desc: 'signInError',
+      args: [],
+    );
+  }
+
   /// `Create an account`
   String get signUp {
     return Intl.message(
       'Create an account',
       name: 'signUp',
       desc: 'signUp',
+      args: [],
+    );
+  }
+
+  /// `Failed to create an account. Make sure your credentials is valid before trying again.`
+  String get signUpError {
+    return Intl.message(
+      'Failed to create an account. Make sure your credentials is valid before trying again.',
+      name: 'signUpError',
+      desc: 'signUpError',
+      args: [],
+    );
+  }
+
+  /// `Account verification failed. Try to resend otp code.`
+  String get verificationError {
+    return Intl.message(
+      'Account verification failed. Try to resend otp code.',
+      name: 'verificationError',
+      desc: 'verificationError',
       args: [],
     );
   }
@@ -250,6 +280,16 @@ class S {
     );
   }
 
+  /// `• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n • Should contain at least one Special character`
+  String get inputPasswordDescription {
+    return Intl.message(
+      '• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n • Should contain at least one Special character',
+      name: 'inputPasswordDescription',
+      desc: 'inputPasswordDescription',
+      args: [],
+    );
+  }
+
   /// `Please enter your password.`
   String get errorPasswordValidationEmpty {
     return Intl.message(
@@ -260,10 +300,10 @@ class S {
     );
   }
 
-  /// `Password must be at least 8 characters or more.`
+  /// `Password must be at least 8 characters or more & make sure to match the requirements.`
   String get errorPasswordValidationInvalid {
     return Intl.message(
-      'Password must be at least 8 characters or more.',
+      'Password must be at least 8 characters or more & make sure to match the requirements.',
       name: 'errorPasswordValidationInvalid',
       desc: 'errorPasswordValidationEmpty',
       args: [],
