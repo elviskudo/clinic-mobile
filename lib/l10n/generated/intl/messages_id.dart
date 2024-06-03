@@ -52,7 +52,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("No. Handphone"),
         "inputPhonePlaceholder":
             MessageLookupByLibrary.simpleMessage("No. handphone kamu."),
+        "offline": MessageLookupByLibrary.simpleMessage(
+            "Ups! Sepertinya Anda sedang offline."),
         "or": MessageLookupByLibrary.simpleMessage("atau"),
+        "pageHomeAddAppointment":
+            MessageLookupByLibrary.simpleMessage("Buat Jadwal"),
+        "pageHomeMicrocopyDesc":
+            MessageLookupByLibrary.simpleMessage("Bagaimana kesehatan mu?"),
         "pageOnboardingDescription": MessageLookupByLibrary.simpleMessage(
             "Rasakan kemudahan membuat jadwal pemeriksaan medis kapan saja, dimana saja dengan aplikasi kami."),
         "pageOnboardingTitle":

@@ -1,19 +1,24 @@
+import 'package:fl_query/fl_query.dart';
+import 'package:fl_query_connectivity_plus_adapter/fl_query_connectivity_plus_adapter.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'app/app.dart';
-import 'drivers/local_storage.dart';
+import 'app.dart';
+import 'service/init.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final prefs = await SharedPreferences.getInstance();
-  // await prefs.clear();
+  await configureDependencies();
+
+  await QueryClient.initialize(
+    cachePrefix: 'clinic_app',
+    connectivity: FlQueryConnectivityPlusAdapter(
+      pollingDuration: const Duration(seconds: 15),
+    ),
+  );
 
   runApp(
-    ProviderScope(
-      overrides: [sharedStorageProvider.overrideWithValue(prefs)],
+    QueryClientProvider(
       child: const MainApp(),
     ),
   );

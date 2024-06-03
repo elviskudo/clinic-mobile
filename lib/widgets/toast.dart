@@ -3,9 +3,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../constants/sizes.dart';
 
-final GlobalKey<ScaffoldMessengerState> toaster =
-    GlobalKey<ScaffoldMessengerState>();
-
 enum ToastType { loading, error, info, plain }
 
 SnackBar toast(String message, {ToastType type = ToastType.plain}) {

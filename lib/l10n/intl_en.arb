@@ -1,5 +1,9 @@
 {
   "@@locale": "en",
+  "offline": "Oops! It looks like you're offline.",
+  "@offline": {
+    "description": "offline"
+  },
   "pageOnboardingTitle": "Welcome to Clinic!",
   "@pageOnboardingTitle": {
     "description": "pageOnboardingTitle"
@@ -52,6 +56,14 @@
   "@or": {
     "description": "or"
   },
+  "pageHomeAddAppointment": "Add Appointment",
+  "@pageHomeAddAppointment": {
+    "description": "pageHomeAddAppointment"
+  },
+  "pageHomeMicrocopyDesc": "How's Your health?",
+  "@pageHomeMicrocopyDesc": {
+    "description": "pageHomeMicrocopyDesc"
+  },
   "inputNameLabel": "Fullname",
   "@inputNameLabel": {
     "description": "inputNameLabel"
@@ -92,7 +104,7 @@
   "@inputPasswordPlaceholder": {
     "description": "inputPasswordPlaceholder"
   },
-  "inputPasswordDescription": "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n • Should contain at least one Special character",
+  "inputPasswordDescription": "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character",
   "@inputPasswordDescription": {
     "description": "inputPasswordDescription"
   },

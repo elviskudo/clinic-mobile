@@ -50,6 +50,16 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Oops! It looks like you're offline.`
+  String get offline {
+    return Intl.message(
+      'Oops! It looks like you\'re offline.',
+      name: 'offline',
+      desc: 'offline',
+      args: [],
+    );
+  }
+
   /// `Welcome to Clinic!`
   String get pageOnboardingTitle {
     return Intl.message(
@@ -180,6 +190,26 @@ class S {
     );
   }
 
+  /// `Add Appointment`
+  String get pageHomeAddAppointment {
+    return Intl.message(
+      'Add Appointment',
+      name: 'pageHomeAddAppointment',
+      desc: 'pageHomeAddAppointment',
+      args: [],
+    );
+  }
+
+  /// `How's Your health?`
+  String get pageHomeMicrocopyDesc {
+    return Intl.message(
+      'How\'s Your health?',
+      name: 'pageHomeMicrocopyDesc',
+      desc: 'pageHomeMicrocopyDesc',
+      args: [],
+    );
+  }
+
   /// `Fullname`
   String get inputNameLabel {
     return Intl.message(
@@ -280,10 +310,10 @@ class S {
     );
   }
 
-  /// `• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n • Should contain at least one Special character`
+  /// `• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character`
   String get inputPasswordDescription {
     return Intl.message(
-      '• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n • Should contain at least one Special character',
+      '• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character',
       name: 'inputPasswordDescription',
       desc: 'inputPasswordDescription',
       args: [],

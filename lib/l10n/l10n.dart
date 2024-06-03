@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../drivers/local_storage.dart';
 import 'generated/l10n.dart';
 
-part 'l10n.g.dart';
+@Injectable()
+@lazySingleton
+class AppL10n with ChangeNotifier {
+  late Locale _locale;
+  final SharedPreferences _prefs;
 
-@riverpod
-class AppLocale extends _$AppLocale {
-  @override
-  Locale build() {
-    final currentLocale = Locale(
-        ref.read(sharedStorageProvider).getString('app_locale') ??
-            Intl.getCurrentLocale());
+  AppL10n({required SharedPreferences prefs}) : _prefs = prefs {
+    final storedLocale =
+        Locale(_prefs.getString('app_locale') ?? Intl.getCurrentLocale());
 
-    _loadLocale(currentLocale);
-
-    return currentLocale;
+    _load(storedLocale);
+    _locale = storedLocale;
   }
 
-  void setLocale(Locale locale) async {
+  Locale get locale => _locale;
+
+  void set(Locale locale) async {
     assert(locale.languageCode == 'id' || locale.languageCode == 'en');
 
-    _loadLocale(locale);
-    await ref
-        .read(sharedStorageProvider)
-        .setString('app_locale', locale.languageCode);
+    _load(locale);
+    await _prefs.setString('app_locale', locale.languageCode);
 
-    state = locale;
+    _locale = locale;
+    notifyListeners();
   }
 
-  void _loadLocale(Locale locale) async {
+  void _load(Locale locale) async {
     await S.load(locale);
   }
 }

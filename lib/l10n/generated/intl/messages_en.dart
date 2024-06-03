@@ -47,13 +47,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "inputNamePlaceholder":
             MessageLookupByLibrary.simpleMessage("Your full name here."),
         "inputPasswordDescription": MessageLookupByLibrary.simpleMessage(
-            "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n • Should contain at least one Special character"),
+            "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character"),
         "inputPasswordPlaceholder": MessageLookupByLibrary.simpleMessage(
             "Enter your password (min 8 characters)."),
         "inputPhoneLabel": MessageLookupByLibrary.simpleMessage("Phone Number"),
         "inputPhonePlaceholder":
             MessageLookupByLibrary.simpleMessage("Your phone number."),
+        "offline": MessageLookupByLibrary.simpleMessage(
+            "Oops! It looks like you\'re offline."),
         "or": MessageLookupByLibrary.simpleMessage("Or"),
+        "pageHomeAddAppointment":
+            MessageLookupByLibrary.simpleMessage("Add Appointment"),
+        "pageHomeMicrocopyDesc":
+            MessageLookupByLibrary.simpleMessage("How\'s Your health?"),
         "pageOnboardingDescription": MessageLookupByLibrary.simpleMessage(
             "Experience the ease of scheduling medical checkup anytime, anywhere with our app."),
         "pageOnboardingTitle":

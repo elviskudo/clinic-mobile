@@ -1,5 +1,9 @@
 {
   "@@locale": "id",
+  "offline": "Ups! Sepertinya Anda sedang offline.",
+  "@offline": {
+    "description": "offline"
+  },
   "pageOnboardingTitle": "Selamat Datang di Clinic!",
   "@pageOnboardingTitle": {
     "description": "pageOnboardingTitle"
@@ -51,6 +55,14 @@
   "or": "atau",
   "@or": {
     "description": "or"
+  },
+  "pageHomeAddAppointment": "Buat Jadwal",
+  "@pageHomeAddAppointment": {
+    "description": "pageHomeAddAppointment"
+  },
+  "pageHomeMicrocopyDesc": "Bagaimana kesehatan mu?",
+  "@pageHomeMicrocopyDesc": {
+    "description": "pageHomeMicrocopyDesc"
   },
   "inputNameLabel": "Nama lengkap",
   "@inputNameLabel": {
