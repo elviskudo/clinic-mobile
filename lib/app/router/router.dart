@@ -3,15 +3,20 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/auth/auth.dart';
+import '../screens/home.dart';
 import '../screens/onboarding.dart';
+import '../screens/profile.dart';
 import '../screens/signin.dart';
 import '../screens/signup.dart';
 import '../screens/verification.dart';
 import '../startup/startup.dart';
+import 'scaffold_with_nested_navigation.dart';
 
 part 'router.g.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
+final _profileNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'profile');
 
 @riverpod
 GoRouter router(RouterRef ref) {
@@ -30,7 +35,7 @@ GoRouter router(RouterRef ref) {
       final isAuthenticated = authCred != null ? authCred.isVerified : false;
 
       if (!isAuthenticated) {
-        if (path == '/' || path.startsWith('/app')) {
+        if (path.startsWith('/app')) {
           if (authCred != null && !authCred.isVerified) {
             return '/auth/verification';
           }
@@ -38,7 +43,7 @@ GoRouter router(RouterRef ref) {
           return path.startsWith('/auth') ? path : '/onboarding';
         }
       } else {
-        return path == '/' || path.startsWith('/auth') ? '/app' : path;
+        return path.startsWith('/auth') ? '/app/home' : path;
       }
 
       return null;
@@ -82,6 +87,37 @@ GoRouter router(RouterRef ref) {
           child: VerificationScreen(),
         ),
       ),
+      StatefulShellRoute.indexedStack(
+        pageBuilder: (context, state, navigationShell) => NoTransitionPage(
+          child: ScaffoldWithNestedNavigation(navigationShell: navigationShell),
+        ),
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: _homeNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/app/home',
+                name: 'home',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: HomeScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _profileNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/app/profile',
+                name: 'profile',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: ProfileScreen(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      )
     ],
   );
 }

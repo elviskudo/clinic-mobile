@@ -131,6 +131,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                                 final res = await ref
                                     .read(authControllerProvider.notifier)
                                     .resendOtp();
+
                                 res.whenOrNull(
                                   error: (error, stackTrace) {
                                     toaster.currentState!.showSnackBar(

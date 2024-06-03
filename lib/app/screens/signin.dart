@@ -129,18 +129,7 @@ class SignInScreen extends HookConsumerWidget {
                             await ref
                                 .read(authControllerProvider.notifier)
                                 .signin(data)
-                                .catchError(
-                              (_) {
-                                toaster.currentState!.showSnackBar(
-                                  toast(
-                                    S.of(context).signUpError,
-                                    type: ToastType.error,
-                                  ),
-                                );
-                              },
-                            ).whenComplete(() {
-                              loading.value = false;
-                            });
+                                .whenComplete(() => loading.value = false);
                           }
                         },
                   child: loading.value

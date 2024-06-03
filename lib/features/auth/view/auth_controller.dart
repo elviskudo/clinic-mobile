@@ -39,6 +39,7 @@ class AuthController extends _$AuthController {
   Future<AsyncValue> resendOtp() async {
     return await AsyncValue.guard(
       () async => ref.read(authRepoProvider).resendOtp(),
+      (err) => err is DioException,
     );
   }
 }
