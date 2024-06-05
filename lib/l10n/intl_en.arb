@@ -147,5 +147,13 @@
   "errorVerificationEmpty": "Please enter a valid verification code.",
   "@errorVerificationEmpty": {
     "description": "errorVerificationEmpty"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "home"
+  },
+  "histories": "Histories",
+  "@histories": {
+    "description": "histories"
   }
 }

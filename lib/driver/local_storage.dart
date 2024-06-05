@@ -3,8 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<SharedPreferences> getStorage() async {
   final prefs = await SharedPreferences.getInstance();
-  // await prefs.clear();
-  await prefs.setString('app_theme', 'light');
+  await prefs.clear();
+  // await prefs.setString('app_theme', 'light');
   return prefs;
 }
 

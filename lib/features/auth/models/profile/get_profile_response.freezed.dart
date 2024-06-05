@@ -20,11 +20,6 @@ GetProfileResponse _$GetProfileResponseFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$GetProfileResponse {
-  int get status => throw _privateConstructorUsedError;
-  bool get success => throw _privateConstructorUsedError;
-  dynamic get errors => throw _privateConstructorUsedError;
-  dynamic get meta => throw _privateConstructorUsedError;
-  String get message => throw _privateConstructorUsedError;
   GetProfileResponseData? get data => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,13 +34,7 @@ abstract class $GetProfileResponseCopyWith<$Res> {
           GetProfileResponse value, $Res Function(GetProfileResponse) then) =
       _$GetProfileResponseCopyWithImpl<$Res, GetProfileResponse>;
   @useResult
-  $Res call(
-      {int status,
-      bool success,
-      dynamic errors,
-      dynamic meta,
-      String message,
-      GetProfileResponseData? data});
+  $Res call({GetProfileResponseData? data});
 
   $GetProfileResponseDataCopyWith<$Res>? get data;
 }
@@ -63,34 +52,9 @@ class _$GetProfileResponseCopyWithImpl<$Res, $Val extends GetProfileResponse>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
-    Object? success = null,
-    Object? errors = freezed,
-    Object? meta = freezed,
-    Object? message = null,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int,
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      errors: freezed == errors
-          ? _value.errors
-          : errors // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      meta: freezed == meta
-          ? _value.meta
-          : meta // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -119,13 +83,7 @@ abstract class _$$GetProfileResponseImplCopyWith<$Res>
       __$$GetProfileResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int status,
-      bool success,
-      dynamic errors,
-      dynamic meta,
-      String message,
-      GetProfileResponseData? data});
+  $Res call({GetProfileResponseData? data});
 
   @override
   $GetProfileResponseDataCopyWith<$Res>? get data;
@@ -142,34 +100,9 @@ class __$$GetProfileResponseImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
-    Object? success = null,
-    Object? errors = freezed,
-    Object? meta = freezed,
-    Object? message = null,
     Object? data = freezed,
   }) {
     return _then(_$GetProfileResponseImpl(
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int,
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      errors: freezed == errors
-          ? _value.errors
-          : errors // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      meta: freezed == meta
-          ? _value.meta
-          : meta // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -181,33 +114,17 @@ class __$$GetProfileResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetProfileResponseImpl implements _GetProfileResponse {
-  const _$GetProfileResponseImpl(
-      {required this.status,
-      required this.success,
-      this.errors,
-      this.meta,
-      required this.message,
-      this.data});
+  const _$GetProfileResponseImpl({this.data});
 
   factory _$GetProfileResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetProfileResponseImplFromJson(json);
 
   @override
-  final int status;
-  @override
-  final bool success;
-  @override
-  final dynamic errors;
-  @override
-  final dynamic meta;
-  @override
-  final String message;
-  @override
   final GetProfileResponseData? data;
 
   @override
   String toString() {
-    return 'GetProfileResponse(status: $status, success: $success, errors: $errors, meta: $meta, message: $message, data: $data)';
+    return 'GetProfileResponse(data: $data)';
   }
 
   @override
@@ -215,24 +132,12 @@ class _$GetProfileResponseImpl implements _GetProfileResponse {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$GetProfileResponseImpl &&
-            (identical(other.status, status) || other.status == status) &&
-            (identical(other.success, success) || other.success == success) &&
-            const DeepCollectionEquality().equals(other.errors, errors) &&
-            const DeepCollectionEquality().equals(other.meta, meta) &&
-            (identical(other.message, message) || other.message == message) &&
             (identical(other.data, data) || other.data == data));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      status,
-      success,
-      const DeepCollectionEquality().hash(errors),
-      const DeepCollectionEquality().hash(meta),
-      message,
-      data);
+  int get hashCode => Object.hash(runtimeType, data);
 
   @JsonKey(ignore: true)
   @override
@@ -250,27 +155,12 @@ class _$GetProfileResponseImpl implements _GetProfileResponse {
 }
 
 abstract class _GetProfileResponse implements GetProfileResponse {
-  const factory _GetProfileResponse(
-      {required final int status,
-      required final bool success,
-      final dynamic errors,
-      final dynamic meta,
-      required final String message,
-      final GetProfileResponseData? data}) = _$GetProfileResponseImpl;
+  const factory _GetProfileResponse({final GetProfileResponseData? data}) =
+      _$GetProfileResponseImpl;
 
   factory _GetProfileResponse.fromJson(Map<String, dynamic> json) =
       _$GetProfileResponseImpl.fromJson;
 
-  @override
-  int get status;
-  @override
-  bool get success;
-  @override
-  dynamic get errors;
-  @override
-  dynamic get meta;
-  @override
-  String get message;
   @override
   GetProfileResponseData? get data;
   @override
@@ -286,7 +176,7 @@ GetProfileResponseData _$GetProfileResponseDataFromJson(
 
 /// @nodoc
 mixin _$GetProfileResponseData {
-  GetProfileResponseDataUser? get user => throw _privateConstructorUsedError;
+  GetProfileResponseDataUser get user => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -300,9 +190,9 @@ abstract class $GetProfileResponseDataCopyWith<$Res> {
           $Res Function(GetProfileResponseData) then) =
       _$GetProfileResponseDataCopyWithImpl<$Res, GetProfileResponseData>;
   @useResult
-  $Res call({GetProfileResponseDataUser? user});
+  $Res call({GetProfileResponseDataUser user});
 
-  $GetProfileResponseDataUserCopyWith<$Res>? get user;
+  $GetProfileResponseDataUserCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -319,24 +209,20 @@ class _$GetProfileResponseDataCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? user = freezed,
+    Object? user = null,
   }) {
     return _then(_value.copyWith(
-      user: freezed == user
+      user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
-              as GetProfileResponseDataUser?,
+              as GetProfileResponseDataUser,
     ) as $Val);
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $GetProfileResponseDataUserCopyWith<$Res>? get user {
-    if (_value.user == null) {
-      return null;
-    }
-
-    return $GetProfileResponseDataUserCopyWith<$Res>(_value.user!, (value) {
+  $GetProfileResponseDataUserCopyWith<$Res> get user {
+    return $GetProfileResponseDataUserCopyWith<$Res>(_value.user, (value) {
       return _then(_value.copyWith(user: value) as $Val);
     });
   }
@@ -351,10 +237,10 @@ abstract class _$$GetProfileResponseDataImplCopyWith<$Res>
       __$$GetProfileResponseDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({GetProfileResponseDataUser? user});
+  $Res call({GetProfileResponseDataUser user});
 
   @override
-  $GetProfileResponseDataUserCopyWith<$Res>? get user;
+  $GetProfileResponseDataUserCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -370,13 +256,13 @@ class __$$GetProfileResponseDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? user = freezed,
+    Object? user = null,
   }) {
     return _then(_$GetProfileResponseDataImpl(
-      user: freezed == user
+      user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
-              as GetProfileResponseDataUser?,
+              as GetProfileResponseDataUser,
     ));
   }
 }
@@ -384,13 +270,13 @@ class __$$GetProfileResponseDataImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetProfileResponseDataImpl implements _GetProfileResponseData {
-  const _$GetProfileResponseDataImpl({this.user});
+  const _$GetProfileResponseDataImpl({required this.user});
 
   factory _$GetProfileResponseDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetProfileResponseDataImplFromJson(json);
 
   @override
-  final GetProfileResponseDataUser? user;
+  final GetProfileResponseDataUser user;
 
   @override
   String toString() {
@@ -426,13 +312,14 @@ class _$GetProfileResponseDataImpl implements _GetProfileResponseData {
 
 abstract class _GetProfileResponseData implements GetProfileResponseData {
   const factory _GetProfileResponseData(
-      {final GetProfileResponseDataUser? user}) = _$GetProfileResponseDataImpl;
+          {required final GetProfileResponseDataUser user}) =
+      _$GetProfileResponseDataImpl;
 
   factory _GetProfileResponseData.fromJson(Map<String, dynamic> json) =
       _$GetProfileResponseDataImpl.fromJson;
 
   @override
-  GetProfileResponseDataUser? get user;
+  GetProfileResponseDataUser get user;
   @override
   @JsonKey(ignore: true)
   _$$GetProfileResponseDataImplCopyWith<_$GetProfileResponseDataImpl>
@@ -453,8 +340,8 @@ mixin _$GetProfileResponseDataUser {
   String get email => throw _privateConstructorUsedError;
   @JsonKey(name: 'phone_number')
   String get phoneNumber => throw _privateConstructorUsedError;
-  bool get verifikasi => throw _privateConstructorUsedError;
-  String? get token => throw _privateConstructorUsedError;
+  @JsonKey(name: 'verifikasi')
+  bool get isVerified => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -475,8 +362,7 @@ abstract class $GetProfileResponseDataUserCopyWith<$Res> {
       String? image,
       String email,
       @JsonKey(name: 'phone_number') String phoneNumber,
-      bool verifikasi,
-      String? token});
+      @JsonKey(name: 'verifikasi') bool isVerified});
 }
 
 /// @nodoc
@@ -498,8 +384,7 @@ class _$GetProfileResponseDataUserCopyWithImpl<$Res,
     Object? image = freezed,
     Object? email = null,
     Object? phoneNumber = null,
-    Object? verifikasi = null,
-    Object? token = freezed,
+    Object? isVerified = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -522,14 +407,10 @@ class _$GetProfileResponseDataUserCopyWithImpl<$Res,
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      verifikasi: null == verifikasi
-          ? _value.verifikasi
-          : verifikasi // ignore: cast_nullable_to_non_nullable
+      isVerified: null == isVerified
+          ? _value.isVerified
+          : isVerified // ignore: cast_nullable_to_non_nullable
               as bool,
-      token: freezed == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String?,
     ) as $Val);
   }
 }
@@ -549,8 +430,7 @@ abstract class _$$GetProfileResponseDataUserImplCopyWith<$Res>
       String? image,
       String email,
       @JsonKey(name: 'phone_number') String phoneNumber,
-      bool verifikasi,
-      String? token});
+      @JsonKey(name: 'verifikasi') bool isVerified});
 }
 
 /// @nodoc
@@ -571,8 +451,7 @@ class __$$GetProfileResponseDataUserImplCopyWithImpl<$Res>
     Object? image = freezed,
     Object? email = null,
     Object? phoneNumber = null,
-    Object? verifikasi = null,
-    Object? token = freezed,
+    Object? isVerified = null,
   }) {
     return _then(_$GetProfileResponseDataUserImpl(
       id: null == id
@@ -595,14 +474,10 @@ class __$$GetProfileResponseDataUserImplCopyWithImpl<$Res>
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      verifikasi: null == verifikasi
-          ? _value.verifikasi
-          : verifikasi // ignore: cast_nullable_to_non_nullable
+      isVerified: null == isVerified
+          ? _value.isVerified
+          : isVerified // ignore: cast_nullable_to_non_nullable
               as bool,
-      token: freezed == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String?,
     ));
   }
 }
@@ -616,8 +491,7 @@ class _$GetProfileResponseDataUserImpl implements _GetProfileResponseDataUser {
       this.image,
       required this.email,
       @JsonKey(name: 'phone_number') required this.phoneNumber,
-      required this.verifikasi,
-      this.token});
+      @JsonKey(name: 'verifikasi') required this.isVerified});
 
   factory _$GetProfileResponseDataUserImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -636,13 +510,12 @@ class _$GetProfileResponseDataUserImpl implements _GetProfileResponseDataUser {
   @JsonKey(name: 'phone_number')
   final String phoneNumber;
   @override
-  final bool verifikasi;
-  @override
-  final String? token;
+  @JsonKey(name: 'verifikasi')
+  final bool isVerified;
 
   @override
   String toString() {
-    return 'GetProfileResponseDataUser(id: $id, fullName: $fullName, image: $image, email: $email, phoneNumber: $phoneNumber, verifikasi: $verifikasi, token: $token)';
+    return 'GetProfileResponseDataUser(id: $id, fullName: $fullName, image: $image, email: $email, phoneNumber: $phoneNumber, isVerified: $isVerified)';
   }
 
   @override
@@ -657,15 +530,14 @@ class _$GetProfileResponseDataUserImpl implements _GetProfileResponseDataUser {
             (identical(other.email, email) || other.email == email) &&
             (identical(other.phoneNumber, phoneNumber) ||
                 other.phoneNumber == phoneNumber) &&
-            (identical(other.verifikasi, verifikasi) ||
-                other.verifikasi == verifikasi) &&
-            (identical(other.token, token) || other.token == token));
+            (identical(other.isVerified, isVerified) ||
+                other.isVerified == isVerified));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, fullName, image, email, phoneNumber, verifikasi, token);
+      runtimeType, id, fullName, image, email, phoneNumber, isVerified);
 
   @JsonKey(ignore: true)
   @override
@@ -685,13 +557,13 @@ class _$GetProfileResponseDataUserImpl implements _GetProfileResponseDataUser {
 abstract class _GetProfileResponseDataUser
     implements GetProfileResponseDataUser {
   const factory _GetProfileResponseDataUser(
-      {required final int id,
-      @JsonKey(name: 'full_name') required final String fullName,
-      final String? image,
-      required final String email,
-      @JsonKey(name: 'phone_number') required final String phoneNumber,
-      required final bool verifikasi,
-      final String? token}) = _$GetProfileResponseDataUserImpl;
+          {required final int id,
+          @JsonKey(name: 'full_name') required final String fullName,
+          final String? image,
+          required final String email,
+          @JsonKey(name: 'phone_number') required final String phoneNumber,
+          @JsonKey(name: 'verifikasi') required final bool isVerified}) =
+      _$GetProfileResponseDataUserImpl;
 
   factory _GetProfileResponseDataUser.fromJson(Map<String, dynamic> json) =
       _$GetProfileResponseDataUserImpl.fromJson;
@@ -709,9 +581,8 @@ abstract class _GetProfileResponseDataUser
   @JsonKey(name: 'phone_number')
   String get phoneNumber;
   @override
-  bool get verifikasi;
-  @override
-  String? get token;
+  @JsonKey(name: 'verifikasi')
+  bool get isVerified;
   @override
   @JsonKey(ignore: true)
   _$$GetProfileResponseDataUserImplCopyWith<_$GetProfileResponseDataUserImpl>

@@ -1,13 +1,19 @@
 import 'dart:async';
 
+import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_toast/native_toast.dart';
 
 import '../../../../constants/sizes.dart';
+import '../../../../di/locator.dart';
 import '../../../../l10n/generated/l10n.dart';
+import '../../../../widgets/submit_button.dart';
+import '../../data/auth_repo.dart';
+import '../../models/verification/verification_request_body.dart';
 import '../widgets/layout.dart';
 
 class VerificationScreen extends HookWidget {
@@ -31,15 +37,31 @@ class VerificationScreen extends HookWidget {
     }, [resendEnabled, resendInSeconds]);
 
     final otpCode = useState<List<String>>([]);
-    final loading = useState(false);
     final errorMessage = useState('');
+
+    final mutation =
+        useMutation<void, dynamic, VerificationRequestBody, dynamic>(
+      'auth/verification',
+      (reqBody) => locator.get<AuthRepository>().verification(reqBody),
+      onData: (result, recovery) {
+        context.go('/app/home');
+      },
+      onError: (error, recoveryData) {
+        NativeToast().makeText(message: S.of(context).verificationError);
+      },
+      refreshQueries: ['profile'],
+    );
 
     void onSubmit(String value) async {
       errorMessage.value = '';
       if (value.isEmpty || value.length < 6) {
         errorMessage.value = S.of(context).errorVerificationEmpty;
       } else {
-        context.go('/app/home');
+        await mutation.mutate(
+          VerificationRequestBody(
+            otpCode: value,
+          ),
+        );
       }
     }
 
@@ -89,13 +111,9 @@ class VerificationScreen extends HookWidget {
               )
             ],
             gapH24,
-            FilledButton.icon(
-              icon: loading.value
-                  ? const Center(child: CircularProgressIndicator())
-                  : const SizedBox.shrink(),
-              onPressed:
-                  loading.value ? null : () => onSubmit(otpCode.value.join('')),
-              label: Text(S.of(context).verificationButtonText),
+            SubmitButton(
+              onSubmit: () => onSubmit(otpCode.value.join('')),
+              child: Text(S.of(context).verificationButtonText),
             ),
             gapH32,
             Center(
@@ -110,6 +128,7 @@ class VerificationScreen extends HookWidget {
                             ? () async {
                                 resendInSeconds.value = 60;
                                 resendEnabled.value = false;
+                                locator.get<AuthRepository>().resendOtp();
                               }
                             : null,
                       style: TextStyle(

@@ -1,12 +1,18 @@
+import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:native_toast/native_toast.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../constants/regex.dart';
 import '../../../../constants/sizes.dart';
+import '../../../../di/locator.dart';
 import '../../../../l10n/generated/l10n.dart';
+import '../../../../widgets/submit_button.dart';
+import '../../data/auth_repo.dart';
+import '../../models/login/login_request_body.dart';
 import '../widgets/form.dart';
 import '../widgets/layout.dart';
 
@@ -16,12 +22,23 @@ class SignInScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
-    final loading = useState(false);
 
     final email = useTextEditingController.fromValue(TextEditingValue.empty);
 
     final password = useTextEditingController.fromValue(TextEditingValue.empty);
     final passwordObscure = useState(true);
+
+    final mutation = useMutation<void, dynamic, LoginRequestBody, dynamic>(
+      'auth/signin',
+      (reqBody) => locator.get<AuthRepository>().login(reqBody),
+      onData: (result, retry) {
+        context.go('/app/home');
+      },
+      onError: (error, recoveryData) {
+        NativeToast().makeText(message: S.of(context).signInError);
+      },
+      refreshQueries: ['profile'],
+    );
 
     return PopScope(
       canPop: false,
@@ -102,20 +119,19 @@ class SignInScreen extends HookWidget {
                   textInputAction: TextInputAction.done,
                 ),
                 gapH24,
-                FilledButton(
-                  onPressed: loading.value
-                      ? null
-                      : () async {
-                          if (formKey.currentState!.validate()) {
-                            formKey.currentState!.reset();
-                            loading.value = true;
-                            context.go('/app/home');
-                            loading.value = false;
-                          }
-                        },
-                  child: loading.value
-                      ? const CircularProgressIndicator()
-                      : Text(S.of(context).signIn),
+                SubmitButton(
+                  onSubmit: () async {
+                    if (formKey.currentState!.validate()) {
+                      formKey.currentState!.reset();
+                      await mutation.mutate(
+                        LoginRequestBody(
+                          email: email.text,
+                          password: password.text,
+                        ),
+                      );
+                    }
+                  },
+                  child: Text(S.of(context).signIn),
                 )
               ],
             ),

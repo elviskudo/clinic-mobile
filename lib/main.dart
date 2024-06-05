@@ -3,7 +3,7 @@ import 'package:fl_query_connectivity_plus_adapter/fl_query_connectivity_plus_ad
 import 'package:flutter/material.dart';
 
 import 'app.dart';
-import 'service/init.dart';
+import 'di/locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +19,7 @@ void main() async {
 
   runApp(
     QueryClientProvider(
+      refreshOnMount: true,
       child: const MainApp(),
     ),
   );

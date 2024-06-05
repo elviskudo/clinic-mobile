@@ -12,8 +12,11 @@ class AppL10n with ChangeNotifier {
   final SharedPreferences _prefs;
 
   AppL10n({required SharedPreferences prefs}) : _prefs = prefs {
-    final storedLocale =
-        Locale(_prefs.getString('app_locale') ?? Intl.getCurrentLocale());
+    final deviceLocale = Intl.getCurrentLocale();
+    final storedLocale = Locale(
+      _prefs.getString('app_locale') ??
+          (deviceLocale.contains('_') ? 'en' : deviceLocale),
+    );
 
     _load(storedLocale);
     _locale = storedLocale;

@@ -6,11 +6,6 @@ part 'get_profile_response.g.dart';
 @freezed
 class GetProfileResponse with _$GetProfileResponse {
   const factory GetProfileResponse({
-    required int status,
-    required bool success,
-    dynamic errors,
-    dynamic meta,
-    required String message,
     GetProfileResponseData? data,
   }) = _GetProfileResponse;
 
@@ -21,7 +16,7 @@ class GetProfileResponse with _$GetProfileResponse {
 @freezed
 class GetProfileResponseData with _$GetProfileResponseData {
   const factory GetProfileResponseData({
-    GetProfileResponseDataUser? user,
+    required GetProfileResponseDataUser user,
   }) = _GetProfileResponseData;
 
   factory GetProfileResponseData.fromJson(Map<String, dynamic> json) =>
@@ -36,8 +31,7 @@ class GetProfileResponseDataUser with _$GetProfileResponseDataUser {
     String? image,
     required String email,
     @JsonKey(name: 'phone_number') required String phoneNumber,
-    required bool verifikasi,
-    String? token,
+    @JsonKey(name: 'verifikasi') required bool isVerified,
   }) = _GetProfileResponseDataUser;
 
   factory GetProfileResponseDataUser.fromJson(Map<String, dynamic> json) =>

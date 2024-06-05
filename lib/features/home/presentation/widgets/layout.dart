@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
-
-import '../../../../constants/sizes.dart';
 
 class AppLayout extends StatefulWidget {
   const AppLayout({
@@ -38,7 +35,6 @@ class _AppLayoutState extends State<AppLayout> {
     final index = page.round();
 
     debugPrint('index: $index, current: ${navigationShell.currentIndex}');
-
     // Ignore swipe events.
     if (index == navigationShell.currentIndex) return;
 
@@ -74,59 +70,37 @@ class _AppLayoutState extends State<AppLayout> {
         itemBuilder: (context, index) => children[index],
         itemCount: children.length,
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Sizes.p16,
-          vertical: Sizes.p12,
-        ),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-        ),
-        child: GNav(
-          selectedIndex: navigationShell.currentIndex,
-          onTabChange: (index) {
-            if (index >= 2) return;
-            navigationShell.goBranch(
-              index,
-              initialLocation: index == navigationShell.currentIndex,
-            );
-          },
-          gap: Sizes.p8,
-          padding: const EdgeInsets.symmetric(
-            horizontal: Sizes.p16,
-            vertical: Sizes.p12,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: navigationShell.currentIndex,
+        onTap: (index) {
+          navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          );
+        },
+        selectedItemColor: Theme.of(context).primaryColor,
+        unselectedItemColor: Theme.of(context).unselectedWidgetColor,
+        showUnselectedLabels: false,
+        items: const [
+          BottomNavigationBarItem(
+            label: 'Home',
+            tooltip: 'Home',
+            icon: PhosphorIcon(PhosphorIconsRegular.houseSimple),
+            activeIcon: PhosphorIcon(PhosphorIconsDuotone.houseSimple),
           ),
-          color: Theme.of(context).colorScheme.onSecondaryContainer,
-          backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-          activeColor: Theme.of(context).colorScheme.onSecondary,
-          tabBackgroundColor: Theme.of(context).colorScheme.secondary,
-          textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSecondary,
-                fontWeight: FontWeight.w500,
-              ),
-          tabs: [
-            const GButton(
-              text: 'Home',
-              icon: PhosphorIconsRegular.houseSimple,
-            ),
-            const GButton(
-              text: 'Profile',
-              icon: PhosphorIconsRegular.userCircle,
-            ),
-            GButton(
-              onPressed: null,
-              iconColor: Theme.of(context).disabledColor,
-              text: 'Appoinment',
-              icon: PhosphorIconsRegular.calendar,
-            ),
-            GButton(
-              onPressed: null,
-              text: 'News',
-              iconColor: Theme.of(context).disabledColor,
-              icon: PhosphorIconsRegular.userCircle,
-            ),
-          ],
-        ),
+          BottomNavigationBarItem(
+            label: 'Histories',
+            tooltip: 'Histories',
+            icon: PhosphorIcon(PhosphorIconsRegular.calendar),
+            activeIcon: PhosphorIcon(PhosphorIconsDuotone.calendar),
+          ),
+          BottomNavigationBarItem(
+            label: 'Profile',
+            tooltip: 'Profile',
+            icon: PhosphorIcon(PhosphorIconsRegular.userCircle),
+            activeIcon: PhosphorIcon(PhosphorIconsDuotone.userCircle),
+          ),
+        ],
       ),
     );
   }

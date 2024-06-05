@@ -39,6 +39,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Please enter a valid phone number."),
         "errorVerificationEmpty": MessageLookupByLibrary.simpleMessage(
             "Please enter a valid verification code."),
+        "histories": MessageLookupByLibrary.simpleMessage("Histories"),
+        "home": MessageLookupByLibrary.simpleMessage("Home"),
         "inputConfirmationPasswordLabel":
             MessageLookupByLibrary.simpleMessage("Confirmation Password"),
         "inputEmailPlaceholder":

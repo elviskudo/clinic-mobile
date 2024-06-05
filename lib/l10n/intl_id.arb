@@ -147,5 +147,13 @@
   "errorVerificationInvalid": "Masukkan kode verifikasi yang valid.",
   "@errorVerificationInvalid": {
     "description": "errorVerificationInvalid"
+  },
+  "home": "Beranda",
+  "@home": {
+    "description": "home"
+  },
+  "histories": "Riwayat",
+  "@histories": {
+    "description": "histories"
   }
 }

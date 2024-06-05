@@ -8,7 +8,9 @@ import '../l10n/generated/l10n.dart';
 import '../theme/theme.dart';
 import 'l10n/l10n.dart';
 import 'router.dart';
-import 'service/init.dart';
+import 'di/locator.dart';
+
+final messengerKey = GlobalKey<ScaffoldMessengerState>();
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -28,7 +30,7 @@ class MainApp extends StatelessWidget {
         title: 'Clinic',
         debugShowCheckedModeBanner: false,
         routerConfig: goRouter,
-        scaffoldMessengerKey: locator<GlobalKey<ScaffoldMessengerState>>(),
+        scaffoldMessengerKey: messengerKey,
         theme: MaterialTheme(Theme.of(context).textTheme).light(),
         darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
         themeMode: context.watch<AppTheme>().mode,
@@ -42,7 +44,7 @@ class MainApp extends StatelessWidget {
         locale: context.watch<AppL10n>().locale,
         builder: (context, child) {
           final state = context.watch<ConnectivityResult>();
-          debugPrint(state.name);
+
           if (state != ConnectivityResult.mobile &&
               state != ConnectivityResult.wifi) {
             NativeToast().makeText(

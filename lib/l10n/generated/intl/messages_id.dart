@@ -37,6 +37,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Password harus sedikitnya 8 karakter atau lebih & pastikan sesuai dengan kriteria."),
         "errorPhoneValidationInvalid": MessageLookupByLibrary.simpleMessage(
             "Silahkan masukkan no. hp yang valid."),
+        "histories": MessageLookupByLibrary.simpleMessage("Riwayat"),
+        "home": MessageLookupByLibrary.simpleMessage("Beranda"),
         "inputConfirmationPasswordLabel":
             MessageLookupByLibrary.simpleMessage("Konfirmasi Password"),
         "inputEmailPlaceholder":
