@@ -1,0 +1,28 @@
+{
+  "offline": "Sepertinya kamu sedang offline, nyalakan mobile data atau wi-fi untuk tersambung kembali.",
+  "or": "Atau",
+  "signin": "Masuk",
+  "signin_error": "Gagal masuk. Pastikan kredensial kamu valid sebelum mengulangi pembuatan akun.",
+  "page_signin_title": "Hi, Selamat Datang!",
+  "page_signin_desc": "Halo, apakabar? kurang enak badan? Jangan khawatir, cek kesehatanmu dengan mudah!",
+  "page_signin_no_account": "Sudah punya akun?",
+  "signup": "Buat akun",
+  "verification": "Verifikasi",
+  "email_field": {
+    "placeholder": "Alamat email kamu.",
+    "empty": "Silahkan masukkan alamat email kamu.",
+    "invalid": "Silahkan masukkan alamat email yang valid (contoh, user@example.com).",
+    "other": ""
+  },
+  "password_field": {
+    "empty": "Silahkan masukkan password kamu.",
+    "invalid": "Password harus sedikitnya 8 karakter atau lebih & pastikan sesuai dengan kriteria.",
+    "placeholder": "Masukkan password kamu (minimal 8 karakter).",
+    "criteria": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus",
+    "other": ""
+  },
+  "page_onboarding_title": "Selamat Datang di Clinic!",
+  "page_onboarding_desc": "Rasakan kemudahan membuat jadwal pemeriksaan medis kapan saja, dimana saja dengan aplikasi kami.",
+  "home_greet_title": "Selamat datang {name}!",
+  "home_greet_desc": "Bagaimana kondisi kesehatanmu?"
+}
