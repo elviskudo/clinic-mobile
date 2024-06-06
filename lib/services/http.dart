@@ -8,7 +8,7 @@ class TokenInterceptor extends Interceptor {
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
-  ) async {
+  ) {
     final token = KV.tokens.get('access_token');
     if (token != null) {
       options.headers = {

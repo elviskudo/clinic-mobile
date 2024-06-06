@@ -2,8 +2,8 @@ import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/widgets/l10n_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
-class AuthViewLayout extends StatelessWidget {
-  const AuthViewLayout({super.key, required this.body});
+class AuthLayout extends StatelessWidget {
+  const AuthLayout({super.key, required this.body});
 
   final Widget body;
 

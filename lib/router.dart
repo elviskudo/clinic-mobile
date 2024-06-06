@@ -10,6 +10,7 @@ import 'screens/signin.dart';
 import 'screens/signup.dart';
 import 'screens/verification.dart';
 import 'widgets/app_layout.dart';
+import 'widgets/auth/auth_guard.dart';
 
 part 'router.g.dart';
 
@@ -24,12 +25,13 @@ GoRouter router(RouterRef ref) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
         name: 'auth',
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: SizedBox.shrink(),
+          child: AuthGuard(),
         ),
       ),
       GoRoute(

@@ -11,25 +11,29 @@ class KV {
   static Future<void> initialize() async {
     const secureStorage = FlutterSecureStorage();
 
-    final encryptionKeyString = await secureStorage.read(key: 'encrypted_keys');
+    await Hive.initFlutter();
+
+    await secureStorage.deleteAll();
+    await Hive.deleteFromDisk();
+
+    final encryptionKeyString = await secureStorage.read(key: 'hive_box_key');
     if (encryptionKeyString == null) {
       final key = Hive.generateSecureKey();
       await secureStorage.write(
-        key: 'encrypted_keys',
+        key: 'hive_box_key',
         value: base64UrlEncode(key),
       );
     }
 
-    final key = await secureStorage.read(key: 'encrypted_keys');
+    final key = await secureStorage.read(key: 'hive_box_key');
     final encryptionKeyUint8List = base64Url.decode(key!);
 
-    _tokensBox = await Hive.openBox(
+    _tokensBox = await Hive.openBox<String>(
       'tokens',
       encryptionCipher: HiveAesCipher(encryptionKeyUint8List),
     );
 
-    await Hive.initFlutter();
-    await Hive.openBox('is_dark_mode');
+    await Hive.openBox<bool>('is_dark_mode');
   }
 
   static Box<bool> get isDarkMode => Hive.box<bool>('is_dark_mode');

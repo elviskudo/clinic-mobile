@@ -9,22 +9,34 @@ import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
-typedef SignInMutationFn = Mutation<void, DioException, Map<String, dynamic>>;
+typedef SignUpMutationFn = Mutation<void, DioException, Map<String, dynamic>>;
 
-SignInMutationProps useSignIn<RecoveryType>(BuildContext context) {
+SignUpMutationProps useSignUp<RecoveryType>(BuildContext context) {
   final key = useMemoized(() => GlobalKey<FormState>());
 
+  final name = useTextEditingController.fromValue(TextEditingValue.empty);
+
   final email = useTextEditingController.fromValue(TextEditingValue.empty);
+
+  final phone = useTextEditingController.fromValue(TextEditingValue.empty);
+  final phoneNumber = useState(PhoneNumber(isoCode: 'ID'));
+  final phoneErrorMessage = useState<String?>(null);
 
   final password = useTextEditingController.fromValue(TextEditingValue.empty);
   final passwordObscure = useState(true);
 
+  final confirmationPassword = useTextEditingController.fromValue(
+    TextEditingValue.empty,
+  );
+  final confirmationPasswordObscure = useState(true);
+
   final mutation =
       useMutation<void, DioException, Map<String, dynamic>, RecoveryType>(
-    'auth/signin',
+    'auth/signup',
     (reqBody) async {
-      final res = await dio.post('/api/auth/signin', data: reqBody);
+      final res = await dio.post('/api/auth/register', data: reqBody);
 
       if (res.statusCode == 201 || res.statusCode == 200) {
         final result = ProfileHttpResponse.fromJson(res.data).data;
@@ -43,23 +55,34 @@ SignInMutationProps useSignIn<RecoveryType>(BuildContext context) {
     },
     onError: (error, recoveryData) {
       debugPrint('$error');
-      context.replace('/signin');
-      toast(context.tr('signin_error'));
+      toast(context.tr('signup_error'));
+      context.replace('/signup');
     },
   );
 
-  return SignInMutationProps(
+  return SignUpMutationProps(
     key: key,
+    name: name,
     email: email,
+    phone: phone,
+    phoneNumber: phoneNumber,
+    phoneErrorMessage: phoneErrorMessage,
     password: password,
     passwordObscure: passwordObscure,
+    confirmationPassword: confirmationPassword,
+    confirmationPasswordObscure: confirmationPasswordObscure,
     isLoading: mutation.isMutating,
     onSubmit: () async {
-      if (key.currentState!.validate()) {
+      final isValid = key.currentState!.validate() &&
+          (phoneErrorMessage.value ?? '').isEmpty;
+
+      if (isValid) {
         key.currentState!.reset();
         await mutation.mutate(
           {
+            'fullname': name.text,
             'email': email.text,
+            'phone_number': '+62${phoneNumber.value.parseNumber()}',
             'password': password.text,
           },
         );
@@ -68,21 +91,35 @@ SignInMutationProps useSignIn<RecoveryType>(BuildContext context) {
   );
 }
 
-class SignInMutationProps {
-  SignInMutationProps({
+class SignUpMutationProps {
+  SignUpMutationProps({
     required this.key,
+    required this.name,
     required this.email,
+    required this.phone,
+    required this.phoneNumber,
+    required this.phoneErrorMessage,
     required this.password,
     required this.passwordObscure,
+    required this.confirmationPassword,
+    required this.confirmationPasswordObscure,
     required this.onSubmit,
     this.isLoading = false,
   });
 
   final GlobalKey<FormState> key;
 
+  final TextEditingController name;
   final TextEditingController email;
+
+  final TextEditingController phone;
+  final ValueNotifier<PhoneNumber> phoneNumber;
+  final ValueNotifier<String?> phoneErrorMessage;
+
   final TextEditingController password;
   final ValueNotifier<bool> passwordObscure;
+  final TextEditingController confirmationPassword;
+  final ValueNotifier<bool> confirmationPasswordObscure;
 
   final bool isLoading;
   final void Function() onSubmit;

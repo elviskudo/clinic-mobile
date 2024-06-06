@@ -16,6 +16,8 @@ import 'services/toast.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await EasyLocalization.ensureInitialized();
+
   await KV.initialize();
 
   await QueryClient.initialize(
@@ -31,6 +33,7 @@ void main() async {
         supportedLocales: const [Locale('en'), Locale('id')],
         path: 'assets/translations',
         fallbackLocale: const Locale('en'),
+        useOnlyLangCode: true,
         assetLoader: const CodegenLoader(),
         child: QueryClientProvider(
           child: const Clinic(),
@@ -40,7 +43,7 @@ void main() async {
   );
 }
 
-class Clinic extends ConsumerWidget {
+class Clinic extends HookConsumerWidget {
   const Clinic({super.key});
 
   @override
@@ -48,8 +51,8 @@ class Clinic extends ConsumerWidget {
     return ValueListenableBuilder(
       valueListenable: KV.isDarkMode.listenable(),
       builder: (context, box, _) {
-        var darkMode = box.get('dark_mode', defaultValue: false)!;
-        var router = ref.watch(routerProvider);
+        final darkMode = box.get('dark_mode', defaultValue: false)!;
+        final router = ref.watch(routerProvider);
 
         return MaterialApp.router(
           title: 'Clinic',
@@ -61,20 +64,31 @@ class Clinic extends ConsumerWidget {
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
-          builder: (context, child) {
-            final conn = useMemoized(
-              () => Connectivity().onConnectivityChanged,
-            );
-            final network = useStream(conn);
-            if (network.hasData) {
-              if (network.requireData == ConnectivityResult.none) {
-                toast(context.tr('offline'));
-              }
-            }
-            return child!;
-          },
+          builder: (context, child) => _ConnectivityWidget(child: child!),
         );
       },
     );
+  }
+}
+
+class _ConnectivityWidget extends HookWidget {
+  const _ConnectivityWidget({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final conn = useMemoized(
+      () => Connectivity().onConnectivityChanged,
+    );
+
+    final network = useStream(conn);
+    if (network.hasData) {
+      if (network.requireData == ConnectivityResult.none) {
+        toast(context.tr('offline'));
+      }
+    }
+
+    return child;
   }
 }

@@ -17,56 +17,104 @@ class CodegenLoader extends AssetLoader{
   static const Map<String,dynamic> en = {
   "offline": "Looks like you are offline, enable mobile data or wi-fi to reconnect.",
   "or": "Or",
+  "resend": "Resend",
+  "verify": "Verify",
+  "page_onboarding_title": "Welcome to Clinic!",
+  "page_onboarding_desc": "Experience the ease of scheduling medical checkup anytime, anywhere with our app.",
   "signin": "Sign in",
-  "signin_error": "Failed to sign in. Make sure your credentials is valid before trying again.",
+  "signin_error": "Failed to sign in. Make sure you have an account before!",
   "page_signin_title": "Hi, Welcome!",
   "page_signin_desc": "Hello, how are you? not feeling great? Don't worry we got you covered, check your health easily!",
   "page_signin_no_account": "Don't have an account yet?",
   "signup": "Create an account",
-  "verification": "Verification",
+  "signup_error": "Failed to create an account. Re-check your data & make sure it is valid! Or try to sign in.",
+  "page_signup_title": "@:signup",
+  "page_signup_desc": "Start with make an account and then you can check your health anytime, anywhere!",
+  "page_signup_had_account": "Already have an account yet?",
+  "name_field": {
+    "label": "Nama lengkap",
+    "placeholder": "Nama lengkap kamu.",
+    "empty": "Silahkan masukkan nama lengkap kamu."
+  },
   "email_field": {
     "placeholder": "Alamat email kamu.",
     "empty": "Please enter your email address.",
-    "invalid": "Please enter a valid email address (e.g., user@example.com).",
-    "other": ""
+    "invalid": "Please enter a valid email address (e.g., user@example.com)."
+  },
+  "phone_field": {
+    "label": "Phone Number",
+    "placeholder": "Your phone number.",
+    "empty": "Please enter your phone number.",
+    "invalid": "Please enter a valid phone number."
   },
   "password_field": {
     "empty": "Please enter your password.",
     "invalid": "Password must be at least 8 characters or more & make sure to match the criteria.",
     "placeholder": "Enter your password (min 8 characters).",
-    "criteria": "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character",
-    "other": ""
+    "criteria": "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character"
   },
-  "onboarding_title": "Welcome to Clinic!",
-  "onboarding_desc": "Experience the ease of scheduling medical checkup anytime, anywhere with our app.",
+  "confirmation_password_field": {
+    "label": "Confirmation Password",
+    "invalid": "Confirmation password must be same as password."
+  },
+  "verification": "Verification",
+  "verification_error": "Account verification failed. Try to resend otp code.",
+  "verification_empty": "Please enter a valid verification code.",
+  "page_verification_title": "@:verification",
+  "page_verification_desc": "Enter the verification code (OTP) that we have sent to your email.",
+  "page_verification_resend_notice": "Did'nt recieve the verification code yet?",
   "home_greet_title": "Greetings {name}!",
   "home_greet_desc": "How's Your health?"
 };
 static const Map<String,dynamic> id = {
   "offline": "Sepertinya kamu sedang offline, nyalakan mobile data atau wi-fi untuk tersambung kembali.",
   "or": "Atau",
+  "resend": "Kirim ulang",
+  "verify": "Verifikasi",
+  "page_onboarding_title": "Selamat Datang di Clinic!",
+  "page_onboarding_desc": "Rasakan kemudahan membuat jadwal pemeriksaan medis kapan saja, dimana saja dengan aplikasi kami.",
   "signin": "Masuk",
-  "signin_error": "Gagal masuk. Pastikan kredensial kamu valid sebelum mengulangi pembuatan akun.",
+  "signin_error": "Gagal masuk. Pastikan kamu sudah punya akun sebelumnya!",
   "page_signin_title": "Hi, Selamat Datang!",
   "page_signin_desc": "Halo, apakabar? kurang enak badan? Jangan khawatir, cek kesehatanmu dengan mudah!",
   "page_signin_no_account": "Sudah punya akun?",
   "signup": "Buat akun",
-  "verification": "Verifikasi",
+  "signup_error": "Gagal membuat akun. Check lagi data kamu & pastikan sudah valid! Atau coba untuk masuk.",
+  "page_signup_title": "@:signup",
+  "page_signup_desc": "Mulai dengan membuat akun dan kamu bisa cek kesehatan kapanpun, dimanapun!",
+  "page_signup_had_account": "Sudah punya akun?",
+  "name_field": {
+    "label": "Nama lengkap",
+    "placeholder": "Nama lengkap kamu.",
+    "empty": "Silahkan masukkan nama lengkap kamu."
+  },
   "email_field": {
     "placeholder": "Alamat email kamu.",
     "empty": "Silahkan masukkan alamat email kamu.",
-    "invalid": "Silahkan masukkan alamat email yang valid (contoh, user@example.com).",
-    "other": ""
+    "invalid": "Silahkan masukkan alamat email yang valid (contoh, user@example.com)."
+  },
+  "phone_field": {
+    "label": "No. Handphone",
+    "placeholder": "No. handphone kamu.",
+    "empty": "Silahkan masukkan no. hp kamu.",
+    "invalid": "Silahkan masukkan no. hp yang valid."
   },
   "password_field": {
     "empty": "Silahkan masukkan password kamu.",
     "invalid": "Password harus sedikitnya 8 karakter atau lebih & pastikan sesuai dengan kriteria.",
     "placeholder": "Masukkan password kamu (minimal 8 karakter).",
-    "criteria": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus",
-    "other": ""
+    "criteria": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus"
   },
-  "page_onboarding_title": "Selamat Datang di Clinic!",
-  "page_onboarding_desc": "Rasakan kemudahan membuat jadwal pemeriksaan medis kapan saja, dimana saja dengan aplikasi kami.",
+  "confirmation_password_field": {
+    "label": "Konfirmasi Password",
+    "invalid": "Konfirmasi password harus sama dengan password."
+  },
+  "verification": "Verifikasi",
+  "verification_error": "Verifikasi akun gagal. Coba untuk kirim ulang kode otp.",
+  "verification_empty": "Masukkan kode verifikasi yang valid.",
+  "page_verification_title": "@:verification",
+  "page_verification_desc": "Masukkan kode verifikasi (OTP) yang sudah kami kirimkan ke email kamu.",
+  "page_verification_resend_notice": "Belum menerima kode verifikasi?",
   "home_greet_title": "Selamat datang {name}!",
   "home_greet_desc": "Bagaimana kondisi kesehatanmu?"
 };

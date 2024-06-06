@@ -12,18 +12,31 @@ class AuthGuard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final query = useProfileQuery(onData: (profile) {
-      if (profile != null) {
-        profile.isVerified ? context.go('/home') : context.go('/verification');
-      } else {
-        context.go('/onboarding');
-      }
-    });
+    final query = useProfileQuery(
+      onData: (profile) {
+        if (profile != null) {
+          profile.isVerified
+              ? context.go('/home')
+              : context.go('/verification');
+        } else {
+          context.go('/onboarding');
+        }
+      },
+      onError: (e) {
+        if (e.response?.statusCode == 400) {
+          context.go('/verification');
+        } else if (e.response?.statusCode == 401) {
+          context.go('/onboarding');
+        }
+      },
+    );
 
     if (query.isLoading) return const ScaffoldBusy();
-    if (query.hasError) return _AuthGuardError(query: query);
+    if (query.hasError && query.error?.response?.statusCode == 500) {
+      return _AuthGuardError(query: query);
+    }
 
-    return const SizedBox.shrink();
+    return const Scaffold();
   }
 }
 

@@ -1,31 +1,24 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
-class SubmitButton extends HookWidget {
+class SubmitButton extends StatelessWidget {
   const SubmitButton({
     super.key,
     required this.onSubmit,
     required this.child,
+    this.disabled = false,
+    this.loading = false,
   });
 
-  final FutureOr<void> Function() onSubmit;
+  final void Function() onSubmit;
   final Widget child;
+  final bool disabled;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
-    final loading = useState(false);
-
     return FilledButton(
-      onPressed: loading.value
-          ? null
-          : () async {
-              loading.value = true;
-              await onSubmit();
-              loading.value = false;
-            },
-      child: loading.value
+      onPressed: loading || disabled ? null : onSubmit,
+      child: loading
           ? SizedBox(
               width: 24,
               height: 24,

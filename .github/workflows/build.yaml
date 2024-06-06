@@ -26,7 +26,7 @@ jobs:
       
       # TODO: Self-sign apk with gradle keystore
 
-      # Setup flutter, install dependencies, and generated codes from build_runner
+      # Setup flutter, install dependencies
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -37,13 +37,11 @@ jobs:
           flutter --version
       - name: Install dependencies
         run: flutter pub get
-      - name: Generate codes with build_runner
-        run: dart run build_runner build -d
-      
+
       # Build the app for Android
       - name: Build apk (Android)
         run: flutter build apk --split-per-abi
-      
+
       # Export app to Github Action artifact (for now)
       - name: Upload to Github Action artifact
         uses: actions/upload-artifact@v4
