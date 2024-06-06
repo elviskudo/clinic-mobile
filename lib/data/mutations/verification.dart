@@ -15,7 +15,7 @@ VerificationMutationProps useAccountVerification(BuildContext context) {
   final otp = useState<List<String>>([]);
   final error = useState('');
 
-  final mutation = useMutation<void, dynamic, String, dynamic>(
+  final mutation = useMutation<void, dynamic, Map<String, dynamic>, dynamic>(
     'auth/verification',
     (reqBody) async {
       final res = await dio.post('/api/auth/verification', data: reqBody);
@@ -53,14 +53,14 @@ class VerificationMutationProps {
   const VerificationMutationProps({
     required ValueNotifier<String?> error,
     required ValueNotifier<List<String>> otp,
-    required Mutation<void, dynamic, String> mutation,
+    required Mutation<void, dynamic, Map<String, dynamic>> mutation,
   })  : _mutation = mutation,
         _otp = otp,
         _error = error;
 
   final ValueNotifier<String?> _error;
   final ValueNotifier<List<String>> _otp;
-  final Mutation<void, dynamic, String> _mutation;
+  final Mutation<void, dynamic, Map<String, dynamic>> _mutation;
 
   String get error => _error.value ?? '';
   String get otp => _otp.value.isEmpty ? '' : _otp.value.join('');
@@ -80,7 +80,7 @@ class VerificationMutationProps {
     if (otp.isEmpty || otp.length < 6) {
       _error.value = context.tr('verification_empty');
     } else {
-      await _mutation.mutate(value ?? otp);
+      await _mutation.mutate({"kode_otp": value ?? otp});
     }
   }
 }
