@@ -65,8 +65,11 @@ class CodegenLoader extends AssetLoader{
   "page_verification_title": "@:verification",
   "page_verification_desc": "Enter the verification code (OTP) that we have sent to your email.",
   "page_verification_resend_notice": "Did'nt recieve the verification code yet?",
+  "home": "Beranda",
   "home_greet_title": "Greetings {name}!",
-  "home_greet_desc": "How's Your health?"
+  "home_greet_desc": "How's Your health?",
+  "histories": "Riwayat",
+  "account": "Akun"
 };
 static const Map<String,dynamic> id = {
   "offline": "Sepertinya kamu sedang offline, nyalakan mobile data atau wi-fi untuk tersambung kembali.",
@@ -119,8 +122,11 @@ static const Map<String,dynamic> id = {
   "page_verification_title": "@:verification",
   "page_verification_desc": "Masukkan kode verifikasi (OTP) yang sudah kami kirimkan ke email kamu.",
   "page_verification_resend_notice": "Belum menerima kode verifikasi?",
+  "home": "Beranda",
   "home_greet_title": "Selamat datang {name}!",
-  "home_greet_desc": "Bagaimana kondisi kesehatanmu?"
+  "home_greet_desc": "Bagaimana kondisi kesehatanmu?",
+  "histories": "Riwayat",
+  "account": "Akun"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "id": id};
 }
