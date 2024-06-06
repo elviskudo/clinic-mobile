@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -81,24 +82,24 @@ class _AppLayoutState extends State<AppLayout> {
         selectedItemColor: Theme.of(context).primaryColor,
         unselectedItemColor: Theme.of(context).unselectedWidgetColor,
         showUnselectedLabels: false,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            label: 'Home',
-            tooltip: 'Home',
-            icon: PhosphorIcon(PhosphorIconsRegular.houseSimple),
-            activeIcon: PhosphorIcon(PhosphorIconsDuotone.houseSimple),
+            label: context.tr('home'),
+            tooltip: context.tr('home'),
+            icon: const PhosphorIcon(PhosphorIconsRegular.houseSimple),
+            activeIcon: const PhosphorIcon(PhosphorIconsDuotone.houseSimple),
           ),
           BottomNavigationBarItem(
-            label: 'Histories',
-            tooltip: 'Histories',
-            icon: PhosphorIcon(PhosphorIconsRegular.calendar),
-            activeIcon: PhosphorIcon(PhosphorIconsDuotone.calendar),
+            label: context.tr('histories'),
+            tooltip: context.tr('histories'),
+            icon: const PhosphorIcon(PhosphorIconsRegular.calendar),
+            activeIcon: const PhosphorIcon(PhosphorIconsDuotone.calendar),
           ),
           BottomNavigationBarItem(
-            label: 'Profile',
-            tooltip: 'Profile',
-            icon: PhosphorIcon(PhosphorIconsRegular.userCircle),
-            activeIcon: PhosphorIcon(PhosphorIconsDuotone.userCircle),
+            label: context.tr('account'),
+            tooltip: context.tr('account'),
+            icon: const PhosphorIcon(PhosphorIconsRegular.userCircle),
+            activeIcon: const PhosphorIcon(PhosphorIconsDuotone.userCircle),
           ),
         ],
       ),

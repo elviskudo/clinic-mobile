@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
 
-Query<Profile?, DioException> useProfileQuery({
+Query<Profile?, DioException> useProfile({
   void Function(Profile?)? onData,
   void Function(DioException)? onError,
 }) {

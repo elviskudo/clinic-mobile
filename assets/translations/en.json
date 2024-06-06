@@ -1,8 +1,6 @@
 {
   "offline": "Looks like you are offline, enable mobile data or wi-fi to reconnect.",
   "or": "Or",
-  "resend": "Resend",
-  "verify": "Verify",
   "page_onboarding_title": "Welcome to Clinic!",
   "page_onboarding_desc": "Experience the ease of scheduling medical checkup anytime, anywhere with our app.",
   "signin": "Sign in",
@@ -44,9 +42,16 @@
   "verification": "Verification",
   "verification_error": "Account verification failed. Try to resend otp code.",
   "verification_empty": "Please enter a valid verification code.",
+  "verify": "Verify",
+  "resend": "Resend",
+  "resend_notice": "We've resend the otp, don't forget to check your email!",
+  "resend_error_notice": "Cannot resend the otp, please retry in a moment.",
   "page_verification_title": "@:verification",
   "page_verification_desc": "Enter the verification code (OTP) that we have sent to your email.",
   "page_verification_resend_notice": "Did'nt recieve the verification code yet?",
+  "home": "Beranda",
   "home_greet_title": "Greetings {name}!",
-  "home_greet_desc": "How's Your health?"
+  "home_greet_desc": "How's Your health?",
+  "histories": "Riwayat",
+  "account": "Akun"
 }

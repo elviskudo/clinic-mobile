@@ -12,7 +12,7 @@ class AuthGuard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final query = useProfileQuery(
+    final query = useProfile(
       onData: (profile) {
         if (profile != null) {
           profile.isVerified
