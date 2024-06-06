@@ -1,18 +1,15 @@
+import 'package:clinic/constants/sizes.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../constants/sizes.dart';
-import '../l10n/l10n.dart';
-
-class L10nDropdownButton extends ConsumerWidget {
+class L10nDropdownButton extends StatelessWidget {
   const L10nDropdownButton({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return DropdownButtonFormField<Locale>(
-      value: ref.watch(appLocaleProvider),
+      value: context.locale,
       autofocus: false,
       enableFeedback: true,
       isDense: true,
@@ -44,12 +41,13 @@ class L10nDropdownButton extends ConsumerWidget {
             child: Text('Indonesia'),
           ),
         ),
-        DropdownMenuItem(value: Locale('en'), child: Text('English')),
+        DropdownMenuItem(
+          value: Locale('en'),
+          child: Text('English'),
+        ),
       ],
-      onChanged: (Locale? value) async {
-        ref
-            .read(appLocaleProvider.notifier)
-            .setLocale(value ?? Locale(Intl.getCurrentLocale()));
+      onChanged: (Locale? locale) async {
+        await context.setLocale(locale ?? context.locale);
       },
     );
   }
