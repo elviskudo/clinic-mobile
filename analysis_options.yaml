@@ -15,5 +15,4 @@ analyzer:
 
 linter:
   rules:
-    - prefer_relative_imports
     - prefer_single_quotes

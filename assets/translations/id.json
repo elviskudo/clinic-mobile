@@ -1,0 +1,57 @@
+{
+  "offline": "Sepertinya kamu sedang offline, nyalakan mobile data atau wi-fi untuk tersambung kembali.",
+  "or": "Atau",
+  "page_onboarding_title": "Selamat Datang di Clinic!",
+  "page_onboarding_desc": "Rasakan kemudahan membuat jadwal pemeriksaan medis kapan saja, dimana saja dengan aplikasi kami.",
+  "signin": "Masuk",
+  "signin_error": "Gagal masuk. Pastikan kamu sudah punya akun sebelumnya!",
+  "page_signin_title": "Hi, Selamat Datang!",
+  "page_signin_desc": "Halo, apakabar? kurang enak badan? Jangan khawatir, cek kesehatanmu dengan mudah!",
+  "page_signin_no_account": "Sudah punya akun?",
+  "signup": "Buat akun",
+  "signup_error": "Gagal membuat akun. Check lagi data kamu & pastikan sudah valid! Atau coba untuk masuk.",
+  "page_signup_title": "@:signup",
+  "page_signup_desc": "Mulai dengan membuat akun dan kamu bisa cek kesehatan kapanpun, dimanapun!",
+  "page_signup_had_account": "Sudah punya akun?",
+  "name_field": {
+    "label": "Nama lengkap",
+    "placeholder": "Nama lengkap kamu.",
+    "empty": "Silahkan masukkan nama lengkap kamu."
+  },
+  "email_field": {
+    "placeholder": "Alamat email kamu.",
+    "empty": "Silahkan masukkan alamat email kamu.",
+    "invalid": "Silahkan masukkan alamat email yang valid (contoh, user@example.com)."
+  },
+  "phone_field": {
+    "label": "No. Handphone",
+    "placeholder": "No. handphone kamu.",
+    "empty": "Silahkan masukkan no. hp kamu.",
+    "invalid": "Silahkan masukkan no. hp yang valid."
+  },
+  "password_field": {
+    "empty": "Silahkan masukkan password kamu.",
+    "invalid": "Password harus sedikitnya 8 karakter atau lebih & pastikan sesuai dengan kriteria.",
+    "placeholder": "Masukkan password kamu (minimal 8 karakter).",
+    "criteria": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus"
+  },
+  "confirmation_password_field": {
+    "label": "Konfirmasi Password",
+    "invalid": "Konfirmasi password harus sama dengan password."
+  },
+  "verification": "Verifikasi",
+  "verification_error": "Verifikasi akun gagal. Coba untuk kirim ulang kode otp.",
+  "verification_empty": "Masukkan kode verifikasi yang valid.",
+  "verify": "Verifikasi",
+  "resend": "Kirim ulang",
+  "resend_notice": "Kami sudah mengirim ulang otp, jangan lupa untuk check email kamu!",
+  "resend_error_notice": "Tidak bisa mengirim ulang otp, coba lagi sesaat.",
+  "page_verification_title": "@:verification",
+  "page_verification_desc": "Masukkan kode verifikasi (OTP) yang sudah kami kirimkan ke email kamu.",
+  "page_verification_resend_notice": "Belum menerima kode verifikasi?",
+  "home": "Beranda",
+  "home_greet_title": "Selamat datang {name}!",
+  "home_greet_desc": "Bagaimana kondisi kesehatanmu?",
+  "histories": "Riwayat",
+  "account": "Akun"
+}

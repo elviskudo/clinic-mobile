@@ -7,46 +7,45 @@ environment:
   sdk: '>=3.3.4 <4.0.0'
 
 dependencies:
+  cached_network_image: ^3.3.1
+  connectivity_plus: ^4.0.2
+  dio: ^5.4.3+1
+  easy_localization: ^3.0.7
+  fl_query: ^1.1.0
+  fl_query_connectivity_plus_adapter: ^0.1.0+1
+  fl_query_hooks: ^1.1.0
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  intl: any
-
-  riverpod: ^2.5.1
-  riverpod_annotation: ^2.3.5
-  hooks_riverpod: ^2.5.1
-  flutter_hooks:
-  go_router: ^14.1.1
-  envied: ^0.5.4+1
-  json_annotation: ^4.9.0
-  freezed_annotation: ^2.4.1
-
-  phosphor_flutter: ^2.1.0
-  websafe_svg: ^3.0.1+1
-  intl_phone_number_input: ^0.7.4
+  flutter_cache_manager: ^3.3.2
+  flutter_hooks: ^0.20.5
   flutter_otp_text_field: ^1.1.3+2
-
-  connectivity_plus: ^6.0.3
-  dio: ^5.4.3+1
-  path_provider: ^2.1.3
-  flutter_secure_storage: ^9.1.1
-  shared_preferences: ^2.2.3
+  flutter_secure_storage: ^9.2.2
+  freezed_annotation: ^2.4.1
+  go_router: ^14.1.4
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  hooks_riverpod: ^2.5.1
+  intl_phone_number_input: ^0.7.4
+  json_annotation: ^4.9.0
+  native_toast: ^0.0.2
+  phosphor_flutter: ^2.1.0
+  riverpod_annotation: ^2.3.5
+  sqflite: ^2.3.3+1
+  websafe_svg: ^3.0.1+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-  build_runner:
-  custom_lint:
+  build_runner: ^2.4.9
+  hive_generator: ^2.0.1
   riverpod_generator: ^2.4.0
   riverpod_lint: ^2.3.10
+  custom_lint: ^0.6.4
   json_serializable: ^6.8.0
   freezed: ^2.5.2
-  envied_generator: ^0.5.4+1
 
 flutter:
-  generate: true
   uses-material-design: true
   fonts:
     - family: CalSans
@@ -63,9 +62,6 @@ flutter:
         - asset: fonts/Geist-Bold.ttf
           weight: 700
   assets:
+    - assets/translations/
     - assets/icons/
     - assets/images/
-
-flutter_intl:
-  enabled: true
-  output_dir: lib/l10n/generated
