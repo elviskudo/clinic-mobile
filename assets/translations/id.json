@@ -44,6 +44,7 @@
   "verification_empty": "Masukkan kode verifikasi yang valid.",
   "verify": "Verifikasi",
   "resend": "Kirim ulang",
+  "resend_sending": "Sedang mengirim ulang kode otp...",
   "resend_notice": "Kami sudah mengirim ulang otp, jangan lupa untuk check email kamu!",
   "resend_error_notice": "Tidak bisa mengirim ulang otp, coba lagi sesaat.",
   "page_verification_title": "@:verification",

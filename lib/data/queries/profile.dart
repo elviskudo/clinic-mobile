@@ -2,7 +2,6 @@ import 'package:clinic/models/profile/profile.dart';
 import 'package:clinic/models/profile/profile_http_response.dart';
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/services/http.dart';
-import 'package:clinic/services/kv.dart';
 import 'package:dio/dio.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
@@ -20,12 +19,7 @@ Query<Profile?, DioException> useProfile(
 
       if (res.statusCode == 200) {
         final result = ProfileHttpResponse.fromJson(res.data);
-        final token = result.data?.token ?? '';
         final profile = result.data?.user;
-
-        if (token.isNotEmpty && profile != null) {
-          await KV.tokens.put('access_token', token);
-        }
 
         if (!profile!.isVerified) {
           throw DioException.badResponse(

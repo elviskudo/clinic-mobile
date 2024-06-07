@@ -44,6 +44,7 @@
   "verification_empty": "Please enter a valid verification code.",
   "verify": "Verify",
   "resend": "Resend",
+  "resend_sending": "Resending otp code...",
   "resend_notice": "We've resend the otp, don't forget to check your email!",
   "resend_error_notice": "Cannot resend the otp, please retry in a moment.",
   "page_verification_title": "@:verification",

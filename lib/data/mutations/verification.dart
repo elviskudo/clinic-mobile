@@ -4,6 +4,7 @@ import 'package:clinic/models/profile/profile_http_response.dart';
 import 'package:clinic/services/http.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:clinic/services/toast.dart';
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
@@ -11,11 +12,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
+typedef VerificationMutationFn
+    = Mutation<void, DioException, Map<String, dynamic>>;
+
 VerificationMutationProps useAccountVerification(BuildContext context) {
   final otp = useState<List<String>>([]);
   final error = useState('');
 
-  final mutation = useMutation<void, dynamic, Map<String, dynamic>, dynamic>(
+  final mutation =
+      useMutation<void, DioException, Map<String, dynamic>, dynamic>(
     'auth/verification',
     (reqBody) async {
       final res = await dio.post('/api/auth/verification', data: reqBody);
@@ -35,9 +40,11 @@ VerificationMutationProps useAccountVerification(BuildContext context) {
       context.go('/');
     },
     onError: (error, recoveryData) {
-      debugPrint('$error');
-      context.replace('/verification');
-      toast(context.tr('verification_error'));
+      debugPrint(
+        '[${error.response!.statusCode}] ${error.response!.data.toString()}',
+      );
+      context.go('/');
+      // toast(context.tr('verification_error'));
     },
     refreshQueries: ['profile'],
   );
@@ -53,14 +60,14 @@ class VerificationMutationProps {
   const VerificationMutationProps({
     required ValueNotifier<String?> error,
     required ValueNotifier<List<String>> otp,
-    required Mutation<void, dynamic, Map<String, dynamic>> mutation,
+    required VerificationMutationFn mutation,
   })  : _mutation = mutation,
         _otp = otp,
         _error = error;
 
   final ValueNotifier<String?> _error;
   final ValueNotifier<List<String>> _otp;
-  final Mutation<void, dynamic, Map<String, dynamic>> _mutation;
+  final VerificationMutationFn _mutation;
 
   String get error => _error.value ?? '';
   String get otp => _otp.value.isEmpty ? '' : _otp.value.join('');
@@ -121,6 +128,8 @@ class ResendProps {
   int get cooldown => _cooldown.value;
 
   void handleSubmit(BuildContext context) async {
+    toast(context.tr('resend_sending'));
+
     await dio.post('/api/auth/resend').then((_) {
       toast(context.tr('resend_notice'));
     }).catchError((e) {
