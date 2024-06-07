@@ -14,12 +14,12 @@
   "page_signup_desc": "Start with make an account and then you can check your health anytime, anywhere!",
   "page_signup_had_account": "Already have an account yet?",
   "name_field": {
-    "label": "Nama lengkap",
-    "placeholder": "Nama lengkap kamu.",
-    "empty": "Silahkan masukkan nama lengkap kamu."
+    "label": "Full name",
+    "placeholder": "Your full name.",
+    "empty": "Please enter your full name."
   },
   "email_field": {
-    "placeholder": "Alamat email kamu.",
+    "placeholder": "Your email address.",
     "empty": "Please enter your email address.",
     "invalid": "Please enter a valid email address (e.g., user@example.com)."
   },
@@ -41,7 +41,7 @@
   },
   "verification": "Verification",
   "verification_error": "Account verification failed. Try to resend otp code.",
-  "verification_empty": "Please enter a valid verification code.",
+  "verification_invalid": "Please enter a valid verification code.",
   "verify": "Verify",
   "resend": "Resend",
   "resend_sending": "Resending otp code...",
@@ -54,5 +54,18 @@
   "home_greet_title": "Greetings {name}!",
   "home_greet_desc": "How's Your health?",
   "histories": "Riwayat",
-  "account": "Akun"
+  "account": "Akun",
+  "account_settings": "Account Settings",
+  "account_settings_link": "View your account settings",
+  "dark_mode": "Dark Mode",
+  "language": "Language",
+  "histories_tile_title": "@:histories",
+  "histories_tile_subtitle": "Doctor's appointments and purchases",
+  "lang_tile_title": "@:language",
+  "help_tile_title": "Help Center",
+  "help_tile_subtitle": "General help, FAQs, Contact us",
+  "feedback_tile_title": "Send Feedback",
+  "feedback_tile_subtitle": "Give some feedback",
+  "term_tile_title": "Term and Conditions",
+  "policy_tile_title": "Privacy Policy"
 }

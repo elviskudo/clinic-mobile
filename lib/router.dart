@@ -1,3 +1,4 @@
+import 'package:clinic/screens/account_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -104,11 +105,20 @@ GoRouter router(RouterRef ref) {
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: AccountScreen(),
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'settings',
+                    name: 'account_settings',
+                    pageBuilder: (context, state) => const MaterialPage(
+                      child: AccountSettingsScreen(),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ],
-      )
+      ),
     ],
   );
 }

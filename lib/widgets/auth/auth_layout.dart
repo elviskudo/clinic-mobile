@@ -1,5 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/widgets/l10n_dropdown_button.dart';
+import 'package:clinic/widgets/l10n/l10n_dropdown_button.dart';
 import 'package:flutter/material.dart';
 
 class AuthLayout extends StatelessWidget {

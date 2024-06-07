@@ -16,14 +16,18 @@ typedef VerificationMutationFn
     = Mutation<void, DioException, Map<String, dynamic>>;
 
 VerificationMutationProps useAccountVerification(BuildContext context) {
-  final otp = useState<List<String>>([]);
-  final error = useState('');
+  final key = useMemoized(() => GlobalKey<FormState>());
+
+  final otp = useTextEditingController.fromValue(TextEditingValue.empty);
 
   final mutation =
       useMutation<void, DioException, Map<String, dynamic>, dynamic>(
     'auth/verification',
     (reqBody) async {
+      debugPrint('[verification_mutation]: ${reqBody.toString()}');
       final res = await dio.post('/api/auth/verification', data: reqBody);
+
+      debugPrint('[verification_response] ${res.data.toString()}');
 
       if (res.statusCode == 201 || res.statusCode == 200) {
         final result = ProfileHttpResponse.fromJson(res.data).data;
@@ -38,19 +42,21 @@ VerificationMutationProps useAccountVerification(BuildContext context) {
     },
     onData: (result, recovery) {
       context.go('/');
+      // TODO: success notice - showModalBottomSheet
     },
-    onError: (error, recoveryData) {
+    onError: (e, recoveryData) {
       debugPrint(
-        '[${error.response!.statusCode}] ${error.response!.data.toString()}',
+        '[verification_mutation] ${e.response!.statusCode} - ${e.response!.data.toString()}',
       );
-      context.go('/');
-      // toast(context.tr('verification_error'));
+      // context.go('/');
+      context.replace('/verification');
+      toast(context.tr('verification_error'));
     },
     refreshQueries: ['profile'],
   );
 
   return VerificationMutationProps(
-    error: error,
+    key: key,
     otp: otp,
     mutation: mutation,
   );
@@ -58,37 +64,22 @@ VerificationMutationProps useAccountVerification(BuildContext context) {
 
 class VerificationMutationProps {
   const VerificationMutationProps({
-    required ValueNotifier<String?> error,
-    required ValueNotifier<List<String>> otp,
+    required this.key,
+    required this.otp,
     required VerificationMutationFn mutation,
-  })  : _mutation = mutation,
-        _otp = otp,
-        _error = error;
+  }) : _mutation = mutation;
 
-  final ValueNotifier<String?> _error;
-  final ValueNotifier<List<String>> _otp;
+  final GlobalKey<FormState> key;
+  final TextEditingController otp;
   final VerificationMutationFn _mutation;
 
-  String get error => _error.value ?? '';
-  String get otp => _otp.value.isEmpty ? '' : _otp.value.join('');
-
-  bool get hasError => error.isNotEmpty;
   bool get isLoading => _mutation.isMutating;
 
-  void handleCodeChange(String code) {
-    if (error.isNotEmpty) {
-      _error.value = '';
+  void handleSubmit(BuildContext context, {String? pin}) async {
+    if (key.currentState!.validate()) {
+      await _mutation.mutate({'kode_otp': pin ?? otp.text});
     }
-    _otp.value.add(code);
-  }
-
-  void handleSubmit(BuildContext context, {String? value}) async {
-    _error.value = '';
-    if (otp.isEmpty || otp.length < 6) {
-      _error.value = context.tr('verification_empty');
-    } else {
-      await _mutation.mutate({'kode_otp': value ?? otp});
-    }
+    key.currentState!.reset();
   }
 }
 
@@ -130,13 +121,16 @@ class ResendProps {
   void handleSubmit(BuildContext context) async {
     toast(context.tr('resend_sending'));
 
+    _cooldown.value = 60;
+    _enabled.value = false;
+
     await dio.post('/api/auth/resend').then((_) {
       toast(context.tr('resend_notice'));
     }).catchError((e) {
+      debugPrint(
+        '[resend_otp] ${e.response!.statusCode} - ${e.response!.data.toString()}',
+      );
       toast(context.tr('resend_error_notice'));
-    }).whenComplete(() {
-      _cooldown.value = 60;
-      _enabled.value = false;
     });
   }
 }

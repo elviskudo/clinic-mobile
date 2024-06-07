@@ -19,11 +19,11 @@ class OnboardingScreen extends HookWidget {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(Sizes.p16),
+                padding: const EdgeInsets.all(Sizes.p24),
                 child: Image.asset(
                   'assets/images/onboarding_illustration.png',
-                  width: 240,
-                  height: 240,
+                  width: 200,
+                  height: 200,
                   isAntiAlias: true,
                   filterQuality: FilterQuality.high,
                 ),

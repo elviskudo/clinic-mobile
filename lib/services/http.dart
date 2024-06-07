@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:clinic/services/kv.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 
 class TokenInterceptor extends Interceptor {
   TokenInterceptor();
@@ -32,4 +35,15 @@ final _interceptors = [
   TokenInterceptor(),
 ];
 
-final dio = Dio(_opts)..interceptors.addAll(_interceptors);
+final dio = Dio(_opts)
+  ..httpClientAdapter = IOHttpClientAdapter(
+    createHttpClient: () {
+      final HttpClient client = HttpClient(
+        context: SecurityContext(withTrustedRoots: false),
+      );
+      client.badCertificateCallback =
+          ((X509Certificate cert, String host, int port) => true);
+      return client;
+    },
+  )
+  ..interceptors.addAll(_interceptors);

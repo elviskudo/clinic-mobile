@@ -1,5 +1,4 @@
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/data/mutations/verification.dart';
 import 'package:clinic/data/queries/profile.dart';
 import 'package:clinic/models/profile/profile.dart';
 import 'package:clinic/widgets/scaffold_busy.dart';
@@ -13,24 +12,23 @@ class AuthGuard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final resend = useResendOTP();
-
     final query = useProfile(
       ref,
       onData: (profile) {
         if (profile != null) {
-          profile.isVerified
-              ? context.go('/home')
-              : context.go('/verification');
+          if (profile.isVerified) {
+            context.go('/home');
+          } else {
+            context.go('/verification');
+          }
         } else {
           context.go('/onboarding');
         }
       },
       onError: (e) {
         if (e.response?.statusCode == 400) {
-          resend.handleSubmit(context);
           context.go('/verification');
-        } else if (e.response?.statusCode == 401) {
+        } else {
           context.go('/onboarding');
         }
       },

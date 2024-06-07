@@ -51,10 +51,12 @@ SignUpMutationProps useSignUp<RecoveryType>(BuildContext context) {
     },
     refreshQueries: ['profile'],
     onData: (data, recoveryData) {
-      context.go('/');
+      context.go('/verification');
     },
-    onError: (error, recoveryData) {
-      debugPrint('$error');
+    onError: (e, recoveryData) {
+      debugPrint(
+        '[signup_mutation] ${e.response!.statusCode} - ${e.response!.data.toString()}',
+      );
       toast(context.tr('signup_error'));
       context.replace('/signup');
     },

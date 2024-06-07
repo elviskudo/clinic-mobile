@@ -30,12 +30,12 @@ class CodegenLoader extends AssetLoader{
   "page_signup_desc": "Start with make an account and then you can check your health anytime, anywhere!",
   "page_signup_had_account": "Already have an account yet?",
   "name_field": {
-    "label": "Nama lengkap",
-    "placeholder": "Nama lengkap kamu.",
-    "empty": "Silahkan masukkan nama lengkap kamu."
+    "label": "Full name",
+    "placeholder": "Your full name.",
+    "empty": "Please enter your full name."
   },
   "email_field": {
-    "placeholder": "Alamat email kamu.",
+    "placeholder": "Your email address.",
     "empty": "Please enter your email address.",
     "invalid": "Please enter a valid email address (e.g., user@example.com)."
   },
@@ -57,7 +57,7 @@ class CodegenLoader extends AssetLoader{
   },
   "verification": "Verification",
   "verification_error": "Account verification failed. Try to resend otp code.",
-  "verification_empty": "Please enter a valid verification code.",
+  "verification_invalid": "Please enter a valid verification code.",
   "verify": "Verify",
   "resend": "Resend",
   "resend_sending": "Resending otp code...",
@@ -70,7 +70,20 @@ class CodegenLoader extends AssetLoader{
   "home_greet_title": "Greetings {name}!",
   "home_greet_desc": "How's Your health?",
   "histories": "Riwayat",
-  "account": "Akun"
+  "account": "Akun",
+  "account_settings": "Account Settings",
+  "account_settings_link": "View your account settings",
+  "dark_mode": "Dark Mode",
+  "language": "Language",
+  "histories_tile_title": "@:histories",
+  "histories_tile_subtitle": "Doctor's appointments and purchases",
+  "lang_tile_title": "@:language",
+  "help_tile_title": "Help Center",
+  "help_tile_subtitle": "General help, FAQs, Contact us",
+  "feedback_tile_title": "Send Feedback",
+  "feedback_tile_subtitle": "Give some feedback",
+  "term_tile_title": "Term and Conditions",
+  "policy_tile_title": "Privacy Policy"
 };
 static const Map<String,dynamic> id = {
   "offline": "Sepertinya kamu sedang offline, nyalakan mobile data atau wi-fi untuk tersambung kembali.",
@@ -115,7 +128,7 @@ static const Map<String,dynamic> id = {
   },
   "verification": "Verifikasi",
   "verification_error": "Verifikasi akun gagal. Coba untuk kirim ulang kode otp.",
-  "verification_empty": "Masukkan kode verifikasi yang valid.",
+  "verification_invalid": "Masukkan kode verifikasi yang valid.",
   "verify": "Verifikasi",
   "resend": "Kirim ulang",
   "resend_sending": "Sedang mengirim ulang kode otp...",
@@ -128,7 +141,20 @@ static const Map<String,dynamic> id = {
   "home_greet_title": "Selamat datang {name}!",
   "home_greet_desc": "Bagaimana kondisi kesehatanmu?",
   "histories": "Riwayat",
-  "account": "Akun"
+  "account": "Akun",
+  "account_settings": "Pengaturan Akun",
+  "account_settings_link": "Cek pengaturan akun kamu",
+  "language": "Bahasa",
+  "dark_mode": "Mode Malam",
+  "histories_tile_title": "@:histories",
+  "histories_tile_subtitle": "Appointment doktor dan pembelian",
+  "lang_tile_title": "@:language",
+  "help_tile_title": "Pusat Bantuan",
+  "help_tile_subtitle": "Bantuan umum, FAQs, Kontak kami",
+  "feedback_tile_title": "Kirim Masukan",
+  "feedback_tile_subtitle": "Beri beberapa masukan",
+  "term_tile_title": "Syarat dan Ketentian",
+  "policy_tile_title": "Kebijakan Privasi"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "id": id};
 }

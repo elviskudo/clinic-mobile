@@ -8,7 +8,7 @@ part of 'profile.dart';
 
 _$ProfileImpl _$$ProfileImplFromJson(Map<String, dynamic> json) =>
     _$ProfileImpl(
-      id: (json['id'] as num).toInt(),
+      id: (json['id'] as num?)?.toInt(),
       email: json['email'] as String,
       fullName: json['full_name'] as String,
       imageUrl: json['image'] as String?,

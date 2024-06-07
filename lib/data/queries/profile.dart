@@ -20,15 +20,6 @@ Query<Profile?, DioException> useProfile(
       if (res.statusCode == 200) {
         final result = ProfileHttpResponse.fromJson(res.data);
         final profile = result.data?.user;
-
-        if (!profile!.isVerified) {
-          throw DioException.badResponse(
-            statusCode: 400,
-            requestOptions: RequestOptions(),
-            response: Response(requestOptions: RequestOptions()),
-          );
-        }
-
         return profile;
       }
 

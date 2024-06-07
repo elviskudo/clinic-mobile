@@ -20,7 +20,7 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Profile {
-  int get id => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   @JsonKey(name: 'full_name')
   String get fullName => throw _privateConstructorUsedError;
@@ -42,7 +42,7 @@ abstract class $ProfileCopyWith<$Res> {
       _$ProfileCopyWithImpl<$Res, Profile>;
   @useResult
   $Res call(
-      {int id,
+      {int? id,
       String email,
       @JsonKey(name: 'full_name') String fullName,
       @JsonKey(name: 'image') String? imageUrl,
@@ -63,7 +63,7 @@ class _$ProfileCopyWithImpl<$Res, $Val extends Profile>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? email = null,
     Object? fullName = null,
     Object? imageUrl = freezed,
@@ -71,10 +71,10 @@ class _$ProfileCopyWithImpl<$Res, $Val extends Profile>
     Object? isVerified = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -107,7 +107,7 @@ abstract class _$$ProfileImplCopyWith<$Res> implements $ProfileCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {int id,
+      {int? id,
       String email,
       @JsonKey(name: 'full_name') String fullName,
       @JsonKey(name: 'image') String? imageUrl,
@@ -126,7 +126,7 @@ class __$$ProfileImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? email = null,
     Object? fullName = null,
     Object? imageUrl = freezed,
@@ -134,10 +134,10 @@ class __$$ProfileImplCopyWithImpl<$Res>
     Object? isVerified = null,
   }) {
     return _then(_$ProfileImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -166,7 +166,7 @@ class __$$ProfileImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ProfileImpl implements _Profile {
   const _$ProfileImpl(
-      {required this.id,
+      {this.id,
       required this.email,
       @JsonKey(name: 'full_name') required this.fullName,
       @JsonKey(name: 'image') this.imageUrl,
@@ -177,7 +177,7 @@ class _$ProfileImpl implements _Profile {
       _$$ProfileImplFromJson(json);
 
   @override
-  final int id;
+  final int? id;
   @override
   final String email;
   @override
@@ -236,7 +236,7 @@ class _$ProfileImpl implements _Profile {
 
 abstract class _Profile implements Profile {
   const factory _Profile(
-      {required final int id,
+      {final int? id,
       required final String email,
       @JsonKey(name: 'full_name') required final String fullName,
       @JsonKey(name: 'image') final String? imageUrl,
@@ -246,7 +246,7 @@ abstract class _Profile implements Profile {
   factory _Profile.fromJson(Map<String, dynamic> json) = _$ProfileImpl.fromJson;
 
   @override
-  int get id;
+  int? get id;
   @override
   String get email;
   @override

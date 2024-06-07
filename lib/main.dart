@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_connectivity_plus_adapter/fl_query_connectivity_plus_adapter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -49,6 +50,8 @@ class Clinic extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useProfile(ref);
+
     return ValueListenableBuilder(
       valueListenable: KV.isDarkMode.listenable(),
       builder: (context, box, _) {
@@ -59,26 +62,37 @@ class Clinic extends HookConsumerWidget {
           title: 'Clinic',
           debugShowCheckedModeBanner: false,
           routerConfig: router,
-          theme: MaterialTheme(Theme.of(context).textTheme).light(),
-          darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
+          theme: MaterialTheme(Theme.of(context).textTheme).light().copyWith(
+                appBarTheme: AppBarTheme(
+                  systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+                    statusBarColor: Colors.transparent,
+                  ),
+                ),
+              ),
+          darkTheme: MaterialTheme(Theme.of(context).textTheme).dark().copyWith(
+                appBarTheme: AppBarTheme(
+                  systemOverlayStyle: SystemUiOverlayStyle.dark
+                      .copyWith(statusBarColor: Colors.transparent),
+                ),
+              ),
           themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
-          builder: (context, child) => _ScreenBuilder(child: child!),
+          builder: (context, child) => _ConnectivityWidget(child: child!),
         );
       },
     );
   }
 }
 
-class _ScreenBuilder extends HookConsumerWidget {
-  const _ScreenBuilder({required this.child});
+class _ConnectivityWidget extends HookWidget {
+  const _ConnectivityWidget({required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final conn = useMemoized(
       () => Connectivity().onConnectivityChanged,
     );
@@ -89,8 +103,6 @@ class _ScreenBuilder extends HookConsumerWidget {
         toast(context.tr('offline'));
       }
     }
-
-    useProfile(ref);
 
     return child;
   }

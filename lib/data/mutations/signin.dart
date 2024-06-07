@@ -41,8 +41,10 @@ SignInMutationProps useSignIn<RecoveryType>(BuildContext context) {
     onData: (data, recoveryData) {
       context.go('/');
     },
-    onError: (error, recoveryData) {
-      debugPrint('$error');
+    onError: (e, recoveryData) {
+      debugPrint(
+        '[signin_mutation] ${e.response!.statusCode} - ${e.response!.data.toString()}',
+      );
       context.replace('/signin');
       toast(context.tr('signin_error'));
     },

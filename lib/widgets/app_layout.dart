@@ -71,35 +71,43 @@ class _AppLayoutState extends State<AppLayout> {
         itemBuilder: (context, index) => children[index],
         itemCount: children.length,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: navigationShell.currentIndex,
-        onTap: (index) {
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: (index) {
           navigationShell.goBranch(
             index,
             initialLocation: index == navigationShell.currentIndex,
           );
         },
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Theme.of(context).unselectedWidgetColor,
-        showUnselectedLabels: false,
-        items: [
-          BottomNavigationBarItem(
+        destinations: [
+          NavigationDestination(
             label: context.tr('home'),
             tooltip: context.tr('home'),
             icon: const PhosphorIcon(PhosphorIconsRegular.houseSimple),
-            activeIcon: const PhosphorIcon(PhosphorIconsDuotone.houseSimple),
+            selectedIcon: PhosphorIcon(
+              PhosphorIconsDuotone.houseSimple,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             label: context.tr('histories'),
             tooltip: context.tr('histories'),
-            icon: const PhosphorIcon(PhosphorIconsRegular.calendar),
-            activeIcon: const PhosphorIcon(PhosphorIconsDuotone.calendar),
+            icon: const PhosphorIcon(
+              PhosphorIconsRegular.clockCounterClockwise,
+            ),
+            selectedIcon: PhosphorIcon(
+              PhosphorIconsDuotone.clockCounterClockwise,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             label: context.tr('account'),
             tooltip: context.tr('account'),
             icon: const PhosphorIcon(PhosphorIconsRegular.userCircle),
-            activeIcon: const PhosphorIcon(PhosphorIconsDuotone.userCircle),
+            selectedIcon: PhosphorIcon(
+              PhosphorIconsDuotone.userCircle,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ],
       ),

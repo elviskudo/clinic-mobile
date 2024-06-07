@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/widgets/photo_profile.dart';
@@ -30,7 +31,7 @@ class HomeScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.all(Sizes.p24),
               children: [
-                Text(
+                AutoSizeText(
                   context.tr(
                     'home_greet_title',
                     namedArgs: {'name': profile?.fullName ?? ''},
@@ -39,6 +40,9 @@ class HomeScreen extends ConsumerWidget {
                       .textTheme
                       .headlineMedium!
                       .copyWith(fontWeight: FontWeight.w600),
+                  minFontSize: 18,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 gapH8,
                 Text(context.tr('home_greet_desc')),

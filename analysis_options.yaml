@@ -4,6 +4,7 @@ analyzer:
   plugins:
     - custom_lint
   errors:
+    deprecated_member_use: ignore
     invalid_annotation_target: ignore
   exclude:
     - fixtures/**
