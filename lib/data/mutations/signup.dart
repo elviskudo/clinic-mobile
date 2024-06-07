@@ -71,23 +71,7 @@ SignUpMutationProps useSignUp<RecoveryType>(BuildContext context) {
     passwordObscure: passwordObscure,
     confirmationPassword: confirmationPassword,
     confirmationPasswordObscure: confirmationPasswordObscure,
-    isLoading: mutation.isMutating,
-    onSubmit: () async {
-      final isValid = key.currentState!.validate() &&
-          (phoneErrorMessage.value ?? '').isEmpty;
-
-      if (isValid) {
-        key.currentState!.reset();
-        await mutation.mutate(
-          {
-            'fullname': name.text,
-            'email': email.text,
-            'phone_number': '+62${phoneNumber.value.parseNumber()}',
-            'password': password.text,
-          },
-        );
-      }
-    },
+    mutation: mutation,
   );
 }
 
@@ -103,9 +87,8 @@ class SignUpMutationProps {
     required this.passwordObscure,
     required this.confirmationPassword,
     required this.confirmationPasswordObscure,
-    required this.onSubmit,
-    this.isLoading = false,
-  });
+    required Mutation<void, DioException, Map<String, dynamic>> mutation,
+  }) : _mutation = mutation;
 
   final GlobalKey<FormState> key;
 
@@ -121,6 +104,25 @@ class SignUpMutationProps {
   final TextEditingController confirmationPassword;
   final ValueNotifier<bool> confirmationPasswordObscure;
 
-  final bool isLoading;
-  final void Function() onSubmit;
+  final SignUpMutationFn _mutation;
+
+  bool get isLoading => _mutation.isMutating;
+
+  String get phoneError => phoneErrorMessage.value ?? '';
+  bool get isValidPhone => phoneError.isEmpty;
+
+  void handleSubmit() async {
+    if (key.currentState!.validate() && isValidPhone) {
+      await _mutation.mutate(
+        {
+          'fullname': name.text,
+          'email': email.text,
+          'phone_number': '+62${phoneNumber.value.parseNumber()}',
+          'password': password.text,
+        },
+      );
+    }
+
+    key.currentState!.reset();
+  }
 }

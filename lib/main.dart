@@ -9,6 +9,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'constants/theme.dart';
+import 'data/queries/profile.dart';
 import 'router.dart';
 import 'services/kv.dart';
 import 'services/toast.dart';
@@ -21,7 +22,7 @@ void main() async {
   await KV.initialize();
 
   await QueryClient.initialize(
-    cachePrefix: 'clinic_app',
+    cachePrefix: 'clinic_fl_query',
     connectivity: FlQueryConnectivityPlusAdapter(
       pollingDuration: const Duration(seconds: 10),
     ),
@@ -64,20 +65,20 @@ class Clinic extends HookConsumerWidget {
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
-          builder: (context, child) => _ConnectivityWidget(child: child!),
+          builder: (context, child) => _ScreenBuilder(child: child!),
         );
       },
     );
   }
 }
 
-class _ConnectivityWidget extends HookWidget {
-  const _ConnectivityWidget({required this.child});
+class _ScreenBuilder extends HookConsumerWidget {
+  const _ScreenBuilder({required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final conn = useMemoized(
       () => Connectivity().onConnectivityChanged,
     );
@@ -88,6 +89,8 @@ class _ConnectivityWidget extends HookWidget {
         toast(context.tr('offline'));
       }
     }
+
+    useProfile(ref);
 
     return child;
   }

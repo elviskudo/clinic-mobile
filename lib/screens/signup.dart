@@ -103,7 +103,7 @@ class SignUpScreen extends HookWidget {
                   ignoreBlank: false,
                   initialValue: form.phoneNumber.value,
                   textFieldController: form.phone,
-                  errorMessage: form.phoneErrorMessage.value,
+                  errorMessage: form.phoneError,
                   formatInput: true,
                   inputDecoration: InputDecoration(
                     label: Text('${context.tr('phone_field.label')}*'),
@@ -191,7 +191,7 @@ class SignUpScreen extends HookWidget {
                 ),
                 gapH24,
                 SubmitButton(
-                  onSubmit: form.onSubmit,
+                  onSubmit: form.handleSubmit,
                   disabled: form.isLoading,
                   loading: form.isLoading,
                   child: Text(context.tr('signup')),
