@@ -80,7 +80,7 @@ class VerificationMutationProps {
     if (otp.isEmpty || otp.length < 6) {
       _error.value = context.tr('verification_empty');
     } else {
-      await _mutation.mutate({"kode_otp": value ?? otp});
+      await _mutation.mutate({'kode_otp': value ?? otp});
     }
   }
 }
@@ -120,13 +120,14 @@ class ResendProps {
   bool get enabled => _enabled.value;
   int get cooldown => _cooldown.value;
 
-  void submit(BuildContext context) async {
-    _cooldown.value = 60;
-    _enabled.value = false;
-
-    await dio
-        .post('/api/auth/resend')
-        .then((_) => toast(context.tr('resend_notice')))
-        .catchError((_) => toast(context.tr('resend_error_notice')));
+  void handleSubmit(BuildContext context) async {
+    await dio.post('/api/auth/resend').then((_) {
+      toast(context.tr('resend_notice'));
+    }).catchError((e) {
+      toast(context.tr('resend_error_notice'));
+    }).whenComplete(() {
+      _cooldown.value = 60;
+      _enabled.value = false;
+    });
   }
 }

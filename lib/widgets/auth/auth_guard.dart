@@ -1,18 +1,22 @@
 import 'package:clinic/constants/sizes.dart';
+import 'package:clinic/data/mutations/verification.dart';
 import 'package:clinic/data/queries/profile.dart';
 import 'package:clinic/models/profile/profile.dart';
 import 'package:clinic/widgets/scaffold_busy.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class AuthGuard extends HookWidget {
+class AuthGuard extends HookConsumerWidget {
   const AuthGuard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final resend = useResendOTP();
+
     final query = useProfile(
+      ref,
       onData: (profile) {
         if (profile != null) {
           profile.isVerified
@@ -24,6 +28,7 @@ class AuthGuard extends HookWidget {
       },
       onError: (e) {
         if (e.response?.statusCode == 400) {
+          resend.handleSubmit(context);
           context.go('/verification');
         } else if (e.response?.statusCode == 401) {
           context.go('/onboarding');

@@ -1,12 +1,15 @@
 import 'package:clinic/models/profile/profile.dart';
 import 'package:clinic/models/profile/profile_http_response.dart';
+import 'package:clinic/providers/profile.dart';
 import 'package:clinic/services/http.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:dio/dio.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-Query<Profile?, DioException> useProfile({
+Query<Profile?, DioException> useProfile(
+  WidgetRef ref, {
   void Function(Profile?)? onData,
   void Function(DioException)? onError,
 }) {
@@ -45,7 +48,13 @@ Query<Profile?, DioException> useProfile({
       toJson: (profile) => profile?.toJson() ?? {},
       fromJson: Profile.fromJson,
     ),
-    onData: onData,
+    initial: ref.watch(profileNotifierProvider),
+    onData: (profile) {
+      ref.read(profileNotifierProvider.notifier).set(profile);
+      if (onData != null) {
+        return onData(profile);
+      }
+    },
     onError: onError,
   );
 }

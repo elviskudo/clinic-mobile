@@ -49,23 +49,11 @@ SignInMutationProps useSignIn<RecoveryType>(BuildContext context) {
   );
 
   return SignInMutationProps(
-    key: key,
-    email: email,
-    password: password,
-    passwordObscure: passwordObscure,
-    isLoading: mutation.isMutating,
-    onSubmit: () async {
-      if (key.currentState!.validate()) {
-        key.currentState!.reset();
-        await mutation.mutate(
-          {
-            'email': email.text,
-            'password': password.text,
-          },
-        );
-      }
-    },
-  );
+      key: key,
+      email: email,
+      password: password,
+      passwordObscure: passwordObscure,
+      mutation: mutation);
 }
 
 class SignInMutationProps {
@@ -74,8 +62,7 @@ class SignInMutationProps {
     required this.email,
     required this.password,
     required this.passwordObscure,
-    required this.onSubmit,
-    this.isLoading = false,
+    required this.mutation,
   });
 
   final GlobalKey<FormState> key;
@@ -84,6 +71,20 @@ class SignInMutationProps {
   final TextEditingController password;
   final ValueNotifier<bool> passwordObscure;
 
-  final bool isLoading;
-  final void Function() onSubmit;
+  final SignInMutationFn mutation;
+
+  bool get isLoading => mutation.isMutating;
+
+  void handleSubmit() async {
+    if (key.currentState!.validate()) {
+      await mutation.mutate(
+        {
+          'email': email.text,
+          'password': password.text,
+        },
+      );
+    }
+
+    key.currentState!.reset();
+  }
 }

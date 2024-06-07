@@ -13,8 +13,8 @@ class KV {
 
     await Hive.initFlutter();
 
-    await secureStorage.deleteAll();
-    await Hive.deleteFromDisk();
+    // await secureStorage.deleteAll();
+    // await Hive.deleteFromDisk();
 
     final encryptionKeyString = await secureStorage.read(key: 'hive_box_key');
     if (encryptionKeyString == null) {

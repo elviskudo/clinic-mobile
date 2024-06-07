@@ -73,7 +73,7 @@ class VerificationScreen extends HookWidget {
                       text: ' ${context.tr("resend")}',
                       recognizer: TapGestureRecognizer()
                         ..onTap = resend.enabled
-                            ? () => resend.submit(context)
+                            ? () => resend.handleSubmit(context)
                             : null,
                       style: TextStyle(
                         color: resend.enabled

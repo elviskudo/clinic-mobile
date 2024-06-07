@@ -96,7 +96,7 @@ class SignInScreen extends HookWidget {
                 ),
                 gapH24,
                 SubmitButton(
-                  onSubmit: form.onSubmit,
+                  onSubmit: form.handleSubmit,
                   disabled: form.isLoading,
                   loading: form.isLoading,
                   child: Text(context.tr('signin')),
