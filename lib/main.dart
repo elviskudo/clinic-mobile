@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_connectivity_plus_adapter/fl_query_connectivity_plus_adapter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -62,19 +61,8 @@ class Clinic extends HookConsumerWidget {
           title: 'Clinic',
           debugShowCheckedModeBanner: false,
           routerConfig: router,
-          theme: MaterialTheme(Theme.of(context).textTheme).light().copyWith(
-                appBarTheme: AppBarTheme(
-                  systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
-                    statusBarColor: Colors.transparent,
-                  ),
-                ),
-              ),
-          darkTheme: MaterialTheme(Theme.of(context).textTheme).dark().copyWith(
-                appBarTheme: AppBarTheme(
-                  systemOverlayStyle: SystemUiOverlayStyle.dark
-                      .copyWith(statusBarColor: Colors.transparent),
-                ),
-              ),
+          theme: MaterialTheme(Theme.of(context).textTheme).light(),
+          darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
           themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
