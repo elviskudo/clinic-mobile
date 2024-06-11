@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/providers/profile.dart';
-import 'package:clinic/widgets/photo_profile.dart';
+import 'package:clinic/widgets/user/photo_profile.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,38 +16,41 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: PhotoProfile(url: profile?.imageUrl),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: PhotoProfile(url: profile?.imageUrl),
+        ),
         actions: const [
           IconButton(
             onPressed: null,
             icon: PhosphorIcon(PhosphorIconsRegular.bellSimple),
           ),
-          gapW4,
+          gapW16,
         ],
       ),
-      body: Column(
+      body: ListView(
+        padding: const EdgeInsets.all(Sizes.p24),
+        shrinkWrap: true,
         children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(Sizes.p24),
-              children: [
-                AutoSizeText(
-                  context.tr(
-                    'home_greet_title',
-                    namedArgs: {'name': profile?.fullName ?? ''},
-                  ),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(fontWeight: FontWeight.w600),
-                  minFontSize: 18,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AutoSizeText(
+                context.tr(
+                  'home_greet_title',
+                  namedArgs: {'name': profile?.fullName ?? ''},
                 ),
-                gapH8,
-                Text(context.tr('home_greet_desc')),
-              ],
-            ),
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(fontWeight: FontWeight.w600),
+                minFontSize: 18,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              gapH8,
+              Text(context.tr('home_greet_desc')),
+            ],
           ),
         ],
       ),

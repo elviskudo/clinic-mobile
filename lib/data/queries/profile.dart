@@ -5,13 +5,10 @@ import 'package:clinic/services/http.dart';
 import 'package:dio/dio.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-Query<Profile?, DioException> useProfile(
-  WidgetRef ref, {
-  void Function(Profile?)? onData,
-  void Function(DioException)? onError,
-}) {
+Query<Profile?, DioException> useProfile(WidgetRef ref) {
   return useQuery<Profile?, DioException>(
     'profile',
     () async {
@@ -36,10 +33,12 @@ Query<Profile?, DioException> useProfile(
     initial: ref.watch(profileNotifierProvider),
     onData: (profile) {
       ref.read(profileNotifierProvider.notifier).set(profile);
-      if (onData != null) {
-        return onData(profile);
-      }
     },
-    onError: onError,
+    onError: (e) {
+      debugPrint(
+        '[profile_query] ${e.response!.statusCode} - ${e.response!.data.toString()}',
+      );
+      ref.read(profileNotifierProvider.notifier).set(null);
+    },
   );
 }

@@ -57,59 +57,63 @@ class _AppLayoutState extends State<AppLayout> {
     final navigationShell = widget.navigationShell;
     final children = widget.children;
 
-    return Scaffold(
-      body: PageView.builder(
-        controller: _controller,
-        onPageChanged: (index) {
-          debugPrint('index: $index, current: ${navigationShell.currentIndex}');
+    return SafeArea(
+      child: Scaffold(
+        body: PageView.builder(
+          controller: _controller,
+          onPageChanged: (index) {
+            debugPrint(
+              'index: $index, current: ${navigationShell.currentIndex}',
+            );
 
-          // Ignore tap events.
-          if (index == navigationShell.currentIndex) return;
+            // Ignore tap events.
+            if (index == navigationShell.currentIndex) return;
 
-          navigationShell.goBranch(index, initialLocation: false);
-        },
-        itemBuilder: (context, index) => children[index],
-        itemCount: children.length,
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) {
-          navigationShell.goBranch(
-            index,
-            initialLocation: index == navigationShell.currentIndex,
-          );
-        },
-        destinations: [
-          NavigationDestination(
-            label: context.tr('home'),
-            tooltip: context.tr('home'),
-            icon: const PhosphorIcon(PhosphorIconsRegular.houseSimple),
-            selectedIcon: PhosphorIcon(
-              PhosphorIconsDuotone.houseSimple,
-              color: Theme.of(context).colorScheme.primary,
+            navigationShell.goBranch(index, initialLocation: false);
+          },
+          itemBuilder: (context, index) => children[index],
+          itemCount: children.length,
+        ),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: navigationShell.currentIndex,
+          onDestinationSelected: (index) {
+            navigationShell.goBranch(
+              index,
+              initialLocation: index == navigationShell.currentIndex,
+            );
+          },
+          destinations: [
+            NavigationDestination(
+              label: context.tr('home'),
+              tooltip: context.tr('home'),
+              icon: const PhosphorIcon(PhosphorIconsRegular.houseSimple),
+              selectedIcon: PhosphorIcon(
+                PhosphorIconsDuotone.houseSimple,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
-          ),
-          NavigationDestination(
-            label: context.tr('histories'),
-            tooltip: context.tr('histories'),
-            icon: const PhosphorIcon(
-              PhosphorIconsRegular.clockCounterClockwise,
+            NavigationDestination(
+              label: context.tr('histories'),
+              tooltip: context.tr('histories'),
+              icon: const PhosphorIcon(
+                PhosphorIconsRegular.clockCounterClockwise,
+              ),
+              selectedIcon: PhosphorIcon(
+                PhosphorIconsDuotone.clockCounterClockwise,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
-            selectedIcon: PhosphorIcon(
-              PhosphorIconsDuotone.clockCounterClockwise,
-              color: Theme.of(context).colorScheme.primary,
+            NavigationDestination(
+              label: context.tr('account'),
+              tooltip: context.tr('account'),
+              icon: const PhosphorIcon(PhosphorIconsRegular.userCircle),
+              selectedIcon: PhosphorIcon(
+                PhosphorIconsDuotone.userCircle,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
-          ),
-          NavigationDestination(
-            label: context.tr('account'),
-            tooltip: context.tr('account'),
-            icon: const PhosphorIcon(PhosphorIconsRegular.userCircle),
-            selectedIcon: PhosphorIcon(
-              PhosphorIconsDuotone.userCircle,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

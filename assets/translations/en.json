@@ -1,6 +1,7 @@
 {
   "offline": "Looks like you are offline, enable mobile data or wi-fi to reconnect.",
   "or": "Or",
+  "patient": "Patient",
   "page_onboarding_title": "Welcome to Clinic!",
   "page_onboarding_desc": "Experience the ease of scheduling medical checkup anytime, anywhere with our app.",
   "signin": "Sign in",
@@ -40,6 +41,10 @@
     "invalid": "Confirmation password must be same as password."
   },
   "verification": "Verification",
+  "verification_success": {
+    "title": "Verification Successful",
+    "microcopy": "Currently redirecting to the main page, you can check your health after this!"
+  },
   "verification_error": "Account verification failed. Try to resend otp code.",
   "verification_invalid": "Please enter a valid verification code.",
   "verify": "Verify",
@@ -50,13 +55,16 @@
   "page_verification_title": "@:verification",
   "page_verification_desc": "Enter the verification code (OTP) that we have sent to your email.",
   "page_verification_resend_notice": "Did'nt recieve the verification code yet?",
-  "home": "Beranda",
+  "home": "Home",
   "home_greet_title": "Greetings {name}!",
   "home_greet_desc": "How's Your health?",
-  "histories": "Riwayat",
-  "account": "Akun",
+  "histories": "Histories",
+  "account": "Account",
   "account_settings": "Account Settings",
   "account_settings_link": "View your account settings",
+  "page_account_settings": {
+    "change_profile_photo": "Change profile photo"
+  },
   "dark_mode": "Dark Mode",
   "language": "Language",
   "histories_tile_title": "@:histories",
@@ -67,5 +75,11 @@
   "feedback_tile_title": "Send Feedback",
   "feedback_tile_subtitle": "Give some feedback",
   "term_tile_title": "Term and Conditions",
-  "policy_tile_title": "Privacy Policy"
+  "policy_tile_title": "Privacy Policy",
+  "profile_tile_title": "Personal Data",
+  "profile_tile_subtitle": "Biodata, Addresses, Diagnose",
+  "account_tile_title": "@:account",
+  "account_tile_subtitle": "Change password",
+  "notifications_tile_title": "Notifications",
+  "signout_tile_title": "Sign out"
 }

@@ -1,5 +1,6 @@
+import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/providers/profile.dart';
-import 'package:clinic/widgets/photo_profile.dart';
+import 'package:clinic/widgets/user/photo_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -12,7 +13,10 @@ class HistoriesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: PhotoProfile(url: profile?.imageUrl),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: Sizes.p24),
+          child: PhotoProfile(url: profile?.imageUrl),
+        ),
       ),
       body: const Center(
         child: Text('Histories page'),

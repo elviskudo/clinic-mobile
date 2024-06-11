@@ -3,7 +3,8 @@ import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:clinic/widgets/l10n/l10n_setting_list_tile.dart';
-import 'package:clinic/widgets/photo_profile.dart';
+import 'package:clinic/widgets/user/photo_profile.dart';
+import 'package:clinic/widgets/user/role_chip.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -46,20 +47,7 @@ class AccountScreen extends ConsumerWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            trailing: Chip(
-              label: Text(
-                'Patient',
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-              ),
-              visualDensity: VisualDensity.compact,
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(99),
-                side: BorderSide(color: Theme.of(context).colorScheme.primary),
-              ),
-            ),
+            trailing: const RoleChip(),
             enableFeedback: false,
           ),
           GestureDetector(

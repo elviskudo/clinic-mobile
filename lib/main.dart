@@ -1,4 +1,5 @@
 import 'package:clinic/generated/codegen_loader.g.dart';
+import 'package:clinic/widgets/auth/auth_guard.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
@@ -9,7 +10,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'constants/theme.dart';
-import 'data/queries/profile.dart';
 import 'router.dart';
 import 'services/kv.dart';
 import 'services/toast.dart';
@@ -49,25 +49,25 @@ class Clinic extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    useProfile(ref);
-
     return ValueListenableBuilder(
       valueListenable: KV.isDarkMode.listenable(),
       builder: (context, box, _) {
         final darkMode = box.get('dark_mode', defaultValue: false)!;
         final router = ref.watch(routerProvider);
 
-        return MaterialApp.router(
-          title: 'Clinic',
-          debugShowCheckedModeBanner: false,
-          routerConfig: router,
-          theme: MaterialTheme(Theme.of(context).textTheme).light(),
-          darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
-          themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          builder: (context, child) => _ConnectivityWidget(child: child!),
+        return AuthGuard(
+          child: MaterialApp.router(
+            title: 'Clinic',
+            debugShowCheckedModeBanner: false,
+            routerConfig: router,
+            theme: MaterialTheme(Theme.of(context).textTheme).light(),
+            darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
+            themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            builder: (context, child) => _ConnectivityWidget(child: child!),
+          ),
         );
       },
     );

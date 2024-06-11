@@ -4,6 +4,7 @@ import 'package:clinic/models/profile/profile_http_response.dart';
 import 'package:clinic/services/http.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:clinic/services/toast.dart';
+import 'package:clinic/widgets/auth/verification_success_bottom_sheet.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
@@ -40,9 +41,11 @@ VerificationMutationProps useAccountVerification(BuildContext context) {
         }
       }
     },
-    onData: (result, recovery) {
-      context.go('/');
-      // TODO: success notice - showModalBottomSheet
+    onData: (result, recovery) async {
+      await showModalBottomSheet(
+        context: context,
+        builder: (context) => const VerificationSuccessBottomSheet(),
+      );
     },
     onError: (e, recoveryData) {
       debugPrint(

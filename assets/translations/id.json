@@ -1,6 +1,7 @@
 {
   "offline": "Sepertinya kamu sedang offline, nyalakan mobile data atau wi-fi untuk tersambung kembali.",
   "or": "Atau",
+  "patient": "Pasien",
   "page_onboarding_title": "Selamat Datang di Clinic!",
   "page_onboarding_desc": "Rasakan kemudahan membuat jadwal pemeriksaan medis kapan saja, dimana saja dengan aplikasi kami.",
   "signin": "Masuk",
@@ -40,6 +41,10 @@
     "invalid": "Konfirmasi password harus sama dengan password."
   },
   "verification": "Verifikasi",
+  "verification_success": {
+    "title": "Verifikasi Berhasil",
+    "microcopy": "Sedang mengarahkan ke halaman utama, kamu bisa mulai cek kesehatan setelah ini!"
+  },
   "verification_error": "Verifikasi akun gagal. Coba untuk kirim ulang kode otp.",
   "verification_invalid": "Masukkan kode verifikasi yang valid.",
   "verify": "Verifikasi",
@@ -57,6 +62,9 @@
   "account": "Akun",
   "account_settings": "Pengaturan Akun",
   "account_settings_link": "Cek pengaturan akun kamu",
+  "page_account_settings": {
+    "change_profile_photo": "Ubah foto profile"
+  },
   "language": "Bahasa",
   "dark_mode": "Mode Malam",
   "histories_tile_title": "@:histories",
@@ -67,5 +75,11 @@
   "feedback_tile_title": "Kirim Masukan",
   "feedback_tile_subtitle": "Beri beberapa masukan",
   "term_tile_title": "Syarat dan Ketentian",
-  "policy_tile_title": "Kebijakan Privasi"
+  "policy_tile_title": "Kebijakan Privasi",
+  "profile_tile_title": "Data Pribadi",
+  "profile_tile_subtitle": "Biodata, Alamat, Diagnosa",
+  "account_tile_title": "@:account",
+  "account_tile_subtitle": "Ubah password",
+  "notifications_tile_title": "Notifikasi",
+  "signout_tile_title": "Keluar"
 }

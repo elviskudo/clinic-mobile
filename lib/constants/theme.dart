@@ -1,6 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class MaterialTheme {
   final TextTheme textTheme;
@@ -352,13 +351,6 @@ class MaterialTheme {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
-      ),
-      appBarTheme: AppBarTheme(
-        systemOverlayStyle: colorScheme.brightness == Brightness.dark
-            ? SystemUiOverlayStyle.light
-                .copyWith(statusBarColor: Colors.transparent)
-            : SystemUiOverlayStyle.dark
-                .copyWith(statusBarColor: Colors.transparent),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: colorScheme.brightness == Brightness.dark

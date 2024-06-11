@@ -51,11 +51,12 @@ SignInMutationProps useSignIn<RecoveryType>(BuildContext context) {
   );
 
   return SignInMutationProps(
-      key: key,
-      email: email,
-      password: password,
-      passwordObscure: passwordObscure,
-      mutation: mutation);
+    key: key,
+    email: email,
+    password: password,
+    passwordObscure: passwordObscure,
+    mutation: mutation,
+  );
 }
 
 class SignInMutationProps {
