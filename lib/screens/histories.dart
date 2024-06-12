@@ -12,10 +12,16 @@ class HistoriesScreen extends ConsumerWidget {
     final profile = ref.watch(profileNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: Sizes.p24),
-          child: PhotoProfile(url: profile?.imageUrl),
+      appBar: PreferredSize(
+        preferredSize: const Size(0, 64),
+        child: Padding(
+          padding: const EdgeInsets.only(top: Sizes.p16),
+          child: AppBar(
+            title: Padding(
+              padding: const EdgeInsets.only(left: Sizes.p8),
+              child: PhotoProfile(url: profile?.imageUrl),
+            ),
+          ),
         ),
       ),
       body: const Center(

@@ -21,7 +21,7 @@ class AccountScreen extends ConsumerWidget {
 
     return Scaffold(
       body: ListView(
-        padding: const EdgeInsets.all(Sizes.p24),
+        padding: const EdgeInsets.all(Sizes.p24).copyWith(top: 0),
         shrinkWrap: true,
         children: [
           ListTile(
@@ -50,17 +50,20 @@ class AccountScreen extends ConsumerWidget {
             trailing: const RoleChip(),
             enableFeedback: false,
           ),
-          GestureDetector(
-            onTap: () {
-              context.push('/account/settings');
-            },
-            child: Text(
-              context.tr('account_settings_link'),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w500,
-                    decoration: TextDecoration.underline,
-                  ),
+          Padding(
+            padding: const EdgeInsets.only(left: 60),
+            child: GestureDetector(
+              onTap: () {
+                context.push('/account/settings');
+              },
+              child: Text(
+                context.tr('account_settings_link'),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.underline,
+                    ),
+              ),
             ),
           ),
           const Padding(

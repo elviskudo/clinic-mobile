@@ -14,7 +14,7 @@ class VerificationSuccessBottomSheet extends HookWidget {
   Widget build(BuildContext context) {
     useEffect(() {
       final timer = Timer.periodic(
-        const Duration(seconds: 1),
+        const Duration(seconds: 5),
         (_) {
           context.go('/');
           if (context.canPop()) {
@@ -27,17 +27,23 @@ class VerificationSuccessBottomSheet extends HookWidget {
     }, []);
 
     return Card(
+      elevation: 0,
+      margin: const EdgeInsets.all(Sizes.p24),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           PhosphorIcon(
             PhosphorIconsDuotone.checkCircle,
             color: Theme.of(context).colorScheme.primary,
+            size: 32,
           ),
+          gapH16,
           Text(
             context.tr('verification_success.title'),
-            style: Theme.of(context).textTheme.titleMedium,
+            style: Theme.of(context).textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
+          gapH16,
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: Sizes.p16),
             child: Text(

@@ -19,12 +19,20 @@ class AccountSettingsScreen extends HookConsumerWidget {
       appBar: AppBar(title: Text(context.tr('account_settings'))),
       body: ListView(
         shrinkWrap: true,
+        padding: const EdgeInsets.all(Sizes.p24),
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const RoleChip(),
-              PhotoProfile(onPressed: () {}, url: profile?.imageUrl, size: 40),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: Sizes.p16),
+                child: PhotoProfile(
+                  onPressed: () {},
+                  url: profile?.imageUrl,
+                  size: 40,
+                ),
+              ),
               GestureDetector(
                 onTap: () {},
                 child: Text(

@@ -15,18 +15,24 @@ class HomeScreen extends ConsumerWidget {
     final profile = ref.watch(profileNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: PhotoProfile(url: profile?.imageUrl),
-        ),
-        actions: const [
-          IconButton(
-            onPressed: null,
-            icon: PhosphorIcon(PhosphorIconsRegular.bellSimple),
+      appBar: PreferredSize(
+        preferredSize: const Size(0, 64),
+        child: Padding(
+          padding: const EdgeInsets.only(top: Sizes.p16),
+          child: AppBar(
+            title: Padding(
+              padding: const EdgeInsets.only(left: Sizes.p8),
+              child: PhotoProfile(url: profile?.imageUrl),
+            ),
+            actions: const [
+              IconButton(
+                onPressed: null,
+                icon: PhosphorIcon(PhosphorIconsRegular.bellSimple),
+              ),
+              gapW16,
+            ],
           ),
-          gapW16,
-        ],
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(Sizes.p24),
@@ -34,6 +40,7 @@ class HomeScreen extends ConsumerWidget {
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AutoSizeText(
                 context.tr(

@@ -44,6 +44,8 @@ VerificationMutationProps useAccountVerification(BuildContext context) {
     onData: (result, recovery) async {
       await showModalBottomSheet(
         context: context,
+        isDismissible: false,
+        enableDrag: false,
         builder: (context) => const VerificationSuccessBottomSheet(),
       );
     },

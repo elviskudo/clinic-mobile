@@ -1,4 +1,3 @@
-import 'package:clinic/providers/profile.dart';
 import 'package:clinic/screens/account_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +11,7 @@ import 'screens/signin.dart';
 import 'screens/signup.dart';
 import 'screens/verification.dart';
 import 'widgets/app_layout.dart';
+import 'widgets/auth/auth_guard.dart';
 
 part 'router.g.dart';
 
@@ -26,22 +26,13 @@ GoRouter router(RouterRef ref) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
-    redirect: (context, state) {
-      final pathname = state.uri.path;
-      final profile = ref.watch(profileNotifierProvider);
-
-      if (pathname.startsWith('/home') ||
-          pathname.startsWith('/histories') ||
-          pathname.startsWith('/account')) {
-        if (profile == null) return '/onboarding';
-        if (!profile.isVerified) return '/verification';
-
-        return pathname;
-      }
-
-      return pathname;
-    },
     routes: [
+      GoRoute(
+        path: '/',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: AuthGuard(),
+        ),
+      ),
       GoRoute(
         path: '/onboarding',
         pageBuilder: (context, state) => const MaterialPage(
@@ -111,15 +102,10 @@ GoRouter router(RouterRef ref) {
         ],
       ),
       GoRoute(
-        path: '/account',
-        routes: [
-          GoRoute(
-            path: 'settings',
-            pageBuilder: (context, state) => const MaterialPage(
-              child: AccountSettingsScreen(),
-            ),
-          ),
-        ],
+        path: '/account/settings',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: AccountSettingsScreen(),
+        ),
       ),
     ],
   );

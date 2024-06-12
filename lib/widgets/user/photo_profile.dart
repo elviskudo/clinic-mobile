@@ -25,7 +25,7 @@ class PhotoProfile extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(999),
           child: CircleAvatar(
-            radius: size ?? 24,
+            radius: size ?? 20,
             backgroundColor:
                 Theme.of(context).colorScheme.surfaceContainerHighest,
             child: imageUrl.contains('api.dicebear.com') ||

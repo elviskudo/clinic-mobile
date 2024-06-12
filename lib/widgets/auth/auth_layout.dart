@@ -9,31 +9,33 @@ class AuthLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          forceMaterialTransparency: true,
-          title: Padding(
-            padding: const EdgeInsets.only(left: Sizes.p8),
-            child: Text(
-              'Logo',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(fontFamily: 'CalSans'),
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size(0, 64),
+        child: Padding(
+          padding: const EdgeInsets.only(top: Sizes.p16),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            scrolledUnderElevation: 0,
+            forceMaterialTransparency: true,
+            title: Padding(
+              padding: const EdgeInsets.only(left: Sizes.p8),
+              child: Text(
+                'Logo',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(fontFamily: 'CalSans'),
+              ),
             ),
+            actions: const [
+              IntrinsicWidth(child: L10nDropdownButton()),
+              gapW24,
+            ],
           ),
-          actions: const [
-            Padding(
-              padding: EdgeInsets.only(right: Sizes.p24),
-              child: IntrinsicWidth(child: L10nDropdownButton()),
-            ),
-          ],
         ),
-        body: body,
       ),
+      body: body,
     );
   }
 }

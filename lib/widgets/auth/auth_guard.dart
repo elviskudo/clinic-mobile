@@ -4,24 +4,34 @@ import 'package:clinic/models/profile/profile.dart';
 import 'package:clinic/widgets/scaffold_busy.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class AuthGuard extends HookConsumerWidget {
-  const AuthGuard({super.key, this.child});
-
-  /// This widget will render if [useProfile] query is successful.
-  final Widget? child;
+  const AuthGuard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final query = useProfile(ref);
+    final query = useProfile(
+      context,
+      ref: ref,
+      onData: (profile) {
+        if (profile != null) {
+          profile.isVerified
+              ? context.go('/home')
+              : context.go('/verification');
+        } else {
+          context.go('/onboarding');
+        }
+      },
+    );
 
     if (query.isLoading) return const ScaffoldBusy();
     if (query.hasError && query.error?.response?.statusCode == 500) {
       return _AuthGuardError(query: query);
     }
 
-    return child ?? const SizedBox.shrink();
+    return const Scaffold();
   }
 }
 
