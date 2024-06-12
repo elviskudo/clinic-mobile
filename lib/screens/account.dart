@@ -94,21 +94,21 @@ class AccountScreen extends ConsumerWidget {
               );
             },
           ),
-          gapH16,
-          ListTile(
-            dense: true,
-            enabled: false,
-            leading: PhosphorIcon(
-              PhosphorIconsRegular.clockCounterClockwise,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            title: Text(context.tr('histories_tile_title')),
-            subtitle: Text(context.tr('histories_tile_subtitle')),
-            trailing: PhosphorIcon(
-              PhosphorIconsRegular.caretRight,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
+          // gapH16,
+          // ListTile(
+          //   dense: true,
+          //   enabled: false,
+          //   leading: PhosphorIcon(
+          //     PhosphorIconsRegular.clockCounterClockwise,
+          //     color: Theme.of(context).colorScheme.primary,
+          //   ),
+          //   title: Text(context.tr('histories_tile_title')),
+          //   subtitle: Text(context.tr('histories_tile_subtitle')),
+          //   trailing: PhosphorIcon(
+          //     PhosphorIconsRegular.caretRight,
+          //     color: Theme.of(context).hintColor,
+          //   ),
+          // ),
           gapH16,
           const L10nSettingListTile(),
           gapH16,

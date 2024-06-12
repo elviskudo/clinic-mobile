@@ -1,4 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
+import 'package:clinic/data/mutations/profile.dart';
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/widgets/auth/sign_out_list_tile.dart';
 import 'package:clinic/widgets/user/photo_profile.dart';
@@ -14,6 +15,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileNotifierProvider);
+    final changeAvatar = useChangeAvatar(ref);
 
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('account_settings'))),
@@ -34,7 +36,9 @@ class AccountSettingsScreen extends HookConsumerWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  await changeAvatar.mutate({});
+                },
                 child: Text(
                   context.tr('page_account_settings.change_profile_photo'),
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(

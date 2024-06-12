@@ -1,4 +1,4 @@
-import 'package:clinic/models/profile/profile_http_response.dart';
+import 'package:clinic/models/profile/profile.dart';
 import 'package:clinic/services/http.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:clinic/services/toast.dart';
@@ -11,7 +11,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
-typedef SignUpMutationFn = Mutation<void, DioException, Map<String, dynamic>>;
+typedef SignUpMutationFn
+    = Mutation<Profile?, DioException, Map<String, dynamic>>;
 
 SignUpMutationProps useSignUp<RecoveryType>(BuildContext context) {
   final key = useMemoized(() => GlobalKey<FormState>());
@@ -33,21 +34,21 @@ SignUpMutationProps useSignUp<RecoveryType>(BuildContext context) {
   final confirmationPasswordObscure = useState(true);
 
   final mutation =
-      useMutation<void, DioException, Map<String, dynamic>, RecoveryType>(
+      useMutation<Profile?, DioException, Map<String, dynamic>, RecoveryType>(
     'auth/signup',
     (reqBody) async {
       final res = await dio.post('/api/auth/register', data: reqBody);
 
       if (res.statusCode == 201 || res.statusCode == 200) {
-        final result = ProfileHttpResponse.fromJson(res.data).data;
-        final token = result?.token ?? '';
-        final profile = result?.user;
+        final token = res.data['data']['token'] ?? '';
 
-        if (token.isNotEmpty && profile != null) {
+        if (token.isNotEmpty) {
           await KV.tokens.put('access_token', token);
-          return;
+          return Profile.fromJson(res.data['data']['user']);
         }
       }
+
+      return null;
     },
     refreshQueries: ['profile'],
     onData: (data, recoveryData) {
@@ -89,7 +90,7 @@ class SignUpMutationProps {
     required this.passwordObscure,
     required this.confirmationPassword,
     required this.confirmationPasswordObscure,
-    required Mutation<void, DioException, Map<String, dynamic>> mutation,
+    required SignUpMutationFn mutation,
   }) : _mutation = mutation;
 
   final GlobalKey<FormState> key;
@@ -113,7 +114,7 @@ class SignUpMutationProps {
   String get phoneError => phoneErrorMessage.value ?? '';
   bool get isValidPhone => phoneError.isEmpty;
 
-  void handleSubmit() async {
+  Future<Profile?> handleSubmit() async {
     if (key.currentState!.validate() && isValidPhone) {
       await _mutation.mutate(
         {
@@ -126,5 +127,6 @@ class SignUpMutationProps {
     }
 
     key.currentState!.reset();
+    return null;
   }
 }

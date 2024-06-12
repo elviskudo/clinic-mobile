@@ -56,7 +56,7 @@
   "page_verification_desc": "Enter the verification code (OTP) that we have sent to your email.",
   "page_verification_resend_notice": "Did'nt recieve the verification code yet?",
   "home": "Home",
-  "home_greet_title": "Greetings {name}!",
+  "home_greet_title": "Welcome to {clinic} {name}!",
   "home_greet_desc": "How's Your health?",
   "histories": "Histories",
   "account": "Account",

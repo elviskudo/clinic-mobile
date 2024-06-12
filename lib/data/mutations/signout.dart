@@ -14,7 +14,7 @@ Mutation<void, DioException, dynamic> useSignOut(
   required WidgetRef ref,
 }) {
   final mutation = useMutation<void, DioException, void, dynamic>(
-    'auth/signin',
+    'auth/signout',
     (_) async {
       final res = await dio.post('/api/users/logout');
       if (res.statusCode == 201 || res.statusCode == 200) {
@@ -26,11 +26,11 @@ Mutation<void, DioException, dynamic> useSignOut(
       await showBusyDialog(context);
     },
     onData: (data, recoveryData) {
+      ref.read(profileNotifierProvider.notifier).set(null);
       context.go('/onboarding');
       if (context.canPop()) {
         context.pop();
       }
-      ref.read(profileNotifierProvider.notifier).set(null);
     },
   );
 

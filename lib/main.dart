@@ -1,20 +1,16 @@
 import 'package:clinic/generated/codegen_loader.g.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:clinic/widgets/connectivity_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_connectivity_plus_adapter/fl_query_connectivity_plus_adapter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import 'constants/sizes.dart';
 import 'constants/theme.dart';
+import 'hooks/use_dark_mode.dart';
 import 'router.dart';
 import 'services/kv.dart';
-import 'services/toast.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,95 +35,37 @@ void main() async {
         useOnlyLangCode: true,
         assetLoader: const CodegenLoader(),
         child: QueryClientProvider(
-          child: const Clinic(),
+          child: const ClinicApp(),
         ),
       ),
     ),
   );
 }
 
-class Clinic extends HookConsumerWidget {
-  const Clinic({super.key});
+class ClinicApp extends HookConsumerWidget {
+  const ClinicApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ValueListenableBuilder(
-      valueListenable: KV.isDarkMode.listenable(),
-      builder: (context, box, _) {
-        final darkMode = box.get('dark_mode', defaultValue: false)!;
-        final router = ref.watch(routerProvider);
+    final isDarkMode = useDarkMode().state;
 
-        SystemChrome.setSystemUIOverlayStyle(
-          darkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-        );
-
-        return MaterialApp.router(
-          title: 'Clinic',
-          debugShowCheckedModeBanner: false,
-          routerConfig: router,
-          theme: MaterialTheme(Theme.of(context).textTheme).light(),
-          darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
-          themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          builder: (context, child) => _ConnectivityWidget(child: child!),
-        );
-      },
-    );
-  }
-}
-
-class _ConnectivityWidget extends HookWidget {
-  const _ConnectivityWidget({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final conn = useMemoized(
-      () => Connectivity().onConnectivityChanged,
+    SystemChrome.setSystemUIOverlayStyle(
+      isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
     );
 
-    final network = useStream(conn);
-    if (network.hasData) {
-      if (network.data == ConnectivityResult.none) {
-        toast(context.tr('offline'));
-      }
-    }
+    final router = ref.watch(routerProvider);
 
-    return network.data == ConnectivityResult.none
-        ? buildOfflinePlaceholder(context)
-        : child;
-  }
-
-  Scaffold buildOfflinePlaceholder(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(Sizes.p24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            PhosphorIcon(
-              PhosphorIconsDuotone.wifiSlash,
-              color: Theme.of(context).colorScheme.primary,
-              size: 32,
-            ),
-            gapH16,
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Sizes.p24),
-              child: Text(
-                context.tr('offline'),
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Theme.of(context).disabledColor),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return MaterialApp.router(
+      title: 'Clinic',
+      debugShowCheckedModeBanner: false,
+      routerConfig: router,
+      theme: MaterialTheme(Theme.of(context).textTheme).light(),
+      darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      builder: (context, child) => ConnectivityWidget(child: child!),
     );
   }
 }

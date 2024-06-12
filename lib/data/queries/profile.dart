@@ -1,5 +1,4 @@
 import 'package:clinic/models/profile/profile.dart';
-import 'package:clinic/models/profile/profile_http_response.dart';
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/services/http.dart';
 import 'package:dio/dio.dart';
@@ -18,14 +17,9 @@ Query<Profile?, DioException> useProfile(
     'profile',
     () async {
       final res = await dio.get('/api/users/profiles');
-
-      if (res.statusCode == 200) {
-        final result = ProfileHttpResponse.fromJson(res.data);
-        final profile = result.data?.user;
-        return profile;
-      }
-
-      return null;
+      return res.statusCode == 200
+          ? Profile.fromJson(res.data['data']['user'])
+          : null;
     },
     refreshConfig: RefreshConfig.withConstantDefaults(
       refreshOnMount: true,
