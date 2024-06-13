@@ -26,6 +26,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   hooks_riverpod: ^2.5.1
+  image_cropper: ^7.0.4
   image_picker: ^1.1.2
   intl_phone_number_input: ^0.7.4
   json_annotation: ^4.9.0

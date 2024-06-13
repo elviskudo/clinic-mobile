@@ -12,6 +12,14 @@ Query<Clinic, DioException> useCurrentClinic() {
       final res = await dio.get('/api/clinics/9');
       return Clinic.fromJson(res.data['data']);
     },
+    refreshConfig: RefreshConfig.withConstantDefaults(
+      refreshOnMount: true,
+      staleDuration: const Duration(minutes: 30),
+    ),
+    jsonConfig: JsonConfig(
+      toJson: (clinic) => clinic.toJson(),
+      fromJson: Clinic.fromJson,
+    ),
     onError: (e) {
       debugPrint(
         '[current_clinic_query] ${e.response!.statusCode} - ${e.response!.data.toString()}',

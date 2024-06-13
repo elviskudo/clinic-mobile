@@ -65,6 +65,11 @@
   "page_account_settings": {
     "change_profile_photo": "Ubah foto profile"
   },
+  "media_chooser_list_tile": {
+    "gallery": "Pilih gambar dari galeri",
+    "camera": "Tangkap gambar dengan kamera"
+  },
+  "pick_media_error": "Gagal update photo profile, terdapat masalah dengan file kamu.\nPastikan kamu memilih file gambar yang sesuai!",
   "language": "Bahasa",
   "dark_mode": "Mode Malam",
   "histories_tile_title": "@:histories",

@@ -81,6 +81,11 @@ class CodegenLoader extends AssetLoader{
   "page_account_settings": {
     "change_profile_photo": "Change profile photo"
   },
+  "media_chooser_list_tile": {
+    "gallery": "Pick image from gallery",
+    "camera": "Capture image with camera"
+  },
+  "pick_media_error": "Cannot update photo profile, there is problem with your file.\nPlease pick the right image file!",
   "dark_mode": "Dark Mode",
   "language": "Language",
   "histories_tile_title": "@:histories",
@@ -166,6 +171,11 @@ static const Map<String,dynamic> id = {
   "page_account_settings": {
     "change_profile_photo": "Ubah foto profile"
   },
+  "media_chooser_list_tile": {
+    "gallery": "Pilih gambar dari galeri",
+    "camera": "Tangkap gambar dengan kamera"
+  },
+  "pick_media_error": "Gagal update photo profile, terdapat masalah dengan file kamu.\nPastikan kamu memilih file gambar yang sesuai!",
   "language": "Bahasa",
   "dark_mode": "Mode Malam",
   "histories_tile_title": "@:histories",

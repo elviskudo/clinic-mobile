@@ -1,19 +1,46 @@
-import 'package:clinic/providers/permission.dart';
+import 'package:clinic/providers/profile.dart';
+import 'package:clinic/services/http.dart';
+import 'package:dio/dio.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
-Mutation useChangeAvatar(WidgetRef ref) {
-  final mutation = useMutation(
+typedef ChangeAvatarMutationFn = Mutation<String, DioException, XFile>;
+
+ChangeAvatarMutationFn useChangeAvatar(BuildContext context, WidgetRef ref) {
+  final mutation = useMutation<String, DioException, XFile, dynamic>(
     'profile/change_avatar',
-    (_) async {
-      final isGranted = await ref.read(
-        mediaPermissionProvider.future,
-      );
+    (file) async {
+      final data = FormData.fromMap({
+        'profil_image' '': await MultipartFile.fromFile(
+          file.path,
+          filename: file.name,
+        ),
+      });
 
-      if (!isGranted) {
-        ref.read(mediaPermissionProvider.notifier).ask();
+      final res = await dio.put('/api/users/update/avatar', data: data);
+
+      if (res.statusCode == 201 || res.statusCode == 200) {
+        return res.data['data']['user']['image'];
       }
+
+      return '';
+    },
+    refreshQueries: ['profile'],
+    onData: (data, recoveryType) {
+      if (data.isNotEmpty) {
+        final profile = ref.read(profileNotifierProvider);
+        ref
+            .read(profileNotifierProvider.notifier)
+            .set(profile?.copyWith(imageUrl: data));
+      }
+    },
+    onError: (e, recoveryType) {
+      debugPrint(
+        '[change_avatar_mutation] ${e.response!.statusCode} - ${e.response!.data.toString()}',
+      );
     },
   );
 

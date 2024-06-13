@@ -18,7 +18,7 @@ class MediaPermission extends _$MediaPermission {
     return camera && (storage || photos);
   }
 
-  void ask() async {
+  void ask({FutureOr<void> Function()? onGranted}) async {
     final camera = await Permission.camera.request();
     late PermissionStatus image;
 
@@ -30,6 +30,10 @@ class MediaPermission extends _$MediaPermission {
     }
 
     state = AsyncData([camera, image].every((val) => val.isGranted));
+
+    if (state.requireValue && onGranted != null) {
+      await onGranted();
+    }
   }
 
   Future<bool> _checkAndroidLatestCompat() async {

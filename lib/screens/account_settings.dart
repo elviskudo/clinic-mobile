@@ -1,7 +1,9 @@
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/data/mutations/profile.dart';
 import 'package:clinic/providers/profile.dart';
+import 'package:clinic/services/toast.dart';
 import 'package:clinic/widgets/auth/sign_out_list_tile.dart';
+import 'package:clinic/widgets/media_picker_bottom_sheet.dart';
 import 'package:clinic/widgets/user/photo_profile.dart';
 import 'package:clinic/widgets/user/role_chip.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -15,7 +17,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileNotifierProvider);
-    final changeAvatar = useChangeAvatar(ref);
+    final changeAvatar = useChangeAvatar(context, ref);
 
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('account_settings'))),
@@ -37,7 +39,16 @@ class AccountSettingsScreen extends HookConsumerWidget {
               ),
               GestureDetector(
                 onTap: () async {
-                  await changeAvatar.mutate({});
+                  final pickedFile = await showMediaPickerBottomSheet(
+                    context,
+                    ref,
+                  );
+
+                  if (pickedFile != null) {
+                    await changeAvatar.mutate(pickedFile);
+                  } else {
+                    toast(context.tr('pick_media_error'));
+                  }
                 },
                 child: Text(
                   context.tr('page_account_settings.change_profile_photo'),
