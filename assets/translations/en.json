@@ -36,6 +36,13 @@
     "placeholder": "Enter your password (min 8 characters).",
     "criteria": "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character"
   },
+  "new_password_field": {
+    "label": "Password Baru",
+    "empty": "@:empty",
+    "invalid": "@:invalid",
+    "placeholder": "@:placeholder",
+    "criteria": "@:criteria"
+  },
   "confirmation_password_field": {
     "label": "Confirmation Password",
     "invalid": "Confirmation password must be same as password."
@@ -65,10 +72,11 @@
   "page_account_settings": {
     "change_profile_photo": "Change profile photo"
   },
-  "media_chooser_list_tile": {
+  "media_picker_list_tile": {
     "gallery": "Pick image from gallery",
     "camera": "Capture image with camera"
   },
+  "change_password_error": "Cannot change password. Please try again.",
   "pick_media_error": "Cannot update photo profile, there is problem with your file.\nPlease pick the right image file!",
   "dark_mode": "Dark Mode",
   "language": "Language",

@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/services/http.dart';
+import 'package:clinic/services/kv.dart';
+import 'package:clinic/services/toast.dart';
 import 'package:clinic/widgets/modal_dialog_busy.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/material.dart';
@@ -54,4 +59,38 @@ ChangeAvatarMutationFn useChangeAvatar(BuildContext context, WidgetRef ref) {
   );
 
   return mutation;
+}
+
+typedef ChangePasswordMutationFn
+    = Mutation<void, DioException, Map<String, dynamic>>;
+
+ChangePasswordMutationFn useChangePassword(BuildContext context, WidgetRef ref,
+    {FutureOr<void> Function()? onData}) {
+  return useMutation(
+    "profile/change_password",
+    (reqBody) async {
+      final res = await dio.post('/api/users/change-password', data: reqBody);
+
+      if (res.statusCode == 201 || res.statusCode == 200) {
+        await KV.tokens.delete('access_token');
+      }
+    },
+    onMutate: (_) async {
+      await showBusyDialog(context);
+    },
+    onData: (data, recoveryType) async {
+      ref.read(profileNotifierProvider.notifier).set(null);
+      context.go('/');
+      if (onData != null) {
+        await onData();
+      }
+    },
+    onError: (e, recoveryType) {
+      debugPrint(
+        '[change_password_mutation] ${e.response!.statusCode} - ${e.response!.data.toString()}',
+      );
+      context.replace('/account/credential');
+      toast(context.tr('change_password_error'));
+    },
+  );
 }

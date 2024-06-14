@@ -52,6 +52,13 @@ class CodegenLoader extends AssetLoader{
     "placeholder": "Enter your password (min 8 characters).",
     "criteria": "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character"
   },
+  "new_password_field": {
+    "label": "Password Baru",
+    "empty": "@:empty",
+    "invalid": "@:invalid",
+    "placeholder": "@:placeholder",
+    "criteria": "@:criteria"
+  },
   "confirmation_password_field": {
     "label": "Confirmation Password",
     "invalid": "Confirmation password must be same as password."
@@ -81,7 +88,7 @@ class CodegenLoader extends AssetLoader{
   "page_account_settings": {
     "change_profile_photo": "Change profile photo"
   },
-  "media_chooser_list_tile": {
+  "media_picker_list_tile": {
     "gallery": "Pick image from gallery",
     "camera": "Capture image with camera"
   },
@@ -142,6 +149,13 @@ static const Map<String,dynamic> id = {
     "placeholder": "Masukkan password kamu (minimal 8 karakter).",
     "criteria": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus"
   },
+  "new_password_field": {
+    "label": "Password Baru",
+    "empty": "@:empty",
+    "invalid": "@:invalid",
+    "placeholder": "@:placeholder",
+    "criteria": "@:criteria"
+  },
   "confirmation_password_field": {
     "label": "Konfirmasi Password",
     "invalid": "Konfirmasi password harus sama dengan password."
@@ -171,7 +185,7 @@ static const Map<String,dynamic> id = {
   "page_account_settings": {
     "change_profile_photo": "Ubah foto profile"
   },
-  "media_chooser_list_tile": {
+  "media_picker_list_tile": {
     "gallery": "Pilih gambar dari galeri",
     "camera": "Tangkap gambar dengan kamera"
   },

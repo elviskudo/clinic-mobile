@@ -1,9 +1,11 @@
-import 'package:clinic/screens/account_settings.dart';
+import 'package:clinic/screens/account/credential.dart';
+import 'package:clinic/screens/account/personal.dart';
+import 'package:clinic/screens/account/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'screens/account.dart';
+import 'screens/account/account.dart';
 import 'screens/histories.dart';
 import 'screens/home.dart';
 import 'screens/onboarding.dart';
@@ -105,6 +107,18 @@ GoRouter router(RouterRef ref) {
         path: '/account/settings',
         pageBuilder: (context, state) => const MaterialPage(
           child: AccountSettingsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/account/credential',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: AccountCredentialScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/account/personal',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: AccountPersonalDataScreen(),
         ),
       ),
     ],

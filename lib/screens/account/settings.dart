@@ -8,6 +8,7 @@ import 'package:clinic/widgets/user/photo_profile.dart';
 import 'package:clinic/widgets/user/role_chip.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -67,7 +68,9 @@ class AccountSettingsScreen extends HookConsumerWidget {
           ),
           ListTile(
             dense: true,
-            onTap: () {},
+            onTap: () {
+              context.push('/account/personal');
+            },
             leading: PhosphorIcon(
               PhosphorIconsRegular.userList,
               color: Theme.of(context).colorScheme.primary,
@@ -82,7 +85,9 @@ class AccountSettingsScreen extends HookConsumerWidget {
           gapH16,
           ListTile(
             dense: true,
-            onTap: () {},
+            onTap: () {
+              context.push('/account/credential');
+            },
             leading: PhosphorIcon(
               PhosphorIconsRegular.key,
               color: Theme.of(context).colorScheme.primary,

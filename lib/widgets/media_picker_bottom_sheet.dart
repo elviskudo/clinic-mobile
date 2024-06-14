@@ -89,7 +89,7 @@ class MediaPickerBottomSheet extends HookWidget {
               PhosphorIconsRegular.images,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: Text(context.tr('media_chooser_list_tile.gallery')),
+            title: Text(context.tr('media_picker_list_tile.gallery')),
             onTap: () => pickFile(context, source: ImageSource.gallery),
           ),
           ListTile(
@@ -97,7 +97,7 @@ class MediaPickerBottomSheet extends HookWidget {
               PhosphorIconsRegular.camera,
               color: Theme.of(context).colorScheme.primary,
             ),
-            title: Text(context.tr('media_chooser_list_tile.camera')),
+            title: Text(context.tr('media_picker_list_tile.camera')),
             onTap: () => pickFile(context, source: ImageSource.camera),
           ),
         ],
