@@ -82,7 +82,8 @@ class AccountCredentialScreen extends HookConsumerWidget {
                     obscureText: confirmationObscure.value,
                     decoration: InputDecoration(
                       label: Text(
-                          '${context.tr('confirmation_password_field.label')}*'),
+                        '${context.tr('confirmation_password_field.label')}*',
+                      ),
                       hintText: context.tr('password_field.placeholder'),
                       suffixIcon: GestureDetector(
                         onTap: () {
@@ -122,7 +123,7 @@ class AccountCredentialScreen extends HookConsumerWidget {
                         });
                       }
                     },
-                    child: Text(context.tr('signup')),
+                    child: const Text('Submit'),
                   )
                 ],
               ),
