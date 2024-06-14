@@ -39,6 +39,7 @@ class AccountCredentialScreen extends HookConsumerWidget {
               'Password',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
+            gapH24,
             Form(
               key: formKey,
               child: Column(
