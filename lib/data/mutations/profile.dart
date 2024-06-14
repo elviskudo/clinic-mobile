@@ -1,9 +1,11 @@
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/services/http.dart';
+import 'package:clinic/widgets/modal_dialog_busy.dart';
 import 'package:dio/dio.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,7 +16,7 @@ ChangeAvatarMutationFn useChangeAvatar(BuildContext context, WidgetRef ref) {
     'profile/change_avatar',
     (file) async {
       final data = FormData.fromMap({
-        'profil_image' '': await MultipartFile.fromFile(
+        'profil_image': await MultipartFile.fromFile(
           file.path,
           filename: file.name,
         ),
@@ -29,12 +31,19 @@ ChangeAvatarMutationFn useChangeAvatar(BuildContext context, WidgetRef ref) {
       return '';
     },
     refreshQueries: ['profile'],
+    onMutate: (_) async {
+      await showBusyDialog(context);
+    },
     onData: (data, recoveryType) {
       if (data.isNotEmpty) {
         final profile = ref.read(profileNotifierProvider);
         ref
             .read(profileNotifierProvider.notifier)
             .set(profile?.copyWith(imageUrl: data));
+      }
+
+      if (context.canPop()) {
+        context.pop();
       }
     },
     onError: (e, recoveryType) {

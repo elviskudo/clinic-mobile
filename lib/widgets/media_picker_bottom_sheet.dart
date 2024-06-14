@@ -22,7 +22,7 @@ Future<XFile?> showMediaPickerBottomSheet(
     );
   }
 
-  late XFile? pickedFile;
+  XFile? pickedFile;
 
   final isGranted = await ref.watch(mediaPermissionProvider.future);
 
@@ -61,8 +61,6 @@ class MediaPickerBottomSheet extends HookWidget {
         sourcePath: file.path,
         compressFormat: ImageCompressFormat.png,
         compressQuality: 80,
-        maxHeight: 512,
-        maxWidth: 512,
         uiSettings: [
           AndroidUiSettings(cropStyle: cropStyle),
           IOSUiSettings(cropStyle: cropStyle),
