@@ -1,6 +1,6 @@
 import 'package:clinic/constants/regex.dart';
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/data/mutations/profile.dart';
+import 'package:clinic/data/mutations/account.dart';
 import 'package:clinic/widgets/submit_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

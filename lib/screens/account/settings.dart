@@ -1,5 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/data/mutations/profile.dart';
+import 'package:clinic/data/mutations/account.dart';
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/services/toast.dart';
 import 'package:clinic/widgets/auth/sign_out_list_tile.dart';
