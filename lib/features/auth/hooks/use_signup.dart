@@ -1,6 +1,5 @@
 import 'package:clinic/constants/regex.dart';
 import 'package:clinic/services/toast.dart';
-import 'package:clinic/widgets/modals/modal_dialog_busy.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
@@ -33,17 +32,17 @@ UseSignUp useSignUp(BuildContext context, WidgetRef ref) {
   final mutation =
       useMutation<Account, DioException, Map<String, dynamic>, dynamic>(
     'auth/signup',
-    (data) async => ref.read(authServiceProvider).signUp(data),
+    ref.read(authServiceProvider).signUp,
     refreshQueries: ['account'],
     onMutate: (_) async {
-      await showBusyDialog(context);
+      // await showBusyDialog(context);
     },
     onData: (data, _) {
-      if (context.canPop()) context.pop();
+      // if (context.canPop()) context.pop();
       context.go('/verification');
     },
     onError: (e, _) {
-      if (context.canPop()) context.pop();
+      // if (context.canPop()) context.pop();
       context.replace('/signup');
       toast(context.tr('signup_error'));
     },

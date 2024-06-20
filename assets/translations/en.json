@@ -41,8 +41,10 @@
     "empty": "@:empty",
     "invalid": "@:invalid",
     "placeholder": "@:placeholder",
-    "criteria": "@:criteria"
+    "criteria": "@:password_field.criteria"
   },
+  "new_password_error": "Cannot change password, please try again later.",
+  "new_password_succeed": "Password changed successfully!",
   "confirmation_password_field": {
     "label": "Confirmation Password",
     "invalid": "Confirmation password must be same as password."

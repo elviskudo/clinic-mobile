@@ -13,7 +13,7 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final account = useAccountQuery(context, ref);
-    final clinic = useCurrentClinic(ref);
+    final clinic = useCurrentClinicQuery(ref);
 
     return Scaffold(
       appBar: PreferredSize(

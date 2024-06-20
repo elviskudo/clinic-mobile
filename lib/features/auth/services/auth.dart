@@ -9,7 +9,7 @@ import '../models/account.dart';
 part 'auth.g.dart';
 
 class AuthService {
-  FutureOr<Account?> getAccount() async {
+  Future<Account?> getAccount() async {
     final res = await dio.get('/api/users/profiles');
     return res.statusCode == 200
         ? Account.fromJson(res.data['data']['user'])
@@ -21,7 +21,7 @@ class AuthService {
         response: Response(requestOptions: RequestOptions(), statusCode: 400),
       );
 
-  FutureOr<Account> signIn(Map<String, dynamic> data) async {
+  Future<Account> signIn(Map<String, dynamic> data) async {
     final res = await dio.post('/api/auth/signin', data: data);
 
     final token = res.data['data']['token'] ?? '';
@@ -33,7 +33,7 @@ class AuthService {
     return Account.fromJson(res.data['data']['user']);
   }
 
-  FutureOr<Account> signUp(Map<String, dynamic> data) async {
+  Future<Account> signUp(Map<String, dynamic> data) async {
     final res = await dio.post('/api/auth/register', data: data);
 
     final token = res.data['data']['token'] ?? '';
@@ -44,13 +44,13 @@ class AuthService {
         .copyWith(isVerified: false);
   }
 
-  FutureOr<void> signOut() async {
+  Future<void> signOut() async {
     await dio
         .post('/api/users/logout')
         .then((_) => KV.tokens.delete('access_token'));
   }
 
-  FutureOr<Account> verifyAccount(Map<String, dynamic> data) async {
+  Future<Account> verifyAccount(Map<String, dynamic> data) async {
     final res = await dio.post('/api/auth/verification', data: data);
 
     final token = res.data['data']['token'] ?? '';
@@ -65,7 +65,7 @@ class AuthService {
     await dio.post('/api/auth/resend');
   }
 
-  FutureOr<String> updateAvatar(XFile file) async {
+  Future<String> updateAvatar(XFile file) async {
     final data = FormData.fromMap({
       'profil_image': await MultipartFile.fromFile(
         file.path,
@@ -77,7 +77,7 @@ class AuthService {
     return res.data['data']['user']['image'];
   }
 
-  FutureOr<void> updatePassword(Map<String, dynamic> data) async {
+  Future<void> updatePassword(Map<String, dynamic> data) async {
     await dio
         .post('/api/users/change-password', data: data)
         .then((_) => KV.tokens.delete('access_token'));

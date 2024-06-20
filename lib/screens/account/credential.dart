@@ -1,6 +1,6 @@
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/features/auth/auth.dart';
-import 'package:clinic/widgets/ui/submit_button.dart';
+import 'package:clinic/widgets/submit_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,17 +13,10 @@ class AccountCredentialScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('account'))),
-      body: SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            Text(
-              context.tr('account'),
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            gapH24,
-            const _ChangePasswordForm()
-          ],
+      body: const SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(Sizes.p24),
+          child: _ChangePasswordForm(),
         ),
       ),
     );
@@ -42,6 +35,7 @@ class _ChangePasswordForm extends HookConsumerWidget {
       key: form.formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
             enabled: false,

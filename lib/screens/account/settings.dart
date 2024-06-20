@@ -29,7 +29,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
                 child: PhotoProfile(
                   onPressed: () {},
                   url: account.data?.imageUrl,
-                  size: 40,
+                  size: 48,
                 ),
               ),
               GestureDetector(

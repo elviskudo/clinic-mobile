@@ -3,7 +3,7 @@ import 'package:clinic/features/auth/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class HistoriesScreen extends ConsumerWidget {
+class HistoriesScreen extends HookConsumerWidget {
   const HistoriesScreen({super.key});
 
   @override

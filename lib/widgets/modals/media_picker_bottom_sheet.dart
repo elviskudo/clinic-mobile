@@ -61,8 +61,9 @@ class MediaPickerBottomSheet extends HookWidget {
         sourcePath: file.path,
         compressFormat: ImageCompressFormat.png,
         compressQuality: 80,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
         uiSettings: [
-          AndroidUiSettings(cropStyle: cropStyle),
+          AndroidUiSettings(cropStyle: cropStyle, showCropGrid: false),
           IOSUiSettings(cropStyle: cropStyle),
         ],
       ).then(

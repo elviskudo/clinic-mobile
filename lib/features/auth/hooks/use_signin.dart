@@ -1,6 +1,5 @@
 import 'package:clinic/constants/regex.dart';
 import 'package:clinic/services/toast.dart';
-import 'package:clinic/widgets/modals/modal_dialog_busy.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
@@ -25,17 +24,17 @@ UseSignInForm useSignIn(BuildContext context, WidgetRef ref) {
   final mutation =
       useMutation<Account, DioException, Map<String, dynamic>, dynamic>(
     'auth/signin',
-    (data) async => ref.read(authServiceProvider).signIn(data),
+    ref.read(authServiceProvider).signIn,
     refreshQueries: ['account'],
-    onMutate: (_) async {
-      await showBusyDialog(context);
-    },
+    // onMutate: (_) async {
+    //   await showBusyDialog(context);
+    // },
     onData: (data, _) {
-      if (context.canPop()) context.pop();
+      // if (context.canPop()) context.pop();
       context.go('/');
     },
     onError: (e, _) {
-      if (context.canPop()) context.pop();
+      // if (context.canPop()) context.pop();
       context.replace('/signin');
       toast(context.tr('signin_error'));
     },

@@ -41,8 +41,10 @@
     "empty": "@:empty",
     "invalid": "@:invalid",
     "placeholder": "@:placeholder",
-    "criteria": "@:criteria"
+    "criteria": "@:password_field.criteria"
   },
+  "new_password_error": "Gagal mengganti kata sandi, coba lagi setelah ini.",
+  "new_password_succeed": "Berhasil mengganti kata sandi!",
   "confirmation_password_field": {
     "label": "Konfirmasi Password",
     "invalid": "Konfirmasi password harus sama dengan password."

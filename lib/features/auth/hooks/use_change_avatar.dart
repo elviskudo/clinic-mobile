@@ -17,7 +17,7 @@ typedef ChangeAvatarMutationFn = Mutation<String, DioException, XFile>;
 void Function() useChangeAvatar(BuildContext context, WidgetRef ref) {
   final mutation = useMutation<String, DioException, XFile, dynamic>(
     'account/update_avatar',
-    (data) async => ref.read(authServiceProvider).updateAvatar(data),
+    ref.read(authServiceProvider).updateAvatar,
     refreshQueries: ['account'],
     onMutate: (_) async {
       await showBusyDialog(context);
@@ -33,13 +33,18 @@ void Function() useChangeAvatar(BuildContext context, WidgetRef ref) {
   );
 
   void handleSubmit() async {
-    final pickedFile = await showMediaPickerBottomSheet(context, ref);
+    final pickedFile = await showMediaPickerBottomSheet(
+      context,
+      ref,
+    ).catchError(
+      (_) {
+        toast(context.tr('pick_media_error'));
+        return null;
+      },
+    );
 
     if (pickedFile != null) {
       await mutation.mutate(pickedFile);
-    } else {
-      // ignore: use_build_context_synchronously
-      toast(context.tr('pick_media_error'));
     }
   }
 

@@ -1,5 +1,4 @@
 import 'package:clinic/services/toast.dart';
-import 'package:clinic/widgets/modals/modal_dialog_busy.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
@@ -22,13 +21,13 @@ UseVerification useVerification(BuildContext context, WidgetRef ref) {
   final mutation =
       useMutation<Account, DioException, Map<String, dynamic>, dynamic>(
     'auth/verification',
-    (data) async => ref.read(authServiceProvider).verifyAccount(data),
+    ref.read(authServiceProvider).verifyAccount,
     refreshQueries: ['account'],
     onMutate: (_) async {
-      await showBusyDialog(context);
+      // await showBusyDialog(context);
     },
     onData: (data, _) async {
-      if (context.canPop()) context.pop();
+      // if (context.canPop()) context.pop();
       await showModalBottomSheet(
         context: context,
         isDismissible: false,
@@ -37,7 +36,7 @@ UseVerification useVerification(BuildContext context, WidgetRef ref) {
       );
     },
     onError: (e, recoveryData) {
-      if (context.canPop()) context.pop();
+      // if (context.canPop()) context.pop();
       context.replace('/verification');
       toast(context.tr('verification_error'));
     },

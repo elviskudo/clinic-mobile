@@ -1,6 +1,6 @@
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/features/auth/auth.dart';
-import 'package:clinic/widgets/ui/scaffold_busy.dart';
+import 'package:clinic/widgets/scaffold_busy.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

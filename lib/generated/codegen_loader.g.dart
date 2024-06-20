@@ -57,8 +57,10 @@ class CodegenLoader extends AssetLoader{
     "empty": "@:empty",
     "invalid": "@:invalid",
     "placeholder": "@:placeholder",
-    "criteria": "@:criteria"
+    "criteria": "@:password_field.criteria"
   },
+  "new_password_error": "Cannot change password, please try again later.",
+  "new_password_succeed": "Password changed successfully!",
   "confirmation_password_field": {
     "label": "Confirmation Password",
     "invalid": "Confirmation password must be same as password."
@@ -157,8 +159,10 @@ static const Map<String,dynamic> id = {
     "empty": "@:empty",
     "invalid": "@:invalid",
     "placeholder": "@:placeholder",
-    "criteria": "@:criteria"
+    "criteria": "@:password_field.criteria"
   },
+  "new_password_error": "Gagal mengganti kata sandi, coba lagi setelah ini.",
+  "new_password_succeed": "Berhasil mengganti kata sandi!",
   "confirmation_password_field": {
     "label": "Konfirmasi Password",
     "invalid": "Konfirmasi password harus sama dengan password."

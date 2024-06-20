@@ -1,6 +1,5 @@
 import 'package:clinic/constants/regex.dart';
 import 'package:clinic/services/toast.dart';
-import 'package:clinic/widgets/modals/modal_dialog_busy.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
@@ -26,17 +25,19 @@ UseChangePassword useChangePassword(BuildContext context, WidgetRef ref) {
   final mutation =
       useMutation<void, DioException, Map<String, dynamic>, dynamic>(
     'account/update_password',
-    (data) async => ref.read(authServiceProvider).updatePassword(data),
+    ref.read(authServiceProvider).updatePassword,
     refreshQueries: ['account'],
     onMutate: (_) async {
-      await showBusyDialog(context);
+      // await showBusyDialog(context);
     },
     onData: (data, _) {
-      if (context.canPop()) context.pop();
+      // if (context.canPop()) context.pop();
+      toast(context.tr('new_password_succeed'));
       context.go('/onboarding');
     },
     onError: (e, _) {
-      if (context.canPop()) context.pop();
+      // if (context.canPop()) context.pop();
+      toast(context.tr('new_password_error'));
       context.replace('/account/credential');
       toast(context.tr('change_password_error'));
     },

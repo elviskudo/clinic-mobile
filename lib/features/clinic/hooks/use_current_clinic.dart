@@ -6,10 +6,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/clinic.dart';
 import '../services/clinic.dart';
 
-Query<Clinic, DioException> useCurrentClinic(WidgetRef ref) {
+Query<Clinic, DioException> useCurrentClinicQuery(WidgetRef ref) {
   final query = useQuery<Clinic, DioException>(
     'clinic/current_active',
-    () async => ref.read(clinicServiceProvider).getCurrentClinic(),
+    ref.read(clinicServiceProvider).getCurrentClinic,
     refreshConfig: RefreshConfig.withConstantDefaults(
       refreshOnMount: true,
       staleDuration: const Duration(minutes: 30),

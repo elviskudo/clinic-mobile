@@ -14,7 +14,7 @@ Mutation<void, DioException, dynamic> useSignOut(
 ) {
   final mutation = useMutation<void, DioException, void, dynamic>(
     'auth/signout',
-    (_) async => ref.read(authServiceProvider).signOut(),
+    (_) async => await ref.read(authServiceProvider).signOut(),
     refreshQueries: ['account'],
     onMutate: (_) async {
       await showBusyDialog(context);

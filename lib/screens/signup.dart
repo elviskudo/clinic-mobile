@@ -1,7 +1,7 @@
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/features/auth/auth.dart';
 import 'package:clinic/widgets/layouts/auth.dart';
-import 'package:clinic/widgets/ui/submit_button.dart';
+import 'package:clinic/widgets/submit_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

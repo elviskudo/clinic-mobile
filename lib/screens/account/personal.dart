@@ -5,8 +5,11 @@ class AccountPersonalDataScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Personal Data'),
+      ),
+      body: const SafeArea(
         child: Center(
           child: Text('Personal Data'),
         ),
