@@ -17,6 +17,7 @@ class CodegenLoader extends AssetLoader{
   static const Map<String,dynamic> en = {
   "offline": "Looks like you are offline, enable mobile data or wi-fi to reconnect.",
   "or": "Or",
+  "patient": "Patient",
   "page_onboarding_title": "Welcome to Clinic!",
   "page_onboarding_desc": "Experience the ease of scheduling medical checkup anytime, anywhere with our app.",
   "signin": "Sign in",
@@ -51,11 +52,24 @@ class CodegenLoader extends AssetLoader{
     "placeholder": "Enter your password (min 8 characters).",
     "criteria": "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character"
   },
+  "new_password_field": {
+    "label": "Password Baru",
+    "empty": "@:empty",
+    "invalid": "@:invalid",
+    "placeholder": "@:placeholder",
+    "criteria": "@:password_field.criteria"
+  },
+  "new_password_error": "Cannot change password, please try again later.",
+  "new_password_succeed": "Password changed successfully!",
   "confirmation_password_field": {
     "label": "Confirmation Password",
     "invalid": "Confirmation password must be same as password."
   },
   "verification": "Verification",
+  "verification_success": {
+    "title": "Verification Successful",
+    "microcopy": "Currently redirecting to the main page, you can check your health after this!"
+  },
   "verification_error": "Account verification failed. Try to resend otp code.",
   "verification_invalid": "Please enter a valid verification code.",
   "verify": "Verify",
@@ -66,13 +80,24 @@ class CodegenLoader extends AssetLoader{
   "page_verification_title": "@:verification",
   "page_verification_desc": "Enter the verification code (OTP) that we have sent to your email.",
   "page_verification_resend_notice": "Did'nt recieve the verification code yet?",
-  "home": "Beranda",
-  "home_greet_title": "Greetings {name}!",
+  "home": "Home",
+  "home_greet_title": "Welcome to {clinic} {name}!",
   "home_greet_desc": "How's Your health?",
-  "histories": "Riwayat",
-  "account": "Akun",
+  "histories": "Histories",
+  "account": "Account",
   "account_settings": "Account Settings",
   "account_settings_link": "View your account settings",
+  "page_account_settings": {
+    "change_profile_photo": "Change photo profile",
+    "change_profile_photo_error": "Cannot change photo profile, please try again later.",
+    "change_profile_photo_succeed": "Photo profile changed!"
+  },
+  "media_picker_list_tile": {
+    "gallery": "Pick image from gallery",
+    "camera": "Capture image with camera"
+  },
+  "change_password_error": "Cannot change password. Please try again.",
+  "pick_media_error": "Cannot update photo profile, there is problem with your file.\nPlease pick the right image file!",
   "dark_mode": "Dark Mode",
   "language": "Language",
   "histories_tile_title": "@:histories",
@@ -83,11 +108,18 @@ class CodegenLoader extends AssetLoader{
   "feedback_tile_title": "Send Feedback",
   "feedback_tile_subtitle": "Give some feedback",
   "term_tile_title": "Term and Conditions",
-  "policy_tile_title": "Privacy Policy"
+  "policy_tile_title": "Privacy Policy",
+  "profile_tile_title": "Personal Data",
+  "profile_tile_subtitle": "Biodata, Addresses, Diagnose",
+  "account_tile_title": "@:account",
+  "account_tile_subtitle": "Change password",
+  "notifications_tile_title": "Notifications",
+  "signout_tile_title": "Sign out"
 };
 static const Map<String,dynamic> id = {
   "offline": "Sepertinya kamu sedang offline, nyalakan mobile data atau wi-fi untuk tersambung kembali.",
   "or": "Atau",
+  "patient": "Pasien",
   "page_onboarding_title": "Selamat Datang di Clinic!",
   "page_onboarding_desc": "Rasakan kemudahan membuat jadwal pemeriksaan medis kapan saja, dimana saja dengan aplikasi kami.",
   "signin": "Masuk",
@@ -122,11 +154,24 @@ static const Map<String,dynamic> id = {
     "placeholder": "Masukkan password kamu (minimal 8 karakter).",
     "criteria": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus"
   },
+  "new_password_field": {
+    "label": "Password Baru",
+    "empty": "@:empty",
+    "invalid": "@:invalid",
+    "placeholder": "@:placeholder",
+    "criteria": "@:password_field.criteria"
+  },
+  "new_password_error": "Gagal mengganti kata sandi, coba lagi setelah ini.",
+  "new_password_succeed": "Berhasil mengganti kata sandi!",
   "confirmation_password_field": {
     "label": "Konfirmasi Password",
     "invalid": "Konfirmasi password harus sama dengan password."
   },
   "verification": "Verifikasi",
+  "verification_success": {
+    "title": "Verifikasi Berhasil",
+    "microcopy": "Sedang mengarahkan ke halaman utama, kamu bisa mulai cek kesehatan setelah ini!"
+  },
   "verification_error": "Verifikasi akun gagal. Coba untuk kirim ulang kode otp.",
   "verification_invalid": "Masukkan kode verifikasi yang valid.",
   "verify": "Verifikasi",
@@ -138,12 +183,23 @@ static const Map<String,dynamic> id = {
   "page_verification_desc": "Masukkan kode verifikasi (OTP) yang sudah kami kirimkan ke email kamu.",
   "page_verification_resend_notice": "Belum menerima kode verifikasi?",
   "home": "Beranda",
-  "home_greet_title": "Selamat datang {name}!",
+  "home_greet_title": "Selamat datang di {clinic} {name}!",
   "home_greet_desc": "Bagaimana kondisi kesehatanmu?",
   "histories": "Riwayat",
   "account": "Akun",
   "account_settings": "Pengaturan Akun",
   "account_settings_link": "Cek pengaturan akun kamu",
+  "page_account_settings": {
+    "change_profile_photo": "Ubah foto profile",
+    "change_profile_photo_error": "Tidak bisa mengubah foto profile, coba kembali setelah ini.",
+    "change_profile_photo_succeed": "Foto profile berhasil diganti!"
+  },
+  "change_password_error": "Gagal mengubah password. Silahkan untuk mencoba lagi.",
+  "media_picker_list_tile": {
+    "gallery": "Pilih gambar dari galeri",
+    "camera": "Tangkap gambar dengan kamera"
+  },
+  "pick_media_error": "Gagal update photo profile, terdapat masalah dengan file kamu.\nPastikan kamu memilih file gambar yang sesuai!",
   "language": "Bahasa",
   "dark_mode": "Mode Malam",
   "histories_tile_title": "@:histories",
@@ -154,7 +210,13 @@ static const Map<String,dynamic> id = {
   "feedback_tile_title": "Kirim Masukan",
   "feedback_tile_subtitle": "Beri beberapa masukan",
   "term_tile_title": "Syarat dan Ketentian",
-  "policy_tile_title": "Kebijakan Privasi"
+  "policy_tile_title": "Kebijakan Privasi",
+  "profile_tile_title": "Data Pribadi",
+  "profile_tile_subtitle": "Biodata, Alamat, Diagnosa",
+  "account_tile_title": "@:account",
+  "account_tile_subtitle": "Ubah password",
+  "notifications_tile_title": "Notifikasi",
+  "signout_tile_title": "Keluar"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "id": id};
 }

@@ -50,5 +50,9 @@
     <string>en</string>
     <string>id</string>
   </array>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>App needs access to photo lib for image_picker pkg</string>
+  <key>NSCameraUsageDescription</key>
+  <string>App needs access to camera for image_picker pkg</string>
 </dict>
 </plist>
