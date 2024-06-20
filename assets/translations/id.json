@@ -70,7 +70,9 @@
   "account_settings": "Pengaturan Akun",
   "account_settings_link": "Cek pengaturan akun kamu",
   "page_account_settings": {
-    "change_profile_photo": "Ubah foto profile"
+    "change_profile_photo": "Ubah foto profile",
+    "change_profile_photo_error": "Tidak bisa mengubah foto profile, coba kembali setelah ini.",
+    "change_profile_photo_succeed": "Foto profile berhasil diganti!"
   },
   "change_password_error": "Gagal mengubah password. Silahkan untuk mencoba lagi.",
   "media_picker_list_tile": {

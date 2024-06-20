@@ -1,5 +1,5 @@
 import 'package:clinic/generated/codegen_loader.g.dart';
-import 'package:clinic/widgets/connectivity_widget.dart';
+import 'package:clinic/widgets/network_observer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_connectivity_plus_adapter/fl_query_connectivity_plus_adapter.dart';
@@ -14,11 +14,8 @@ import 'services/kv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await EasyLocalization.ensureInitialized();
-
   await KV.initialize();
-
   await QueryClient.initialize(
     cachePrefix: 'clinic_fl_query',
     connectivity: FlQueryConnectivityPlusAdapter(
@@ -65,7 +62,7 @@ class ClinicApp extends HookConsumerWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      builder: (context, child) => ConnectivityWidget(child: child!),
+      builder: (context, child) => NetworkObserver(child: child!),
     );
   }
 }

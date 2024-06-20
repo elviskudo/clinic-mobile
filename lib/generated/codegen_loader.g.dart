@@ -86,12 +86,15 @@ class CodegenLoader extends AssetLoader{
   "account_settings": "Account Settings",
   "account_settings_link": "View your account settings",
   "page_account_settings": {
-    "change_profile_photo": "Change profile photo"
+    "change_profile_photo": "Change photo profile",
+    "change_profile_photo_error": "Cannot change photo profile, please try again later.",
+    "change_profile_photo_succeed": "Photo profile changed!"
   },
   "media_picker_list_tile": {
     "gallery": "Pick image from gallery",
     "camera": "Capture image with camera"
   },
+  "change_password_error": "Cannot change password. Please try again.",
   "pick_media_error": "Cannot update photo profile, there is problem with your file.\nPlease pick the right image file!",
   "dark_mode": "Dark Mode",
   "language": "Language",
@@ -183,8 +186,11 @@ static const Map<String,dynamic> id = {
   "account_settings": "Pengaturan Akun",
   "account_settings_link": "Cek pengaturan akun kamu",
   "page_account_settings": {
-    "change_profile_photo": "Ubah foto profile"
+    "change_profile_photo": "Ubah foto profile",
+    "change_profile_photo_error": "Tidak bisa mengubah foto profile, coba kembali setelah ini.",
+    "change_profile_photo_succeed": "Foto profile berhasil diganti!"
   },
+  "change_password_error": "Gagal mengubah password. Silahkan untuk mencoba lagi.",
   "media_picker_list_tile": {
     "gallery": "Pilih gambar dari galeri",
     "camera": "Tangkap gambar dengan kamera"

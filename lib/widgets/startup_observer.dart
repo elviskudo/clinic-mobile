@@ -1,20 +1,19 @@
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/data/queries/profile.dart';
-import 'package:clinic/models/profile/profile.dart';
-import 'package:clinic/widgets/scaffold_busy.dart';
+import 'package:clinic/features/auth/auth.dart';
+import 'package:clinic/widgets/ui/scaffold_busy.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class AuthGuard extends HookConsumerWidget {
-  const AuthGuard({super.key});
+class StartupObserver extends HookConsumerWidget {
+  const StartupObserver({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final query = useProfile(
+    final query = useAccountQuery(
       context,
-      ref: ref,
+      ref,
       onData: (profile) {
         if (profile != null) {
           profile.isVerified
@@ -38,7 +37,7 @@ class AuthGuard extends HookConsumerWidget {
 class _AuthGuardError extends StatelessWidget {
   const _AuthGuardError({required this.query});
 
-  final Query<Profile?, dynamic> query;
+  final Query<Account?, dynamic> query;
 
   @override
   Widget build(BuildContext context) {

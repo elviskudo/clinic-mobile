@@ -73,6 +73,7 @@ class MediaPickerBottomSheet extends HookWidget {
       );
     } catch (e) {
       debugPrint(e.toString());
+      // ignore: use_build_context_synchronously
       Navigator.pop<XFile?>(context, null);
     }
   }

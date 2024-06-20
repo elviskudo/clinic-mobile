@@ -12,8 +12,8 @@ import 'screens/onboarding.dart';
 import 'screens/signin.dart';
 import 'screens/signup.dart';
 import 'screens/verification.dart';
-import 'widgets/app_layout.dart';
-import 'widgets/auth/auth_guard.dart';
+import 'widgets/layouts/root.dart';
+import 'widgets/startup_observer.dart';
 
 part 'router.g.dart';
 
@@ -32,7 +32,7 @@ GoRouter router(RouterRef ref) {
       GoRoute(
         path: '/',
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: AuthGuard(),
+          child: StartupObserver(),
         ),
       ),
       GoRoute(
@@ -62,7 +62,7 @@ GoRouter router(RouterRef ref) {
       StatefulShellRoute(
         builder: (context, state, navigationShell) => navigationShell,
         navigatorContainerBuilder: (context, navigationShell, children) {
-          return AppLayout(
+          return RootLayout(
             navigationShell: navigationShell,
             children: children,
           );

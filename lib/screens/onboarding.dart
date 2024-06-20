@@ -1,5 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/widgets/auth/auth_layout.dart';
+import 'package:clinic/widgets/layouts/auth.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

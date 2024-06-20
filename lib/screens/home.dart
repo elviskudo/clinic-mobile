@@ -1,8 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/data/queries/clinic.dart';
-import 'package:clinic/providers/profile.dart';
-import 'package:clinic/widgets/user/photo_profile.dart';
+import 'package:clinic/features/auth/auth.dart';
+import 'package:clinic/features/clinic/clinic.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,8 +12,8 @@ class HomeScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(profileNotifierProvider);
-    final clinic = useCurrentClinic();
+    final account = useAccountQuery(context, ref);
+    final clinic = useCurrentClinic(ref);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -24,7 +23,7 @@ class HomeScreen extends HookConsumerWidget {
           child: AppBar(
             title: Padding(
               padding: const EdgeInsets.only(left: Sizes.p8),
-              child: PhotoProfile(url: profile?.imageUrl),
+              child: PhotoProfile(url: account.data?.imageUrl),
             ),
             actions: const [
               IconButton(
@@ -48,7 +47,7 @@ class HomeScreen extends HookConsumerWidget {
                 context.tr(
                   'home_greet_title',
                   namedArgs: {
-                    'name': profile?.fullName ?? '',
+                    'name': account.data?.fullName ?? '',
                     'clinic': clinic.data?.name ?? '',
                   },
                 ),

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class AppLayout extends StatefulWidget {
-  const AppLayout({
+class RootLayout extends StatefulWidget {
+  const RootLayout({
     super.key,
     required this.navigationShell,
     required this.children,
@@ -14,10 +14,10 @@ class AppLayout extends StatefulWidget {
   final List<Widget> children;
 
   @override
-  State<AppLayout> createState() => _AppLayoutState();
+  State<RootLayout> createState() => _RootLayoutState();
 }
 
-class _AppLayoutState extends State<AppLayout> {
+class _RootLayoutState extends State<RootLayout> {
   late final PageController _controller;
 
   @override
@@ -29,7 +29,7 @@ class _AppLayoutState extends State<AppLayout> {
   }
 
   @override
-  void didUpdateWidget(covariant AppLayout oldWidget) {
+  void didUpdateWidget(covariant RootLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
     final navigationShell = widget.navigationShell;
     final page = _controller.page ?? _controller.initialPage;

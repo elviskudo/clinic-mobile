@@ -6,7 +6,7 @@ part of 'permission.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$mediaPermissionHash() => r'423b9a1213a7ba348f17239cef56a171d34f339e';
+String _$mediaPermissionHash() => r'044307313b922c7194fd3244d514fd76594ca871';
 
 /// See also [MediaPermission].
 @ProviderFor(MediaPermission)

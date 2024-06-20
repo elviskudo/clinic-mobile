@@ -70,7 +70,9 @@
   "account_settings": "Account Settings",
   "account_settings_link": "View your account settings",
   "page_account_settings": {
-    "change_profile_photo": "Change profile photo"
+    "change_profile_photo": "Change photo profile",
+    "change_profile_photo_error": "Cannot change photo profile, please try again later.",
+    "change_profile_photo_succeed": "Photo profile changed!"
   },
   "media_picker_list_tile": {
     "gallery": "Pick image from gallery",

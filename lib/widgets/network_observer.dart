@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class ConnectivityWidget extends HookWidget {
-  const ConnectivityWidget({super.key, required this.child});
+class NetworkObserver extends HookWidget {
+  const NetworkObserver({super.key, required this.child});
 
   final Widget child;
 
@@ -25,13 +25,13 @@ class ConnectivityWidget extends HookWidget {
     }
 
     return network.data == ConnectivityResult.none
-        ? const _OfflinePlaceholder()
+        ? const _OfflineScreen()
         : child;
   }
 }
 
-class _OfflinePlaceholder extends StatelessWidget {
-  const _OfflinePlaceholder();
+class _OfflineScreen extends StatelessWidget {
+  const _OfflineScreen();
 
   @override
   Widget build(BuildContext context) {

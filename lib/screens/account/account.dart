@@ -1,10 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/providers/profile.dart';
+import 'package:clinic/features/auth/auth.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:clinic/widgets/l10n/l10n_setting_list_tile.dart';
-import 'package:clinic/widgets/user/photo_profile.dart';
-import 'package:clinic/widgets/user/role_chip.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,12 +10,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class AccountScreen extends ConsumerWidget {
+class AccountScreen extends HookConsumerWidget {
   const AccountScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(profileNotifierProvider);
+    final account = useAccountQuery(context, ref);
 
     return Scaffold(
       body: ListView(
@@ -26,9 +24,9 @@ class AccountScreen extends ConsumerWidget {
         children: [
           ListTile(
             contentPadding: const EdgeInsets.all(0).copyWith(top: Sizes.p16),
-            leading: PhotoProfile(url: profile?.imageUrl),
+            leading: PhotoProfile(url: account.data?.imageUrl),
             title: AutoSizeText(
-              profile?.fullName ?? '',
+              account.data?.fullName ?? '',
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge!
@@ -38,7 +36,7 @@ class AccountScreen extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
             ),
             subtitle: AutoSizeText(
-              profile?.email ?? '',
+              account.data?.email ?? '',
               style: Theme.of(context)
                   .textTheme
                   .bodySmall!
