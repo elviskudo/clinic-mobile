@@ -23,9 +23,9 @@ UseVerification useVerification(BuildContext context, WidgetRef ref) {
     'auth/verification',
     ref.read(authServiceProvider).verifyAccount,
     refreshQueries: ['account'],
-    onMutate: (_) async {
-      // await showBusyDialog(context);
-    },
+    // onMutate: (_) async {
+    //   await showBusyDialog(context);
+    // },
     onData: (data, _) async {
       // if (context.canPop()) context.pop();
       await showModalBottomSheet(
