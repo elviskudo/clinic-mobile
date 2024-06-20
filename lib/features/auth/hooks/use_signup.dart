@@ -167,7 +167,7 @@ class UseSignUp {
   }
 
   bool get isValid =>
-      formKey.currentState!.validate() && (_phoneError.value ?? '').isEmpty;
+      formKey.currentState!.validate() && (_phoneError.value ?? '').isNotEmpty;
 
   void reset() {
     formKey.currentState!.reset();
