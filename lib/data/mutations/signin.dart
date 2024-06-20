@@ -1,4 +1,4 @@
-import 'package:clinic/models/profile/profile_http_response.dart';
+import 'package:clinic/models/profile/profile.dart';
 import 'package:clinic/services/http.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:clinic/services/toast.dart';
@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
-typedef SignInMutationFn = Mutation<void, DioException, Map<String, dynamic>>;
+typedef SignInMutationFn
+    = Mutation<Profile?, DioException, Map<String, dynamic>>;
 
 SignInMutationProps useSignIn<RecoveryType>(BuildContext context) {
   final key = useMemoized(() => GlobalKey<FormState>());
@@ -21,21 +22,21 @@ SignInMutationProps useSignIn<RecoveryType>(BuildContext context) {
   final passwordObscure = useState(true);
 
   final mutation =
-      useMutation<void, DioException, Map<String, dynamic>, RecoveryType>(
+      useMutation<Profile?, DioException, Map<String, dynamic>, RecoveryType>(
     'auth/signin',
     (reqBody) async {
       final res = await dio.post('/api/auth/signin', data: reqBody);
 
       if (res.statusCode == 201 || res.statusCode == 200) {
-        final result = ProfileHttpResponse.fromJson(res.data).data;
-        final token = result?.token ?? '';
-        final profile = result?.user;
+        final token = res.data['data']['token'] ?? '';
 
-        if (token.isNotEmpty && profile != null) {
+        if (token.isNotEmpty) {
           await KV.tokens.put('access_token', token);
-          return;
+          return Profile.fromJson(res.data['data']['user']);
         }
       }
+
+      return null;
     },
     refreshQueries: ['profile'],
     onData: (data, recoveryData) {
@@ -51,11 +52,12 @@ SignInMutationProps useSignIn<RecoveryType>(BuildContext context) {
   );
 
   return SignInMutationProps(
-      key: key,
-      email: email,
-      password: password,
-      passwordObscure: passwordObscure,
-      mutation: mutation);
+    key: key,
+    email: email,
+    password: password,
+    passwordObscure: passwordObscure,
+    mutation: mutation,
+  );
 }
 
 class SignInMutationProps {

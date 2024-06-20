@@ -13,21 +13,13 @@ class AuthGuard extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = useProfile(
-      ref,
+      context,
+      ref: ref,
       onData: (profile) {
         if (profile != null) {
-          if (profile.isVerified) {
-            context.go('/home');
-          } else {
-            context.go('/verification');
-          }
-        } else {
-          context.go('/onboarding');
-        }
-      },
-      onError: (e) {
-        if (e.response?.statusCode == 400) {
-          context.go('/verification');
+          profile.isVerified
+              ? context.go('/home')
+              : context.go('/verification');
         } else {
           context.go('/onboarding');
         }

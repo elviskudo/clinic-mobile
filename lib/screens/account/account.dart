@@ -3,7 +3,8 @@ import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:clinic/widgets/l10n/l10n_setting_list_tile.dart';
-import 'package:clinic/widgets/photo_profile.dart';
+import 'package:clinic/widgets/user/photo_profile.dart';
+import 'package:clinic/widgets/user/role_chip.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -20,7 +21,7 @@ class AccountScreen extends ConsumerWidget {
 
     return Scaffold(
       body: ListView(
-        padding: const EdgeInsets.all(Sizes.p24),
+        padding: const EdgeInsets.all(Sizes.p24).copyWith(top: 0),
         shrinkWrap: true,
         children: [
           ListTile(
@@ -46,33 +47,23 @@ class AccountScreen extends ConsumerWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            trailing: Chip(
-              label: Text(
-                'Patient',
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-              ),
-              visualDensity: VisualDensity.compact,
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(99),
-                side: BorderSide(color: Theme.of(context).colorScheme.primary),
-              ),
-            ),
+            trailing: const RoleChip(),
             enableFeedback: false,
           ),
-          GestureDetector(
-            onTap: () {
-              context.push('/account/settings');
-            },
-            child: Text(
-              context.tr('account_settings_link'),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w500,
-                    decoration: TextDecoration.underline,
-                  ),
+          Padding(
+            padding: const EdgeInsets.only(left: 60),
+            child: GestureDetector(
+              onTap: () {
+                context.push('/account/settings');
+              },
+              child: Text(
+                context.tr('account_settings_link'),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.underline,
+                    ),
+              ),
             ),
           ),
           const Padding(
@@ -103,21 +94,21 @@ class AccountScreen extends ConsumerWidget {
               );
             },
           ),
-          gapH16,
-          ListTile(
-            dense: true,
-            enabled: false,
-            leading: PhosphorIcon(
-              PhosphorIconsRegular.clockCounterClockwise,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            title: Text(context.tr('histories_tile_title')),
-            subtitle: Text(context.tr('histories_tile_subtitle')),
-            trailing: PhosphorIcon(
-              PhosphorIconsRegular.caretRight,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
+          // gapH16,
+          // ListTile(
+          //   dense: true,
+          //   enabled: false,
+          //   leading: PhosphorIcon(
+          //     PhosphorIconsRegular.clockCounterClockwise,
+          //     color: Theme.of(context).colorScheme.primary,
+          //   ),
+          //   title: Text(context.tr('histories_tile_title')),
+          //   subtitle: Text(context.tr('histories_tile_subtitle')),
+          //   trailing: PhosphorIcon(
+          //     PhosphorIconsRegular.caretRight,
+          //     color: Theme.of(context).hintColor,
+          //   ),
+          // ),
           gapH16,
           const L10nSettingListTile(),
           gapH16,

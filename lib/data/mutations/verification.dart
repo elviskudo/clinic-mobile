@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:clinic/models/profile/profile_http_response.dart';
+import 'package:clinic/models/profile/profile.dart';
 import 'package:clinic/services/http.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:clinic/services/toast.dart';
+import 'package:clinic/widgets/auth/verification_success_bottom_sheet.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
@@ -13,7 +14,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 typedef VerificationMutationFn
-    = Mutation<void, DioException, Map<String, dynamic>>;
+    = Mutation<Profile?, DioException, Map<String, dynamic>>;
 
 VerificationMutationProps useAccountVerification(BuildContext context) {
   final key = useMemoized(() => GlobalKey<FormState>());
@@ -21,7 +22,7 @@ VerificationMutationProps useAccountVerification(BuildContext context) {
   final otp = useTextEditingController.fromValue(TextEditingValue.empty);
 
   final mutation =
-      useMutation<void, DioException, Map<String, dynamic>, dynamic>(
+      useMutation<Profile?, DioException, Map<String, dynamic>, dynamic>(
     'auth/verification',
     (reqBody) async {
       debugPrint('[verification_mutation]: ${reqBody.toString()}');
@@ -30,19 +31,25 @@ VerificationMutationProps useAccountVerification(BuildContext context) {
       debugPrint('[verification_response] ${res.data.toString()}');
 
       if (res.statusCode == 201 || res.statusCode == 200) {
-        final result = ProfileHttpResponse.fromJson(res.data).data;
-        final token = result?.token ?? '';
-        final profile = result?.user;
+        final token = res.data['data']['token'] ?? '';
 
-        if (token.isNotEmpty && profile != null) {
+        if (token.isNotEmpty) {
           await KV.tokens.put('access_token', token);
-          return;
+          return Profile.fromJson(res.data['data']['user']);
         }
       }
+
+      return null;
     },
-    onData: (result, recovery) {
-      context.go('/');
-      // TODO: success notice - showModalBottomSheet
+    onData: (data, recovery) async {
+      if (data?.isVerified ?? false) {
+        await showModalBottomSheet(
+          context: context,
+          isDismissible: false,
+          enableDrag: false,
+          builder: (context) => const VerificationSuccessBottomSheet(),
+        );
+      }
     },
     onError: (e, recoveryData) {
       debugPrint(

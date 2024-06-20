@@ -1,29 +1,25 @@
 import 'package:clinic/models/profile/profile.dart';
-import 'package:clinic/models/profile/profile_http_response.dart';
 import 'package:clinic/providers/profile.dart';
 import 'package:clinic/services/http.dart';
 import 'package:dio/dio.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 Query<Profile?, DioException> useProfile(
-  WidgetRef ref, {
+  BuildContext context, {
+  required WidgetRef ref,
   void Function(Profile?)? onData,
-  void Function(DioException)? onError,
 }) {
   return useQuery<Profile?, DioException>(
     'profile',
     () async {
       final res = await dio.get('/api/users/profiles');
-
-      if (res.statusCode == 200) {
-        final result = ProfileHttpResponse.fromJson(res.data);
-        final profile = result.data?.user;
-        return profile;
-      }
-
-      return null;
+      return res.statusCode == 200
+          ? Profile.fromJson(res.data['data']['user'])
+          : null;
     },
     refreshConfig: RefreshConfig.withConstantDefaults(
       refreshOnMount: true,
@@ -37,9 +33,15 @@ Query<Profile?, DioException> useProfile(
     onData: (profile) {
       ref.read(profileNotifierProvider.notifier).set(profile);
       if (onData != null) {
-        return onData(profile);
+        onData(profile);
       }
     },
-    onError: onError,
+    onError: (e) {
+      debugPrint(
+        '[profile_query] ${e.response!.statusCode} - ${e.response!.data.toString()}',
+      );
+      ref.read(profileNotifierProvider.notifier).set(null);
+      context.go('/onboarding');
+    },
   );
 }

@@ -1,6 +1,7 @@
 {
   "offline": "Sepertinya kamu sedang offline, nyalakan mobile data atau wi-fi untuk tersambung kembali.",
   "or": "Atau",
+  "patient": "Pasien",
   "page_onboarding_title": "Selamat Datang di Clinic!",
   "page_onboarding_desc": "Rasakan kemudahan membuat jadwal pemeriksaan medis kapan saja, dimana saja dengan aplikasi kami.",
   "signin": "Masuk",
@@ -35,11 +36,22 @@
     "placeholder": "Masukkan password kamu (minimal 8 karakter).",
     "criteria": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus"
   },
+  "new_password_field": {
+    "label": "Password Baru",
+    "empty": "@:empty",
+    "invalid": "@:invalid",
+    "placeholder": "@:placeholder",
+    "criteria": "@:criteria"
+  },
   "confirmation_password_field": {
     "label": "Konfirmasi Password",
     "invalid": "Konfirmasi password harus sama dengan password."
   },
   "verification": "Verifikasi",
+  "verification_success": {
+    "title": "Verifikasi Berhasil",
+    "microcopy": "Sedang mengarahkan ke halaman utama, kamu bisa mulai cek kesehatan setelah ini!"
+  },
   "verification_error": "Verifikasi akun gagal. Coba untuk kirim ulang kode otp.",
   "verification_invalid": "Masukkan kode verifikasi yang valid.",
   "verify": "Verifikasi",
@@ -51,12 +63,21 @@
   "page_verification_desc": "Masukkan kode verifikasi (OTP) yang sudah kami kirimkan ke email kamu.",
   "page_verification_resend_notice": "Belum menerima kode verifikasi?",
   "home": "Beranda",
-  "home_greet_title": "Selamat datang {name}!",
+  "home_greet_title": "Selamat datang di {clinic} {name}!",
   "home_greet_desc": "Bagaimana kondisi kesehatanmu?",
   "histories": "Riwayat",
   "account": "Akun",
   "account_settings": "Pengaturan Akun",
   "account_settings_link": "Cek pengaturan akun kamu",
+  "page_account_settings": {
+    "change_profile_photo": "Ubah foto profile"
+  },
+  "change_password_error": "Gagal mengubah password. Silahkan untuk mencoba lagi.",
+  "media_picker_list_tile": {
+    "gallery": "Pilih gambar dari galeri",
+    "camera": "Tangkap gambar dengan kamera"
+  },
+  "pick_media_error": "Gagal update photo profile, terdapat masalah dengan file kamu.\nPastikan kamu memilih file gambar yang sesuai!",
   "language": "Bahasa",
   "dark_mode": "Mode Malam",
   "histories_tile_title": "@:histories",
@@ -67,5 +88,11 @@
   "feedback_tile_title": "Kirim Masukan",
   "feedback_tile_subtitle": "Beri beberapa masukan",
   "term_tile_title": "Syarat dan Ketentian",
-  "policy_tile_title": "Kebijakan Privasi"
+  "policy_tile_title": "Kebijakan Privasi",
+  "profile_tile_title": "Data Pribadi",
+  "profile_tile_subtitle": "Biodata, Alamat, Diagnosa",
+  "account_tile_title": "@:account",
+  "account_tile_subtitle": "Ubah password",
+  "notifications_tile_title": "Notifikasi",
+  "signout_tile_title": "Keluar"
 }

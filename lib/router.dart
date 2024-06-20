@@ -1,9 +1,11 @@
-import 'package:clinic/screens/account_settings.dart';
+import 'package:clinic/screens/account/credential.dart';
+import 'package:clinic/screens/account/personal.dart';
+import 'package:clinic/screens/account/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'screens/account.dart';
+import 'screens/account/account.dart';
 import 'screens/histories.dart';
 import 'screens/home.dart';
 import 'screens/onboarding.dart';
@@ -26,39 +28,33 @@ GoRouter router(RouterRef ref) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
-    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
-        name: 'auth',
         pageBuilder: (context, state) => const NoTransitionPage(
           child: AuthGuard(),
         ),
       ),
       GoRoute(
         path: '/onboarding',
-        name: 'onbarding',
         pageBuilder: (context, state) => const MaterialPage(
           child: OnboardingScreen(),
         ),
       ),
       GoRoute(
         path: '/signin',
-        name: 'signin',
         pageBuilder: (context, state) => const MaterialPage(
           child: SignInScreen(),
         ),
       ),
       GoRoute(
         path: '/signup',
-        name: 'signup',
         pageBuilder: (context, state) => const MaterialPage(
           child: SignUpScreen(),
         ),
       ),
       GoRoute(
         path: '/verification',
-        name: 'verification',
         pageBuilder: (context, state) => const MaterialPage(
           child: VerificationScreen(),
         ),
@@ -77,7 +73,6 @@ GoRouter router(RouterRef ref) {
             routes: [
               GoRoute(
                 path: '/home',
-                name: 'home',
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: HomeScreen(),
                 ),
@@ -89,7 +84,6 @@ GoRouter router(RouterRef ref) {
             routes: [
               GoRoute(
                 path: '/histories',
-                name: 'histories',
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: HistoriesScreen(),
                 ),
@@ -101,23 +95,31 @@ GoRouter router(RouterRef ref) {
             routes: [
               GoRoute(
                 path: '/account',
-                name: 'account',
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: AccountScreen(),
                 ),
-                routes: [
-                  GoRoute(
-                    path: 'settings',
-                    name: 'account_settings',
-                    pageBuilder: (context, state) => const MaterialPage(
-                      child: AccountSettingsScreen(),
-                    ),
-                  ),
-                ],
-              ),
+              )
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/account/settings',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: AccountSettingsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/account/credential',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: AccountCredentialScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/account/personal',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: AccountPersonalDataScreen(),
+        ),
       ),
     ],
   );

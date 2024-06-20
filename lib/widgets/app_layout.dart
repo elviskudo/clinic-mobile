@@ -58,18 +58,22 @@ class _AppLayoutState extends State<AppLayout> {
     final children = widget.children;
 
     return Scaffold(
-      body: PageView.builder(
-        controller: _controller,
-        onPageChanged: (index) {
-          debugPrint('index: $index, current: ${navigationShell.currentIndex}');
+      body: SafeArea(
+        child: PageView.builder(
+          controller: _controller,
+          onPageChanged: (index) {
+            debugPrint(
+              'index: $index, current: ${navigationShell.currentIndex}',
+            );
 
-          // Ignore tap events.
-          if (index == navigationShell.currentIndex) return;
+            // Ignore tap events.
+            if (index == navigationShell.currentIndex) return;
 
-          navigationShell.goBranch(index, initialLocation: false);
-        },
-        itemBuilder: (context, index) => children[index],
-        itemCount: children.length,
+            navigationShell.goBranch(index, initialLocation: false);
+          },
+          itemBuilder: (context, index) => children[index],
+          itemCount: children.length,
+        ),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
