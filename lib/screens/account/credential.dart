@@ -38,6 +38,8 @@ class _ChangePasswordForm extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
+            readOnly: false,
+            enableInteractiveSelection: false,
             enabled: false,
             initialValue: account.data?.email,
             autofocus: false,

@@ -176,7 +176,7 @@ class _RedirectToSignIn extends StatelessWidget {
             TextSpan(
               text: ' ${context.tr("signin")}',
               recognizer: TapGestureRecognizer()
-                ..onTap = () => context.go('/signin'),
+                ..onTap = () => context.push('/signin'),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w500,

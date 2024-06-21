@@ -62,13 +62,7 @@ class _RootLayoutState extends State<RootLayout> {
         child: PageView.builder(
           controller: _controller,
           onPageChanged: (index) {
-            debugPrint(
-              'index: $index, current: ${navigationShell.currentIndex}',
-            );
-
-            // Ignore tap events.
             if (index == navigationShell.currentIndex) return;
-
             navigationShell.goBranch(index, initialLocation: false);
           },
           itemBuilder: (context, index) => children[index],
