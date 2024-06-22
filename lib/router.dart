@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'screens/account/account.dart';
+import 'screens/appointment/appointment.dart';
 import 'screens/histories.dart';
 import 'screens/home.dart';
 import 'screens/onboarding.dart';
@@ -121,6 +122,12 @@ GoRouter router(RouterRef ref) {
           child: AccountPersonalDataScreen(),
         ),
       ),
+      GoRoute(
+        path: '/appointment',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: AppointmentScreen(),
+        ),
+      )
     ],
   );
 }

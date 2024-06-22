@@ -14,6 +14,7 @@ import 'services/kv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await EasyLocalization.ensureInitialized();
   await KV.initialize();
   await QueryClient.initialize(

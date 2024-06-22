@@ -4,6 +4,7 @@ import 'package:clinic/features/auth/auth.dart';
 import 'package:clinic/features/clinic/clinic.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -56,7 +57,7 @@ class HomeScreen extends HookConsumerWidget {
                     .headlineMedium!
                     .copyWith(fontWeight: FontWeight.w600),
                 minFontSize: 18,
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
               gapH8,
@@ -65,12 +66,14 @@ class HomeScreen extends HookConsumerWidget {
           ),
         ],
       ),
-      floatingActionButton: const Padding(
-        padding: EdgeInsets.only(bottom: Sizes.p16),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: Sizes.p16),
         child: FloatingActionButton(
-          onPressed: null,
-          elevation: 4,
-          child: PhosphorIcon(
+          onPressed: () {
+            context.push('/appointment');
+          },
+          elevation: 2,
+          child: const PhosphorIcon(
             PhosphorIconsRegular.calendarPlus,
           ),
         ),

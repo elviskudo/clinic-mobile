@@ -34,9 +34,9 @@ UseSignUp useSignUp(BuildContext context, WidgetRef ref) {
     'auth/signup',
     ref.read(authServiceProvider).signUp,
     refreshQueries: ['account'],
-    onMutate: (_) async {
-      // await showBusyDialog(context);
-    },
+    // onMutate: (_) async {
+    //    await showBusyDialog(context);
+    // },
     onData: (data, _) {
       // if (context.canPop()) context.pop();
       context.go('/verification');
@@ -167,7 +167,7 @@ class UseSignUp {
   }
 
   bool get isValid =>
-      formKey.currentState!.validate() && (_phoneError.value ?? '').isEmpty;
+      formKey.currentState!.validate() && (_phoneError.value ?? '').isNotEmpty;
 
   void reset() {
     formKey.currentState!.reset();
