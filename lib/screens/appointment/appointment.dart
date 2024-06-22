@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'capture.dart';
 import 'code.dart';
 import 'schedule.dart';
+import 'summary.dart';
 import 'symptom.dart';
 
 class AppointmentScreen extends HookWidget {
@@ -12,7 +13,7 @@ class AppointmentScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tab = useTabController(initialLength: 4);
+    final tab = useTabController(initialLength: 5);
 
     return PopScope(
       canPop: false,
@@ -40,6 +41,7 @@ class AppointmentScreen extends HookWidget {
               Tab(text: 'Code'),
               Tab(text: 'Symptom'),
               Tab(text: 'Capture'),
+              Tab(text: 'Summary'),
             ],
           ),
         ),
@@ -47,11 +49,12 @@ class AppointmentScreen extends HookWidget {
           child: TabBarView(
             controller: tab,
             physics: const NeverScrollableScrollPhysics(),
-            children: const [
-              AppointmentScheduleScreen(),
-              AppointmentCodeScreen(),
-              AppointmentSymptomScreen(),
-              AppointmentCaptureScreen(),
+            children: [
+              AppointmentScheduleScreen(tabController: tab),
+              AppointmentCodeScreen(tabController: tab),
+              AppointmentSymptomScreen(tabController: tab),
+              AppointmentCaptureScreen(tabController: tab),
+              const AppointmentSummaryScreen()
             ],
           ),
         ),
