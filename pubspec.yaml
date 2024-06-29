@@ -21,6 +21,7 @@ dependencies:
   flutter_cache_manager: ^3.3.2
   flutter_hooks: ^0.20.5
   flutter_secure_storage: ^9.2.2
+  flutter_native_splash: ^2.4.0
   freezed_annotation: ^2.4.1
   go_router: ^14.1.4
   hive: ^2.2.3
@@ -42,6 +43,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: "^0.13.1"
   build_runner: ^2.4.9
   hive_generator: ^2.0.1
   riverpod_generator: ^2.4.0
@@ -70,3 +72,18 @@ flutter:
     - assets/translations/
     - assets/icons/
     - assets/images/
+    - assets/launcher/
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/launcher/icon.png"
+  adaptive_icon_foreground: "assets/launcher/foreground.png"
+  adaptive_icon_background: "assets/launcher/background.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  remove_alpha_ios: true
+
+flutter_native_splash:
+  color: "#f7fbf2"
+  color_dark: "#101510"
+  image: "assets/launcher/foreground.png"
