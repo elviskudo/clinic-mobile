@@ -4,6 +4,7 @@ import 'package:clinic/widgets/l10n/l10n_dropdown_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:websafe_svg/websafe_svg.dart';
 
 class AuthLayout extends HookWidget {
   const AuthLayout({super.key, required this.body});
@@ -28,12 +29,22 @@ class AuthLayout extends HookWidget {
                 : SystemUiOverlayStyle.dark,
             title: Padding(
               padding: const EdgeInsets.only(left: Sizes.p8),
-              child: Text(
-                'Logo',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge!
-                    .copyWith(fontFamily: 'CalSans'),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  WebsafeSvg.asset(
+                    'assets/icons/clinic_ai.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                  Text(
+                    'Clinic AI',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(fontFamily: 'CalSans'),
+                  ),
+                ],
               ),
             ),
             actions: const [

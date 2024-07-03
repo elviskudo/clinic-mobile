@@ -1,4 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
+import 'package:clinic/features/city/city.dart';
 import 'package:clinic/widgets/submit_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class AccountPersonalDataScreen extends StatelessWidget {
           padding: const EdgeInsets.all(Sizes.p24),
           shrinkWrap: true,
           children: const [
-            Expanded(child: _PersonalDataForm()),
+            _PersonalDataForm(),
           ],
         ),
       ),
@@ -103,15 +104,8 @@ class _PersonalDataForm extends HookConsumerWidget {
             textInputAction: TextInputAction.next,
           ),
           gapH16,
-          DropdownButtonFormField(
-            decoration: const InputDecoration(
-              label: Text('City'),
-              hintText: 'Select city',
-            ),
-            items: const [
-              DropdownMenuItem(value: 0, child: Text('Malang')),
-            ],
-            onChanged: (value) {},
+          CitiesDropdown(
+            onChanged: (_) {},
           ),
           gapH16,
           TextFormField(
