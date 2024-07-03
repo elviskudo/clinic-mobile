@@ -37,11 +37,12 @@ class AuthLayout extends HookWidget {
                     width: 24,
                     height: 24,
                   ),
+                  gapW8,
                   Text(
                     'Clinic AI',
                     style: Theme.of(context)
                         .textTheme
-                        .titleLarge!
+                        .titleMedium!
                         .copyWith(fontFamily: 'CalSans'),
                   ),
                 ],

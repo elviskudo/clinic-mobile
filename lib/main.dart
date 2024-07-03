@@ -33,15 +33,15 @@ void main() async {
         useOnlyLangCode: true,
         assetLoader: const CodegenLoader(),
         child: QueryClientProvider(
-          child: const ClinicApp(),
+          child: const ClinicAI(),
         ),
       ),
     ),
   );
 }
 
-class ClinicApp extends HookConsumerWidget {
-  const ClinicApp({super.key});
+class ClinicAI extends HookConsumerWidget {
+  const ClinicAI({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

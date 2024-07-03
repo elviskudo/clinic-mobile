@@ -8,16 +8,18 @@ part 'city.g.dart';
 class CityService {
   Future<List<City>> getCities(String q) async {
     if (q.isEmpty) return [];
-
-    final res = await dio.get('/api/v2/cities', queryParameters: {
+    final res =
+        await dio.get<Map<String, dynamic>>('/api/v2/cities', queryParameters: {
       'q': q,
       'page': 1,
       'limit': 10,
       'order': 'asc',
     });
-    final data = res.data['data'] as List<Map<String, dynamic>>;
+    final data = List.from(res.data!['data'])
+        .map((json) => City.fromJson(json))
+        .toList();
 
-    return data.map(City.fromJson).toList();
+    return data;
   }
 }
 
