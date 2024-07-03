@@ -25,6 +25,8 @@ mixin _$City {
   String get name => throw _privateConstructorUsedError;
   @JsonKey(name: 'kecamatan')
   String get district => throw _privateConstructorUsedError;
+  @JsonKey(name: 'kelurahan')
+  String get regency => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -39,7 +41,8 @@ abstract class $CityCopyWith<$Res> {
   $Res call(
       {int id,
       @JsonKey(name: 'kabupaten') String name,
-      @JsonKey(name: 'kecamatan') String district});
+      @JsonKey(name: 'kecamatan') String district,
+      @JsonKey(name: 'kelurahan') String regency});
 }
 
 /// @nodoc
@@ -58,6 +61,7 @@ class _$CityCopyWithImpl<$Res, $Val extends City>
     Object? id = null,
     Object? name = null,
     Object? district = null,
+    Object? regency = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -71,6 +75,10 @@ class _$CityCopyWithImpl<$Res, $Val extends City>
       district: null == district
           ? _value.district
           : district // ignore: cast_nullable_to_non_nullable
+              as String,
+      regency: null == regency
+          ? _value.regency
+          : regency // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -86,7 +94,8 @@ abstract class _$$CityImplCopyWith<$Res> implements $CityCopyWith<$Res> {
   $Res call(
       {int id,
       @JsonKey(name: 'kabupaten') String name,
-      @JsonKey(name: 'kecamatan') String district});
+      @JsonKey(name: 'kecamatan') String district,
+      @JsonKey(name: 'kelurahan') String regency});
 }
 
 /// @nodoc
@@ -102,6 +111,7 @@ class __$$CityImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? district = null,
+    Object? regency = null,
   }) {
     return _then(_$CityImpl(
       id: null == id
@@ -116,6 +126,10 @@ class __$$CityImplCopyWithImpl<$Res>
           ? _value.district
           : district // ignore: cast_nullable_to_non_nullable
               as String,
+      regency: null == regency
+          ? _value.regency
+          : regency // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -126,7 +140,8 @@ class _$CityImpl extends _City {
   const _$CityImpl(
       {required this.id,
       @JsonKey(name: 'kabupaten') required this.name,
-      @JsonKey(name: 'kecamatan') required this.district})
+      @JsonKey(name: 'kecamatan') required this.district,
+      @JsonKey(name: 'kelurahan') required this.regency})
       : super._();
 
   factory _$CityImpl.fromJson(Map<String, dynamic> json) =>
@@ -140,10 +155,13 @@ class _$CityImpl extends _City {
   @override
   @JsonKey(name: 'kecamatan')
   final String district;
+  @override
+  @JsonKey(name: 'kelurahan')
+  final String regency;
 
   @override
   String toString() {
-    return 'City(id: $id, name: $name, district: $district)';
+    return 'City(id: $id, name: $name, district: $district, regency: $regency)';
   }
 
   @override
@@ -154,12 +172,13 @@ class _$CityImpl extends _City {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.district, district) ||
-                other.district == district));
+                other.district == district) &&
+            (identical(other.regency, regency) || other.regency == regency));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, district);
+  int get hashCode => Object.hash(runtimeType, id, name, district, regency);
 
   @JsonKey(ignore: true)
   @override
@@ -179,7 +198,8 @@ abstract class _City extends City {
   const factory _City(
       {required final int id,
       @JsonKey(name: 'kabupaten') required final String name,
-      @JsonKey(name: 'kecamatan') required final String district}) = _$CityImpl;
+      @JsonKey(name: 'kecamatan') required final String district,
+      @JsonKey(name: 'kelurahan') required final String regency}) = _$CityImpl;
   const _City._() : super._();
 
   factory _City.fromJson(Map<String, dynamic> json) = _$CityImpl.fromJson;
@@ -192,6 +212,9 @@ abstract class _City extends City {
   @override
   @JsonKey(name: 'kecamatan')
   String get district;
+  @override
+  @JsonKey(name: 'kelurahan')
+  String get regency;
   @override
   @JsonKey(ignore: true)
   _$$CityImplCopyWith<_$CityImpl> get copyWith =>

@@ -1,3 +1,4 @@
+import 'package:clinic/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -23,8 +24,14 @@ class CitiesDropdown extends StatelessWidget {
         final selected = await showModalBottomSheet<City?>(
           context: context,
           showDragHandle: true,
+          isScrollControlled: true,
           builder: (context) {
-            return const _CitiesDropdownBottomSheet();
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: const _CitiesDropdownBottomSheet(),
+            );
           },
         );
         if (selected != null) {
@@ -61,27 +68,30 @@ class _CitiesDropdownBottomSheet extends HookConsumerWidget {
       builder: (context, scrollController) {
         return Column(
           children: [
-            TextFormField(
-              initialValue: filter.value,
-              decoration: InputDecoration(
-                helperText: 'Search cities by name...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    filter.value = '';
-                  },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Sizes.p24),
+              child: TextFormField(
+                autofocus: false,
+                initialValue: filter.value,
+                decoration: const InputDecoration(
+                  hintText: 'Search cities by name...',
+                  prefixIcon: Icon(Icons.search),
                 ),
+                onChanged: (val) async {
+                  filter.value = val;
+                },
               ),
-              onChanged: (val) async {
-                filter.value = val;
-              },
             ),
+            gapH16,
             cities.value.isEmpty
-                ? const Text('No cities found.')
+                ? const ListTile(
+                    title: Center(child: Text('No cities found.')),
+                    contentPadding: EdgeInsets.symmetric(horizontal: Sizes.p24),
+                  )
                 : Expanded(
                     child: ListView.builder(
                       itemCount: cities.value.length,
+                      controller: scrollController,
                       itemBuilder: (ctx, index) => ListTile(
                         title: Text(cities.value[index].text),
                         onTap: () {

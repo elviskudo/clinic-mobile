@@ -11,9 +11,10 @@ class City with _$City {
     required int id,
     @JsonKey(name: 'kabupaten') required String name,
     @JsonKey(name: 'kecamatan') required String district,
+    @JsonKey(name: 'kelurahan') required String regency,
   }) = _City;
 
   factory City.fromJson(Map<String, dynamic> json) => _$CityFromJson(json);
 
-  String get text => '$district - $name';
+  String get text => '$regency - $district, $name';
 }
