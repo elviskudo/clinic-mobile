@@ -1,4 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
+import 'package:clinic/features/biodata/biodata.dart';
 import 'package:clinic/features/city/city.dart';
 import 'package:clinic/widgets/submit_button.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -34,14 +35,30 @@ class _PersonalDataForm extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final citiesCtrl = useTextEditingController();
+    final formKey = useMemoized(() => GlobalKey<FormState>());
+
+    final bio = useBiodataQuery(ref).data;
+
+    final nameCtrl = useTextEditingController(text: bio?.fullName);
+    final placeOfBirthCtrl = useTextEditingController(text: bio?.placeOfBirth);
+    final dateOfBirthCtrl = useTextEditingController(text: bio?.dateOfBirthStr);
+    final citiesCtrl = useTextEditingController(text: bio?.cityStr);
+    final nikCtrl = useTextEditingController(text: bio?.nik);
+    final addressCtrl = useTextEditingController(text: bio?.address);
+    final postalCodeCtrl = useTextEditingController(text: bio?.postalCode);
+
+    final gender = useState<String?>(bio?.gender);
+    final responsibleForCosts = useState<String?>(bio?.responsibleForCosts);
+    final bloodType = useState<String?>(bio?.bloodType);
 
     return Form(
+      key: formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
           TextFormField(
+            controller: nameCtrl,
             decoration: InputDecoration(
               label: Text(context.tr('name_field.label')),
               hintText: context.tr('name_field.placeholder'),
@@ -50,7 +67,11 @@ class _PersonalDataForm extends HookConsumerWidget {
           ),
           gapH16,
           TextFormField(
-            decoration: const InputDecoration(label: Text('Place of birth')),
+            controller: placeOfBirthCtrl,
+            decoration: InputDecoration(
+              label: Text(context.tr('place_of_birth_field.label')),
+              hintText: context.tr('place_of_birth_field.placeholder'),
+            ),
             textInputAction: TextInputAction.next,
           ),
           gapH16,
@@ -61,9 +82,11 @@ class _PersonalDataForm extends HookConsumerWidget {
           //   acceptEmptyDate: false,
           // ),
           TextFormField(
-            decoration: const InputDecoration(
-              label: Text('Date of birth'),
-              suffixIcon: PhosphorIcon(PhosphorIconsDuotone.calendar),
+            controller: dateOfBirthCtrl,
+            decoration: InputDecoration(
+              label: Text(context.tr('date_of_birth_field.label')),
+              hintText: context.tr('date_of_birth_field.placeholder'),
+              suffixIcon: const PhosphorIcon(PhosphorIconsDuotone.calendar),
             ),
             onTap: () async {
               DateTime? pickedDate = await showDatePicker(
@@ -72,7 +95,10 @@ class _PersonalDataForm extends HookConsumerWidget {
                 lastDate: DateTime.now(),
                 locale: context.locale,
               );
-              if (pickedDate == null) return;
+              if (pickedDate != null) {
+                dateOfBirthCtrl.text =
+                    DateFormat('dd/MM/yyyy').format(pickedDate);
+              }
             },
             enableInteractiveSelection: false,
             readOnly: true,
@@ -80,26 +106,34 @@ class _PersonalDataForm extends HookConsumerWidget {
           ),
           gapH16,
           DropdownButtonFormField(
-            decoration: const InputDecoration(
-              label: Text('Gender'),
-              hintText: 'Select gender',
+            value: gender.value,
+            decoration: InputDecoration(
+              label: Text(context.tr('gender_field.label')),
+              hintText: context.tr('gender_field.placeholder'),
             ),
             items: const [
               DropdownMenuItem(value: 'male', child: Text('Male')),
               DropdownMenuItem(value: 'female', child: Text('Female')),
             ],
-            onChanged: (value) {},
+            onChanged: (value) {
+              gender.value = value;
+            },
           ),
           gapH16,
           TextFormField(
-            decoration: const InputDecoration(label: Text('No. ID Card')),
+            controller: nikCtrl,
+            decoration: InputDecoration(
+              label: Text(context.tr('nik_field.label')),
+              hintText: context.tr('nik_field.placeholder'),
+            ),
             textInputAction: TextInputAction.next,
           ),
           gapH16,
           TextFormField(
-            decoration: const InputDecoration(
-              label: Text('Address'),
-              hintText: 'Enter your address...',
+            controller: addressCtrl,
+            decoration: InputDecoration(
+              label: Text(context.tr('address_field.label')),
+              hintText: context.tr('address_field.placeholder'),
             ),
             maxLines: 3,
             maxLength: 150,
@@ -107,25 +141,24 @@ class _PersonalDataForm extends HookConsumerWidget {
             textInputAction: TextInputAction.next,
           ),
           gapH16,
-          CitiesDropdown(
-            controller: citiesCtrl,
-          ),
+          CitiesDropdown(controller: citiesCtrl),
           gapH16,
           TextFormField(
-            decoration: const InputDecoration(
-              label: Text('Postal Code'),
-              hintText: 'Enter your postal code...',
+            controller: postalCodeCtrl,
+            decoration: InputDecoration(
+              label: Text(context.tr('postal_code_field.label')),
+              hintText: context.tr('postal_code_field.placeholder'),
             ),
             keyboardType: TextInputType.streetAddress,
             textInputAction: TextInputAction.next,
           ),
           gapH16,
           DropdownButtonFormField(
-            decoration: const InputDecoration(
-              label: Text('Responsible for Costs'),
-              hintText: 'Pilih salah satu',
+            decoration: InputDecoration(
+              label: Text(context.tr('responsible_costs_field.label')),
+              hintText: context.tr('responsible_costs_field.placeholder'),
             ),
-            value: 'normal',
+            value: responsibleForCosts.value,
             items: const [
               DropdownMenuItem(
                 value: 'bpjs_1',
@@ -144,14 +177,17 @@ class _PersonalDataForm extends HookConsumerWidget {
                 child: Text('Umum'),
               ),
             ],
-            onChanged: (value) {},
+            onChanged: (value) {
+              responsibleForCosts.value = value;
+            },
           ),
           gapH16,
           DropdownButtonFormField(
-            decoration: const InputDecoration(
-              label: Text('Blood Type'),
-              hintText: 'Select blood type...',
+            decoration: InputDecoration(
+              label: Text(context.tr('blood_type_field.label')),
+              hintText: context.tr('blood_type_field.placeholder'),
             ),
+            value: bloodType.value,
             items: const [
               DropdownMenuItem(
                 value: 'a',
@@ -170,12 +206,40 @@ class _PersonalDataForm extends HookConsumerWidget {
                 child: Text('O'),
               ),
             ],
-            onChanged: (value) {},
-            onSaved: (value) {},
+            onChanged: (value) {
+              bloodType.value = value;
+            },
+            onSaved: (_) {
+              debugPrint({
+                'name': nameCtrl.text,
+                'placeOfBirth': placeOfBirthCtrl.text,
+                'dateOfBirth': dateOfBirthCtrl.text,
+                'cities': citiesCtrl.text,
+                'nik': nikCtrl.text,
+                'address': addressCtrl.text,
+                'postalCode': postalCodeCtrl.text,
+                'gender': gender.value,
+                'responsibleForCosts': responsibleForCosts.value,
+                'bloodType': bloodType.value,
+              }.toString());
+            },
           ),
           gapH24,
           SubmitButton(
-            onSubmit: () {},
+            onSubmit: () {
+              debugPrint({
+                'name': nameCtrl.text,
+                'placeOfBirth': placeOfBirthCtrl.text,
+                'dateOfBirth': dateOfBirthCtrl.text,
+                'cities': citiesCtrl.text,
+                'nik': nikCtrl.text,
+                'address': addressCtrl.text,
+                'postalCode': postalCodeCtrl.text,
+                'gender': gender.value,
+                'responsibleForCosts': responsibleForCosts.value,
+                'bloodType': bloodType.value,
+              }.toString());
+            },
             child: const Text('Save'),
           )
         ],

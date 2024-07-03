@@ -1,4 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -15,10 +16,10 @@ class CitiesDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      decoration: const InputDecoration(
-        label: Text('City'),
-        hintText: 'Select city',
-        suffixIcon: Icon(Icons.arrow_drop_down),
+      decoration: InputDecoration(
+        label: Text(context.tr('nik_field.label')),
+        hintText: context.tr('nik_field.placeholder'),
+        suffixIcon: const Icon(Icons.arrow_drop_down),
       ),
       onTap: () async {
         final selected = await showModalBottomSheet<City?>(
