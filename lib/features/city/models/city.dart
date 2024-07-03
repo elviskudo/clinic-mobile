@@ -12,4 +12,6 @@ class City with _$City {
   }) = _City;
 
   factory City.fromJson(Map<String, dynamic> json) => _$CityFromJson(json);
+
+  String get text => '$district - $name';
 }
