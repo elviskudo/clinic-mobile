@@ -5,6 +5,8 @@ part 'city.g.dart';
 
 @freezed
 class City with _$City {
+  const City._();
+
   const factory City({
     required int id,
     @JsonKey(name: 'kabupaten') required String name,
