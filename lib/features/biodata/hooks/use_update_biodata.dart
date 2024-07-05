@@ -47,7 +47,7 @@ UseUpdateBiodata useUpdateBiodata(BuildContext context, WidgetRef ref) {
   final mutation = useMutation<Biodata, DioException, Biodata, dynamic>(
     'biodata/update',
     ref.read(biodataServiceProvider).updateBiodata,
-    refreshQueries: ['biodata', 'account'],
+    refreshQueries: ['biodata', 'biodata/uncomplete', 'account'],
     onData: (data, _) async {
       currentBio.setData(data);
       toast('Biodata updated successfully!');
