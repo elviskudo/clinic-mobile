@@ -114,7 +114,43 @@ class CodegenLoader extends AssetLoader{
   "account_tile_title": "@:account",
   "account_tile_subtitle": "Change password",
   "notifications_tile_title": "Notifications",
-  "signout_tile_title": "Sign out"
+  "signout_tile_title": "Sign out",
+  "place_of_birth_field": {
+    "label": "Place of birth",
+    "placeholder": "Your place of birth"
+  },
+  "date_of_birth_field": {
+    "label": "Date of birth",
+    "placeholder": "Your date of birth"
+  },
+  "gender_field": {
+    "label": "Gender",
+    "placeholder": "Select gender"
+  },
+  "nik_field": {
+    "label": "ID Card Number (NIK)",
+    "placeholder": "Your id card number (NIK)"
+  },
+  "address_field": {
+    "label": "Address",
+    "placeholder": "Your address..."
+  },
+  "postal_code_field": {
+    "label": "Postal Code",
+    "placeholder": "Your postal code"
+  },
+  "responsible_costs_field": {
+    "label": "Responsible for Costs",
+    "placeholder": "Choose responsible cost"
+  },
+  "blood_type_field": {
+    "label": "Blood Type",
+    "placeholder": "Select blood type"
+  },
+  "city_field": {
+    "label": "City",
+    "placeholder": "Select city"
+  }
 };
 static const Map<String,dynamic> id = {
   "offline": "Sepertinya kamu sedang offline, nyalakan mobile data atau wi-fi untuk tersambung kembali.",
@@ -216,7 +252,43 @@ static const Map<String,dynamic> id = {
   "account_tile_title": "@:account",
   "account_tile_subtitle": "Ubah password",
   "notifications_tile_title": "Notifikasi",
-  "signout_tile_title": "Keluar"
+  "signout_tile_title": "Keluar",
+  "place_of_birth_field": {
+    "label": "Tempat lahir",
+    "placeholder": "Tempat lahir kamu"
+  },
+  "date_of_birth_field": {
+    "label": "Date of birth",
+    "placeholder": "Tanggal lahir kamu"
+  },
+  "gender_field": {
+    "label": "Jenis Kelamin",
+    "placeholder": "Pilih jenis kelamin"
+  },
+  "nik_field": {
+    "label": "No. KTP (NIK)",
+    "placeholder": "No. KTP (NIK) kamu"
+  },
+  "address_field": {
+    "label": "Alamat",
+    "placeholder": "Masukkan alamat kamu..."
+  },
+  "postal_code_field": {
+    "label": "Kode Pos",
+    "placeholder": "Kode pos kamu"
+  },
+  "responsible_costs_field": {
+    "label": "Biaya Penanganan",
+    "placeholder": "Pilih biaya penanganan"
+  },
+  "blood_type_field": {
+    "label": "Golongan Darah",
+    "placeholder": "Pilih golongan darah"
+  },
+  "city_field": {
+    "label": "Kota",
+    "placeholder": "Pilih kota"
+  }
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "id": id};
 }

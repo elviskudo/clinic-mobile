@@ -98,5 +98,41 @@
   "account_tile_title": "@:account",
   "account_tile_subtitle": "Change password",
   "notifications_tile_title": "Notifications",
-  "signout_tile_title": "Sign out"
+  "signout_tile_title": "Sign out",
+  "place_of_birth_field": {
+    "label": "Place of birth",
+    "placeholder": "Your place of birth"
+  },
+  "date_of_birth_field": {
+    "label": "Date of birth",
+    "placeholder": "Your date of birth"
+  },
+  "gender_field": {
+    "label": "Gender",
+    "placeholder": "Select gender"
+  },
+  "nik_field": {
+    "label": "ID Card Number (NIK)",
+    "placeholder": "Your id card number (NIK)"
+  },
+  "address_field": {
+    "label": "Address",
+    "placeholder": "Your address..."
+  },
+  "postal_code_field": {
+    "label": "Postal Code",
+    "placeholder": "Your postal code"
+  },
+  "responsible_costs_field": {
+    "label": "Responsible for Costs",
+    "placeholder": "Choose responsible cost"
+  },
+  "blood_type_field": {
+    "label": "Blood Type",
+    "placeholder": "Select blood type"
+  },
+  "city_field": {
+    "label": "City",
+    "placeholder": "Select city"
+  }
 }

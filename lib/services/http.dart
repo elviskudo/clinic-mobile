@@ -26,7 +26,7 @@ class TokenInterceptor extends Interceptor {
 final _opts = BaseOptions(
   baseUrl: 'https://clever-betta-optimis-007f52a5.koyeb.app',
   connectTimeout: const Duration(seconds: 15),
-  receiveTimeout: const Duration(seconds: 5),
+  receiveTimeout: const Duration(seconds: 10),
   receiveDataWhenStatusError: true,
 );
 

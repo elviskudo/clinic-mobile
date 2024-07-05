@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/features/auth/auth.dart';
+import 'package:clinic/features/biodata/biodata.dart';
 import 'package:clinic/features/clinic/clinic.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -40,30 +41,26 @@ class HomeScreen extends HookConsumerWidget {
         padding: const EdgeInsets.all(Sizes.p24),
         shrinkWrap: true,
         children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AutoSizeText(
-                context.tr(
-                  'home_greet_title',
-                  namedArgs: {
-                    'name': account.data?.fullName ?? '',
-                    'clinic': clinic.data?.name ?? '',
-                  },
-                ),
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(fontWeight: FontWeight.w600),
-                minFontSize: 18,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              gapH8,
-              Text(context.tr('home_greet_desc')),
-            ],
+          AutoSizeText(
+            context.tr(
+              'home_greet_title',
+              namedArgs: {
+                'name': account.data?.fullName ?? '',
+                'clinic': clinic.data?.name ?? '',
+              },
+            ),
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium!
+                .copyWith(fontWeight: FontWeight.w600),
+            minFontSize: 16,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
+          gapH8,
+          Text(context.tr('home_greet_desc')),
+          gapH24,
+          const BiodataCompletionCard(),
         ],
       ),
       floatingActionButton: Padding(
