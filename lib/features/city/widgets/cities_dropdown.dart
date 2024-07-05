@@ -8,9 +8,14 @@ import '../models/city.dart';
 import '../services/city.dart';
 
 class CitiesDropdown extends StatelessWidget {
-  const CitiesDropdown({super.key, required this.controller});
+  const CitiesDropdown({
+    super.key,
+    required this.controller,
+    this.onChanged,
+  });
 
   final TextEditingController controller;
+  final void Function(City)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +42,9 @@ class CitiesDropdown extends StatelessWidget {
         );
         if (selected != null) {
           controller.text = selected.text;
+          if (onChanged != null) {
+            onChanged!(selected);
+          }
         }
       },
       autofocus: false,

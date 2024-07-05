@@ -15,7 +15,7 @@ class BiodataService {
     return Biodata.fromJson(res.data!['data']['user']);
   }
 
-  Future<Biodata> updateBiodata(Biodata bio) async {
+  Future<Biodata> updateBiodata(Map<String, dynamic> bio) async {
     final res = await dio.put('/api/users/personal-data');
     return Biodata.fromJson(res.data!['data']['user']);
   }

@@ -8,7 +8,7 @@ import '../services/biodata.dart';
 
 Query<Biodata, DioException> useBiodataQuery(WidgetRef ref) {
   return useQuery<Biodata, DioException>(
-    'user/biodata',
+    'biodata',
     ref.read(biodataServiceProvider).getBiodata,
     jsonConfig: JsonConfig(
       toJson: (bio) => bio.toJson(),

@@ -4,7 +4,6 @@ import 'package:clinic/features/city/city.dart';
 import 'package:clinic/widgets/submit_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -35,30 +34,16 @@ class _PersonalDataForm extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final formKey = useMemoized(() => GlobalKey<FormState>());
-
-    final bio = useBiodataQuery(ref).data;
-
-    final nameCtrl = useTextEditingController(text: bio?.fullName);
-    final placeOfBirthCtrl = useTextEditingController(text: bio?.placeOfBirth);
-    final dateOfBirthCtrl = useTextEditingController(text: bio?.dateOfBirthStr);
-    final citiesCtrl = useTextEditingController(text: bio?.cityStr);
-    final nikCtrl = useTextEditingController(text: bio?.nik);
-    final addressCtrl = useTextEditingController(text: bio?.address);
-    final postalCodeCtrl = useTextEditingController(text: bio?.postalCode);
-
-    final gender = useState<String?>(bio?.gender);
-    final responsibleForCosts = useState<String?>(bio?.responsibleForCosts);
-    final bloodType = useState<String?>(bio?.bloodType);
+    final mutation = useUpdateBiodata(context, ref);
 
     return Form(
-      key: formKey,
+      key: mutation.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
           TextFormField(
-            controller: nameCtrl,
+            controller: mutation.nameCtrl,
             decoration: InputDecoration(
               label: Text(context.tr('name_field.label')),
               hintText: context.tr('name_field.placeholder'),
@@ -67,7 +52,7 @@ class _PersonalDataForm extends HookConsumerWidget {
           ),
           gapH16,
           TextFormField(
-            controller: placeOfBirthCtrl,
+            controller: mutation.placeOfBirthCtrl,
             decoration: InputDecoration(
               label: Text(context.tr('place_of_birth_field.label')),
               hintText: context.tr('place_of_birth_field.placeholder'),
@@ -75,38 +60,21 @@ class _PersonalDataForm extends HookConsumerWidget {
             textInputAction: TextInputAction.next,
           ),
           gapH16,
-          // InputDatePickerFormField(
-          //   fieldLabelText: 'Date of birth',
-          //   firstDate: DateTime(DateTime.now().year - 120),
-          //   lastDate: DateTime.now(),
-          //   acceptEmptyDate: false,
-          // ),
           TextFormField(
-            controller: dateOfBirthCtrl,
+            controller: mutation.dateOfBirthCtrl,
             decoration: InputDecoration(
               label: Text(context.tr('date_of_birth_field.label')),
               hintText: context.tr('date_of_birth_field.placeholder'),
               suffixIcon: const PhosphorIcon(PhosphorIconsDuotone.calendar),
             ),
-            onTap: () async {
-              DateTime? pickedDate = await showDatePicker(
-                context: context,
-                firstDate: DateTime(DateTime.now().year - 120),
-                lastDate: DateTime.now(),
-                locale: context.locale,
-              );
-              if (pickedDate != null) {
-                dateOfBirthCtrl.text =
-                    DateFormat('dd/MM/yyyy').format(pickedDate);
-              }
-            },
+            onTap: mutation.handleDateOfBirthChange,
             enableInteractiveSelection: false,
             readOnly: true,
             textInputAction: TextInputAction.next,
           ),
           gapH16,
           DropdownButtonFormField(
-            value: gender.value,
+            value: mutation.gender,
             decoration: InputDecoration(
               label: Text(context.tr('gender_field.label')),
               hintText: context.tr('gender_field.placeholder'),
@@ -115,13 +83,11 @@ class _PersonalDataForm extends HookConsumerWidget {
               DropdownMenuItem(value: 'male', child: Text('Male')),
               DropdownMenuItem(value: 'female', child: Text('Female')),
             ],
-            onChanged: (value) {
-              gender.value = value;
-            },
+            onChanged: mutation.handleGenderChange,
           ),
           gapH16,
           TextFormField(
-            controller: nikCtrl,
+            controller: mutation.nikCtrl,
             decoration: InputDecoration(
               label: Text(context.tr('nik_field.label')),
               hintText: context.tr('nik_field.placeholder'),
@@ -130,7 +96,7 @@ class _PersonalDataForm extends HookConsumerWidget {
           ),
           gapH16,
           TextFormField(
-            controller: addressCtrl,
+            controller: mutation.addressCtrl,
             decoration: InputDecoration(
               label: Text(context.tr('address_field.label')),
               hintText: context.tr('address_field.placeholder'),
@@ -141,10 +107,13 @@ class _PersonalDataForm extends HookConsumerWidget {
             textInputAction: TextInputAction.next,
           ),
           gapH16,
-          CitiesDropdown(controller: citiesCtrl),
+          CitiesDropdown(
+            controller: mutation.citiesCtrl,
+            onChanged: mutation.handleCityChange,
+          ),
           gapH16,
           TextFormField(
-            controller: postalCodeCtrl,
+            controller: mutation.postalCodeCtrl,
             decoration: InputDecoration(
               label: Text(context.tr('postal_code_field.label')),
               hintText: context.tr('postal_code_field.placeholder'),
@@ -158,7 +127,7 @@ class _PersonalDataForm extends HookConsumerWidget {
               label: Text(context.tr('responsible_costs_field.label')),
               hintText: context.tr('responsible_costs_field.placeholder'),
             ),
-            value: responsibleForCosts.value,
+            value: mutation.responsibleForCosts,
             items: const [
               DropdownMenuItem(
                 value: 'bpjs_1',
@@ -177,9 +146,7 @@ class _PersonalDataForm extends HookConsumerWidget {
                 child: Text('Umum'),
               ),
             ],
-            onChanged: (value) {
-              responsibleForCosts.value = value;
-            },
+            onChanged: mutation.handleResponsibleForCostsChange,
           ),
           gapH16,
           DropdownButtonFormField(
@@ -187,7 +154,7 @@ class _PersonalDataForm extends HookConsumerWidget {
               label: Text(context.tr('blood_type_field.label')),
               hintText: context.tr('blood_type_field.placeholder'),
             ),
-            value: bloodType.value,
+            value: mutation.bloodType,
             items: const [
               DropdownMenuItem(
                 value: 'a',
@@ -206,40 +173,16 @@ class _PersonalDataForm extends HookConsumerWidget {
                 child: Text('O'),
               ),
             ],
-            onChanged: (value) {
-              bloodType.value = value;
-            },
+            onChanged: mutation.handleBloodTypeChange,
             onSaved: (_) {
-              debugPrint({
-                'name': nameCtrl.text,
-                'placeOfBirth': placeOfBirthCtrl.text,
-                'dateOfBirth': dateOfBirthCtrl.text,
-                'cities': citiesCtrl.text,
-                'nik': nikCtrl.text,
-                'address': addressCtrl.text,
-                'postalCode': postalCodeCtrl.text,
-                'gender': gender.value,
-                'responsibleForCosts': responsibleForCosts.value,
-                'bloodType': bloodType.value,
-              }.toString());
+              mutation.handleSubmit();
             },
           ),
           gapH24,
           SubmitButton(
-            onSubmit: () {
-              debugPrint({
-                'name': nameCtrl.text,
-                'placeOfBirth': placeOfBirthCtrl.text,
-                'dateOfBirth': dateOfBirthCtrl.text,
-                'cities': citiesCtrl.text,
-                'nik': nikCtrl.text,
-                'address': addressCtrl.text,
-                'postalCode': postalCodeCtrl.text,
-                'gender': gender.value,
-                'responsibleForCosts': responsibleForCosts.value,
-                'bloodType': bloodType.value,
-              }.toString());
-            },
+            disabled: mutation.isLoading,
+            loading: mutation.isLoading,
+            onSubmit: mutation.handleSubmit,
             child: const Text('Save'),
           )
         ],
