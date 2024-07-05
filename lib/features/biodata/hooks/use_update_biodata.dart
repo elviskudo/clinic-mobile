@@ -17,39 +17,41 @@ typedef UpdateBiodataMutationFn
 UseUpdateBiodata useUpdateBiodata(BuildContext context, WidgetRef ref) {
   final formKey = useMemoized(() => GlobalKey<FormState>());
 
-  final currentBio = useBiodataQuery(ref).data;
+  final currentBio = useBiodataQuery(ref);
 
-  final nameCtrl = useTextEditingController(text: currentBio?.fullName);
+  final nameCtrl = useTextEditingController(text: currentBio.data?.fullName);
   final placeOfBirthCtrl =
-      useTextEditingController(text: currentBio?.placeOfBirth);
+      useTextEditingController(text: currentBio.data?.placeOfBirth);
   final dateOfBirthCtrl =
-      useTextEditingController(text: currentBio?.dateOfBirthStr);
-  final citiesCtrl = useTextEditingController(text: currentBio?.cityStr);
-  final nikCtrl = useTextEditingController(text: currentBio?.nik);
-  final addressCtrl = useTextEditingController(text: currentBio?.address);
-  final postalCodeCtrl = useTextEditingController(text: currentBio?.postalCode);
+      useTextEditingController(text: currentBio.data?.dateOfBirthStr);
+  final citiesCtrl = useTextEditingController(text: currentBio.data?.cityStr);
+  final nikCtrl = useTextEditingController(text: currentBio.data?.nik);
+  final addressCtrl = useTextEditingController(text: currentBio.data?.address);
+  final postalCodeCtrl =
+      useTextEditingController(text: currentBio.data?.postalCode);
 
-  final gender = useState<String?>(currentBio?.gender);
+  final gender = useState<String?>(currentBio.data?.gender);
   final responsibleForCosts =
-      useState<String?>(currentBio?.responsibleForCosts);
-  final bloodType = useState<String?>(currentBio?.bloodType);
+      useState<String?>(currentBio.data?.responsibleForCosts);
+  final bloodType = useState<String?>(currentBio.data?.bloodType);
 
-  final currentSelectedCity = useState<City?>(currentBio?.city);
+  final currentSelectedCity = useState<City?>(currentBio.data?.city);
 
   final mutation =
       useMutation<Biodata, DioException, Map<String, dynamic>, dynamic>(
     'biodata/update',
-    // ref.read(biodataServiceProvider).updateBiodata,
-    (json) async {
-      debugPrint(json.toString());
-      return const Biodata();
-    },
+    ref.read(biodataServiceProvider).updateBiodata,
+    // (json) async {
+    //   debugPrint(json.toString());
+    //   return const Biodata();
+    // },
     refreshQueries: ['biodata'],
     onMutate: (_) async {
       await showBusyDialog(context);
     },
-    onData: (data, _) {
+    onData: (data, _) async {
       if (context.canPop()) context.pop();
+      currentBio.setData(data);
       toast('Biodata updated successfully!');
     },
     onError: (e, _) {
@@ -60,7 +62,7 @@ UseUpdateBiodata useUpdateBiodata(BuildContext context, WidgetRef ref) {
 
   return UseUpdateBiodata(
     context: context,
-    initialValue: currentBio,
+    initialValue: currentBio.data,
     formKey: formKey,
     nameCtrl: nameCtrl,
     placeOfBirthCtrl: placeOfBirthCtrl,
@@ -133,9 +135,8 @@ class UseUpdateBiodata {
     }
   }
 
-  Biodata get current =>
-      _initialValue ??
-      Biodata(
+  Biodata get current => Biodata(
+        id: _initialValue?.id,
         fullName: nameCtrl.text,
         placeOfBirth: placeOfBirthCtrl.text,
         dateOfBirth: DateFormat('dd/MM/yyyy').parse(dateOfBirthCtrl.text),
@@ -196,7 +197,7 @@ class UseUpdateBiodata {
           FilledButton(
             onPressed: () async {
               Navigator.pop(context);
-              await _mutation.mutate(current.toJson());
+              await _mutation.mutate(current.toJson().remove('id'));
               reset();
             },
             child: const Text('Continue'),
