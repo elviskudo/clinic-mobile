@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/features/auth/auth.dart';
 import 'package:clinic/features/biodata/biodata.dart';
-import 'package:clinic/features/biodata/widgets/biodata_completion_card.dart';
 import 'package:clinic/services/kv.dart';
 import 'package:clinic/widgets/l10n/l10n_setting_list_tile.dart';
 import 'package:easy_localization/easy_localization.dart';
