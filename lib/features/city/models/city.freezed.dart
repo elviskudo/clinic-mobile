@@ -136,13 +136,12 @@ class __$$CityImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$CityImpl extends _City {
+class _$CityImpl implements _City {
   const _$CityImpl(
       {required this.id,
       @JsonKey(name: 'kabupaten') required this.name,
       @JsonKey(name: 'kecamatan') required this.district,
-      @JsonKey(name: 'kelurahan') required this.regency})
-      : super._();
+      @JsonKey(name: 'kelurahan') required this.regency});
 
   factory _$CityImpl.fromJson(Map<String, dynamic> json) =>
       _$$CityImplFromJson(json);
@@ -194,13 +193,12 @@ class _$CityImpl extends _City {
   }
 }
 
-abstract class _City extends City {
+abstract class _City implements City {
   const factory _City(
       {required final int id,
       @JsonKey(name: 'kabupaten') required final String name,
       @JsonKey(name: 'kecamatan') required final String district,
       @JsonKey(name: 'kelurahan') required final String regency}) = _$CityImpl;
-  const _City._() : super._();
 
   factory _City.fromJson(Map<String, dynamic> json) = _$CityImpl.fromJson;
 

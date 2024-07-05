@@ -17,7 +17,7 @@ _$BiodataImpl _$$BiodataImplFromJson(Map<String, dynamic> json) =>
       gender: json['gender'] as String?,
       nik: json['no_identity'] as String?,
       address: json['address'] as String?,
-      postalCode: json['area_code'] as String?,
+      postalCode: (json['area_code'] as num?)?.toInt(),
       responsibleForCosts: json['responsible_for_costs'] as String?,
       bloodType: json['blood_type'] as String?,
       city: json['city'] == null

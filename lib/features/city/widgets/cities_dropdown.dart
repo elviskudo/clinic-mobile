@@ -41,7 +41,8 @@ class CitiesDropdown extends StatelessWidget {
           },
         );
         if (selected != null) {
-          controller.text = selected.text;
+          controller.text =
+              '${selected.regency} - ${selected.district}, ${selected.name}';
           if (onChanged != null) {
             onChanged!(selected);
           }
@@ -101,12 +102,17 @@ class _CitiesDropdownBottomSheet extends HookConsumerWidget {
                     child: ListView.builder(
                       itemCount: cities.value.length,
                       controller: scrollController,
-                      itemBuilder: (ctx, index) => ListTile(
-                        title: Text(cities.value[index].text),
-                        onTap: () {
-                          Navigator.pop(context, cities.value[index]);
-                        },
-                      ),
+                      itemBuilder: (ctx, index) {
+                        final city = cities.value[index];
+                        return ListTile(
+                          title: Text(
+                            '${city.regency} - ${city.district}, ${city.name}',
+                          ),
+                          onTap: () {
+                            Navigator.pop(context, city);
+                          },
+                        );
+                      },
                     ),
                   ),
           ],

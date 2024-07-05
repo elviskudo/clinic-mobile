@@ -10,9 +10,5 @@ Query<Biodata, DioException> useBiodataQuery(WidgetRef ref) {
   return useQuery<Biodata, DioException>(
     'biodata',
     ref.read(biodataServiceProvider).getBiodata,
-    jsonConfig: JsonConfig(
-      toJson: (bio) => bio.toJson(),
-      fromJson: Biodata.fromJson,
-    ),
   );
 }

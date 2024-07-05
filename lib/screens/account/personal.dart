@@ -7,24 +7,58 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class AccountPersonalDataScreen extends StatelessWidget {
+class AccountPersonalDataScreen extends HookConsumerWidget {
   const AccountPersonalDataScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Personal Data'),
-      ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(Sizes.p24),
-          shrinkWrap: true,
-          children: const [
-            _PersonalDataForm(),
-          ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentBio = useBiodataQuery(ref);
+
+    if (currentBio.hasError) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(Sizes.p24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                PhosphorIcon(
+                  PhosphorIconsDuotone.xCircle,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 32,
+                ),
+                gapH16,
+                Text(
+                  currentBio.error?.message ?? 'Something went wrong...',
+                  textAlign: TextAlign.center,
+                ),
+                gapH24,
+                OutlinedButton(
+                  onPressed: () async {
+                    await currentBio.refresh();
+                  },
+                  child: const Text('Refresh'),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Personal Data')),
+      body: currentBio.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.all(Sizes.p24),
+                shrinkWrap: true,
+                children: const [
+                  _PersonalDataForm(),
+                ],
+              ),
+            ),
     );
   }
 }

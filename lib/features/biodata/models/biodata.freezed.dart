@@ -32,7 +32,7 @@ mixin _$Biodata {
   String? get nik => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
   @JsonKey(name: 'area_code')
-  String? get postalCode => throw _privateConstructorUsedError;
+  int? get postalCode => throw _privateConstructorUsedError;
   @JsonKey(name: 'responsible_for_costs')
   String? get responsibleForCosts => throw _privateConstructorUsedError;
   @JsonKey(name: 'blood_type')
@@ -57,7 +57,7 @@ abstract class $BiodataCopyWith<$Res> {
       String? gender,
       @JsonKey(name: 'no_identity') String? nik,
       String? address,
-      @JsonKey(name: 'area_code') String? postalCode,
+      @JsonKey(name: 'area_code') int? postalCode,
       @JsonKey(name: 'responsible_for_costs') String? responsibleForCosts,
       @JsonKey(name: 'blood_type') String? bloodType,
       City? city});
@@ -122,7 +122,7 @@ class _$BiodataCopyWithImpl<$Res, $Val extends Biodata>
       postalCode: freezed == postalCode
           ? _value.postalCode
           : postalCode // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       responsibleForCosts: freezed == responsibleForCosts
           ? _value.responsibleForCosts
           : responsibleForCosts // ignore: cast_nullable_to_non_nullable
@@ -166,7 +166,7 @@ abstract class _$$BiodataImplCopyWith<$Res> implements $BiodataCopyWith<$Res> {
       String? gender,
       @JsonKey(name: 'no_identity') String? nik,
       String? address,
-      @JsonKey(name: 'area_code') String? postalCode,
+      @JsonKey(name: 'area_code') int? postalCode,
       @JsonKey(name: 'responsible_for_costs') String? responsibleForCosts,
       @JsonKey(name: 'blood_type') String? bloodType,
       City? city});
@@ -230,7 +230,7 @@ class __$$BiodataImplCopyWithImpl<$Res>
       postalCode: freezed == postalCode
           ? _value.postalCode
           : postalCode // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       responsibleForCosts: freezed == responsibleForCosts
           ? _value.responsibleForCosts
           : responsibleForCosts // ignore: cast_nullable_to_non_nullable
@@ -249,7 +249,7 @@ class __$$BiodataImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$BiodataImpl extends _Biodata {
+class _$BiodataImpl implements _Biodata {
   const _$BiodataImpl(
       {this.id,
       @JsonKey(name: 'fullname') this.fullName,
@@ -261,8 +261,7 @@ class _$BiodataImpl extends _Biodata {
       @JsonKey(name: 'area_code') this.postalCode,
       @JsonKey(name: 'responsible_for_costs') this.responsibleForCosts,
       @JsonKey(name: 'blood_type') this.bloodType,
-      this.city})
-      : super._();
+      this.city});
 
   factory _$BiodataImpl.fromJson(Map<String, dynamic> json) =>
       _$$BiodataImplFromJson(json);
@@ -287,7 +286,7 @@ class _$BiodataImpl extends _Biodata {
   final String? address;
   @override
   @JsonKey(name: 'area_code')
-  final String? postalCode;
+  final int? postalCode;
   @override
   @JsonKey(name: 'responsible_for_costs')
   final String? responsibleForCosts;
@@ -356,7 +355,7 @@ class _$BiodataImpl extends _Biodata {
   }
 }
 
-abstract class _Biodata extends Biodata {
+abstract class _Biodata implements Biodata {
   const factory _Biodata(
       {final int? id,
       @JsonKey(name: 'fullname') final String? fullName,
@@ -365,11 +364,10 @@ abstract class _Biodata extends Biodata {
       final String? gender,
       @JsonKey(name: 'no_identity') final String? nik,
       final String? address,
-      @JsonKey(name: 'area_code') final String? postalCode,
+      @JsonKey(name: 'area_code') final int? postalCode,
       @JsonKey(name: 'responsible_for_costs') final String? responsibleForCosts,
       @JsonKey(name: 'blood_type') final String? bloodType,
       final City? city}) = _$BiodataImpl;
-  const _Biodata._() : super._();
 
   factory _Biodata.fromJson(Map<String, dynamic> json) = _$BiodataImpl.fromJson;
 
@@ -393,7 +391,7 @@ abstract class _Biodata extends Biodata {
   String? get address;
   @override
   @JsonKey(name: 'area_code')
-  String? get postalCode;
+  int? get postalCode;
   @override
   @JsonKey(name: 'responsible_for_costs')
   String? get responsibleForCosts;

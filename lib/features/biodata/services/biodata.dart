@@ -15,8 +15,19 @@ class BiodataService {
     return Biodata.fromJson(res.data!['data']['user']);
   }
 
-  Future<Biodata> updateBiodata(Map<String, dynamic> bio) async {
-    final res = await dio.put('/api/users/personal-data');
+  Future<Biodata> updateBiodata(Biodata bio) async {
+    final res = await dio.put('/api/users/personal-data', data: {
+      'fullname': bio.fullName,
+      'birth_place': bio.placeOfBirth,
+      'birth_date': bio.dateOfBirth?.toIso8601String(),
+      'gender': bio.gender,
+      'no_identity': bio.nik,
+      'address': bio.address,
+      'area_code': bio.postalCode,
+      'responsible_for_costs': bio.responsibleForCosts,
+      'blood_type': bio.bloodType,
+      'city_id': bio.city?.id,
+    });
     return Biodata.fromJson(res.data!['data']['user']);
   }
 

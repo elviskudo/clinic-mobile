@@ -1,18 +1,15 @@
 import 'package:clinic/features/biodata/biodata.dart';
 import 'package:clinic/features/city/city.dart';
 import 'package:clinic/services/toast.dart';
-import 'package:clinic/widgets/modals/modal_dialog_busy.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_query/fl_query.dart';
 import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-typedef UpdateBiodataMutationFn
-    = Mutation<Biodata, DioException, Map<String, dynamic>>;
+typedef UpdateBiodataMutationFn = Mutation<Biodata, DioException, Biodata>;
 
 UseUpdateBiodata useUpdateBiodata(BuildContext context, WidgetRef ref) {
   final formKey = useMemoized(() => GlobalKey<FormState>());
@@ -20,42 +17,42 @@ UseUpdateBiodata useUpdateBiodata(BuildContext context, WidgetRef ref) {
   final currentBio = useBiodataQuery(ref);
 
   final nameCtrl = useTextEditingController(text: currentBio.data?.fullName);
-  final placeOfBirthCtrl =
-      useTextEditingController(text: currentBio.data?.placeOfBirth);
-  final dateOfBirthCtrl =
-      useTextEditingController(text: currentBio.data?.dateOfBirthStr);
-  final citiesCtrl = useTextEditingController(text: currentBio.data?.cityStr);
+  final placeOfBirthCtrl = useTextEditingController(
+    text: currentBio.data?.placeOfBirth,
+  );
+  final dateOfBirthCtrl = useTextEditingController(
+    text: currentBio.data?.dateOfBirth != null
+        ? DateFormat('dd/MM/yyyy').format(currentBio.data!.dateOfBirth!)
+        : null,
+  );
+  final citiesCtrl = useTextEditingController(
+    text: currentBio.data?.city != null
+        ? '${currentBio.data!.city!.regency} - ${currentBio.data!.city!.district}, ${currentBio.data!.city!.name}'
+        : null,
+  );
   final nikCtrl = useTextEditingController(text: currentBio.data?.nik);
   final addressCtrl = useTextEditingController(text: currentBio.data?.address);
-  final postalCodeCtrl =
-      useTextEditingController(text: currentBio.data?.postalCode);
+  final postalCodeCtrl = useTextEditingController(
+    text: currentBio.data?.postalCode.toString(),
+  );
 
   final gender = useState<String?>(currentBio.data?.gender);
-  final responsibleForCosts =
-      useState<String?>(currentBio.data?.responsibleForCosts);
+  final responsibleForCosts = useState<String?>(
+    currentBio.data?.responsibleForCosts,
+  );
   final bloodType = useState<String?>(currentBio.data?.bloodType);
 
   final currentSelectedCity = useState<City?>(currentBio.data?.city);
 
-  final mutation =
-      useMutation<Biodata, DioException, Map<String, dynamic>, dynamic>(
+  final mutation = useMutation<Biodata, DioException, Biodata, dynamic>(
     'biodata/update',
     ref.read(biodataServiceProvider).updateBiodata,
-    // (json) async {
-    //   debugPrint(json.toString());
-    //   return const Biodata();
-    // },
-    refreshQueries: ['biodata'],
-    onMutate: (_) async {
-      await showBusyDialog(context);
-    },
+    refreshQueries: ['biodata', 'account'],
     onData: (data, _) async {
-      if (context.canPop()) context.pop();
       currentBio.setData(data);
       toast('Biodata updated successfully!');
     },
     onError: (e, _) {
-      if (context.canPop()) context.pop();
       toast('Cannot update biodata, please try again...');
     },
   );
@@ -95,7 +92,7 @@ class UseUpdateBiodata {
     required ValueNotifier<String?> responsibleForCosts,
     required ValueNotifier<String?> bloodType,
     required ValueNotifier<City?> currentSelectedCity,
-    required Mutation<Biodata, DioException, Map<String, dynamic>> mutation,
+    required UpdateBiodataMutationFn mutation,
   })  : _mutation = mutation,
         _initialValue = initialValue,
         _currentSelectedCity = currentSelectedCity,
@@ -137,13 +134,18 @@ class UseUpdateBiodata {
 
   Biodata get current => Biodata(
         id: _initialValue?.id,
-        fullName: nameCtrl.text,
-        placeOfBirth: placeOfBirthCtrl.text,
-        dateOfBirth: DateFormat('dd/MM/yyyy').parse(dateOfBirthCtrl.text),
+        fullName: nameCtrl.text.isEmpty ? null : nameCtrl.text,
+        placeOfBirth:
+            placeOfBirthCtrl.text.isEmpty ? null : placeOfBirthCtrl.text,
+        dateOfBirth: dateOfBirthCtrl.text.isNotEmpty
+            ? DateFormat('dd/MM/yyyy').parse(dateOfBirthCtrl.text)
+            : _initialValue?.dateOfBirth,
         city: city,
-        nik: nikCtrl.text,
-        address: addressCtrl.text,
-        postalCode: postalCodeCtrl.text,
+        nik: nikCtrl.text.isEmpty ? null : nikCtrl.text,
+        address: addressCtrl.text.isEmpty ? null : addressCtrl.text,
+        postalCode: postalCodeCtrl.text.isEmpty
+            ? null
+            : int.tryParse(postalCodeCtrl.text),
         bloodType: bloodType,
         gender: gender,
         responsibleForCosts: responsibleForCosts,
@@ -177,10 +179,6 @@ class UseUpdateBiodata {
     }
   }
 
-  void reset() {
-    formKey.currentState!.reset();
-  }
-
   void handleSubmit() async {
     await showDialog(
       context: context,
@@ -197,8 +195,7 @@ class UseUpdateBiodata {
           FilledButton(
             onPressed: () async {
               Navigator.pop(context);
-              await _mutation.mutate(current.toJson().remove('id'));
-              reset();
+              await _mutation.mutate(current);
             },
             child: const Text('Continue'),
           ),
