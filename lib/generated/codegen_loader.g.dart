@@ -258,7 +258,7 @@ static const Map<String,dynamic> id = {
     "placeholder": "Tempat lahir kamu"
   },
   "date_of_birth_field": {
-    "label": "Date of birth",
+    "label": "Tanggal Lahir",
     "placeholder": "Tanggal lahir kamu"
   },
   "gender_field": {

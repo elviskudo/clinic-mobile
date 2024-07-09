@@ -1,8 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/features/user/user_repo.dart';
-import 'package:dio/dio.dart';
-import 'package:fl_query_hooks/fl_query_hooks.dart';
+import 'package:clinic/features/user/hooks/use_uncomplete_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -13,14 +11,9 @@ class UncompleteProfileNotice extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profile = useQuery<List<String>, DioException>(
-      'uncomplete_profile',
-      () async => await UserRepository().getUncompleteProfile(context),
-    );
+    final profile = useUncompleteProfile(context);
 
-    if ((profile.data ?? []).isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if ((profile.data ?? []).isEmpty) const SizedBox.shrink();
 
     return Card(
       elevation: 0,

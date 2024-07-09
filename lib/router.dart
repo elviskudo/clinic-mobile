@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'pages/account/credential.dart';
 import 'pages/auth/onboarding.dart';
 import 'pages/auth/signin.dart';
 import 'pages/auth/signup.dart';
@@ -107,6 +108,12 @@ GoRouter router(RouterRef ref) {
         path: '/account/settings',
         pageBuilder: (context, state) => const MaterialPage(
           child: AccountSettingsPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/account/credential',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: AccountCredentialPage(),
         ),
       ),
     ],

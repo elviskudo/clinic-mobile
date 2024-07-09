@@ -1,10 +1,8 @@
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/features/auth/auth_dto.dart';
-import 'package:clinic/features/auth/auth_repo.dart';
+import 'package:clinic/features/auth/hooks/use_credential.dart';
 import 'package:clinic/widgets/scaffold_busy.dart';
-import 'package:dio/dio.dart';
 import 'package:fl_query/fl_query.dart';
-import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -14,14 +12,10 @@ class RootLayout extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final query = useQuery<AuthDTO?, DioException>(
-      'auth_cred',
-      () async => await AuthRepository().getCredential(),
+    final query = useCredential(
+      context,
       onData: (cred) {
         context.go(cred == null ? '/onboarding' : '/home');
-      },
-      onError: (e) {
-        debugPrint('$e');
       },
     );
 

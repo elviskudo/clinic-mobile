@@ -1,12 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/features/user/user_dto.dart';
-import 'package:clinic/features/user/user_repo.dart';
+import 'package:clinic/features/user/hooks/use_profile.dart';
 import 'package:clinic/widgets/cards/uncomplete_profile_notice.dart';
 import 'package:clinic/widgets/dashboard_header.dart';
-import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -17,10 +14,7 @@ class HomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profile = useQuery<Profile, DioException>(
-      'profile',
-      () async => await UserRepository().getProfile(),
-    );
+    final profile = useProfile();
 
     return Scaffold(
       appBar: const DashboardHeader(),

@@ -7,7 +7,6 @@ import 'user_dto.dart';
 
 class UserRepository {
   Future<Profile> getProfile() async {
-    await Future.delayed(const Duration(seconds: 5));
     return const Profile(fullName: 'John Doe');
   }
 

@@ -5,22 +5,31 @@ import 'package:form_validator/form_validator.dart';
 class EmailInput extends StatelessWidget {
   const EmailInput({
     super.key,
-    required this.controller,
+    this.controller,
     this.textInputAction = TextInputAction.done,
     this.autofocus = false,
+    this.readOnly = false,
+    this.initialValue,
     this.enabled = true,
   });
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
+
   final TextInputAction textInputAction;
+
+  final String? initialValue;
+
   final bool autofocus;
   final bool enabled;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       autofocus: autofocus,
       enabled: enabled,
+      readOnly: readOnly,
+      initialValue: initialValue,
       controller: controller,
       decoration: InputDecoration(
         labelText: 'Email',

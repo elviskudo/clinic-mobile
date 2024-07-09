@@ -1,18 +1,15 @@
 import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/features/auth/auth_dto.dart';
-import 'package:clinic/features/auth/auth_repo.dart';
+import 'package:clinic/features/auth/hooks/use_credential.dart';
 import 'package:clinic/features/auth/hooks/use_signout.dart';
-import 'package:clinic/features/user/user_dto.dart';
-import 'package:clinic/features/user/user_repo.dart';
+import 'package:clinic/features/user/hooks/use_profile.dart';
 import 'package:clinic/services/toast.dart';
 import 'package:clinic/widgets/modals/media_picker_bottom_sheet.dart';
 import 'package:clinic/widgets/photo_profile.dart';
 import 'package:clinic/widgets/role_chip.dart';
 import 'package:clinic/widgets/submit_button.dart';
-import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -22,14 +19,8 @@ class AccountSettingsPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cred = useQuery<AuthDTO?, DioException>(
-      'auth_cred',
-      () async => await AuthRepository().getCredential(),
-    );
-    final profile = useQuery<Profile, DioException>(
-      'profile',
-      () async => await UserRepository().getProfile(),
-    );
+    final cred = useCredential(context);
+    final profile = useProfile();
     final signout = useSignout(context);
 
     return Scaffold(
@@ -121,7 +112,7 @@ class AccountSettingsPage extends HookConsumerWidget {
             onTap: profile.isLoading || cred.isLoading
                 ? null
                 : () {
-                    // context.push('/account/credential');
+                    context.push('/account/credential');
                   },
             leading: PhosphorIcon(
               PhosphorIconsRegular.key,
