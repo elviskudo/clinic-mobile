@@ -29,7 +29,7 @@ void main() async {
         supportedLocales: const [Locale('en'), Locale('id')],
         path: 'assets/translations',
         useOnlyLangCode: true,
-        fallbackLocale: const Locale('en'),
+        fallbackLocale: const Locale('id'),
         assetLoader: const CodegenLoader(),
         child: QueryClientProvider(
           child: const ClinicAI(),

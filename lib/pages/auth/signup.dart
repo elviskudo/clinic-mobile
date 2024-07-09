@@ -1,4 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
+import 'package:clinic/widgets/forms/auth/signup_form.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class SignupPage extends StatelessWidget {
                   ),
             ),
             gapH24,
+            const SignupForm(),
             gapH32,
             const _RedirectToSignIn()
           ],

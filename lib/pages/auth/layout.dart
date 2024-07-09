@@ -1,6 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
 import 'package:clinic/services/theme.dart';
-import 'package:clinic/widgets/l10n/l10n_dropdown_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -27,26 +26,29 @@ class AuthLayout extends HookWidget {
             systemOverlayStyle: isDarkMode
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
-            title: Row(
-              children: [
-                Image.asset(
-                  'assets/launcher/foreground.png',
-                  filterQuality: FilterQuality.high,
-                  height: 48,
-                ),
-                Text(
-                  'Clinic AI',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(fontWeight: FontWeight.w600),
-                ),
-              ],
+            title: Padding(
+              padding: const EdgeInsets.only(left: Sizes.p8),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/launcher/foreground.png',
+                    filterQuality: FilterQuality.high,
+                    height: 48,
+                  ),
+                  Text(
+                    'Clinic AI',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
             ),
-            actions: const [
-              IntrinsicWidth(child: L10nDropdownButton()),
-              gapW24,
-            ],
+            // actions: const [
+            //   IntrinsicWidth(child: L10nDropdownButton()),
+            //   gapW24,
+            // ],
           ),
         ),
       ),

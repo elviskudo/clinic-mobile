@@ -3,12 +3,12 @@ import 'package:mocktail/mocktail.dart';
 import 'user_dto.dart';
 
 class UserRepository {
-  Future<Profile> getProfile() {
-    throw Exception('Method not implemented!');
+  Future<Profile> getProfile() async {
+    return const Profile(fullName: 'John Doe', phoneNumber: '');
   }
 
-  Future<Profile> updateProfile(Map<String, dynamic> json) {
-    throw Exception('Method not implemented!');
+  Future<Profile> updateProfile(Map<String, dynamic> json) async {
+    return const Profile(fullName: 'John Doe', phoneNumber: '');
   }
 }
 

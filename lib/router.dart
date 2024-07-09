@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'pages/auth/onboarding.dart';
 import 'pages/auth/signin.dart';
 import 'pages/auth/signup.dart';
+import 'pages/auth/verification.dart';
 import 'pages/dashboard/account.dart';
 import 'pages/dashboard/histories.dart';
 import 'pages/dashboard/home.dart';
@@ -49,6 +50,12 @@ GoRouter router(RouterRef ref) {
         path: '/signup',
         pageBuilder: (context, state) => const MaterialPage(
           child: SignupPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/verification',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: VerificationPage(),
         ),
       ),
       StatefulShellRoute(

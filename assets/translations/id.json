@@ -32,7 +32,7 @@
   },
   "password_field": {
     "empty": "Silahkan masukkan password kamu.",
-    "invalid": "Password harus sedikitnya 8 karakter atau lebih & pastikan sesuai dengan kriteria.",
+    "invalid": "Password harus memiliki sedikitnya 1 huruf kecil, huruf besar, angka, dan karakter khusus.",
     "placeholder": "Masukkan password kamu (minimal 8 karakter).",
     "criteria": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus"
   },

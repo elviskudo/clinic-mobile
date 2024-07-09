@@ -1,4 +1,5 @@
 import 'package:clinic/constants/sizes.dart';
+import 'package:clinic/widgets/forms/auth/signin_form.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class SigninPage extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             gapH24,
+            const SigninForm(),
             gapH32,
             const _RedirectToSignUp()
           ],

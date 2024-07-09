@@ -48,7 +48,7 @@ class CodegenLoader extends AssetLoader{
   },
   "password_field": {
     "empty": "Please enter your password.",
-    "invalid": "Password must be at least 8 characters or more & make sure to match the criteria.",
+    "invalid": "Password must contains at least 1 lowercase, uppercase, number, and special character",
     "placeholder": "Enter your password (min 8 characters).",
     "criteria": "• Should contain at least one upper case\n• Should contain at least one lower case\n• Should contain at least one digit\n• Should contain at least one special character"
   },
@@ -186,7 +186,7 @@ static const Map<String,dynamic> id = {
   },
   "password_field": {
     "empty": "Silahkan masukkan password kamu.",
-    "invalid": "Password harus sedikitnya 8 karakter atau lebih & pastikan sesuai dengan kriteria.",
+    "invalid": "Password harus memiliki sedikitnya 1 huruf kecil, huruf besar, angka, dan karakter khusus.",
     "placeholder": "Masukkan password kamu (minimal 8 karakter).",
     "criteria": "• Perlu setidaknya satu huruf besar\n• Perlu setidaknya satu huruf kecil\n• Perlu setidaknya satu angka\n• Perlu setidaknya satu karakter khusus"
   },

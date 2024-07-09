@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:clinic/services/kv.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:flutter/foundation.dart';
 
 import 'auth_dto.dart';
 
@@ -13,7 +13,8 @@ class AuthRepository {
   }
 
   Future<AuthDTO> signIn(Map<String, dynamic> json) async {
-    await KV.tokens.put('access_token', 'supersecrettoken');
+    debugPrint(json.toString());
+    // await KV.tokens.put('access_token', 'supersecrettoken');
     return const AuthDTO(
       id: '123',
       email: 'john@email.com',
@@ -22,17 +23,23 @@ class AuthRepository {
   }
 
   Future<AuthDTO> signUp(Map<String, dynamic> json) async {
-    await KV.tokens.put('access_token', 'supersecrettoken');
+    debugPrint(json.toString());
+    // await KV.tokens.put('access_token', 'supersecrettoken');
     return const AuthDTO(id: '123', email: 'john@email.com');
   }
 
   Future<AuthDTO> emailVerification(String code) async {
-    await KV.tokens.put('access_token', 'supersecrettoken');
+    // await KV.tokens.put('access_token', 'supersecrettoken');
+    debugPrint(code);
     return const AuthDTO(
       id: '123',
       email: 'john@email.com',
       isVerified: true,
     );
+  }
+
+  Future<void> resendEmailVerificationCode() async {
+    return;
   }
 
   Future<void> signOut() async {
@@ -43,5 +50,3 @@ class AuthRepository {
     await KV.tokens.delete('access_token');
   }
 }
-
-class MockAuthRepository extends Mock implements AuthRepository {}
