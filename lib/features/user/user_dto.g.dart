@@ -18,7 +18,7 @@ Map<String, dynamic> _$$RoleImplToJson(_$RoleImpl instance) =>
 _$ProfileImpl _$$ProfileImplFromJson(Map<String, dynamic> json) =>
     _$ProfileImpl(
       fullName: json['fullname'] as String,
-      phoneNumber: json['phone_number'] as String,
+      phoneNumber: json['phone_number'] as String?,
       avatar: json['profile_image'] as String?,
       nik: json['no_identity'] as String?,
       dateOfBirth: json['birth_date'] == null

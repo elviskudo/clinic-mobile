@@ -6,6 +6,7 @@ import 'package:fl_query_connectivity_plus_adapter/fl_query_connectivity_plus_ad
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import 'router.dart';
 import 'services/kv.dart';
@@ -51,17 +52,32 @@ class ClinicAI extends HookConsumerWidget {
       isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
     );
 
-    return MaterialApp.router(
-      title: 'Clinic',
-      debugShowCheckedModeBanner: false,
-      routerConfig: router,
-      theme: MaterialTheme(Theme.of(context).textTheme).light(),
-      darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      builder: (context, child) => NetworkObserver(child: child!),
+    return SkeletonizerConfig(
+      data: SkeletonizerConfigData(
+        effect: ShimmerEffect(
+          baseColor: isDarkMode
+              ? MaterialTheme(Theme.of(context).textTheme)
+                  .dark()
+                  .colorScheme
+                  .outlineVariant
+              : MaterialTheme(Theme.of(context).textTheme)
+                  .light()
+                  .colorScheme
+                  .outlineVariant,
+        ),
+      ),
+      child: MaterialApp.router(
+        title: 'Clinic',
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+        theme: MaterialTheme(Theme.of(context).textTheme).light(),
+        darkTheme: MaterialTheme(Theme.of(context).textTheme).dark(),
+        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        builder: (context, child) => NetworkObserver(child: child!),
+      ),
     );
   }
 }

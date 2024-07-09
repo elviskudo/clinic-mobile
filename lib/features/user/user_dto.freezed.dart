@@ -155,7 +155,7 @@ mixin _$Profile {
   @JsonKey(name: 'fullname')
   String get fullName => throw _privateConstructorUsedError;
   @JsonKey(name: 'phone_number')
-  String get phoneNumber => throw _privateConstructorUsedError;
+  String? get phoneNumber => throw _privateConstructorUsedError;
   @JsonKey(name: 'profile_image')
   String? get avatar => throw _privateConstructorUsedError;
   @JsonKey(name: 'no_identity')
@@ -187,7 +187,7 @@ abstract class $ProfileCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'fullname') String fullName,
-      @JsonKey(name: 'phone_number') String phoneNumber,
+      @JsonKey(name: 'phone_number') String? phoneNumber,
       @JsonKey(name: 'profile_image') String? avatar,
       @JsonKey(name: 'no_identity') String? nik,
       @JsonKey(name: 'birth_date') DateTime? dateOfBirth,
@@ -215,7 +215,7 @@ class _$ProfileCopyWithImpl<$Res, $Val extends Profile>
   @override
   $Res call({
     Object? fullName = null,
-    Object? phoneNumber = null,
+    Object? phoneNumber = freezed,
     Object? avatar = freezed,
     Object? nik = freezed,
     Object? dateOfBirth = freezed,
@@ -233,10 +233,10 @@ class _$ProfileCopyWithImpl<$Res, $Val extends Profile>
           ? _value.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
               as String,
-      phoneNumber: null == phoneNumber
+      phoneNumber: freezed == phoneNumber
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       avatar: freezed == avatar
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
@@ -294,7 +294,7 @@ abstract class _$$ProfileImplCopyWith<$Res> implements $ProfileCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'fullname') String fullName,
-      @JsonKey(name: 'phone_number') String phoneNumber,
+      @JsonKey(name: 'phone_number') String? phoneNumber,
       @JsonKey(name: 'profile_image') String? avatar,
       @JsonKey(name: 'no_identity') String? nik,
       @JsonKey(name: 'birth_date') DateTime? dateOfBirth,
@@ -320,7 +320,7 @@ class __$$ProfileImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? fullName = null,
-    Object? phoneNumber = null,
+    Object? phoneNumber = freezed,
     Object? avatar = freezed,
     Object? nik = freezed,
     Object? dateOfBirth = freezed,
@@ -338,10 +338,10 @@ class __$$ProfileImplCopyWithImpl<$Res>
           ? _value.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
               as String,
-      phoneNumber: null == phoneNumber
+      phoneNumber: freezed == phoneNumber
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       avatar: freezed == avatar
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
@@ -395,7 +395,7 @@ class __$$ProfileImplCopyWithImpl<$Res>
 class _$ProfileImpl implements _Profile {
   const _$ProfileImpl(
       {@JsonKey(name: 'fullname') required this.fullName,
-      @JsonKey(name: 'phone_number') required this.phoneNumber,
+      @JsonKey(name: 'phone_number') this.phoneNumber,
       @JsonKey(name: 'profile_image') this.avatar,
       @JsonKey(name: 'no_identity') this.nik,
       @JsonKey(name: 'birth_date') this.dateOfBirth,
@@ -416,7 +416,7 @@ class _$ProfileImpl implements _Profile {
   final String fullName;
   @override
   @JsonKey(name: 'phone_number')
-  final String phoneNumber;
+  final String? phoneNumber;
   @override
   @JsonKey(name: 'profile_image')
   final String? avatar;
@@ -516,7 +516,7 @@ class _$ProfileImpl implements _Profile {
 abstract class _Profile implements Profile {
   const factory _Profile(
       {@JsonKey(name: 'fullname') required final String fullName,
-      @JsonKey(name: 'phone_number') required final String phoneNumber,
+      @JsonKey(name: 'phone_number') final String? phoneNumber,
       @JsonKey(name: 'profile_image') final String? avatar,
       @JsonKey(name: 'no_identity') final String? nik,
       @JsonKey(name: 'birth_date') final DateTime? dateOfBirth,
@@ -536,7 +536,7 @@ abstract class _Profile implements Profile {
   String get fullName;
   @override
   @JsonKey(name: 'phone_number')
-  String get phoneNumber;
+  String? get phoneNumber;
   @override
   @JsonKey(name: 'profile_image')
   String? get avatar;

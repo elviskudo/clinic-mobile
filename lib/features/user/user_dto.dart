@@ -16,7 +16,7 @@ class Role with _$Role {
 class Profile with _$Profile {
   const factory Profile({
     @JsonKey(name: 'fullname') required String fullName,
-    @JsonKey(name: 'phone_number') required String phoneNumber,
+    @JsonKey(name: 'phone_number') String? phoneNumber,
     @JsonKey(name: 'profile_image') String? avatar,
     @JsonKey(name: 'no_identity') String? nik,
     @JsonKey(name: 'birth_date') DateTime? dateOfBirth,
