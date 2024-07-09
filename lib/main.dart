@@ -7,10 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'constants/theme.dart';
-import 'hooks/use_dark_mode.dart';
 import 'router.dart';
 import 'services/kv.dart';
+import 'services/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +19,7 @@ void main() async {
   await QueryClient.initialize(
     cachePrefix: 'clinic_fl_query',
     connectivity: FlQueryConnectivityPlusAdapter(
-      pollingDuration: const Duration(seconds: 10),
+      pollingDuration: const Duration(seconds: 5),
     ),
   );
 
@@ -29,8 +28,8 @@ void main() async {
       child: EasyLocalization(
         supportedLocales: const [Locale('en'), Locale('id')],
         path: 'assets/translations',
-        fallbackLocale: const Locale('en'),
         useOnlyLangCode: true,
+        fallbackLocale: const Locale('en'),
         assetLoader: const CodegenLoader(),
         child: QueryClientProvider(
           child: const ClinicAI(),
@@ -46,12 +45,11 @@ class ClinicAI extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = useDarkMode().state;
+    final router = ref.watch(routerProvider);
 
     SystemChrome.setSystemUIOverlayStyle(
       isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
     );
-
-    final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: 'Clinic',

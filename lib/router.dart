@@ -1,27 +1,24 @@
-import 'package:clinic/screens/account/credential.dart';
-import 'package:clinic/screens/account/personal.dart';
-import 'package:clinic/screens/account/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'screens/account/account.dart';
-import 'screens/appointment/appointment.dart';
-import 'screens/histories.dart';
-import 'screens/home.dart';
-import 'screens/onboarding.dart';
-import 'screens/signin.dart';
-import 'screens/signup.dart';
-import 'screens/verification.dart';
-import 'widgets/layouts/root.dart';
-import 'widgets/startup_observer.dart';
+import 'pages/auth/onboarding.dart';
+import 'pages/auth/signin.dart';
+import 'pages/auth/signup.dart';
+import 'pages/dashboard/account.dart';
+import 'pages/dashboard/histories.dart';
+import 'pages/dashboard/home.dart';
+import 'pages/dashboard/layout.dart';
+import 'pages/root.dart';
 
 part 'router.g.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final _homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
-final _historiesNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
+final _historiesNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'histories',
+);
 final _accountNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'account');
 
 @riverpod
@@ -33,37 +30,31 @@ GoRouter router(RouterRef ref) {
       GoRoute(
         path: '/',
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: StartupObserver(),
+          child: RootLayout(),
         ),
       ),
       GoRoute(
         path: '/onboarding',
         pageBuilder: (context, state) => const MaterialPage(
-          child: OnboardingScreen(),
+          child: OnboardingPage(),
         ),
       ),
       GoRoute(
         path: '/signin',
         pageBuilder: (context, state) => const MaterialPage(
-          child: SignInScreen(),
+          child: SigninPage(),
         ),
       ),
       GoRoute(
         path: '/signup',
         pageBuilder: (context, state) => const MaterialPage(
-          child: SignUpScreen(),
-        ),
-      ),
-      GoRoute(
-        path: '/verification',
-        pageBuilder: (context, state) => const MaterialPage(
-          child: VerificationScreen(),
+          child: SignupPage(),
         ),
       ),
       StatefulShellRoute(
         builder: (context, state, navigationShell) => navigationShell,
         navigatorContainerBuilder: (context, navigationShell, children) {
-          return RootLayout(
+          return DashboardLayout(
             navigationShell: navigationShell,
             children: children,
           );
@@ -75,7 +66,7 @@ GoRouter router(RouterRef ref) {
               GoRoute(
                 path: '/home',
                 pageBuilder: (context, state) => const NoTransitionPage(
-                  child: HomeScreen(),
+                  child: HomePage(),
                 ),
               ),
             ],
@@ -86,7 +77,7 @@ GoRouter router(RouterRef ref) {
               GoRoute(
                 path: '/histories',
                 pageBuilder: (context, state) => const NoTransitionPage(
-                  child: HistoriesScreen(),
+                  child: HistoriesPage(),
                 ),
               ),
             ],
@@ -97,37 +88,13 @@ GoRouter router(RouterRef ref) {
               GoRoute(
                 path: '/account',
                 pageBuilder: (context, state) => const NoTransitionPage(
-                  child: AccountScreen(),
+                  child: AccountPage(),
                 ),
               )
             ],
           ),
         ],
       ),
-      GoRoute(
-        path: '/account/settings',
-        pageBuilder: (context, state) => const MaterialPage(
-          child: AccountSettingsScreen(),
-        ),
-      ),
-      GoRoute(
-        path: '/account/credential',
-        pageBuilder: (context, state) => const MaterialPage(
-          child: AccountCredentialScreen(),
-        ),
-      ),
-      GoRoute(
-        path: '/account/personal',
-        pageBuilder: (context, state) => const MaterialPage(
-          child: AccountPersonalDataScreen(),
-        ),
-      ),
-      GoRoute(
-        path: '/appointment',
-        pageBuilder: (context, state) => const MaterialPage(
-          child: AppointmentScreen(),
-        ),
-      )
     ],
   );
 }
