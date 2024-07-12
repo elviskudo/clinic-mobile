@@ -1,28 +1,24 @@
-import 'package:clinic/constants/sizes.dart';
-import 'package:clinic/services/kv.dart';
+import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:state_beacon/state_beacon.dart';
 
-UseDarkMode useDarkMode() {
-  final memoized = useMemoized(
-    () => KV.isDarkMode.listenable(keys: ['dark_mode']),
-  );
-  final box = useValueListenable(memoized);
-  return UseDarkMode(kv: box);
-}
+import 'local_store.dart';
 
-class UseDarkMode {
-  UseDarkMode({required Box<bool> kv}) : _kv = kv;
+class ThemeController extends BeaconController {
+  ThemeController({required FlutterSecureStorage store}) : _store = store;
 
-  final Box<bool> _kv;
+  final FlutterSecureStorage _store;
 
-  bool get state => _kv.get('dark_mode', defaultValue: false)!;
+  late final theme = B.writable(ThemeMode.light);
 
-  void handleChange(bool val) async {
-    await _kv.put('dark_mode', val);
+  void set(ThemeMode mode) async {
+    theme.value = mode;
+    await _store.write(key: 'x-theme', value: mode.name);
   }
 }
+
+final theme$ = Ref.scoped((ctx) => ThemeController(store: localStore.instance));
 
 class MaterialTheme {
   final TextTheme textTheme;

@@ -1,0 +1,28 @@
+global_options:
+  freezed:freezed:
+    runs_before:
+      - isar_generator:isar_generator
+
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_route_generator: # this for @RoutePage
+        options:
+          enable_cached_builds: true
+        generate_for:
+          - lib/screens/**.dart
+      json_serializable:json_serializable:
+        enabled: true
+        generate_for:
+          include:
+            - lib/features/**/domain/**.dart
+      freezed:freezed:
+        enabled: true
+        generate_for:
+          include:
+            - lib/features/**/domain/**.dart
+      isar_generator:isar_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/features/**/domain/**.dart
