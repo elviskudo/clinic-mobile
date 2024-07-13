@@ -275,7 +275,7 @@ class __$$ProfileImplCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable()
-class _$ProfileImpl extends _Profile {
+class _$ProfileImpl implements _Profile {
   const _$ProfileImpl(
       {@JsonKey(name: 'fullname') required this.fullName,
       @JsonKey(name: 'phone_number') this.phoneNumber,
@@ -290,8 +290,7 @@ class _$ProfileImpl extends _Profile {
       this.gender,
       this.address,
       this.nationality,
-      this.religion})
-      : super._();
+      this.religion});
 
   factory _$ProfileImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProfileImplFromJson(json);
@@ -404,7 +403,7 @@ class _$ProfileImpl extends _Profile {
   }
 }
 
-abstract class _Profile extends Profile {
+abstract class _Profile implements Profile {
   const factory _Profile(
       {@JsonKey(name: 'fullname') required final String fullName,
       @JsonKey(name: 'phone_number') final String? phoneNumber,
@@ -420,7 +419,6 @@ abstract class _Profile extends Profile {
       final String? address,
       final String? nationality,
       final String? religion}) = _$ProfileImpl;
-  const _Profile._() : super._();
 
   factory _Profile.fromJson(Map<String, dynamic> json) = _$ProfileImpl.fromJson;
 

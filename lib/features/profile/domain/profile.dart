@@ -1,14 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:isar/isar.dart';
 
 part 'profile.freezed.dart';
 part 'profile.g.dart';
 
 @freezed
-@Collection(ignore: {'copyWith'})
 class Profile with _$Profile {
-  const Profile._();
-
   @JsonSerializable()
   const factory Profile({
     @JsonKey(name: 'fullname') required String fullName,
@@ -26,8 +22,6 @@ class Profile with _$Profile {
     String? nationality,
     String? religion,
   }) = _Profile;
-
-  Id get isarId => Isar.autoIncrement;
 
   factory Profile.fromJson(Map<String, dynamic> json) =>
       _$ProfileFromJson(json);

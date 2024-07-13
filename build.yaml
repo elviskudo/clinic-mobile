@@ -1,16 +1,6 @@
-global_options:
-  freezed:freezed:
-    runs_before:
-      - isar_generator:isar_generator
-
 targets:
   $default:
     builders:
-      auto_route_generator:auto_route_generator: # this for @RoutePage
-        options:
-          enable_cached_builds: true
-        generate_for:
-          - lib/screens/**.dart
       json_serializable:json_serializable:
         enabled: true
         generate_for:
@@ -21,8 +11,8 @@ targets:
         generate_for:
           include:
             - lib/features/**/domain/**.dart
-      isar_generator:isar_generator:
+      go_router_builder:go_router_builder:
         enabled: true
         generate_for:
           include:
-            - lib/features/**/domain/**.dart
+            - lib/pages/**_router.dart

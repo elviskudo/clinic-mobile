@@ -1,5 +1,3 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:clinic/app_router.gr.dart';
 import 'package:clinic/features/auth/auth.dart';
 import 'package:clinic/ui/form/confirmation_password_input.dart';
 import 'package:clinic/ui/form/email_input.dart';
@@ -8,19 +6,23 @@ import 'package:clinic/ui/form/password_input.dart';
 import 'package:clinic/ui/form/phone_number_input.dart';
 import 'package:clinic/ui/notification/toast.dart';
 import 'package:clinic/utils/sizes.dart';
-import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_rearch/flutter_rearch.dart';
+import 'package:rearch/rearch.dart';
 
-@RoutePage()
+import '../auth_router.dart';
+
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(Sizes.p24),
+    return PopScope(
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        OnboardingRoute().go(context);
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -48,57 +50,51 @@ class SignupScreen extends StatelessWidget {
   }
 }
 
-class _SignUpForm extends HookWidget {
+class _SignUpForm extends RearchConsumer {
   const _SignUpForm();
 
   @override
-  Widget build(BuildContext context) {
-    final formKey = useMemoized(() => GlobalKey<FormState>());
+  Widget build(BuildContext context, WidgetHandle use) {
+    final formKey = use.memo(() => GlobalKey<FormState>());
 
-    final emailCtrl = useTextEditingController();
-    final nameCtrl = useTextEditingController();
-    final phoneCtrl = useTextEditingController();
-    final passwordCtrl = useTextEditingController();
-    final confirmPassCtrl = useTextEditingController();
+    final emailCtrl = use.textEditingController();
+    final nameCtrl = use.textEditingController();
+    final phoneCtrl = use.textEditingController();
 
-    final mutation = useMutation(
-      'signup',
-      (
-        ({
-          String email,
-          String name,
-          String phone,
-          String password,
-        }) data,
-      ) async =>
-          await auth$.read(context).signUp(
-                email: data.email,
-                name: data.name,
-                phone: data.phone,
-                password: data.password,
-              ),
-      refreshQueries: ['auth_credential'],
-      onMutate: (_) {
-        context.toast.loading(
-          title: 'Authentication',
-          message: 'Creating your account...',
+    final passwordCtrl = use.textEditingController();
+    final confirmPassCtrl = use.textEditingController();
+
+    final (:state, :mutate, :clear) = use.mutation<Credential>();
+    final future = use(signupAction);
+
+    void signup() {
+      if (formKey.currentState!.validate()) {
+        return mutate(
+          future(
+            email: emailCtrl.text,
+            name: nameCtrl.text,
+            phone: "+62${phoneCtrl.text.replaceAll('-', '')}",
+            password: passwordCtrl.text,
+          ),
         );
-      },
-      onData: (data, _) {
-        context.toast.success(
-          title: 'Authentication',
-          message: 'Your account has been created successfully!',
-        );
-        context.replaceRoute(const VerificationRoute());
-      },
-      onError: (ex, _) {
+      }
+    }
+
+    use.effect(() {
+      if (state case AsyncLoading()) {
+        context.toast.loading(message: 'Registering new account...');
+      } else if (state case AsyncData()) {
+        VerificationRoute().go(context);
+        context.toast.success(message: 'Registration completed!');
+      } else if (state case AsyncError()) {
         context.toast.error(
-          title: 'Authentication',
-          message:
-              'Cannot create new account. Check your credential and please try again.',
+          message: 'Registration failed, check your credential and try again.',
         );
-      },
-    );
+      } else {
+        context.toast.clear();
+      }
+      return () => clear();
+    }, [state]);
 
     return Form(
       key: formKey,
@@ -122,22 +118,12 @@ class _SignUpForm extends HookWidget {
           ConfirmationPasswordInput(
             controller: confirmPassCtrl,
             relatedPasswordController: passwordCtrl,
+            onSaved: (_) => signup(),
           ),
           gapH24,
           FilledButton(
-            onPressed: mutation.isMutating
-                ? null
-                : () async {
-                    if (formKey.currentState!.validate()) {
-                      await mutation.mutate((
-                        email: emailCtrl.text,
-                        name: nameCtrl.text,
-                        phone: "+62${phoneCtrl.text.replaceAll('-', '')}",
-                        password: passwordCtrl.text,
-                      ));
-                    }
-                  },
-            child: const Text('Sign in'),
+            onPressed: state is AsyncLoading ? null : signup,
+            child: const Text('Create an account'),
           ),
         ],
       ),
@@ -158,7 +144,7 @@ class _RedirectToSignIn extends StatelessWidget {
             TextSpan(
               text: '\nSign in',
               recognizer: TapGestureRecognizer()
-                ..onTap = () => context.pushRoute(const SigninRoute()),
+                ..onTap = () => SigninRoute().push(context),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w500,

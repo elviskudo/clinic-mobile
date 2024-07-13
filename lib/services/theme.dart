@@ -1,24 +1,5 @@
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:state_beacon/state_beacon.dart';
-
-import 'local_store.dart';
-
-class ThemeController extends BeaconController {
-  ThemeController({required FlutterSecureStorage store}) : _store = store;
-
-  final FlutterSecureStorage _store;
-
-  late final theme = B.writable(ThemeMode.light);
-
-  void set(ThemeMode mode) async {
-    theme.value = mode;
-    await _store.write(key: 'x-theme', value: mode.name);
-  }
-}
-
-final theme$ = Ref.scoped((ctx) => ThemeController(store: localStore.instance));
 
 class MaterialTheme {
   final TextTheme textTheme;

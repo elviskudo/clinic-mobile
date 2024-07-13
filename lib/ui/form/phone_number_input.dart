@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
-class PhoneNumberInput extends HookWidget {
+class PhoneNumberInput extends StatelessWidget {
   const PhoneNumberInput({
     super.key,
     required this.controller,

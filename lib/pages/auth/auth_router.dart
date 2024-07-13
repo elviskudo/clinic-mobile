@@ -1,45 +1,82 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:clinic/app_router.gr.dart';
+import 'package:clinic/pages/pages.dart';
 import 'package:clinic/ui/l10n/l10n_chooser.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-@RoutePage()
-class AuthPage extends StatelessWidget {
-  const AuthPage({super.key});
+import 'routes/onboarding.dart';
+import 'routes/signin.dart';
+import 'routes/signup.dart';
+
+part 'auth_router.g.dart';
+
+@TypedShellRoute<AuthRoute>(
+  routes: <TypedGoRoute<GoRouteData>>[
+    TypedGoRoute<OnboardingRoute>(path: '/onboarding'),
+    TypedGoRoute<SigninRoute>(path: '/signin'),
+    TypedGoRoute<SignupRoute>(path: '/signup'),
+    TypedGoRoute<VerificationRoute>(path: '/verification'),
+  ],
+)
+class AuthRoute extends ShellRouteData {
+  static final GlobalKey<NavigatorState> $navigatorKey = rootNavKey;
+
+  @override
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
+    return _AuthLayout(child: navigator);
+  }
+}
+
+class OnboardingRoute extends GoRouteData {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const OnboardingScreen();
+  }
+}
+
+class SigninRoute extends GoRouteData {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const SigninScreen();
+  }
+}
+
+class SignupRoute extends GoRouteData {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const SignupScreen();
+  }
+}
+
+class VerificationRoute extends GoRouteData {}
+
+class _AuthLayout extends StatelessWidget {
+  const _AuthLayout({required this.child});
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return AutoTabsRouter.tabBar(
-      routes: const [
-        OnboardingRoute(),
-        SigninRoute(),
-        SignupRoute(),
-      ],
-      builder: (context, child, ctrl) => Scaffold(
-        appBar: const AuthPageHeader(),
-        resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              SliverFillRemaining(child: child),
-              SliverToBoxAdapter(
-                child: Center(
-                  child: Text(
-                    '© 2024. All Rights Reserverd.',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall!
-                        .copyWith(color: Theme.of(context).colorScheme.outline),
-                  ),
-                ),
-              ),
-              const SliverPadding(
-                padding: EdgeInsets.only(bottom: Sizes.p24),
-              ),
-            ],
+    return Scaffold(
+      appBar: const _AuthPageHeader(),
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(Sizes.p24),
+            height: MediaQuery.of(context).size.height,
+            child: child,
+            // Center(
+            //   child: Text(
+            //     '© 2024. All Rights Reserverd.',
+            //     style: Theme.of(context)
+            //         .textTheme
+            //         .labelSmall!
+            //         .copyWith(color: Theme.of(context).colorScheme.outline),
+            //   ),
+            // ),
           ),
         ),
       ),
@@ -47,10 +84,8 @@ class AuthPage extends StatelessWidget {
   }
 }
 
-class AuthPageHeader extends StatelessWidget implements PreferredSizeWidget {
-  const AuthPageHeader({super.key, this.automaticallyImplyLeading = true});
-
-  final bool automaticallyImplyLeading;
+class _AuthPageHeader extends StatelessWidget implements PreferredSizeWidget {
+  const _AuthPageHeader();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +93,6 @@ class AuthPageHeader extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: Sizes.p8,
       scrolledUnderElevation: 0,
       elevation: 0,
-      automaticallyImplyLeading: automaticallyImplyLeading,
       backgroundColor: Theme.of(context).colorScheme.surface,
       title: Row(
         children: [

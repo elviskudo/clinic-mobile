@@ -156,13 +156,12 @@ class __$$CredentialImplCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable()
-class _$CredentialImpl extends _Credential {
+class _$CredentialImpl implements _Credential {
   const _$CredentialImpl(
       {this.id,
       required this.email,
       this.role = const Role(name: 'patient'),
-      @JsonKey(name: 'is_verified') this.isVerified = false})
-      : super._();
+      @JsonKey(name: 'is_verified') this.isVerified = false});
 
   factory _$CredentialImpl.fromJson(Map<String, dynamic> json) =>
       _$$CredentialImplFromJson(json);
@@ -213,13 +212,12 @@ class _$CredentialImpl extends _Credential {
   }
 }
 
-abstract class _Credential extends Credential {
+abstract class _Credential implements Credential {
   const factory _Credential(
       {final String? id,
       required final String email,
       final Role? role,
       @JsonKey(name: 'is_verified') final bool isVerified}) = _$CredentialImpl;
-  const _Credential._() : super._();
 
   factory _Credential.fromJson(Map<String, dynamic> json) =
       _$CredentialImpl.fromJson;

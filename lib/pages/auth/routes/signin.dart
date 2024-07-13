@@ -1,25 +1,26 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:clinic/app_router.gr.dart';
 import 'package:clinic/features/auth/auth.dart';
-import 'package:clinic/features/auth/presentation/auth_store.dart';
+import 'package:clinic/pages/dash/dash_route.dart';
 import 'package:clinic/ui/form/email_input.dart';
 import 'package:clinic/ui/form/password_input.dart';
 import 'package:clinic/ui/notification/toast.dart';
 import 'package:clinic/utils/sizes.dart';
-import 'package:fl_query_hooks/fl_query_hooks.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:toastification/toastification.dart';
+import 'package:flutter_rearch/flutter_rearch.dart';
+import 'package:rearch/rearch.dart';
 
-@RoutePage()
+import '../auth_router.dart';
+
 class SigninScreen extends StatelessWidget {
   const SigninScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(Sizes.p24),
+    return PopScope(
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        OnboardingRoute().go(context);
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -47,40 +48,53 @@ class SigninScreen extends StatelessWidget {
   }
 }
 
-class _SignInForm extends HookWidget {
+class _SignInForm extends RearchConsumer {
   const _SignInForm();
 
   @override
-  Widget build(BuildContext context) {
-    final formKey = useMemoized(() => GlobalKey<FormState>());
+  Widget build(BuildContext context, WidgetHandle use) {
+    final formKey = use.memo(() => GlobalKey<FormState>());
 
-    final emailCtrl = useTextEditingController();
-    final passwordCtrl = useTextEditingController();
+    final emailCtrl = use.textEditingController();
+    final passwordCtrl = use.textEditingController();
 
-    final mutation = useMutation(
-      'signin',
-      (({String email, String password}) data) async => await auth$
-          .read(context)
-          .signIn(email: data.email, password: data.password),
-      refreshQueries: ['auth_credential'],
-      onData: (data, _) {
-        toastification.dismissAll();
+    final (:state, :mutate, :clear) = use.mutation<Credential>();
+    final future = use(signinAction);
+
+    void signin() {
+      if (formKey.currentState!.validate()) {
+        return mutate(
+          future(
+            email: emailCtrl.text,
+            password: passwordCtrl.text,
+          ),
+        );
+      }
+    }
+
+    use.effect(() {
+      if (state case AsyncLoading()) {
+        context.toast.loading(message: 'Signing in...');
+      } else if (state case AsyncData(:final data)) {
+        if (!data.isVerified) {
+          VerificationRoute().go(context);
+        } else {
+          HomeRoute().go(context);
+        }
         context.toast.success(
-          title: 'Authentication',
-          message: 'Welcome back to Clinic AI!',
+          message: data.isVerified
+              ? 'Welcome back to Clinic AI!'
+              : 'Looks like your account is not verified yet.',
         );
-        context.replaceRoute(const DashboardRoute());
-      },
-      onError: (ex, _) {
-        debugPrint('$ex');
-        toastification.dismissAll();
+      } else if (state case AsyncError()) {
         context.toast.error(
-          title: 'Authentication',
-          message:
-              'Sign in failed. Check your credential and please try again.',
+          message: 'Sign in failed, check your credential and try again.',
         );
-      },
-    );
+      } else {
+        context.toast.clear();
+      }
+      return () => clear();
+    }, [state]);
 
     return Form(
       key: formKey,
@@ -95,23 +109,13 @@ class _SignInForm extends HookWidget {
             textInputAction: TextInputAction.next,
           ),
           gapH16,
-          PasswordInput(controller: passwordCtrl),
+          PasswordInput(
+            controller: passwordCtrl,
+            onSaved: (_) => signin(),
+          ),
           gapH24,
           FilledButton(
-            onPressed: mutation.isMutating
-                ? null
-                : () async {
-                    context.toast.loading(
-                      title: 'Authentication',
-                      message: 'Signing in...',
-                    );
-                    if (formKey.currentState!.validate()) {
-                      await mutation.mutate((
-                        email: emailCtrl.text,
-                        password: passwordCtrl.text,
-                      ));
-                    }
-                  },
+            onPressed: state is AsyncLoading ? null : signin,
             child: const Text('Sign in'),
           ),
         ],
@@ -133,7 +137,7 @@ class _RedirectToSignUp extends StatelessWidget {
             TextSpan(
               text: '\nCreate an account',
               recognizer: TapGestureRecognizer()
-                ..onTap = () => context.pushRoute(const SignupRoute()),
+                ..onTap = () => SignupRoute().push(context),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w500,

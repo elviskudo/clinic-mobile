@@ -1,10 +1,11 @@
 import 'package:clinic/utils/regex.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_rearch/flutter_rearch.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:rearch/rearch.dart';
 
-class PasswordInput extends HookWidget {
+class PasswordInput extends RearchConsumer {
   const PasswordInput({
     super.key,
     required this.controller,
@@ -21,8 +22,8 @@ class PasswordInput extends HookWidget {
   final void Function(String?)? onSaved;
 
   @override
-  Widget build(BuildContext context) {
-    final obscure = useState(true);
+  Widget build(BuildContext context, WidgetHandle use) {
+    final (obscure, setObscure) = use.state(true);
 
     return TextFormField(
       controller: controller,
@@ -31,16 +32,16 @@ class PasswordInput extends HookWidget {
         hintText: 'Your password',
         suffixIcon: GestureDetector(
           onTap: () {
-            obscure.value = !obscure.value;
+            setObscure(!obscure);
           },
           child: PhosphorIcon(
-            obscure.value
+            obscure
                 ? PhosphorIcons.eye(PhosphorIconsStyle.duotone)
                 : PhosphorIcons.eyeClosed(PhosphorIconsStyle.duotone),
           ),
         ),
       ),
-      obscureText: obscure.value,
+      obscureText: obscure,
       validator: ValidationBuilder(requiredMessage: 'Password cannot be empty')
           .minLength(8, 'Password must be at least 8 characters')
           .regExp(

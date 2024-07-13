@@ -1,41 +1,29 @@
-import 'package:clinic/ui/notification/toast.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_rearch/flutter_rearch.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:rearch/rearch.dart';
 
-class NetworkObserver extends HookWidget {
+class NetworkObserver extends RearchConsumer {
   const NetworkObserver({super.key, required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    final conn = useMemoized(
-      () => Connectivity().onConnectivityChanged,
+  Widget build(BuildContext context, WidgetHandle use) {
+    final network = use.stream(
+      use.memo(
+        () => Connectivity().onConnectivityChanged,
+      ),
     );
 
-    final network = useStream(conn);
-    useEffect(() {
-      if (network.hasData) {
-        if (network.data == ConnectivityResult.none) {
-          context.toast.info(
-            title: 'Network',
-            message: 'Looks like you are not connecting to any network.',
-            autoCloseDuration: const Duration(
-              seconds: 1,
-            ),
-          );
-        }
-      }
-      return null;
-    }, [network.data]);
+    if (network case AsyncData(:final data)
+        when data == ConnectivityResult.none) {
+      return const _OfflineScreen();
+    }
 
-    return network.data == ConnectivityResult.none
-        ? const _OfflineScreen()
-        : child;
+    return child;
   }
 }
 
@@ -59,7 +47,7 @@ class _OfflineScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Sizes.p24),
               child: Text(
-                context.tr('offline'),
+                'Looks like you are not connecting to any network.',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!

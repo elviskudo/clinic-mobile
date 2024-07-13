@@ -72,6 +72,7 @@ typedef Toast = ({
     required String message,
     String? title,
   }) error,
+  void Function() clear,
 });
 
 extension ToastX on BuildContext {
@@ -131,6 +132,9 @@ extension ToastX on BuildContext {
               autoCloseDuration ?? const Duration(milliseconds: 1500),
         );
       },
+      clear: () {
+        toastification.dismissAll();
+      }
     );
   }
 }
