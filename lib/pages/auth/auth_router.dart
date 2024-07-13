@@ -9,6 +9,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'routes/onboarding.dart';
 import 'routes/signin.dart';
 import 'routes/signup.dart';
+import 'routes/verification.dart';
 
 part 'auth_router.g.dart';
 
@@ -31,26 +32,39 @@ class AuthRoute extends ShellRouteData {
 
 class OnboardingRoute extends GoRouteData {
   @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const OnboardingScreen();
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return CupertinoPage(
+      child: const OnboardingScreen(),
+    );
   }
 }
 
 class SigninRoute extends GoRouteData {
   @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const SigninScreen();
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return CupertinoPage(
+      child: const SigninScreen(),
+    );
   }
 }
 
 class SignupRoute extends GoRouteData {
   @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const SignupScreen();
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return CupertinoPage(
+      child: const SignupScreen(),
+    );
   }
 }
 
-class VerificationRoute extends GoRouteData {}
+class VerificationRoute extends GoRouteData {
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return CupertinoPage(
+      child: const VerificationScreen(),
+    );
+  }
+}
 
 class _AuthLayout extends StatelessWidget {
   const _AuthLayout({required this.child});

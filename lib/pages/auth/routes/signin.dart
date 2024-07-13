@@ -1,5 +1,5 @@
 import 'package:clinic/features/auth/auth.dart';
-import 'package:clinic/pages/dash/dash_route.dart';
+import 'package:clinic/pages/dash/dash_router.dart';
 import 'package:clinic/ui/form/email_input.dart';
 import 'package:clinic/ui/form/password_input.dart';
 import 'package:clinic/ui/notification/toast.dart';

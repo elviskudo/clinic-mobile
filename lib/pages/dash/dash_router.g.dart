@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'dash_route.dart';
+part of 'dash_router.dart';
 
 // **************************************************************************
 // GoRouterGenerator

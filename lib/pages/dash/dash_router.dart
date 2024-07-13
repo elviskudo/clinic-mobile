@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-part 'dash_route.g.dart';
+part 'dash_router.g.dart';
 
 final _dashboardNavKey = GlobalKey<NavigatorState>();
 
@@ -63,11 +63,33 @@ class AppointmentBranch extends StatefulShellBranchData {
   static const String $restorationScopeId = 'dashboardRestorationScopeId';
 }
 
-class AppointmentRoute extends GoRouteData {}
+class AppointmentRoute extends GoRouteData {
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return const NoTransitionPage(
+      child: Scaffold(
+        body: Center(
+          child: Text('Medical Records'),
+        ),
+      ),
+    );
+  }
+}
 
 class AccountBranch extends StatefulShellBranchData {
   static final GlobalKey<NavigatorState> $parentNavigatorKey = _dashboardNavKey;
   static const String $restorationScopeId = 'dashboardRestorationScopeId';
 }
 
-class AccountRoute extends GoRouteData {}
+class AccountRoute extends GoRouteData {
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return const NoTransitionPage(
+      child: Scaffold(
+        body: Center(
+          child: Text('Medical Records'),
+        ),
+      ),
+    );
+  }
+}

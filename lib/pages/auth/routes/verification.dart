@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:clinic/features/auth/auth.dart' as auth;
-import 'package:clinic/pages/dash/dash_route.dart';
+import 'package:clinic/pages/dash/dash_router.dart';
 import 'package:clinic/ui/notification/toast.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/gestures.dart';
@@ -11,8 +11,8 @@ import 'package:form_validator/form_validator.dart';
 import 'package:pinput/pinput.dart';
 import 'package:rearch/rearch.dart';
 
-class VerificationPage extends StatelessWidget {
-  const VerificationPage({super.key});
+class VerificationScreen extends StatelessWidget {
+  const VerificationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
