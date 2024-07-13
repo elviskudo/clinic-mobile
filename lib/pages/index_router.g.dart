@@ -16,7 +16,7 @@ RouteBase get $rootRoute => GoRouteData.$route(
     );
 
 extension $RootRouteExtension on RootRoute {
-  static RootRoute _fromState(GoRouterState state) => RootRoute();
+  static RootRoute _fromState(GoRouterState state) => const RootRoute();
 
   String get location => GoRouteData.$location(
         '/',

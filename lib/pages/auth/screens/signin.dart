@@ -16,33 +16,41 @@ class SigninScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (didPop) {
-        if (didPop) return;
-        OnboardingRoute().go(context);
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        const OnboardingRoute().go(context);
+        return false;
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Hi, Welcome!',
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(fontWeight: FontWeight.w600),
-          ),
-          gapH8,
-          Text(
-            'Hello, how are you? not feeling great? Don\'t worry we got you covered, check your health easily!',
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-          ),
-          gapH24,
-          const _SignInForm(),
-          gapH32,
-          const _RedirectToSignUp()
-        ],
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) return;
+          const OnboardingRoute().go(context);
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Hi, Welcome!',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium!
+                  .copyWith(fontWeight: FontWeight.w600),
+            ),
+            gapH8,
+            Text(
+              'Hello, how are you? not feeling great? Don\'t worry we got you covered, check your health easily!',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            gapH24,
+            const _SignInForm(),
+            gapH32,
+            const _RedirectToSignUp()
+          ],
+        ),
       ),
     );
   }
@@ -58,7 +66,7 @@ class _SignInForm extends RearchConsumer {
     final emailCtrl = use.textEditingController();
     final passwordCtrl = use.textEditingController();
 
-    final (:state, :mutate, :clear) = use.mutation<Credential>();
+    final (:state, :mutate, clear: _) = use.mutation<Credential>();
     final future = use(signinAction);
 
     void signin() {
@@ -72,29 +80,20 @@ class _SignInForm extends RearchConsumer {
       }
     }
 
-    use.effect(() {
-      if (state case AsyncLoading()) {
-        context.toast.loading(message: 'Signing in...');
-      } else if (state case AsyncData(:final data)) {
-        if (!data.isVerified) {
-          VerificationRoute().go(context);
-        } else {
-          HomeRoute().go(context);
-        }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (state case AsyncData(:final data)) {
         context.toast.success(
           message: data.isVerified
               ? 'Welcome back to Clinic AI!'
               : 'Looks like your account is not verified yet.',
         );
-      } else if (state case AsyncError()) {
+        const HomeRoute().go(context);
+      } else if (state is AsyncError) {
         context.toast.error(
           message: 'Sign in failed, check your credential and try again.',
         );
-      } else {
-        context.toast.clear();
       }
-      return () => clear();
-    }, [state]);
+    });
 
     return Form(
       key: formKey,
@@ -109,10 +108,7 @@ class _SignInForm extends RearchConsumer {
             textInputAction: TextInputAction.next,
           ),
           gapH16,
-          PasswordInput(
-            controller: passwordCtrl,
-            onSaved: (_) => signin(),
-          ),
+          PasswordInput(controller: passwordCtrl),
           gapH24,
           FilledButton(
             onPressed: state is AsyncLoading ? null : signin,
@@ -137,7 +133,7 @@ class _RedirectToSignUp extends StatelessWidget {
             TextSpan(
               text: '\nCreate an account',
               recognizer: TapGestureRecognizer()
-                ..onTap = () => SignupRoute().push(context),
+                ..onTap = () => const SignupRoute().push(context),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w500,

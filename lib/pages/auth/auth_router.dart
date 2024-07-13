@@ -6,62 +6,71 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import 'routes/onboarding.dart';
-import 'routes/signin.dart';
-import 'routes/signup.dart';
-import 'routes/verification.dart';
+import 'screens/onboarding.dart';
+import 'screens/signin.dart';
+import 'screens/signup.dart';
+import 'screens/verification.dart';
 
 part 'auth_router.g.dart';
 
-@TypedShellRoute<AuthRoute>(
-  routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<OnboardingRoute>(path: '/onboarding'),
-    TypedGoRoute<SigninRoute>(path: '/signin'),
-    TypedGoRoute<SignupRoute>(path: '/signup'),
-    TypedGoRoute<VerificationRoute>(path: '/verification'),
-  ],
-)
-class AuthRoute extends ShellRouteData {
-  static final GlobalKey<NavigatorState> $navigatorKey = rootNavKey;
-
-  @override
-  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
-    return _AuthLayout(child: navigator);
-  }
-}
-
+@TypedGoRoute<OnboardingRoute>(path: '/auth/onboarding')
 class OnboardingRoute extends GoRouteData {
+  const OnboardingRoute();
+
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return CupertinoPage(
-      child: const OnboardingScreen(),
+      key: state.pageKey,
+      child: const _AuthLayout(
+        child: OnboardingScreen(),
+      ),
     );
   }
 }
 
+@TypedGoRoute<SigninRoute>(path: '/auth/signin')
 class SigninRoute extends GoRouteData {
+  const SigninRoute();
+
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return CupertinoPage(
-      child: const SigninScreen(),
+      key: state.pageKey,
+      child: const _AuthLayout(
+        child: SigninScreen(),
+      ),
     );
   }
 }
 
+@TypedGoRoute<SignupRoute>(path: '/auth/signup')
 class SignupRoute extends GoRouteData {
+  const SignupRoute();
+
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return CupertinoPage(
-      child: const SignupScreen(),
+      key: state.pageKey,
+      child: const _AuthLayout(
+        child: SignupScreen(),
+      ),
     );
   }
 }
 
+@TypedGoRoute<VerificationRoute>(path: '/auth/verification')
 class VerificationRoute extends GoRouteData {
+  const VerificationRoute({this.shouldRequest = false});
+
+  final bool shouldRequest;
+
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return CupertinoPage(
-      child: const VerificationScreen(),
+      key: state.pageKey,
+      child: _AuthLayout(
+        child: VerificationScreen(shouldRequest: shouldRequest),
+      ),
     );
   }
 }
@@ -75,7 +84,6 @@ class _AuthLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const _AuthPageHeader(),
-      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(

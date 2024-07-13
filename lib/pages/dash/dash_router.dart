@@ -1,6 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import 'screens/home.dart';
 
 part 'dash_router.g.dart';
 
@@ -20,6 +21,8 @@ final _dashboardNavKey = GlobalKey<NavigatorState>();
   ],
 )
 class DashboardRoute extends StatefulShellRouteData {
+  const DashboardRoute();
+
   @override
   Widget builder(
     BuildContext context,
@@ -46,14 +49,13 @@ class HomeBranch extends StatefulShellBranchData {
 }
 
 class HomeRoute extends GoRouteData {
+  const HomeRoute();
+
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return NoTransitionPage(
-      child: Scaffold(
-        body: Center(
-          child: const Text('hello').tr(),
-        ),
-      ),
+      key: state.pageKey,
+      child: const HomeScreen(),
     );
   }
 }
@@ -64,10 +66,13 @@ class AppointmentBranch extends StatefulShellBranchData {
 }
 
 class AppointmentRoute extends GoRouteData {
+  const AppointmentRoute();
+
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return const NoTransitionPage(
-      child: Scaffold(
+    return NoTransitionPage(
+      key: state.pageKey,
+      child: const Scaffold(
         body: Center(
           child: Text('Medical Records'),
         ),
@@ -82,10 +87,13 @@ class AccountBranch extends StatefulShellBranchData {
 }
 
 class AccountRoute extends GoRouteData {
+  const AccountRoute();
+
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return const NoTransitionPage(
-      child: Scaffold(
+    return NoTransitionPage(
+      key: state.pageKey,
+      child: const Scaffold(
         body: Center(
           child: Text('Medical Records'),
         ),

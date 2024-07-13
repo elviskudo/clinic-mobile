@@ -10,6 +10,7 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: const EdgeInsets.all(Sizes.p24),
@@ -40,14 +41,14 @@ class OnboardingScreen extends StatelessWidget {
         FilledButton(
           child: const Text('Sign in'),
           onPressed: () {
-            SigninRoute().push(context);
+            const SigninRoute().push(context);
           },
         ),
         gapH16,
         OutlinedButton(
           child: const Text('Create an Account'),
           onPressed: () {
-            SignupRoute().push(context);
+            const SignupRoute().push(context);
           },
         ),
       ],

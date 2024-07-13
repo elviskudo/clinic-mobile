@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:clinic/features/auth/auth.dart' as auth;
 import 'package:clinic/pages/dash/dash_router.dart';
+import 'package:clinic/ui/notification/success_sheet.dart';
 import 'package:clinic/ui/notification/toast.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/gestures.dart';
@@ -12,33 +13,43 @@ import 'package:pinput/pinput.dart';
 import 'package:rearch/rearch.dart';
 
 class VerificationScreen extends StatelessWidget {
-  const VerificationScreen({super.key});
+  const VerificationScreen({
+    super.key,
+    this.shouldRequest = false,
+  });
+
+  final bool shouldRequest;
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: Column(
-        children: [
-          Text(
-            'Verify Your Email',
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(fontWeight: FontWeight.w600),
-          ),
-          gapH8,
-          Text(
-            'Enter the verification code (OTP) that we have sent to your email.',
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-          ),
-          gapH24,
-          const _VerificationForm(),
-          gapH32,
-          const _ResendOtpButton(),
-        ],
+    return BackButtonListener(
+      onBackButtonPressed: () async => false,
+      child: PopScope(
+        canPop: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Verify Your Email',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium!
+                  .copyWith(fontWeight: FontWeight.w600),
+            ),
+            gapH8,
+            Text(
+              'Enter the verification code (OTP) that we have sent to your email.',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            gapH24,
+            const _VerificationForm(),
+            gapH32,
+            _ResendOtpButton(shouldRequest: shouldRequest),
+          ],
+        ),
       ),
     );
   }
@@ -53,7 +64,7 @@ class _VerificationForm extends RearchConsumer {
 
     final pinputCtrl = use.textEditingController();
 
-    final (:state, :mutate, :clear) = use.mutation<auth.Credential>();
+    final (:state, :mutate, clear: _) = use.mutation<auth.Credential>();
     final future = use(auth.emailVerificationAction);
 
     void verify({String? pin}) {
@@ -64,25 +75,20 @@ class _VerificationForm extends RearchConsumer {
       }
     }
 
-    use.effect(() {
-      if (state case AsyncLoading()) {
-        context.toast.loading(
-          message: 'Processing verification request...',
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (state is AsyncData) {
+        showSuccessSheet(
+          context,
+          title: 'Verification Success',
+          message: 'Your email has been verified, redirecting to app...',
         );
-      } else if (state case AsyncData()) {
-        HomeRoute().go(context);
-        context.toast.success(
-          message: 'Your email has been verified successfully!',
-        );
-      } else if (state case AsyncError()) {
+        const HomeRoute().go(context);
+      } else if (state is AsyncError) {
         context.toast.error(
           message: 'Cannot verify email address, please try again later.',
         );
-      } else {
-        context.toast.clear();
       }
-      return () => clear();
-    }, [state]);
+    });
 
     return Form(
       key: formKey,
@@ -116,12 +122,24 @@ class _VerificationForm extends RearchConsumer {
 }
 
 class _ResendOtpButton extends RearchConsumer {
-  const _ResendOtpButton();
+  const _ResendOtpButton({this.shouldRequest = false});
+
+  final bool shouldRequest;
 
   @override
   Widget build(BuildContext context, WidgetHandle use) {
     var (cooldown, setCooldown) = use.state(60);
     final (enabled, setEnabled) = use.state(false);
+
+    final (:state, :mutate, clear: _) = use.mutation<void>();
+    final future = use(auth.resendEmailVerificationCodeAction);
+
+    void resend() {
+    	setCooldown(60);	
+	setEnabled(false);
+
+        mutate(future);
+    }
 
     use.effect(() {
       final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -132,30 +150,19 @@ class _ResendOtpButton extends RearchConsumer {
         }
       });
 
-      return () => timer.cancel();
-    }, [enabled, cooldown]);
-
-    final (:state, :mutate, :clear) = use.mutation<void>();
-    final future = use(auth.resendEmailVerificationCodeAction);
-
-    use.effect(() {
-      if (state case AsyncLoading()) {
-        context.toast.loading(
-          message: 'Signing in...',
-        );
-      } else if (state case AsyncData()) {
-        context.toast.loading(
-          message: 'Requesting verification code...',
-        );
-      } else if (state case AsyncError()) {
-        context.toast.error(
-          message: 'Cannot send verification code, please try again later.',
-        );
-      } else {
-        context.toast.clear();
+      if (shouldRequest) {
+      	debugPrint("resending email verification code...");
+        resend();
       }
-      return () => clear();
-    }, [state]);
+
+      if (state is AsyncData) {
+      	nativeToast('Verification code has been sent to your email.');
+      } else if (state is AsyncError) {
+      	nativeToast('Failed to send verification code, please try again later.');
+      }
+
+      return () => timer.cancel();
+    }, [enabled, cooldown, shouldRequest]);
 
     return Center(
       child: Text.rich(
@@ -165,7 +172,7 @@ class _ResendOtpButton extends RearchConsumer {
             TextSpan(
               text: ' Resend',
               recognizer: TapGestureRecognizer()
-                ..onTap = () => enabled ? mutate(future) : null,
+                ..onTap = enabled ? resend : null,
               style: TextStyle(
                 color: enabled
                     ? Theme.of(context).colorScheme.primary

@@ -18,33 +18,41 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (didPop) {
-        if (didPop) return;
-        OnboardingRoute().go(context);
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        const OnboardingRoute().go(context);
+        return false;
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Create an Account',
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(fontWeight: FontWeight.w600),
-          ),
-          gapH8,
-          Text(
-            'Start with make an account and then you can check your health anytime, anywhere!',
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-          ),
-          gapH24,
-          const _SignUpForm(),
-          gapH32,
-          const _RedirectToSignIn()
-        ],
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) return;
+          const OnboardingRoute().go(context);
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Create an Account',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium!
+                  .copyWith(fontWeight: FontWeight.w600),
+            ),
+            gapH8,
+            Text(
+              'Start with make an account and then you can check your health anytime, anywhere!',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            gapH24,
+            const _SignUpForm(),
+            gapH32,
+            const _RedirectToSignIn()
+          ],
+        ),
       ),
     );
   }
@@ -64,7 +72,7 @@ class _SignUpForm extends RearchConsumer {
     final passwordCtrl = use.textEditingController();
     final confirmPassCtrl = use.textEditingController();
 
-    final (:state, :mutate, :clear) = use.mutation<Credential>();
+    final (:state, :mutate, clear: _) = use.mutation<Credential>();
     final future = use(signupAction);
 
     void signup() {
@@ -80,21 +88,16 @@ class _SignUpForm extends RearchConsumer {
       }
     }
 
-    use.effect(() {
-      if (state case AsyncLoading()) {
-        context.toast.loading(message: 'Registering new account...');
-      } else if (state case AsyncData()) {
-        VerificationRoute().go(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (state case AsyncData()) {
         context.toast.success(message: 'Registration completed!');
+        const VerificationRoute().go(context);
       } else if (state case AsyncError()) {
         context.toast.error(
           message: 'Registration failed, check your credential and try again.',
         );
-      } else {
-        context.toast.clear();
       }
-      return () => clear();
-    }, [state]);
+    });
 
     return Form(
       key: formKey,
@@ -109,16 +112,24 @@ class _SignUpForm extends RearchConsumer {
             textInputAction: TextInputAction.next,
           ),
           gapH16,
-          NameInput(controller: nameCtrl),
+          NameInput(
+            controller: nameCtrl,
+            textInputAction: TextInputAction.next,
+          ),
           gapH16,
-          PhoneNumberInput(controller: phoneCtrl),
+          PhoneNumberInput(
+            controller: phoneCtrl,
+            textInputAction: TextInputAction.next,
+          ),
           gapH16,
-          PasswordInput(controller: passwordCtrl),
+          PasswordInput(
+            controller: passwordCtrl,
+            textInputAction: TextInputAction.next,
+          ),
           gapH16,
           ConfirmationPasswordInput(
             controller: confirmPassCtrl,
             relatedPasswordController: passwordCtrl,
-            onSaved: (_) => signup(),
           ),
           gapH24,
           FilledButton(
@@ -144,7 +155,7 @@ class _RedirectToSignIn extends StatelessWidget {
             TextSpan(
               text: '\nSign in',
               recognizer: TapGestureRecognizer()
-                ..onTap = () => SigninRoute().push(context),
+                ..onTap = () => const SigninRoute().push(context),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w500,

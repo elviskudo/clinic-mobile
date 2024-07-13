@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:native_toast/native_toast.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:toastification/toastification.dart';
 
@@ -137,4 +138,10 @@ extension ToastX on BuildContext {
       }
     );
   }
+}
+
+final _toaster = NativeToast();
+
+void nativeToast(String message) async {
+  await _toaster.makeText(message: message);
 }

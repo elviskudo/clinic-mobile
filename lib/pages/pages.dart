@@ -11,21 +11,21 @@ import 'index_router.dart' as root;
 final rootNavKey = GlobalKey<NavigatorState>();
 
 GoRouter router(CapsuleHandle use) {
+  final (cred, refresh) = use(cred$);
+
   return GoRouter(
     routes: [...root.$appRoutes, ...auth.$appRoutes, ...dash.$appRoutes],
     navigatorKey: rootNavKey,
-    initialLocation: '/',
-    errorBuilder: (c, s) => ErrorScaffold(error: s.error!),
-    redirect: (context, state) async {
-      return switch (await use(fetchCredential)) {
-        null => state.matchedLocation.startsWith('/app')
-            ? auth.OnboardingRoute().location
-            : state.matchedLocation,
-        Credential(:final isVerified) => isVerified
-            ? dash.HomeRoute().location
-            : auth.OnboardingRoute().location,
-      };
+    debugLogDiagnostics: true,
+    initialLocation: switch (cred) {
+      AsyncData(:final data) => data == null
+          ? const auth.OnboardingRoute().location
+          : data.isVerified
+              ? const dash.HomeRoute().location
+              : const auth.VerificationRoute(shouldRequest: true).location,
+      _ => '/',
     },
+    errorBuilder: (c, s) => ErrorScaffold(error: s.error!),
   );
 }
 

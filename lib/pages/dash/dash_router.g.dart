@@ -51,7 +51,7 @@ extension $DashboardRouteExtension on DashboardRoute {
 }
 
 extension $HomeRouteExtension on HomeRoute {
-  static HomeRoute _fromState(GoRouterState state) => HomeRoute();
+  static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   String get location => GoRouteData.$location(
         '/app/home',
@@ -68,7 +68,8 @@ extension $HomeRouteExtension on HomeRoute {
 }
 
 extension $AppointmentRouteExtension on AppointmentRoute {
-  static AppointmentRoute _fromState(GoRouterState state) => AppointmentRoute();
+  static AppointmentRoute _fromState(GoRouterState state) =>
+      const AppointmentRoute();
 
   String get location => GoRouteData.$location(
         '/app/appointment',
@@ -85,7 +86,7 @@ extension $AppointmentRouteExtension on AppointmentRoute {
 }
 
 extension $AccountRouteExtension on AccountRoute {
-  static AccountRoute _fromState(GoRouterState state) => AccountRoute();
+  static AccountRoute _fromState(GoRouterState state) => const AccountRoute();
 
   String get location => GoRouteData.$location(
         '/app/account',

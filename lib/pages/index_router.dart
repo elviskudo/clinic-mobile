@@ -7,11 +7,14 @@ import 'package:go_router/go_router.dart';
 import 'package:rearch/rearch.dart';
 
 import 'auth/auth_router.dart' as auth;
+import 'dash/dash_router.dart' as dash;
 
 part 'index_router.g.dart';
 
 @TypedGoRoute<RootRoute>(path: '/')
 class RootRoute extends GoRouteData {
+  const RootRoute();
+
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const _RootLayout();
@@ -23,16 +26,17 @@ class _RootLayout extends RearchConsumer {
 
   @override
   Widget build(BuildContext context, WidgetHandle use) {
-    final cred = use(cred$);
+    final (cred, _) = use(cred$);
 
-    use.effect(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (cred case AsyncData(:final data)) {
         if (data == null || !data.isVerified) {
-          auth.OnboardingRoute().go(context);
+          const auth.OnboardingRoute().go(context);
+        } else {
+          const dash.HomeRoute().go(context);
         }
       }
-      return null;
-    }, []);
+    });
 
     return switch (cred) {
       AsyncData() => const PlaceholderScaffold(),

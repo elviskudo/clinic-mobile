@@ -1,4 +1,4 @@
-import 'package:clinic/ui/network_observer.dart';
+import 'package:clinic/ui/container/network_observer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rearch/flutter_rearch.dart';
@@ -6,12 +6,14 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:toastification/toastification.dart';
 
 import 'pages/pages.dart';
+import 'services/kv.dart';
 import 'services/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await EasyLocalization.ensureInitialized();
+  await KV.ensureInitialized();
 
   runApp(
     EasyLocalization(
