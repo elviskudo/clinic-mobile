@@ -4,7 +4,6 @@ import 'package:clinic/ui/form/email_input.dart';
 import 'package:clinic/ui/form/name_input.dart';
 import 'package:clinic/ui/form/password_input.dart';
 import 'package:clinic/ui/form/phone_number_input.dart';
-import 'package:clinic/ui/notification/notification.dart';
 import 'package:clinic/ui/notification/toast.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/gestures.dart';
@@ -85,23 +84,20 @@ class _SignUpForm extends RearchConsumer {
             password: passwordCtrl.text,
           ).then<void>(
             (_) {
-              notif.currentState!.context.toast
-                  .success(message: 'Registration completed!');
+              context.toast.success(message: 'Registration completed!');
               const VerificationRoute().go(context);
+            },
+          ).catchError(
+            (_) {
+              context.toast.error(
+                message:
+                    'Registration failed, check your credential and try again.',
+              );
             },
           ),
         );
       }
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (state case AsyncData()) {
-      } else if (state case AsyncError()) {
-        context.toast.error(
-          message: 'Registration failed, check your credential and try again.',
-        );
-      }
-    });
 
     return Form(
       key: formKey,

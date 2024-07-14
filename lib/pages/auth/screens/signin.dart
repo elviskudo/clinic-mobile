@@ -81,7 +81,9 @@ class _SignInForm extends RearchConsumer {
                     ? 'Welcome back to Clinic AI!'
                     : 'Looks like your account is not verified yet.',
               );
-              const HomeRoute().go(context);
+              data.isVerified
+                  ? const HomeRoute().replace(context)
+                  : const VerificationRoute(shouldRequest: true).go(context);
             },
           ).catchError(
             (_) {

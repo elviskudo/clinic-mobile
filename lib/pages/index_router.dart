@@ -17,31 +17,25 @@ class RootRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const _RootLayout();
-  }
-}
+    return RearchBuilder(
+      builder: (context, use) {
+        final (cred, _) = use(futureCredential);
 
-class _RootLayout extends RearchConsumer {
-  const _RootLayout();
-
-  @override
-  Widget build(BuildContext context, WidgetHandle use) {
-    final (cred, _) = use(cred$);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (cred case AsyncData(:final data)) {
-        if (data == null || !data.isVerified) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (cred case AsyncData(:final data) when data != null) {
+            return data.isVerified
+                ? const dash.HomeRoute().go(context)
+                : const auth.VerificationRoute(shouldRequest: true).go(context);
+          }
           const auth.OnboardingRoute().go(context);
-        } else {
-          const dash.HomeRoute().go(context);
-        }
-      }
-    });
+        });
 
-    return switch (cred) {
-      AsyncData() => const PlaceholderScaffold(),
-      AsyncError(:final error) => ErrorScaffold(error: error),
-      AsyncLoading() => const PlaceholderScaffold(),
-    };
+        return switch (cred) {
+          AsyncData() => const PlaceholderScaffold(),
+          AsyncError(:final error) => ErrorScaffold(error: error),
+          AsyncLoading() => const PlaceholderScaffold(),
+        };
+      },
+    );
   }
 }

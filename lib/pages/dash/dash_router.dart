@@ -39,7 +39,12 @@ class DashboardRoute extends StatefulShellRouteData {
     StatefulNavigationShell navigationShell,
     List<Widget> children,
   ) {
-    return children[0];
+    return Scaffold(
+      body: IndexedStack(
+        index: navigationShell.currentIndex,
+        children: children,
+      ),
+    );
   }
 }
 

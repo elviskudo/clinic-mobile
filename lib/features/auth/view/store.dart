@@ -1,6 +1,12 @@
 part of 'view.dart';
 
-(AsyncValue<Credential?>, void Function()) cred$(CapsuleHandle use) {
+Credential? credential$(CapsuleHandle use) => null;
+
+(AsyncValue<Credential?>, void Function()) futureCredential(CapsuleHandle use) {
   final fetch = use(fetchCredential);
-  return use.refreshableFuture(() => fetch);
+  var cred = use(credential$);
+  return use.refreshableFuture(() async {
+    cred = await fetch;
+    return cred;
+  });
 }

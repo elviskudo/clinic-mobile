@@ -1,9 +1,6 @@
 import 'dart:async';
 
 import 'package:clinic/features/auth/auth.dart' as auth;
-import 'package:clinic/pages/dash/dash_router.dart';
-import 'package:clinic/ui/notification/notification.dart';
-import 'package:clinic/ui/notification/success_sheet.dart';
 import 'package:clinic/ui/notification/toast.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/gestures.dart';
@@ -12,6 +9,8 @@ import 'package:flutter_rearch/flutter_rearch.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:pinput/pinput.dart';
 import 'package:rearch/rearch.dart';
+
+import '../auth_router.dart';
 
 class VerificationScreen extends StatelessWidget {
   const VerificationScreen({
@@ -72,16 +71,11 @@ class _VerificationForm extends RearchConsumer {
         return mutate(
           future(pin ?? pinputCtrl.text).then<void>(
             (_) {
-              showSuccessSheet(
-                notif.currentState!.context,
-                title: 'Verification Success',
-                message: 'Your email has been verified, redirecting to app...',
-              );
-              const HomeRoute().go(context);
+              const VerificationSuccessRoute().replace(context);
             },
           ).catchError(
             (_) {
-              notif.currentState!.context.toast.error(
+              context.toast.error(
                 message: 'Cannot verify email address, please try again later.',
               );
             },
@@ -98,6 +92,7 @@ class _VerificationForm extends RearchConsumer {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Pinput(
+            autofocus: true,
             controller: pinputCtrl,
             length: 6,
             pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
@@ -150,6 +145,12 @@ class _ResendOtpButton extends RearchConsumer {
       );
     }
 
+    use.callonce(() {
+      if (shouldRequest) {
+        resend();
+      }
+    });
+
     use.effect(() {
       final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         if (cooldown != 0) {
@@ -159,13 +160,8 @@ class _ResendOtpButton extends RearchConsumer {
         }
       });
 
-      if (shouldRequest) {
-        debugPrint('resending email verification code...');
-        resend();
-      }
-
       return () => timer.cancel();
-    }, [enabled, cooldown, shouldRequest]);
+    }, [enabled, cooldown]);
 
     return Center(
       child: Text.rich(

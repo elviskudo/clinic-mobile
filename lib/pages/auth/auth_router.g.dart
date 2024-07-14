@@ -11,6 +11,7 @@ List<RouteBase> get $appRoutes => [
       $signinRoute,
       $signupRoute,
       $verificationRoute,
+      $verificationSuccessRoute,
     ];
 
 RouteBase get $onboardingRoute => GoRouteData.$route(
@@ -128,4 +129,27 @@ bool _$boolConverter(String value) {
     default:
       throw UnsupportedError('Cannot convert "$value" into a bool.');
   }
+}
+
+RouteBase get $verificationSuccessRoute => GoRouteData.$route(
+      path: '/auth/verification/success',
+      factory: $VerificationSuccessRouteExtension._fromState,
+    );
+
+extension $VerificationSuccessRouteExtension on VerificationSuccessRoute {
+  static VerificationSuccessRoute _fromState(GoRouterState state) =>
+      const VerificationSuccessRoute();
+
+  String get location => GoRouteData.$location(
+        '/auth/verification/success',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

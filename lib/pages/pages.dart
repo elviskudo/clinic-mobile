@@ -11,7 +11,7 @@ import 'index_router.dart' as root;
 final rootNavKey = GlobalKey<NavigatorState>();
 
 GoRouter router(CapsuleHandle use) {
-  final (cred, _) = use(cred$);
+  final (cred, _) = use(futureCredential);
 
   return GoRouter(
     routes: [...root.$appRoutes, ...auth.$appRoutes, ...dash.$appRoutes],
@@ -41,7 +41,7 @@ class CupertinoPage extends CustomTransitionPage {
             return CupertinoPageTransition(
               primaryRouteAnimation: primaryRouteAnimation,
               secondaryRouteAnimation: secondaryRouteAnimation,
-              linearTransition: false,
+              linearTransition: true,
               child: child,
             );
           },

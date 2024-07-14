@@ -47,34 +47,30 @@ class ClinicAI extends RearchConsumer {
           baseColor: light.colorScheme.outlineVariant,
         ),
       ),
-      child: ToastificationWrapper(
-        child: ValueListenableBuilder(
-            valueListenable: KV.isDarkMode.listenable(keys: ['dark_mode']),
-            builder: (context, box, _) {
-              final isDarkMode = box.get('dark_mode') ?? false;
-
-              return MaterialApp.router(
-                routerConfig: use(router),
-                title: 'Clinic AI',
-                debugShowCheckedModeBanner: false,
-                theme: light,
-                darkTheme: dark,
-                themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-                localizationsDelegates: context.localizationDelegates,
-                supportedLocales: context.supportedLocales,
-                locale: context.locale,
-                scaffoldMessengerKey: notif,
-                builder: (context, child) {
-                  return ToastificationConfigProvider(
-                    config: const ToastificationConfig(
-                      alignment: Alignment.bottomCenter,
-                      animationDuration: Duration(milliseconds: 500),
-                    ),
-                    child: NetworkObserver(child: child!),
-                  );
-                },
-              );
-            }),
+      child: ValueListenableBuilder(
+        valueListenable: KV.isDarkMode.listenable(keys: ['dark_mode']),
+        builder: (context, box, _) {
+          final isDarkMode = box.get('dark_mode') ?? false;
+          return ToastificationWrapper(
+            config: const ToastificationConfig(
+              animationDuration: Duration(milliseconds: 750),
+              alignment: Alignment.topCenter,
+            ),
+            child: MaterialApp.router(
+              routerConfig: use(router),
+              title: 'Clinic AI',
+              debugShowCheckedModeBanner: false,
+              theme: light,
+              darkTheme: dark,
+              themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              scaffoldMessengerKey: notifier,
+              builder: (context, child) => NetworkObserver(child: child!),
+            ),
+          );
+        },
       ),
     );
   }

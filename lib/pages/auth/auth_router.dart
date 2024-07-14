@@ -10,6 +10,7 @@ import 'screens/onboarding.dart';
 import 'screens/signin.dart';
 import 'screens/signup.dart';
 import 'screens/verification.dart';
+import 'screens/verification_success.dart';
 
 part 'auth_router.g.dart';
 
@@ -69,21 +70,42 @@ class VerificationRoute extends GoRouteData {
     return CupertinoPage(
       key: state.pageKey,
       child: _AuthLayout(
+        automaticallyImplyLeading: false,
         child: VerificationScreen(shouldRequest: shouldRequest),
       ),
     );
   }
 }
 
+@TypedGoRoute<VerificationSuccessRoute>(path: '/auth/verification/success')
+class VerificationSuccessRoute extends GoRouteData {
+  const VerificationSuccessRoute();
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return CupertinoPage(
+      key: state.pageKey,
+      child: const VerificationSuccessScreen(),
+    );
+  }
+}
+
 class _AuthLayout extends StatelessWidget {
-  const _AuthLayout({required this.child});
+  const _AuthLayout({
+    required this.child,
+    this.automaticallyImplyLeading = true,
+  });
 
   final Widget child;
+  final bool automaticallyImplyLeading;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const _AuthPageHeader(),
+      appBar: _AuthPageHeader(
+        automaticallyImplyLeading: automaticallyImplyLeading,
+      ),
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(Sizes.p24),
@@ -108,7 +130,9 @@ class _AuthLayout extends StatelessWidget {
 }
 
 class _AuthPageHeader extends StatelessWidget implements PreferredSizeWidget {
-  const _AuthPageHeader();
+  const _AuthPageHeader({this.automaticallyImplyLeading = true});
+
+  final bool automaticallyImplyLeading;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +140,7 @@ class _AuthPageHeader extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: Sizes.p8,
       scrolledUnderElevation: 0,
       elevation: 0,
+      automaticallyImplyLeading: automaticallyImplyLeading,
       backgroundColor: Theme.of(context).colorScheme.surface,
       title: Row(
         children: [

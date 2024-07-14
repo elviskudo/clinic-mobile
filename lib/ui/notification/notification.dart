@@ -1,3 +1,3 @@
 import 'package:flutter/material.dart';
 
-final notif = GlobalKey<ScaffoldMessengerState>();
+final notifier = GlobalKey<ScaffoldMessengerState>();

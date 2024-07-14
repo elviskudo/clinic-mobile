@@ -20,11 +20,14 @@ class HomeScreen extends RearchConsumer {
     }
 
     return Scaffold(
-      body: Center(
-        child: FilledButton(
-          onPressed: state is AsyncLoading ? null : signout,
-          child: const Text('Sign out'),
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FilledButton(
+            onPressed: state is AsyncLoading ? null : signout,
+            child: const Text('Sign out'),
+          ),
+        ],
       ),
     );
   }

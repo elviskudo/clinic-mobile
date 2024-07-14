@@ -19,21 +19,20 @@ ToastificationType _tostification(ToastType type) {
   };
 }
 
-ToastificationItem _toast(
+Future<ToastificationItem> _toast(
   BuildContext context,
   ColorScheme colorScheme, {
   String? title,
   String? message,
   ToastType? type,
   Duration? autoCloseDuration,
-}) {
-  return toastification.show(
+}) async {
+  final toast = toastification.show(
     title: title != null ? Text(title) : null,
     description: message != null ? Text(message) : null,
     type: _tostification(type ?? ToastType.info),
     autoCloseDuration: autoCloseDuration,
     closeButtonShowType: CloseButtonShowType.none,
-    context: context,
     showProgressBar: false,
     dragToClose: false,
     style: ToastificationStyle.flat,
@@ -54,21 +53,22 @@ ToastificationItem _toast(
         ),
     },
   );
+  return Future.delayed(const Duration(milliseconds: 500)).then((_) => toast);
 }
 
 typedef Toast = ({
-  ToastificationItem Function({String? message, String? title}) loading,
-  ToastificationItem Function({
+  void Function({String? message, String? title}) loading,
+  void Function({
     Duration? autoCloseDuration,
     required String message,
     String? title,
   }) info,
-  ToastificationItem Function({
+  void Function({
     Duration? autoCloseDuration,
     required String message,
     String? title,
   }) success,
-  ToastificationItem Function({
+  void Function({
     Duration? autoCloseDuration,
     required String message,
     String? title,
@@ -79,8 +79,8 @@ typedef Toast = ({
 extension ToastX on BuildContext {
   Toast get toast {
     return (
-      loading: ({String? title, String? message}) {
-        return _toast(
+      loading: ({String? title, String? message}) async {
+        await _toast(
           this,
           Theme.of(this).colorScheme,
           title: title,
@@ -92,45 +92,45 @@ extension ToastX on BuildContext {
         String? title,
         required String message,
         Duration? autoCloseDuration,
-      }) {
-        return _toast(
+      }) async {
+        await _toast(
           this,
           Theme.of(this).colorScheme,
           title: title,
           message: message,
           type: ToastType.success,
           autoCloseDuration:
-              autoCloseDuration ?? const Duration(milliseconds: 1500),
+              autoCloseDuration ?? const Duration(milliseconds: 3000),
         );
       },
       error: ({
         String? title,
         required String message,
         Duration? autoCloseDuration,
-      }) {
-        return _toast(
+      }) async {
+        await _toast(
           this,
           Theme.of(this).colorScheme,
           title: title,
           message: message,
           type: ToastType.error,
           autoCloseDuration:
-              autoCloseDuration ?? const Duration(milliseconds: 1500),
+              autoCloseDuration ?? const Duration(milliseconds: 3000),
         );
       },
       info: ({
         String? title,
         required String message,
         Duration? autoCloseDuration,
-      }) {
-        return _toast(
+      }) async {
+        await _toast(
           this,
           Theme.of(this).colorScheme,
           title: title,
           message: message,
           type: ToastType.info,
           autoCloseDuration:
-              autoCloseDuration ?? const Duration(milliseconds: 1500),
+              autoCloseDuration ?? const Duration(milliseconds: 3000),
         );
       },
       clear: () {

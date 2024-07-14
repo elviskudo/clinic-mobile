@@ -18,7 +18,7 @@ Future<Credential> Function({
   required String password,
   bool? verified,
 }) signupAction(CapsuleHandle use) {
-  final (_, refresh) = use(cred$);
+  final (_, refresh) = use(futureCredential);
 
   return ({
     required String email,
@@ -72,7 +72,7 @@ Future<Credential> Function({
 }
 
 Future<void> Function() signoutAction(CapsuleHandle use) {
-  final (_, refresh) = use(cred$);
+  final (_, refresh) = use(futureCredential);
 
   return () async {
     await KV.auth.delete('credential');
@@ -82,14 +82,15 @@ Future<void> Function() signoutAction(CapsuleHandle use) {
 }
 
 Future<Credential> Function(String) emailVerificationAction(CapsuleHandle use) {
-  final fetch = use(fetchCredential);
-  final (_, refresh) = use(cred$);
+  final (_, refresh) = use(futureCredential);
 
   return (String code) async {
-    final cred = await fetch;
+    final cred = KV.auth.get('credential');
     if (cred == null) throw Exception('User not found');
 
-    final verified = cred.copyWith(isVerified: true);
+    final verified = Credential.fromJson(
+      jsonDecode(cred) as Map<String, dynamic>,
+    ).copyWith(isVerified: true);
 
     await KV.auth.put('credential', jsonEncode(verified.toJson()));
     refresh();
