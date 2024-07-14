@@ -1,5 +1,38 @@
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+
+import 'kv.dart';
+
+class ThemeListTile extends StatelessWidget {
+  const ThemeListTile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: KV.isDarkMode.listenable(keys: ['dark_mode']),
+      builder: (context, box, _) {
+        final darkMode = box.get('dark_mode') ?? false;
+        return ListTile(
+          dense: true,
+          leading: PhosphorIcon(
+            darkMode ? PhosphorIconsRegular.moon : PhosphorIconsRegular.sun,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          title: const Text('Dark Mode'),
+          subtitle: Text(darkMode ? 'On' : 'Off'),
+          trailing: Switch(
+            value: darkMode,
+            onChanged: (value) {
+              box.put('dark_mode', value);
+            },
+          ),
+        );
+      },
+    );
+  }
+}
 
 class MaterialTheme {
   final TextTheme textTheme;

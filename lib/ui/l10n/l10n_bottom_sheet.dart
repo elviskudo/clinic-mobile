@@ -2,9 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
-Future<Locale?> showL10nChooser(BuildContext context) async {
+Future<Locale?> showL10nBottomSheet(BuildContext context) async {
   return await WoltModalSheet.show<Locale>(
     context: context,
+    useRootNavigator: true,
+    useSafeArea: true,
     pageListBuilder: (context) => [
       SliverWoltModalSheetPage(
         hasTopBarLayer: true,

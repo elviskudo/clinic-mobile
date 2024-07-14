@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'profile.freezed.dart';
@@ -25,4 +26,50 @@ class Profile with _$Profile {
 
   factory Profile.fromJson(Map<String, dynamic> json) =>
       _$ProfileFromJson(json);
+}
+
+List<String> profileToText({required Profile? profile}) {
+  final List<String> profileKeys = [
+    'no_identity',
+    'birth_date',
+    'birth_place',
+    'work_in',
+    'blood_type',
+    'marital_status',
+    'responsible_for_costs',
+    'gender',
+    'address',
+    'nationality',
+    'religion',
+    'city_id'
+  ];
+
+  final Map<String, String> profileTextMap = {
+    'no_identity': 'Identity Number (NIK)',
+    'birth_date': 'Date of Birth',
+    'birth_place': 'Place of Birth',
+    'work_in': 'Work Location',
+    'blood_type': 'Blood Type',
+    'marital_status': 'Marital Status',
+    'responsible_for_costs': 'Responsible Costs',
+    'gender': 'Gender',
+    'address': 'Street Address',
+    'nationality': 'Nationality',
+    'religion': 'Religion',
+    'city_id': 'Hometown',
+  };
+
+  final profileMap = profile != null
+      ? profile.toJson()
+      : {for (var key in profileKeys) key: null};
+
+  try {
+    return profileMap.keys
+        .where((key) => profileMap[key] == null && profileKeys.contains(key))
+        .map((key) => profileTextMap[key] ?? '')
+        .toList();
+  } on Exception catch (e) {
+    debugPrint(e.toString());
+    return [];
+  }
 }

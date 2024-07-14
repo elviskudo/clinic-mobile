@@ -1,12 +1,31 @@
 part of 'view.dart';
 
-Credential? credential$(CapsuleHandle use) => null;
+Credential? _cachedCredential(CapsuleHandle _) => null;
 
-(AsyncValue<Credential?>, void Function()) futureCredential(CapsuleHandle use) {
+(AsyncValue<Credential?>, void Function()) cred$(CapsuleHandle use) {
   final fetch = use(fetchCredential);
-  var cred = use(credential$);
-  return use.refreshableFuture(() async {
-    cred = await fetch;
-    return cred;
-  });
+  final cached = use(_cachedCredential);
+  return use.refreshableFuture(() async => cached ?? await fetch);
+}
+
+(String?, String) email$(CapsuleHandle use) {
+  final (profile, _) = use(cred$);
+  return (
+    switch (profile) {
+      AsyncData(:final data) => data?.email,
+      _ => null,
+    },
+    'Loading'
+  );
+}
+
+(String?, String) role$(CapsuleHandle use) {
+  final (cred, _) = use(cred$);
+  return (
+    switch (cred) {
+      AsyncData(:final data) => data?.role?.name,
+      _ => null,
+    },
+    'Loading'
+  );
 }

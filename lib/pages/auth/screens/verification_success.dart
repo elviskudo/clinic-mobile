@@ -11,12 +11,12 @@ class VerificationSuccessScreen extends RearchConsumer {
 
   @override
   Widget build(BuildContext context, WidgetHandle use) {
-    final (_, refresh) = use(futureCredential);
+    final (_, refresh) = use(cred$);
 
     use.callonce(() {
       refresh();
       Future.delayed(const Duration(seconds: 3)).then(
-        (_) => const HomeRoute().replace(context),
+        (_) => const HomeRoute().go(context),
       );
     });
 

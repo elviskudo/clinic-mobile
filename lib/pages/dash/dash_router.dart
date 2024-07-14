@@ -1,6 +1,13 @@
+import 'package:clinic/features/auth/auth.dart';
+import 'package:clinic/features/profile/profile.dart';
+import 'package:clinic/pages/dash/screens/account.dart';
+import 'package:clinic/pages/dash/screens/appointments.dart';
+import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../pages.dart';
 import 'screens/home.dart';
 
 part 'dash_router.g.dart';
@@ -39,10 +46,88 @@ class DashboardRoute extends StatefulShellRouteData {
     StatefulNavigationShell navigationShell,
     List<Widget> children,
   ) {
+    return _DashboardLayout(
+      navigationShell: navigationShell,
+      children: children,
+    );
+  }
+}
+
+class _DashboardLayout extends StatelessWidget {
+  const _DashboardLayout({
+    required this.navigationShell,
+    required this.children,
+  });
+
+  final StatefulNavigationShell navigationShell;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+      appBar: navigationShell.currentIndex != 2
+          ? PreferredSize(
+              preferredSize: const Size(0, 64),
+              child: Padding(
+                padding: const EdgeInsets.only(top: Sizes.p16),
+                child: AppBar(
+                  title: const Padding(
+                    padding: EdgeInsets.only(left: Sizes.p8),
+                    child: Row(
+                      children: [
+                        PhotoProfile(),
+                        gapW16,
+                        RoleChip(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : null,
       body: IndexedStack(
         index: navigationShell.currentIndex,
         children: children,
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: (index) {
+          navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          );
+        },
+        destinations: [
+          NavigationDestination(
+            label: 'Home',
+            tooltip: 'Home',
+            icon: const PhosphorIcon(PhosphorIconsRegular.houseSimple),
+            selectedIcon: PhosphorIcon(
+              PhosphorIconsDuotone.houseSimple,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          NavigationDestination(
+            label: 'Appointments',
+            tooltip: 'Appointments',
+            icon: const PhosphorIcon(
+              PhosphorIconsRegular.clockCounterClockwise,
+            ),
+            selectedIcon: PhosphorIcon(
+              PhosphorIconsDuotone.clockCounterClockwise,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          NavigationDestination(
+            label: 'Account',
+            tooltip: 'Account',
+            icon: const PhosphorIcon(PhosphorIconsRegular.userCircle),
+            selectedIcon: PhosphorIcon(
+              PhosphorIconsDuotone.userCircle,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -58,7 +143,7 @@ class HomeRoute extends GoRouteData {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return NoTransitionPage(
+    return CupertinoPage(
       key: state.pageKey,
       child: const HomeScreen(),
     );
@@ -75,13 +160,9 @@ class AppointmentRoute extends GoRouteData {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return NoTransitionPage(
+    return CupertinoPage(
       key: state.pageKey,
-      child: const Scaffold(
-        body: Center(
-          child: Text('Medical Records'),
-        ),
-      ),
+      child: const AppointmentsScreen(),
     );
   }
 }
@@ -96,13 +177,9 @@ class AccountRoute extends GoRouteData {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return NoTransitionPage(
+    return CupertinoPage(
       key: state.pageKey,
-      child: const Scaffold(
-        body: Center(
-          child: Text('Medical Records'),
-        ),
-      ),
+      child: const AccountScreen(),
     );
   }
 }

@@ -1,10 +1,8 @@
 import 'package:clinic/pages/pages.dart';
-import 'package:clinic/ui/l10n/l10n_chooser.dart';
+import 'package:clinic/ui/l10n/l10n_button.dart';
 import 'package:clinic/utils/sizes.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import 'screens/onboarding.dart';
 import 'screens/signin.dart';
@@ -158,39 +156,7 @@ class _AuthPageHeader extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
-      actions: [
-        GestureDetector(
-          onTap: () => showL10nChooser(context),
-          child: Chip(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(99),
-              side: BorderSide(color: Theme.of(context).colorScheme.tertiary),
-            ),
-            backgroundColor: Theme.of(context)
-                .colorScheme
-                .tertiaryContainer
-                .withOpacity(0.4),
-            label: Row(
-              children: [
-                PhosphorIcon(
-                  PhosphorIconsDuotone.globe,
-                  color: Theme.of(context).colorScheme.tertiary,
-                  size: 15,
-                ),
-                gapW8,
-                Text(
-                  context.locale.languageCode == 'id' ? 'Indonesia' : 'English',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelSmall!
-                      .copyWith(color: Theme.of(context).colorScheme.tertiary),
-                ),
-              ],
-            ),
-          ),
-        ),
-        gapW24,
-      ],
+      actions: const [L10nButton(), gapW24],
     );
   }
 

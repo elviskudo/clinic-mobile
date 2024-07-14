@@ -38,23 +38,26 @@ class ClinicAI extends RearchConsumer {
 
   @override
   Widget build(BuildContext context, WidgetHandle use) {
-    final light = MaterialTheme(Theme.of(context).textTheme).light();
-    final dark = MaterialTheme(Theme.of(context).textTheme).dark();
-
-    return SkeletonizerConfig(
-      data: SkeletonizerConfigData(
-        effect: ShimmerEffect(
-          baseColor: light.colorScheme.outlineVariant,
-        ),
+    return ToastificationWrapper(
+      config: const ToastificationConfig(
+        animationDuration: Duration(milliseconds: 750),
+        alignment: Alignment.topCenter,
       ),
       child: ValueListenableBuilder(
         valueListenable: KV.isDarkMode.listenable(keys: ['dark_mode']),
         builder: (context, box, _) {
+          final light = MaterialTheme(Theme.of(context).textTheme).light();
+          final dark = MaterialTheme(Theme.of(context).textTheme).dark();
+
           final isDarkMode = box.get('dark_mode') ?? false;
-          return ToastificationWrapper(
-            config: const ToastificationConfig(
-              animationDuration: Duration(milliseconds: 750),
-              alignment: Alignment.topCenter,
+
+          return SkeletonizerConfig(
+            data: SkeletonizerConfigData(
+              effect: ShimmerEffect(
+                baseColor: isDarkMode
+                    ? dark.colorScheme.surfaceContainerHighest
+                    : light.colorScheme.surfaceContainerHighest,
+              ),
             ),
             child: MaterialApp.router(
               routerConfig: use(router),

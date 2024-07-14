@@ -71,7 +71,7 @@ class _VerificationForm extends RearchConsumer {
         return mutate(
           future(pin ?? pinputCtrl.text).then<void>(
             (_) {
-              const VerificationSuccessRoute().replace(context);
+              const VerificationSuccessRoute().go(context);
             },
           ).catchError(
             (_) {

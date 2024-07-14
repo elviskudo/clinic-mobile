@@ -82,7 +82,7 @@ class _SignInForm extends RearchConsumer {
                     : 'Looks like your account is not verified yet.',
               );
               data.isVerified
-                  ? const HomeRoute().replace(context)
+                  ? const HomeRoute().go(context)
                   : const VerificationRoute(shouldRequest: true).go(context);
             },
           ).catchError(

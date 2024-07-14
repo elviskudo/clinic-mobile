@@ -18,7 +18,7 @@ Future<Credential> Function({
   required String password,
   bool? verified,
 }) signupAction(CapsuleHandle use) {
-  final (_, refresh) = use(futureCredential);
+  final (_, refresh) = use(cred$);
 
   return ({
     required String email,
@@ -31,7 +31,7 @@ Future<Credential> Function({
   }) async {
     final cred = Credential(
       id: Faker.instance.datatype.uuid(),
-      email: Faker.instance.internet.email(),
+      email: email,
       isVerified: verified ?? false,
     );
 
@@ -72,7 +72,7 @@ Future<Credential> Function({
 }
 
 Future<void> Function() signoutAction(CapsuleHandle use) {
-  final (_, refresh) = use(futureCredential);
+  final (_, refresh) = use(cred$);
 
   return () async {
     await KV.auth.delete('credential');
@@ -82,7 +82,7 @@ Future<void> Function() signoutAction(CapsuleHandle use) {
 }
 
 Future<Credential> Function(String) emailVerificationAction(CapsuleHandle use) {
-  final (_, refresh) = use(futureCredential);
+  final (_, refresh) = use(cred$);
 
   return (String code) async {
     final cred = KV.auth.get('credential');
