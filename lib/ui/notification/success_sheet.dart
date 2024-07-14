@@ -7,13 +7,11 @@ void showSuccessSheet(
   BuildContext context, {
   required String title,
   required String message,
-}) {
-  WoltModalSheet.show<Locale>(
+}) async {
+  await WoltModalSheet.show(
     context: context,
     pageListBuilder: (context) => [
       SliverWoltModalSheetPage(
-        hasTopBarLayer: true,
-        isTopBarLayerAlwaysVisible: true,
         mainContentSlivers: [
           SliverToBoxAdapter(
             child: Padding(

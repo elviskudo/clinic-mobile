@@ -85,21 +85,22 @@ class _AuthLayout extends StatelessWidget {
     return Scaffold(
       appBar: const _AuthPageHeader(),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(Sizes.p24),
-            height: MediaQuery.of(context).size.height,
-            child: child,
-            // Center(
-            //   child: Text(
-            //     '© 2024. All Rights Reserverd.',
-            //     style: Theme.of(context)
-            //         .textTheme
-            //         .labelSmall!
-            //         .copyWith(color: Theme.of(context).colorScheme.outline),
-            //   ),
-            // ),
-          ),
+        child: ListView(
+          padding: const EdgeInsets.all(Sizes.p24),
+          shrinkWrap: true,
+          children: [
+            child,
+            gapH48,
+            Center(
+              child: Text(
+                '© 2024. All Rights Reserverd.',
+                style: Theme.of(context)
+                    .textTheme
+                    .labelSmall!
+                    .copyWith(color: Theme.of(context).colorScheme.outline),
+              ),
+            ),
+          ],
         ),
       ),
     );

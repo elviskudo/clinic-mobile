@@ -11,7 +11,7 @@ import 'index_router.dart' as root;
 final rootNavKey = GlobalKey<NavigatorState>();
 
 GoRouter router(CapsuleHandle use) {
-  final (cred, refresh) = use(cred$);
+  final (cred, _) = use(cred$);
 
   return GoRouter(
     routes: [...root.$appRoutes, ...auth.$appRoutes, ...dash.$appRoutes],

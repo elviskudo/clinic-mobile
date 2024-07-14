@@ -9,10 +9,10 @@ Future<Locale?> showL10nChooser(BuildContext context) async {
       SliverWoltModalSheetPage(
         hasTopBarLayer: true,
         isTopBarLayerAlwaysVisible: true,
-        // topBarTitle: Text(
-        //   'Choose app language',
-        //   style: Theme.of(context).textTheme.titleSmall,
-        // ),
+        topBarTitle: Text(
+          'Choose Language',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         mainContentSlivers: [
           SliverList.list(
             children: [

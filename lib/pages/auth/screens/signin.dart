@@ -29,7 +29,6 @@ class SigninScreen extends StatelessWidget {
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Hi, Welcome!',
@@ -66,7 +65,7 @@ class _SignInForm extends RearchConsumer {
     final emailCtrl = use.textEditingController();
     final passwordCtrl = use.textEditingController();
 
-    final (:state, :mutate, clear: _) = use.mutation<Credential>();
+    final (:state, :mutate, clear: _) = use.mutation<void>();
     final future = use(signinAction);
 
     void signin() {
@@ -75,25 +74,25 @@ class _SignInForm extends RearchConsumer {
           future(
             email: emailCtrl.text,
             password: passwordCtrl.text,
+          ).then(
+            (data) {
+              context.toast.success(
+                message: data.isVerified
+                    ? 'Welcome back to Clinic AI!'
+                    : 'Looks like your account is not verified yet.',
+              );
+              const HomeRoute().go(context);
+            },
+          ).catchError(
+            (_) {
+              context.toast.error(
+                message: 'Sign in failed, check your credential and try again.',
+              );
+            },
           ),
         );
       }
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (state case AsyncData(:final data)) {
-        context.toast.success(
-          message: data.isVerified
-              ? 'Welcome back to Clinic AI!'
-              : 'Looks like your account is not verified yet.',
-        );
-        const HomeRoute().go(context);
-      } else if (state is AsyncError) {
-        context.toast.error(
-          message: 'Sign in failed, check your credential and try again.',
-        );
-      }
-    });
 
     return Form(
       key: formKey,

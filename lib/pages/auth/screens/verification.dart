@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:clinic/features/auth/auth.dart' as auth;
 import 'package:clinic/pages/dash/dash_router.dart';
+import 'package:clinic/ui/notification/notification.dart';
 import 'package:clinic/ui/notification/success_sheet.dart';
 import 'package:clinic/ui/notification/toast.dart';
 import 'package:clinic/utils/sizes.dart';
@@ -28,7 +29,6 @@ class VerificationScreen extends StatelessWidget {
         canPop: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               'Verify Your Email',
@@ -64,31 +64,31 @@ class _VerificationForm extends RearchConsumer {
 
     final pinputCtrl = use.textEditingController();
 
-    final (:state, :mutate, clear: _) = use.mutation<auth.Credential>();
+    final (:state, :mutate, clear: _) = use.mutation<void>();
     final future = use(auth.emailVerificationAction);
 
     void verify({String? pin}) {
       if (formKey.currentState!.validate()) {
         return mutate(
-          future(pin ?? pinputCtrl.text),
+          future(pin ?? pinputCtrl.text).then<void>(
+            (_) {
+              showSuccessSheet(
+                notif.currentState!.context,
+                title: 'Verification Success',
+                message: 'Your email has been verified, redirecting to app...',
+              );
+              const HomeRoute().go(context);
+            },
+          ).catchError(
+            (_) {
+              notif.currentState!.context.toast.error(
+                message: 'Cannot verify email address, please try again later.',
+              );
+            },
+          ),
         );
       }
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (state is AsyncData) {
-        showSuccessSheet(
-          context,
-          title: 'Verification Success',
-          message: 'Your email has been verified, redirecting to app...',
-        );
-        const HomeRoute().go(context);
-      } else if (state is AsyncError) {
-        context.toast.error(
-          message: 'Cannot verify email address, please try again later.',
-        );
-      }
-    });
 
     return Form(
       key: formKey,
@@ -104,11 +104,8 @@ class _VerificationForm extends RearchConsumer {
             validator: ValidationBuilder(
               requiredMessage: 'Verification code cannot be empty',
             ).minLength(6, 'Please enter a valid verification code').build(),
-            onCompleted: state is AsyncLoading
-                ? null
-                : (pin) {
-                    verify(pin: pin);
-                  },
+            onCompleted:
+                state is AsyncLoading ? null : (pin) => verify(pin: pin),
           ),
           gapH24,
           FilledButton(
@@ -131,14 +128,26 @@ class _ResendOtpButton extends RearchConsumer {
     var (cooldown, setCooldown) = use.state(60);
     final (enabled, setEnabled) = use.state(false);
 
-    final (:state, :mutate, clear: _) = use.mutation<void>();
+    final (state: _, :mutate, clear: _) = use.mutation<void>();
     final future = use(auth.resendEmailVerificationCodeAction);
 
     void resend() {
-    	setCooldown(60);	
-	setEnabled(false);
+      setCooldown(60);
+      setEnabled(false);
 
-        mutate(future);
+      mutate(
+        future.then(
+          (_) {
+            nativeToast('Verification code has been sent to your email.');
+          },
+        ).catchError(
+          (_) {
+            nativeToast(
+              'Failed to send verification code, please try again later.',
+            );
+          },
+        ),
+      );
     }
 
     use.effect(() {
@@ -151,14 +160,8 @@ class _ResendOtpButton extends RearchConsumer {
       });
 
       if (shouldRequest) {
-      	debugPrint("resending email verification code...");
+        debugPrint('resending email verification code...');
         resend();
-      }
-
-      if (state is AsyncData) {
-      	nativeToast('Verification code has been sent to your email.');
-      } else if (state is AsyncError) {
-      	nativeToast('Failed to send verification code, please try again later.');
       }
 
       return () => timer.cancel();

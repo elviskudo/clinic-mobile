@@ -4,6 +4,7 @@ import 'package:clinic/ui/form/email_input.dart';
 import 'package:clinic/ui/form/name_input.dart';
 import 'package:clinic/ui/form/password_input.dart';
 import 'package:clinic/ui/form/phone_number_input.dart';
+import 'package:clinic/ui/notification/notification.dart';
 import 'package:clinic/ui/notification/toast.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/gestures.dart';
@@ -31,7 +32,6 @@ class SignupScreen extends StatelessWidget {
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Create an Account',
@@ -72,7 +72,7 @@ class _SignUpForm extends RearchConsumer {
     final passwordCtrl = use.textEditingController();
     final confirmPassCtrl = use.textEditingController();
 
-    final (:state, :mutate, clear: _) = use.mutation<Credential>();
+    final (:state, :mutate, clear: _) = use.mutation<void>();
     final future = use(signupAction);
 
     void signup() {
@@ -83,6 +83,12 @@ class _SignUpForm extends RearchConsumer {
             name: nameCtrl.text,
             phone: "+62${phoneCtrl.text.replaceAll('-', '')}",
             password: passwordCtrl.text,
+          ).then<void>(
+            (_) {
+              notif.currentState!.context.toast
+                  .success(message: 'Registration completed!');
+              const VerificationRoute().go(context);
+            },
           ),
         );
       }
@@ -90,8 +96,6 @@ class _SignUpForm extends RearchConsumer {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (state case AsyncData()) {
-        context.toast.success(message: 'Registration completed!');
-        const VerificationRoute().go(context);
       } else if (state case AsyncError()) {
         context.toast.error(
           message: 'Registration failed, check your credential and try again.',
