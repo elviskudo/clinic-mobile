@@ -1,5 +1,4 @@
 import 'package:clinic/features/auth/auth.dart';
-import 'package:clinic/features/profile/profile.dart';
 import 'package:clinic/ui/container/error.dart';
 import 'package:clinic/ui/container/splash.dart';
 import 'package:flutter/material.dart';
@@ -20,13 +19,7 @@ class RootRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) {
     return RearchBuilder(
       builder: (context, use) {
-        final (cred, fetchCred) = use(cred$);
-        final (_, fetchProfile) = use(profile$);
-
-        use.callonce(() {
-          fetchCred();
-          fetchProfile();
-        });
+        final cred = use(cred$);
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (cred case AsyncData(:final data) when data != null) {

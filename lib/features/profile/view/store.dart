@@ -1,25 +1,12 @@
 part of 'view.dart';
 
-(Profile?, void Function(Profile?)) _cachedProfile(CapsuleHandle use) {
-  return use.state<Profile?>(null);
-}
-
-(AsyncValue<Profile?>, void Function()) profile$(CapsuleHandle use) {
+AsyncValue<Profile?> profile$(CapsuleHandle use) {
   final fetch = use(fetchProfile);
-  final (cached, setCached) = use(_cachedProfile);
-
-  return use.refreshableFuture(() async {
-    if (cached != null) return cached;
-
-    final remote = await fetch;
-    setCached(remote);
-
-    return remote;
-  });
+  return use.future(fetch);
 }
 
 (String?, String) fullName$(CapsuleHandle use) {
-  final (profile, _) = use(profile$);
+  final profile = use(profile$);
   return (
     switch (profile) {
       AsyncData(:final data) => data?.fullName,
@@ -30,7 +17,7 @@ part of 'view.dart';
 }
 
 (String?, String) avatar$(CapsuleHandle use) {
-  final (profile, _) = use(profile$);
+  final profile = use(profile$);
   return (
     switch (profile) {
       AsyncData(:final data) => data?.avatar,
@@ -41,7 +28,7 @@ part of 'view.dart';
 }
 
 (String?, String) profileText$(CapsuleHandle use) {
-  final (profile, _) = use(profile$);
+  final profile = use(profile$);
   return (
     switch (profile) {
       AsyncData(:final data) =>

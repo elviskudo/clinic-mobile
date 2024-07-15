@@ -16,7 +16,7 @@ class AccountScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.only(top: Sizes.p4),
+          padding: const EdgeInsets.only(top: Sizes.p8),
           shrinkWrap: true,
           children: const [
             _AccountScreenHeader(),

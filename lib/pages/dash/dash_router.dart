@@ -19,8 +19,8 @@ final _dashboardNavKey = GlobalKey<NavigatorState>();
     TypedStatefulShellBranch<HomeBranch>(
       routes: [TypedGoRoute<HomeRoute>(path: '/app/home')],
     ),
-    TypedStatefulShellBranch<AppointmentBranch>(
-      routes: [TypedGoRoute<AppointmentRoute>(path: '/app/appointment')],
+    TypedStatefulShellBranch<AppointmentsBranch>(
+      routes: [TypedGoRoute<AppointmentsRoute>(path: '/app/appointment')],
     ),
     TypedStatefulShellBranch<AccountBranch>(
       routes: [TypedGoRoute<AccountRoute>(path: '/app/account')],
@@ -67,10 +67,13 @@ class _DashboardLayout extends StatelessWidget {
     return Scaffold(
       appBar: navigationShell.currentIndex != 2
           ? PreferredSize(
-              preferredSize: const Size(0, 64),
+              preferredSize: const Size(0, 88),
               child: Padding(
                 padding: const EdgeInsets.only(top: Sizes.p16),
                 child: AppBar(
+                  scrolledUnderElevation: 0,
+                  elevation: 0,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
                   title: const Padding(
                     padding: EdgeInsets.only(left: Sizes.p8),
                     child: Row(
@@ -150,13 +153,13 @@ class HomeRoute extends GoRouteData {
   }
 }
 
-class AppointmentBranch extends StatefulShellBranchData {
+class AppointmentsBranch extends StatefulShellBranchData {
   static final GlobalKey<NavigatorState> $parentNavigatorKey = _dashboardNavKey;
   static const String $restorationScopeId = 'dashboardRestorationScopeId';
 }
 
-class AppointmentRoute extends GoRouteData {
-  const AppointmentRoute();
+class AppointmentsRoute extends GoRouteData {
+  const AppointmentsRoute();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {

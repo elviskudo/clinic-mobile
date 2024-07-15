@@ -11,7 +11,7 @@ import 'index_router.dart' as root;
 final rootNavKey = GlobalKey<NavigatorState>();
 
 GoRouter router(CapsuleHandle use) {
-  final (cred, _) = use(cred$);
+  final cred = use(cred$);
 
   return GoRouter(
     routes: [...root.$appRoutes, ...auth.$appRoutes, ...dash.$appRoutes],
@@ -32,7 +32,6 @@ GoRouter router(CapsuleHandle use) {
 class CupertinoPage extends CustomTransitionPage {
   CupertinoPage({super.key, required super.child})
       : super(
-          transitionDuration: const Duration(milliseconds: 600),
           transitionsBuilder: (
             context,
             animation,

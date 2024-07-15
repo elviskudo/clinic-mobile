@@ -1,10 +1,21 @@
 part of 'view.dart';
 
-Future<Credential?> fetchCredential(CapsuleHandle _) async {
+(Credential?, void Function(Credential?)) _cachedCredential(CapsuleHandle use) {
+  return use.state<Credential?>(null);
+}
+
+Future<Credential?> fetchCredential(CapsuleHandle use) async {
+  final (cached, _) = use(_cachedCredential);
+
   try {
-    final cred = KV.auth.get('credential');
-    if (cred == null) return null;
-    return Credential.fromJson(jsonDecode(cred) as Map<String, dynamic>);
+    if (cached != null) return cached;
+
+    final json = KV.auth.get('credential');
+    final cred = json != null
+        ? Credential.fromJson(jsonDecode(json) as Map<String, dynamic>)
+        : null;
+
+    return cred;
   } catch (ex) {
     debugPrint('$ex');
     return null;

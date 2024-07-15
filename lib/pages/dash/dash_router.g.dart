@@ -25,11 +25,11 @@ RouteBase get $dashboardRoute => StatefulShellRouteData.$route(
           ],
         ),
         StatefulShellBranchData.$branch(
-          restorationScopeId: AppointmentBranch.$restorationScopeId,
+          restorationScopeId: AppointmentsBranch.$restorationScopeId,
           routes: [
             GoRouteData.$route(
               path: '/app/appointment',
-              factory: $AppointmentRouteExtension._fromState,
+              factory: $AppointmentsRouteExtension._fromState,
             ),
           ],
         ),
@@ -67,9 +67,9 @@ extension $HomeRouteExtension on HomeRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $AppointmentRouteExtension on AppointmentRoute {
-  static AppointmentRoute _fromState(GoRouterState state) =>
-      const AppointmentRoute();
+extension $AppointmentsRouteExtension on AppointmentsRoute {
+  static AppointmentsRoute _fromState(GoRouterState state) =>
+      const AppointmentsRoute();
 
   String get location => GoRouteData.$location(
         '/app/appointment',

@@ -1,4 +1,3 @@
-import 'package:clinic/features/auth/auth.dart';
 import 'package:clinic/pages/dash/dash_router.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +10,7 @@ class VerificationSuccessScreen extends RearchConsumer {
 
   @override
   Widget build(BuildContext context, WidgetHandle use) {
-    final (_, refresh) = use(cred$);
-
     use.callonce(() {
-      refresh();
       Future.delayed(const Duration(seconds: 3)).then(
         (_) => const HomeRoute().go(context),
       );
