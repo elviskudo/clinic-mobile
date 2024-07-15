@@ -1,11 +1,21 @@
 part of 'view.dart';
 
-Credential? _cachedCredential(CapsuleHandle _) => null;
+(Credential?, void Function(Credential?)) _cachedCredential(CapsuleHandle use) {
+  return use.state<Credential?>(null);
+}
 
 (AsyncValue<Credential?>, void Function()) cred$(CapsuleHandle use) {
   final fetch = use(fetchCredential);
-  final cached = use(_cachedCredential);
-  return use.refreshableFuture(() async => cached ?? await fetch);
+  final (cached, setCached) = use(_cachedCredential);
+
+  return use.refreshableFuture(() async {
+    if (cached != null) return cached;
+
+    final remote = await fetch;
+    setCached(remote);
+
+    return remote;
+  });
 }
 
 (String?, String) email$(CapsuleHandle use) {

@@ -18,7 +18,7 @@ Future<Credential> Function({
   required String password,
   bool? verified,
 }) signupAction(CapsuleHandle use) {
-  final (_, refresh) = use(cred$);
+  final (_, set) = use(_cachedCredential);
 
   return ({
     required String email,
@@ -46,7 +46,8 @@ Future<Credential> Function({
       KV.auth.put('credential', jsonEncode(cred.toJson())),
       KV.auth.put('profile', profile),
     ]);
-    refresh();
+
+    set(cred);
 
     return cred;
   };
@@ -72,17 +73,17 @@ Future<Credential> Function({
 }
 
 Future<void> Function() signoutAction(CapsuleHandle use) {
-  final (_, refresh) = use(cred$);
+  final (_, set) = use(_cachedCredential);
 
   return () async {
     await KV.auth.delete('credential');
     await KV.auth.delete('profile');
-    refresh();
+    set(null);
   };
 }
 
 Future<Credential> Function(String) emailVerificationAction(CapsuleHandle use) {
-  final (_, refresh) = use(cred$);
+  final (_, set) = use(_cachedCredential);
 
   return (String code) async {
     final cred = KV.auth.get('credential');
@@ -93,7 +94,8 @@ Future<Credential> Function(String) emailVerificationAction(CapsuleHandle use) {
     ).copyWith(isVerified: true);
 
     await KV.auth.put('credential', jsonEncode(verified.toJson()));
-    refresh();
+
+    set(verified);
 
     return verified;
   };

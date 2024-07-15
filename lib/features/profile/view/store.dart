@@ -1,11 +1,21 @@
 part of 'view.dart';
 
-Profile? _cachedProfile(CapsuleHandle _) => null;
+(Profile?, void Function(Profile?)) _cachedProfile(CapsuleHandle use) {
+  return use.state<Profile?>(null);
+}
 
 (AsyncValue<Profile?>, void Function()) profile$(CapsuleHandle use) {
   final fetch = use(fetchProfile);
-  final cached = use(_cachedProfile);
-  return use.refreshableFuture(() async => cached ?? await fetch);
+  final (cached, setCached) = use(_cachedProfile);
+
+  return use.refreshableFuture(() async {
+    if (cached != null) return cached;
+
+    final remote = await fetch;
+    setCached(remote);
+
+    return remote;
+  });
 }
 
 (String?, String) fullName$(CapsuleHandle use) {

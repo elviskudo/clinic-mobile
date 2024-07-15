@@ -4,6 +4,7 @@ import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rearch/flutter_rearch.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:rearch/rearch.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class UncompleteProfileNotice extends RearchConsumer {
@@ -15,9 +16,14 @@ class UncompleteProfileNotice extends RearchConsumer {
   Widget build(BuildContext context, WidgetHandle use) {
     final (data, placeholder) = use(profileText$);
 
-    if (hideWhenComplete && data == null) return const SizedBox.shrink();
+    if (hideWhenComplete && (data != null && data.isEmpty)) {
+      return const SizedBox.shrink();
+    }
 
-    final bool isUncomplete = data == null || data.isNotEmpty;
+    final bool isUncomplete = use.memo(
+      () => data == null || data.isNotEmpty,
+      [data],
+    );
 
     return Card(
       elevation: 0,
