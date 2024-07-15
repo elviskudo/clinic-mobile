@@ -1,0 +1,18 @@
+targets:
+  $default:
+    builders:
+      json_serializable:json_serializable:
+        enabled: true
+        generate_for:
+          include:
+            - lib/features/**/domain/**.dart
+      freezed:freezed:
+        enabled: true
+        generate_for:
+          include:
+            - lib/features/**/domain/**.dart
+      go_router_builder:go_router_builder:
+        enabled: true
+        generate_for:
+          include:
+            - lib/pages/**_router.dart

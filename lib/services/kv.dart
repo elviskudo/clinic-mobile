@@ -6,9 +6,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 class KV {
   KV._();
 
-  static late Box<String> _tokensBox;
+  static Box<bool> get isDarkMode => Hive.box<bool>('is_dark_mode');
 
-  static Future<void> initialize() async {
+  static late Box<String> _authBox;
+  static Box<String> get auth => _authBox;
+
+  static Future<void> ensureInitialized() async {
     const secureStorage = FlutterSecureStorage();
 
     await Hive.initFlutter();
@@ -28,14 +31,11 @@ class KV {
     final key = await secureStorage.read(key: 'hive_box_key');
     final encryptionKeyUint8List = base64Url.decode(key!);
 
-    _tokensBox = await Hive.openBox<String>(
-      'tokens',
+    _authBox = await Hive.openBox<String>(
+      'auth',
       encryptionCipher: HiveAesCipher(encryptionKeyUint8List),
     );
 
     await Hive.openBox<bool>('is_dark_mode');
   }
-
-  static Box<bool> get isDarkMode => Hive.box<bool>('is_dark_mode');
-  static Box<String> get tokens => _tokensBox;
 }
