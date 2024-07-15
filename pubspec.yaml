@@ -7,50 +7,53 @@ environment:
   sdk: '>=3.3.4 <4.0.0'
 
 dependencies:
-  auto_size_text: ^3.0.0
-  cached_network_image: ^3.3.1
+  flutter:
+    sdk: flutter
+
   connectivity_plus: ^4.0.2
   device_info_plus: ^10.1.0
   dio: ^5.4.3+1
-  easy_localization: ^3.0.7
-  fl_query: ^1.1.0
-  fl_query_connectivity_plus_adapter: ^0.1.0+1
-  fl_query_hooks: ^1.1.0
-  flutter:
-    sdk: flutter
-  flutter_cache_manager: ^3.3.2
-  flutter_hooks: ^0.20.5
   flutter_secure_storage: ^9.2.2
-  flutter_native_splash: ^2.4.0
+  path_provider: ^2.1.3
+  permission_handler: ^11.3.1
+
+  faker_dart: ^0.2.2
+  form_validator: ^2.1.1
   freezed_annotation: ^2.4.1
-  go_router: ^14.1.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  hooks_riverpod: ^2.5.1
+  json_annotation: ^4.9.0
+
+  flutter_rearch:
+  rearch:
+  go_router: ^14.2.1
+
+  auto_size_text: ^3.0.0
+  easy_localization: ^3.0.7
+  flutter_native_splash: ^2.4.0
   image_cropper: ^7.0.4
   image_picker: ^1.1.2
   intl_phone_number_input: ^0.7.4
-  json_annotation: ^4.9.0
   native_toast: ^0.0.2
-  permission_handler: ^11.3.1
   phosphor_flutter: ^2.1.0
   pinput: ^4.0.0
-  riverpod_annotation: ^2.3.5
-  sqflite: ^2.3.3+1
+  skeletonizer: ^1.3.0
+  toastification: ^2.0.0
   websafe_svg: ^3.0.1+1
-
+  wolt_modal_sheet: ^0.7.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   flutter_lints: ^3.0.0
-  flutter_launcher_icons: "^0.13.1"
+
   build_runner: ^2.4.9
-  hive_generator: ^2.0.1
-  riverpod_generator: ^2.4.0
-  riverpod_lint: ^2.3.10
-  custom_lint: ^0.6.4
-  json_serializable: ^6.8.0
   freezed: ^2.5.2
+  go_router_builder: ^2.3.0
+  json_serializable: ^6.8.0
+
+  flutter_launcher_icons: "^0.13.1"
 
 flutter:
   uses-material-design: true
@@ -69,10 +72,10 @@ flutter:
         - asset: fonts/Geist-Bold.ttf
           weight: 700
   assets:
-    - assets/translations/
     - assets/icons/
     - assets/images/
     - assets/launcher/
+    - i18n/
 
 flutter_launcher_icons:
   android: "ic_launcher"

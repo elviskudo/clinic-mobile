@@ -1,2 +1,1 @@
-export 'hooks/use_current_clinic.dart';
-export 'models/clinic.dart';
+export 'domain/clinic.dart';

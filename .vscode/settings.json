@@ -4,5 +4,5 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
   },
-  "dart.flutterSdkPath": ".fvm/versions/3.22.2"
+  "dart.flutterSdkPath": ".fvm/versions/stable"
 }
