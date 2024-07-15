@@ -111,10 +111,10 @@ class _DashboardLayout extends StatelessWidget {
             label: 'Appointments',
             tooltip: 'Appointments',
             icon: const PhosphorIcon(
-              PhosphorIconsRegular.clockCounterClockwise,
+              PhosphorIconsRegular.calendar,
             ),
             selectedIcon: PhosphorIcon(
-              PhosphorIconsDuotone.clockCounterClockwise,
+              PhosphorIconsDuotone.calendar,
               color: Theme.of(context).colorScheme.primary,
             ),
           ),

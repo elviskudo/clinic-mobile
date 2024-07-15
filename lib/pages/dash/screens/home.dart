@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:clinic/features/appointment/appointment.dart';
 import 'package:clinic/features/profile/profile.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
@@ -11,32 +12,71 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: const AppointmentFloatingActionButton(),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(Sizes.p24),
-          shrinkWrap: true,
+          primary: true,
           children: [
-            RearchBuilder(
-              builder: (context, use) {
-                final (name, placeholder) = use(fullName$);
-                return Skeletonizer(
-                  enabled: name == null,
-                  child: AutoSizeText(
-                    'Welcome to Mayou Clinic ${name ?? placeholder}!',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                    minFontSize: 18,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Sizes.p24),
+              child: RearchBuilder(
+                builder: (context, use) {
+                  final (name, placeholder) = use(fullName$);
+                  return Skeletonizer(
+                    enabled: name == null,
+                    child: AutoSizeText(
+                      'Welcome to Mayou Clinic ${name ?? placeholder}!',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall!
+                          .copyWith(fontWeight: FontWeight.w600),
+                      minFontSize: 18,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                },
+              ),
             ),
             gapH16,
-            const Text(
-              'How\'s your heath? Let\'s start by making appointment with our profesional doctors!',
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: Sizes.p24),
+              child: Text(
+                'How\'s your heath? Let\'s start by making appointment with our profesional doctors!',
+              ),
             ),
             gapH32,
-            const UncompleteProfileNotice(hideWhenComplete: true),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: Sizes.p24),
+              child: UncompleteProfileNotice(hideWhenComplete: true),
+            ),
+            gapH32,
+            const AppointmentListTitle(title: 'Active Appointments'),
+            gapH16,
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: Sizes.p24),
+              child: AppointmentList(
+                filter: AppointmentFilter.onprogress,
+              ),
+            ),
+            gapH32,
+            const AppointmentListTitle(title: 'Active Appointments'),
+            gapH16,
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: Sizes.p24),
+              child: AppointmentList(
+                filter: AppointmentFilter.completed,
+              ),
+            ),
+            gapH32,
+            const AppointmentListTitle(title: 'Recent Appointments'),
+            gapH16,
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: Sizes.p24),
+              child: AppointmentList(
+                filter: AppointmentFilter.completed,
+              ),
+            ),
             gapH32,
           ],
         ),
