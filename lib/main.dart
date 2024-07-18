@@ -41,6 +41,10 @@ class ClinicAI extends RearchConsumer {
 
   @override
   Widget build(BuildContext context, WidgetHandle use) {
+    final routerConfig = use(router);
+
+    use.automaticKeepAlive();
+
     return ToastificationWrapper(
       config: const ToastificationConfig(
         animationDuration: Duration(milliseconds: 750),
@@ -63,7 +67,7 @@ class ClinicAI extends RearchConsumer {
               ),
             ),
             child: MaterialApp.router(
-              routerConfig: use(router),
+              routerConfig: routerConfig,
               title: 'Clinic AI',
               debugShowCheckedModeBanner: false,
               theme: light,

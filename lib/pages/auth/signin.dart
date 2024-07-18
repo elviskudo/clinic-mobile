@@ -83,12 +83,14 @@ class _SignInForm extends RearchConsumer {
               );
               data.isVerified
                   ? const HomeRoute().go(context)
-                  : const VerificationRoute(shouldRequest: true).go(context);
+                  : const VerificationRoute().go(context);
             },
           ).catchError(
-            (_) {
+            (ex) {
               context.toast.error(
-                message: 'Sign in failed, check your credential and try again.',
+                message: ex is AuthenticationFailed
+                    ? 'Sign in failed, email or password is not correct.'
+                    : 'Sign in failed please try again.',
               );
             },
           ),

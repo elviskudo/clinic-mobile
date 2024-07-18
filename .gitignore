@@ -50,3 +50,5 @@ key*
 
 # FVM Version Cache
 .fvm/
+
+**/*.hprof

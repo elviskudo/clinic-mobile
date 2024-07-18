@@ -48,6 +48,9 @@ class AuthRepository {
     } on DioException catch (e) {
       if (e.response?.statusCode == 400) throw AuthenticationFailed();
       rethrow;
+    } catch (ex) {
+      debugPrint(ex.toString());
+      rethrow;
     }
   }
 
@@ -83,6 +86,9 @@ class AuthRepository {
     } on DioException catch (e) {
       if (e.response?.statusCode == 400) throw AuthenticationFailed();
       rethrow;
+    } catch (ex) {
+      debugPrint(ex.toString());
+      rethrow;
     }
   }
 
@@ -104,6 +110,9 @@ class AuthRepository {
     } on DioException catch (e) {
       if (e.response?.statusCode == 400) throw EmailVerificationFailed();
       if (e.response?.statusCode == 401) throw UnauthorizedAction();
+      rethrow;
+    } catch (ex) {
+      debugPrint(ex.toString());
       rethrow;
     }
   }
