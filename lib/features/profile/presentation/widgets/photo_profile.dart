@@ -1,10 +1,11 @@
 import 'dart:io';
 
-import 'package:clinic/features/profile/view/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rearch/flutter_rearch.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:websafe_svg/websafe_svg.dart';
+
+import '../store.dart';
 
 class PhotoProfile extends RearchConsumer {
   const PhotoProfile({

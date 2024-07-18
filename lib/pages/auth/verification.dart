@@ -10,7 +10,7 @@ import 'package:form_validator/form_validator.dart';
 import 'package:pinput/pinput.dart';
 import 'package:rearch/rearch.dart';
 
-import '../auth_router.dart';
+import 'auth_router.dart';
 
 class VerificationScreen extends StatelessWidget {
   const VerificationScreen({

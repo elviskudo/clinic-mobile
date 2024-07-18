@@ -38,8 +38,10 @@ mixin _$Profile {
   String? get bloodType => throw _privateConstructorUsedError;
   @JsonKey(name: 'marital_status')
   String? get maritalStatus => throw _privateConstructorUsedError;
-  @JsonKey(name: 'responsible_for_costs')
+  @JsonKey(name: 'responsibleForCosts')
   String? get insurance => throw _privateConstructorUsedError;
+  @JsonKey(name: 'area_code')
+  String? get postCode => throw _privateConstructorUsedError;
   String? get gender => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
   String? get nationality => throw _privateConstructorUsedError;
@@ -65,7 +67,8 @@ abstract class $ProfileCopyWith<$Res> {
       @JsonKey(name: 'work_in') String? workPlace,
       @JsonKey(name: 'blood_type') String? bloodType,
       @JsonKey(name: 'marital_status') String? maritalStatus,
-      @JsonKey(name: 'responsible_for_costs') String? insurance,
+      @JsonKey(name: 'responsibleForCosts') String? insurance,
+      @JsonKey(name: 'area_code') String? postCode,
       String? gender,
       String? address,
       String? nationality,
@@ -95,6 +98,7 @@ class _$ProfileCopyWithImpl<$Res, $Val extends Profile>
     Object? bloodType = freezed,
     Object? maritalStatus = freezed,
     Object? insurance = freezed,
+    Object? postCode = freezed,
     Object? gender = freezed,
     Object? address = freezed,
     Object? nationality = freezed,
@@ -141,6 +145,10 @@ class _$ProfileCopyWithImpl<$Res, $Val extends Profile>
           ? _value.insurance
           : insurance // ignore: cast_nullable_to_non_nullable
               as String?,
+      postCode: freezed == postCode
+          ? _value.postCode
+          : postCode // ignore: cast_nullable_to_non_nullable
+              as String?,
       gender: freezed == gender
           ? _value.gender
           : gender // ignore: cast_nullable_to_non_nullable
@@ -178,7 +186,8 @@ abstract class _$$ProfileImplCopyWith<$Res> implements $ProfileCopyWith<$Res> {
       @JsonKey(name: 'work_in') String? workPlace,
       @JsonKey(name: 'blood_type') String? bloodType,
       @JsonKey(name: 'marital_status') String? maritalStatus,
-      @JsonKey(name: 'responsible_for_costs') String? insurance,
+      @JsonKey(name: 'responsibleForCosts') String? insurance,
+      @JsonKey(name: 'area_code') String? postCode,
       String? gender,
       String? address,
       String? nationality,
@@ -206,6 +215,7 @@ class __$$ProfileImplCopyWithImpl<$Res>
     Object? bloodType = freezed,
     Object? maritalStatus = freezed,
     Object? insurance = freezed,
+    Object? postCode = freezed,
     Object? gender = freezed,
     Object? address = freezed,
     Object? nationality = freezed,
@@ -252,6 +262,10 @@ class __$$ProfileImplCopyWithImpl<$Res>
           ? _value.insurance
           : insurance // ignore: cast_nullable_to_non_nullable
               as String?,
+      postCode: freezed == postCode
+          ? _value.postCode
+          : postCode // ignore: cast_nullable_to_non_nullable
+              as String?,
       gender: freezed == gender
           ? _value.gender
           : gender // ignore: cast_nullable_to_non_nullable
@@ -286,7 +300,8 @@ class _$ProfileImpl implements _Profile {
       @JsonKey(name: 'work_in') this.workPlace,
       @JsonKey(name: 'blood_type') this.bloodType,
       @JsonKey(name: 'marital_status') this.maritalStatus,
-      @JsonKey(name: 'responsible_for_costs') this.insurance,
+      @JsonKey(name: 'responsibleForCosts') this.insurance,
+      @JsonKey(name: 'area_code') this.postCode,
       this.gender,
       this.address,
       this.nationality,
@@ -323,8 +338,11 @@ class _$ProfileImpl implements _Profile {
   @JsonKey(name: 'marital_status')
   final String? maritalStatus;
   @override
-  @JsonKey(name: 'responsible_for_costs')
+  @JsonKey(name: 'responsibleForCosts')
   final String? insurance;
+  @override
+  @JsonKey(name: 'area_code')
+  final String? postCode;
   @override
   final String? gender;
   @override
@@ -336,7 +354,7 @@ class _$ProfileImpl implements _Profile {
 
   @override
   String toString() {
-    return 'Profile(fullName: $fullName, phoneNumber: $phoneNumber, avatar: $avatar, nik: $nik, dateOfBirth: $dateOfBirth, placeOfBirth: $placeOfBirth, workPlace: $workPlace, bloodType: $bloodType, maritalStatus: $maritalStatus, insurance: $insurance, gender: $gender, address: $address, nationality: $nationality, religion: $religion)';
+    return 'Profile(fullName: $fullName, phoneNumber: $phoneNumber, avatar: $avatar, nik: $nik, dateOfBirth: $dateOfBirth, placeOfBirth: $placeOfBirth, workPlace: $workPlace, bloodType: $bloodType, maritalStatus: $maritalStatus, insurance: $insurance, postCode: $postCode, gender: $gender, address: $address, nationality: $nationality, religion: $religion)';
   }
 
   @override
@@ -362,6 +380,8 @@ class _$ProfileImpl implements _Profile {
                 other.maritalStatus == maritalStatus) &&
             (identical(other.insurance, insurance) ||
                 other.insurance == insurance) &&
+            (identical(other.postCode, postCode) ||
+                other.postCode == postCode) &&
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.nationality, nationality) ||
@@ -384,6 +404,7 @@ class _$ProfileImpl implements _Profile {
       bloodType,
       maritalStatus,
       insurance,
+      postCode,
       gender,
       address,
       nationality,
@@ -414,7 +435,8 @@ abstract class _Profile implements Profile {
       @JsonKey(name: 'work_in') final String? workPlace,
       @JsonKey(name: 'blood_type') final String? bloodType,
       @JsonKey(name: 'marital_status') final String? maritalStatus,
-      @JsonKey(name: 'responsible_for_costs') final String? insurance,
+      @JsonKey(name: 'responsibleForCosts') final String? insurance,
+      @JsonKey(name: 'area_code') final String? postCode,
       final String? gender,
       final String? address,
       final String? nationality,
@@ -450,8 +472,11 @@ abstract class _Profile implements Profile {
   @JsonKey(name: 'marital_status')
   String? get maritalStatus;
   @override
-  @JsonKey(name: 'responsible_for_costs')
+  @JsonKey(name: 'responsibleForCosts')
   String? get insurance;
+  @override
+  @JsonKey(name: 'area_code')
+  String? get postCode;
   @override
   String? get gender;
   @override

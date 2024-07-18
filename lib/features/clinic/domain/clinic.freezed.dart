@@ -20,6 +20,7 @@ Clinic _$ClinicFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Clinic {
+  String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -32,7 +33,7 @@ abstract class $ClinicCopyWith<$Res> {
   factory $ClinicCopyWith(Clinic value, $Res Function(Clinic) then) =
       _$ClinicCopyWithImpl<$Res, Clinic>;
   @useResult
-  $Res call({String name});
+  $Res call({String id, String name});
 }
 
 /// @nodoc
@@ -48,9 +49,14 @@ class _$ClinicCopyWithImpl<$Res, $Val extends Clinic>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -66,7 +72,7 @@ abstract class _$$ClinicImplCopyWith<$Res> implements $ClinicCopyWith<$Res> {
       __$$ClinicImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name});
+  $Res call({String id, String name});
 }
 
 /// @nodoc
@@ -80,9 +86,14 @@ class __$$ClinicImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
   }) {
     return _then(_$ClinicImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -95,17 +106,19 @@ class __$$ClinicImplCopyWithImpl<$Res>
 
 @JsonSerializable()
 class _$ClinicImpl implements _Clinic {
-  const _$ClinicImpl({required this.name});
+  const _$ClinicImpl({required this.id, required this.name});
 
   factory _$ClinicImpl.fromJson(Map<String, dynamic> json) =>
       _$$ClinicImplFromJson(json);
 
   @override
+  final String id;
+  @override
   final String name;
 
   @override
   String toString() {
-    return 'Clinic(name: $name)';
+    return 'Clinic(id: $id, name: $name)';
   }
 
   @override
@@ -113,12 +126,13 @@ class _$ClinicImpl implements _Clinic {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ClinicImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, name);
+  int get hashCode => Object.hash(runtimeType, id, name);
 
   @JsonKey(ignore: true)
   @override
@@ -135,10 +149,13 @@ class _$ClinicImpl implements _Clinic {
 }
 
 abstract class _Clinic implements Clinic {
-  const factory _Clinic({required final String name}) = _$ClinicImpl;
+  const factory _Clinic(
+      {required final String id, required final String name}) = _$ClinicImpl;
 
   factory _Clinic.fromJson(Map<String, dynamic> json) = _$ClinicImpl.fromJson;
 
+  @override
+  String get id;
   @override
   String get name;
   @override

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rearch/flutter_rearch.dart';
 import 'package:rearch/rearch.dart';
 
-import '../auth_router.dart';
+import 'auth_router.dart';
 
 class SigninScreen extends StatelessWidget {
   const SigninScreen({super.key});

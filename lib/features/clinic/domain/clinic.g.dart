@@ -7,10 +7,12 @@ part of 'clinic.dart';
 // **************************************************************************
 
 _$ClinicImpl _$$ClinicImplFromJson(Map<String, dynamic> json) => _$ClinicImpl(
+      id: json['id'] as String,
       name: json['name'] as String,
     );
 
 Map<String, dynamic> _$$ClinicImplToJson(_$ClinicImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
     };

@@ -1,18 +1,18 @@
 import 'package:clinic/features/auth/auth.dart';
 import 'package:clinic/features/profile/profile.dart';
-import 'package:clinic/pages/dash/screens/account.dart';
-import 'package:clinic/pages/dash/screens/appointments.dart';
+import 'package:clinic/pages/dash/account.dart';
+import 'package:clinic/pages/dash/appointments.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../pages.dart';
-import 'screens/home.dart';
+import 'home.dart';
 
 part 'dash_router.g.dart';
 
-final _dashboardNavKey = GlobalKey<NavigatorState>();
+final dashboard = GlobalKey<NavigatorState>();
 
 @TypedStatefulShellRoute<DashboardRoute>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
@@ -137,7 +137,7 @@ class _DashboardLayout extends StatelessWidget {
 }
 
 class HomeBranch extends StatefulShellBranchData {
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = _dashboardNavKey;
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = dashboard;
   static const String $restorationScopeId = 'dashboardRestorationScopeId';
 }
 
@@ -154,7 +154,7 @@ class HomeRoute extends GoRouteData {
 }
 
 class AppointmentsBranch extends StatefulShellBranchData {
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = _dashboardNavKey;
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = dashboard;
   static const String $restorationScopeId = 'dashboardRestorationScopeId';
 }
 
@@ -171,7 +171,7 @@ class AppointmentsRoute extends GoRouteData {
 }
 
 class AccountBranch extends StatefulShellBranchData {
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = _dashboardNavKey;
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = dashboard;
   static const String $restorationScopeId = 'dashboardRestorationScopeId';
 }
 

@@ -1,6 +1,7 @@
 import 'package:clinic/ui/container/network_observer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_rearch/flutter_rearch.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -12,6 +13,8 @@ import 'services/theme.dart';
 import 'ui/notification/notification.dart';
 
 void main() async {
+  await dotenv.load();
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await EasyLocalization.ensureInitialized();
