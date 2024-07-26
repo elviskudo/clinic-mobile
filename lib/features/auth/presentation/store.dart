@@ -1,4 +1,7 @@
-part of 'view.dart';
+import 'package:rearch/rearch.dart';
+
+import '../domain/credential.dart';
+import 'actions.dart';
 
 AsyncValue<Credential?> cred$(CapsuleHandle use) {
   final fetch = use(fetchCredential);

@@ -20,11 +20,13 @@ Credential _$CredentialFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Credential {
-  String? get id => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   Role? get role => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_verified')
   bool get isVerified => throw _privateConstructorUsedError;
+  @JsonKey(name: 'clinic_id')
+  String get clinicId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -39,10 +41,11 @@ abstract class $CredentialCopyWith<$Res> {
       _$CredentialCopyWithImpl<$Res, Credential>;
   @useResult
   $Res call(
-      {String? id,
+      {String id,
       String email,
       Role? role,
-      @JsonKey(name: 'is_verified') bool isVerified});
+      @JsonKey(name: 'is_verified') bool isVerified,
+      @JsonKey(name: 'clinic_id') String clinicId});
 
   $RoleCopyWith<$Res>? get role;
 }
@@ -60,16 +63,17 @@ class _$CredentialCopyWithImpl<$Res, $Val extends Credential>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? id = null,
     Object? email = null,
     Object? role = freezed,
     Object? isVerified = null,
+    Object? clinicId = null,
   }) {
     return _then(_value.copyWith(
-      id: freezed == id
+      id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -82,6 +86,10 @@ class _$CredentialCopyWithImpl<$Res, $Val extends Credential>
           ? _value.isVerified
           : isVerified // ignore: cast_nullable_to_non_nullable
               as bool,
+      clinicId: null == clinicId
+          ? _value.clinicId
+          : clinicId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 
@@ -107,10 +115,11 @@ abstract class _$$CredentialImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? id,
+      {String id,
       String email,
       Role? role,
-      @JsonKey(name: 'is_verified') bool isVerified});
+      @JsonKey(name: 'is_verified') bool isVerified,
+      @JsonKey(name: 'clinic_id') String clinicId});
 
   @override
   $RoleCopyWith<$Res>? get role;
@@ -127,16 +136,17 @@ class __$$CredentialImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? id = null,
     Object? email = null,
     Object? role = freezed,
     Object? isVerified = null,
+    Object? clinicId = null,
   }) {
     return _then(_$CredentialImpl(
-      id: freezed == id
+      id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -149,6 +159,10 @@ class __$$CredentialImplCopyWithImpl<$Res>
           ? _value.isVerified
           : isVerified // ignore: cast_nullable_to_non_nullable
               as bool,
+      clinicId: null == clinicId
+          ? _value.clinicId
+          : clinicId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -158,16 +172,17 @@ class __$$CredentialImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CredentialImpl implements _Credential {
   const _$CredentialImpl(
-      {this.id,
+      {required this.id,
       required this.email,
       this.role = const Role(name: 'patient'),
-      @JsonKey(name: 'is_verified') this.isVerified = false});
+      @JsonKey(name: 'is_verified') this.isVerified = false,
+      @JsonKey(name: 'clinic_id') required this.clinicId});
 
   factory _$CredentialImpl.fromJson(Map<String, dynamic> json) =>
       _$$CredentialImplFromJson(json);
 
   @override
-  final String? id;
+  final String id;
   @override
   final String email;
   @override
@@ -176,10 +191,13 @@ class _$CredentialImpl implements _Credential {
   @override
   @JsonKey(name: 'is_verified')
   final bool isVerified;
+  @override
+  @JsonKey(name: 'clinic_id')
+  final String clinicId;
 
   @override
   String toString() {
-    return 'Credential(id: $id, email: $email, role: $role, isVerified: $isVerified)';
+    return 'Credential(id: $id, email: $email, role: $role, isVerified: $isVerified, clinicId: $clinicId)';
   }
 
   @override
@@ -191,12 +209,15 @@ class _$CredentialImpl implements _Credential {
             (identical(other.email, email) || other.email == email) &&
             (identical(other.role, role) || other.role == role) &&
             (identical(other.isVerified, isVerified) ||
-                other.isVerified == isVerified));
+                other.isVerified == isVerified) &&
+            (identical(other.clinicId, clinicId) ||
+                other.clinicId == clinicId));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, email, role, isVerified);
+  int get hashCode =>
+      Object.hash(runtimeType, id, email, role, isVerified, clinicId);
 
   @JsonKey(ignore: true)
   @override
@@ -214,16 +235,18 @@ class _$CredentialImpl implements _Credential {
 
 abstract class _Credential implements Credential {
   const factory _Credential(
-      {final String? id,
-      required final String email,
-      final Role? role,
-      @JsonKey(name: 'is_verified') final bool isVerified}) = _$CredentialImpl;
+          {required final String id,
+          required final String email,
+          final Role? role,
+          @JsonKey(name: 'is_verified') final bool isVerified,
+          @JsonKey(name: 'clinic_id') required final String clinicId}) =
+      _$CredentialImpl;
 
   factory _Credential.fromJson(Map<String, dynamic> json) =
       _$CredentialImpl.fromJson;
 
   @override
-  String? get id;
+  String get id;
   @override
   String get email;
   @override
@@ -231,6 +254,9 @@ abstract class _Credential implements Credential {
   @override
   @JsonKey(name: 'is_verified')
   bool get isVerified;
+  @override
+  @JsonKey(name: 'clinic_id')
+  String get clinicId;
   @override
   @JsonKey(ignore: true)
   _$$CredentialImplCopyWith<_$CredentialImpl> get copyWith =>

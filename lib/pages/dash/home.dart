@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:clinic/features/appointment/appointment.dart';
+import 'package:clinic/features/clinic/clinic.dart';
 import 'package:clinic/features/profile/profile.dart';
 import 'package:clinic/pages/dash/dash_router.dart';
 import 'package:clinic/utils/sizes.dart';
@@ -84,11 +85,12 @@ class _WelcomeText extends RearchConsumer {
   @override
   Widget build(BuildContext context, WidgetHandle use) {
     final (name, placeholder) = use(fullName$);
+    final (clinic, clinicPlaceholder) = use(clinicName$);
 
     return Skeletonizer(
-      enabled: name == null,
+      enabled: name == null || clinic == null,
       child: AutoSizeText(
-        'Welcome to Mayou Clinic ${name ?? placeholder}!',
+        'Welcome to ${clinic ?? clinicPlaceholder} ${name ?? placeholder}!',
         style: Theme.of(context)
             .textTheme
             .headlineSmall!
@@ -124,8 +126,8 @@ class _AppointmentListTitle extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            const AppointmentsRoute().push(context);
-            StatefulNavigationShell.of(context).goBranch(1);
+            // const AppointmentsRoute().push(context);
+            StatefulNavigationShell.of(dashboard.currentContext!).goBranch(1);
           },
           child: Text(
             'See all',

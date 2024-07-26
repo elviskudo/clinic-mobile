@@ -4,11 +4,11 @@ import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'screens/onboarding.dart';
-import 'screens/signin.dart';
-import 'screens/signup.dart';
-import 'screens/verification.dart';
-import 'screens/verification_success.dart';
+import 'onboarding.dart';
+import 'signin.dart';
+import 'signup.dart';
+import 'verification.dart';
+import 'verification_success.dart';
 
 part 'auth_router.g.dart';
 

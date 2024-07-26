@@ -1,11 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:clinic/features/profile/profile.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rearch/flutter_rearch.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:rearch/rearch.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+
+import '../store.dart';
 
 class UncompleteProfileNotice extends RearchConsumer {
   const UncompleteProfileNotice({super.key, this.hideWhenComplete = false});

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rearch/flutter_rearch.dart';
 import 'package:rearch/rearch.dart';
 
-import '../auth_router.dart';
+import 'auth_router.dart';
 
 class SigninScreen extends StatelessWidget {
   const SigninScreen({super.key});
@@ -83,12 +83,14 @@ class _SignInForm extends RearchConsumer {
               );
               data.isVerified
                   ? const HomeRoute().go(context)
-                  : const VerificationRoute(shouldRequest: true).go(context);
+                  : const VerificationRoute().go(context);
             },
           ).catchError(
-            (_) {
+            (ex) {
               context.toast.error(
-                message: 'Sign in failed, check your credential and try again.',
+                message: ex is AuthenticationFailed
+                    ? 'Sign in failed, email or password is not correct.'
+                    : 'Sign in failed please try again.',
               );
             },
           ),
