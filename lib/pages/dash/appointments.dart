@@ -1,5 +1,5 @@
-import 'package:clinic/features/appointment/view/widgets/appointment_card.dart';
-import 'package:clinic/pages/dash/screens/home.dart';
+import 'package:clinic/features/appointment/presentation/widgets/appointment_card.dart';
+import 'package:clinic/pages/dash/home.dart';
 import 'package:clinic/utils/sizes.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

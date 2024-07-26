@@ -1,4 +1,7 @@
-part of 'view.dart';
+import 'package:rearch/rearch.dart';
+
+import '../domain/profile.dart';
+import 'actions.dart';
 
 AsyncValue<Profile?> profile$(CapsuleHandle use) {
   final fetch = use(fetchProfile);

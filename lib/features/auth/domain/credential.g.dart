@@ -8,12 +8,13 @@ part of 'credential.dart';
 
 _$CredentialImpl _$$CredentialImplFromJson(Map<String, dynamic> json) =>
     _$CredentialImpl(
-      id: json['id'] as String?,
+      id: json['id'] as String,
       email: json['email'] as String,
       role: json['role'] == null
           ? const Role(name: 'patient')
           : Role.fromJson(json['role'] as Map<String, dynamic>),
       isVerified: json['is_verified'] as bool? ?? false,
+      clinicId: json['clinic_id'] as String,
     );
 
 Map<String, dynamic> _$$CredentialImplToJson(_$CredentialImpl instance) =>
@@ -22,6 +23,7 @@ Map<String, dynamic> _$$CredentialImplToJson(_$CredentialImpl instance) =>
       'email': instance.email,
       'role': instance.role,
       'is_verified': instance.isVerified,
+      'clinic_id': instance.clinicId,
     };
 
 _$RoleImpl _$$RoleImplFromJson(Map<String, dynamic> json) => _$RoleImpl(

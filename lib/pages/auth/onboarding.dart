@@ -1,7 +1,7 @@
 import 'package:clinic/utils/sizes.dart';
 import 'package:flutter/material.dart';
 
-import '../auth_router.dart';
+import 'auth_router.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
