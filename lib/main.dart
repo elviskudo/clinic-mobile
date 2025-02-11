@@ -14,6 +14,7 @@ void main() {
       translations: AppTranslations(),
       locale: const Locale('en'),
       fallbackLocale: const Locale('en'),
+      debugShowCheckedModeBanner: false,
     ),
   );
 }
