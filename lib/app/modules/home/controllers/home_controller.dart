@@ -25,9 +25,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> updateAllTranslations(
-    Map<String, RxString> translations, 
-    String targetLanguage
-  ) async {
+      Map<String, RxString> translations, String targetLanguage) async {
     var previousLanguage = currentLanguage.value;
     isLoading.value = true;
 
@@ -46,7 +44,7 @@ class HomeController extends GetxController {
         translations[entry.key]?.value = translatedTexts[index];
         index++;
       }
-
+      currentLanguage.value.toUpperCase();
       currentLanguage.value = targetLanguage;
     } catch (e) {
       print('Error updating translations: $e');
