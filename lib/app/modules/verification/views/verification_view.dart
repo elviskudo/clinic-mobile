@@ -1,3 +1,5 @@
+import 'package:clinic_ai/app/modules/home/controllers/home_controller.dart';
+import 'package:clinic_ai/components/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -9,6 +11,14 @@ class VerificationView extends GetView<VerificationController> {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.put(HomeController());
+
+    final translations = {
+      'verif': 'Verification code'.obs,
+      'enterVerif': 'Enter the verification code that we have sent\nto the email:'.obs,
+      'recieveOtp': "Didn't recieve the OTP?".obs,
+      'verif2': 'Verification'.obs,
+    };
     return Scaffold(
       backgroundColor: const Color(0xFFF7FBF2),
       body: SafeArea(
@@ -28,47 +38,53 @@ class VerificationView extends GetView<VerificationController> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  _buildLanguageSwitch(),
+                  LanguageSelector(
+                    controller: homeController,
+                    translationData: translations,
+                  )
                 ],
               ),
               const Spacer(flex: 1),
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'Verification code'.tr,
-                      style: GoogleFonts.inter(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
+              Obx(
+                () => Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        translations["verif"]!.value,
+                        style: GoogleFonts.inter(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Enter the verification code that we have sent\nto the email:'.tr,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: const Color(0xFF727970),
-                        height: 1.5,
+                      const SizedBox(height: 12),
+                      Text(
+                        translations["enterVerif"]!.value
+                            .tr,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: const Color(0xFF727970),
+                          height: 1.5,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                    OTPFields(),
-                    const SizedBox(height: 8),
-                    Obx(() => controller.isError.value
-                        ? Text(
-                            controller.errorMessage.value,
-                            style: GoogleFonts.inter(
-                              color: const Color(0xFFBA1A1A),
-                              fontSize: 12,
-                            ),
-                          )
-                        : const SizedBox.shrink()),
-                    const SizedBox(height: 24),
-                    _buildResendSection(),
-                    const SizedBox(height: 32),
-                    _buildVerificationButton(),
-                  ],
+                      const SizedBox(height: 32),
+                      OTPFields(),
+                      const SizedBox(height: 8),
+                      Obx(() => controller.isError.value
+                          ? Text(
+                              controller.errorMessage.value,
+                              style: GoogleFonts.inter(
+                                color: const Color(0xFFBA1A1A),
+                                fontSize: 12,
+                              ),
+                            )
+                          : const SizedBox.shrink()),
+                      const SizedBox(height: 24),
+                      _buildResendSection(translations["recieveOtp"]!.value),
+                      const SizedBox(height: 32),
+                      _buildVerificationButton(translations["verif2"]!.value),
+                    ],
+                  ),
                 ),
               ),
               const Spacer(flex: 2),
@@ -79,58 +95,12 @@ class VerificationView extends GetView<VerificationController> {
     );
   }
 
-  Widget _buildLanguageSwitch() {
-  return PopupMenuButton<String>(
-    onSelected: (value) {
-      Get.updateLocale(Locale(value));
-    },
-    itemBuilder: (context) => [
-      const PopupMenuItem(
-        value: 'en',
-        child: Text('EN'),
-      ),
-      const PopupMenuItem(
-        value: 'id',
-        child: Text('ID'),
-      ),
-    ],
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF727970)),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: Image.asset(
-              'assets/icons/Globe.png',
-              width: 16,
-              height: 16,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.language, size: 16, color: Color(0xFF727970));
-              },
-            ),
-          ),
-          Text(
-            Get.locale?.languageCode.toUpperCase() ?? 'EN',
-            style: GoogleFonts.inter(
-              color: const Color(0xFF727970),
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-  Widget _buildResendSection() {
+ 
+  Widget _buildResendSection(String? recieveOtp) {
     return Column(
       children: [
         Text(
-          "Didn't recieve the OTP?".tr,
+          recieveOtp!,
           style: GoogleFonts.inter(
             color: const Color(0xFF727970),
             fontSize: 14,
@@ -157,7 +127,7 @@ class VerificationView extends GetView<VerificationController> {
     );
   }
 
-  Widget _buildVerificationButton() {
+  Widget _buildVerificationButton(String? verif) {
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -171,7 +141,7 @@ class VerificationView extends GetView<VerificationController> {
           elevation: 0,
         ),
         child: Text(
-          'Verification'.tr,
+          verif!,
           style: GoogleFonts.inter(
             color: Colors.white,
             fontSize: 16,
