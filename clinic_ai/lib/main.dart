@@ -1,3 +1,4 @@
+import 'package:clinic_ai/app/translations/app_translations.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -10,6 +11,9 @@ void main() {
       title: "Application",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
+      translations: AppTranslations(),
+      locale: const Locale('en'),
+      fallbackLocale: const Locale('en'),
     ),
   );
 }
