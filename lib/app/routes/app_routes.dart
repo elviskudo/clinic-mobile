@@ -6,6 +6,8 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const VERIVICATION = _Paths.VERIVICATION;
   static const VERIVICATION_SUCCESS = _Paths.VERIVICATION_SUCCESS;
+  static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
+  static const ONBOARDING_PAGE = _Paths.ONBOARDING_PAGE;
 }
 
 abstract class _Paths {
@@ -13,4 +15,6 @@ abstract class _Paths {
   static const HOME = '/home';
   static const VERIVICATION = '/verivication';
   static const VERIVICATION_SUCCESS = '/verivication-success';
+  static const SPLASH_SCREEN = '/splash-screen';
+  static const ONBOARDING_PAGE = '/onboarding-page';
 }
