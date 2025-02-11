@@ -1,3 +1,5 @@
+import 'package:clinic_ai/app/modules/home/controllers/home_controller.dart';
+import 'package:clinic_ai/components/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -9,6 +11,16 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(HomeController());
+    final translations = {
+      'welcome': 'Welcome to Clinic'.obs,
+      'description': 'Enjoy the convenience of scheduling\n'
+              'medical appointments anytime, anywhere\n'
+              'with our AI-generated app...'
+          .obs,
+      'buttonText': 'Sign in with Google'.obs,
+      'footer': 'Dibuat dengan Flutter'.obs,
+    };
     return Scaffold(
       backgroundColor: Color(0xffF7FBF2),
       body: SafeArea(
@@ -28,27 +40,9 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.language, size: 16, color: Colors.grey[600]),
-                        SizedBox(width: 4),
-                        Text(
-                          'EN',
-                          style: GoogleFonts.poppins(color: Colors.grey[600]),
-                        ),
-                        Icon(Icons.arrow_drop_down,
-                            size: 16, color: Colors.grey[600]),
-                      ],
-                    ),
+                  LanguageSelector(
+                    controller: controller,
+                    translationData: translations,
                   ),
                 ],
               ),
@@ -71,24 +65,23 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Welcome to Clinic',
-                      style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF35693E),
-                      ),
-                    ),
+                    Obx(() => Text(
+                          translations['welcome']!.value,
+                          style: GoogleFonts.poppins(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF35693E),
+                          ),
+                        )),
                     Gap(8),
-                    Text(
-                      'Enjoy the convenience of scheduling\n'
-                      'medical appointments anytime, anywhere\n'
-                      'with our AI-generated app...',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: Color(0xFF727970),
-                      ),
-                    ),
+                    Obx(() => Text(
+                          translations['description']!.value,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF727970),
+                          ),
+                        )),
                   ],
                 ),
               ),
@@ -102,14 +95,11 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
                     'assets/icons/google.png',
                     height: 32,
                   ),
-                  label: Text(
-                    'Masuk dengan akun Google',
-                    style: GoogleFonts.poppins(
-                      color: Color(0xff313036),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  label: Obx(() => Text(translations['buttonText']!.value,
+                      style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black))),
                   style: OutlinedButton.styleFrom(
                     minimumSize: Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(

@@ -9,7 +9,7 @@ class SplashScreenController extends GetxController {
     super.onInit();
     Future.delayed(const Duration(seconds: 2), () {
       // Replace 'OnboardingView' with your actual onboarding route name
-      Get.offNamed('/onboarding-page');
+      Get.offNamed('/onboarding');
     });
   }
 
