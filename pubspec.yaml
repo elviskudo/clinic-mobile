@@ -40,6 +40,7 @@ dependencies:
   gap: ^3.0.1
   translator: ^1.0.3+1
   supabase_flutter: ^2.8.3
+  shared_preferences: ^2.5.2
 
 dev_dependencies:
   flutter_test:
