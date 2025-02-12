@@ -12,6 +12,7 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(HomeController());
+    final onBoardCtrl = Get.put(OnboardingPageController());
     final translations = {
       'welcome': 'Welcome to Clinic'.obs,
       'description': 'Enjoy the convenience of scheduling\n'
@@ -90,7 +91,9 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
               SizedBox(
                 height: 55,
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    onBoardCtrl.loginWithGoogle();
+                  },
                   icon: Image.asset(
                     'assets/icons/google.png',
                     height: 32,

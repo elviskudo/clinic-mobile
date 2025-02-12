@@ -8,6 +8,7 @@ class SplashScreenView extends GetView<SplashScreenController> {
   const SplashScreenView({super.key});
   @override
   Widget build(BuildContext context) {
+    final SplashScreenController controller = Get.put(SplashScreenController());
     return Scaffold(
       backgroundColor: Color(0xffF7FBF2),
       body: Center(
@@ -15,8 +16,8 @@ class SplashScreenView extends GetView<SplashScreenController> {
             width: 185,
             height: 185,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/images/logoclinicai.png")),
+              image:
+                  DecorationImage(image: AssetImage("assets/images/logo.png")),
             )),
       ),
     );
