@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=C:\Android\flutter
-FLUTTER_APPLICATION_PATH=D:\clinic-ai\clinic-mobile
+FLUTTER_ROOT=C:\Android\flutter\flutter
+FLUTTER_APPLICATION_PATH=C:\BelajarCoding\PKL\clinic_ai\clinic-mobile
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.0
