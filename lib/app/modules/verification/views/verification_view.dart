@@ -136,7 +136,7 @@ class VerificationView extends GetView<VerificationController> {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF35693E),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(25),
           ),
           elevation: 0,
         ),
