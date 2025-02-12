@@ -11,7 +11,7 @@ class HomeView extends GetView<HomeController> {
   final translations = {
     'welcome': 'Selamat Datang'.obs,
     'description': 'Ini adalah aplikasi penerjemah'.obs,
-    'buttonText': 'Tekan Disini'.obs,
+    'buttonText': 'logout'.obs,
     'footer': 'Dibuat dengan Flutter'.obs,
   };
 
@@ -38,7 +38,7 @@ class HomeView extends GetView<HomeController> {
                 )),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async => await controller.logout(),
               child: Obx(() => Text(translations['buttonText']!.value)),
             ),
             const SizedBox(height: 20),

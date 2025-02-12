@@ -1,27 +1,32 @@
+import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreenController extends GetxController {
-  //TODO: Implement SplashScreenController
+  static const String ONBOARDING_SHOWN_KEY = 'isOnboardingSeen';
 
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
-    Future.delayed(const Duration(seconds: 2), () {
-      // Replace 'OnboardingView' with your actual onboarding route name
-      Get.offNamed('/onboarding-page');
-    });
+    checkLoginStatus();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
+  Future<void> checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool isOnboardingSeen = prefs.getBool(ONBOARDING_SHOWN_KEY) ?? false;
 
-  @override
-  void onClose() {
-    super.onClose();
+    // Wait for 2 seconds before navigation
+    await Future.delayed(const Duration(seconds: 2));
+    
+    if (!isOnboardingSeen) {
+      Get.offAllNamed(Routes.ONBOARDING_PAGE);
+    } else {
+      bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+      if (isLoggedIn) {
+        Get.offAllNamed(Routes.HOME);
+      } else {
+        Get.offAllNamed(Routes.LOGIN);
+      }
+    }
   }
-
-  void increment() => count.value++;
 }
