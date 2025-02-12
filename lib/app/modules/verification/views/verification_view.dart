@@ -15,7 +15,8 @@ class VerificationView extends GetView<VerificationController> {
 
     final translations = {
       'verif': 'Verification code'.obs,
-      'enterVerif': 'Enter the verification code that we have sent\nto the email:'.obs,
+      'enterVerif':
+          'Enter the verification code that we have sent\nto the email:'.obs,
       'recieveOtp': "Didn't recieve the OTP?".obs,
       'verif2': 'Verification'.obs,
     };
@@ -58,8 +59,7 @@ class VerificationView extends GetView<VerificationController> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        translations["enterVerif"]!.value
-                            .tr,
+                        translations["enterVerif"]!.value.tr,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.inter(
                           fontSize: 14,
@@ -95,7 +95,6 @@ class VerificationView extends GetView<VerificationController> {
     );
   }
 
- 
   Widget _buildResendSection(String? recieveOtp) {
     return Column(
       children: [
@@ -107,19 +106,35 @@ class VerificationView extends GetView<VerificationController> {
           ),
         ),
         const SizedBox(height: 4),
-        TextButton(
-          onPressed: () => controller.resendOTP(),
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.zero,
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          child: Text(
-            'Resending'.tr,
-            style: GoogleFonts.inter(
-              color: const Color(0xFF35693E),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+        Obx(() => Text(
+              controller.countdown.value > 0
+                  ? 'Resend in ${controller.countdown.value}s'
+                  : 'You can resend now',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: const Color(0xFFBA1A1A),
+              ),
+            )),
+        const SizedBox(height: 4),
+        Obx(
+          () => TextButton(
+            onPressed: controller.countdown.value == 0
+                ? () => controller.resendOTP()
+                : null,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              'Resend'.tr,
+              style: GoogleFonts.inter(
+                color: controller.countdown.value == 0
+                    ? const Color(0xFF35693E)
+                    : Colors.grey,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),
@@ -136,7 +151,7 @@ class VerificationView extends GetView<VerificationController> {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF35693E),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(25),
           ),
           elevation: 0,
         ),
@@ -161,8 +176,8 @@ class OTPFields extends GetView<VerificationController> {
       children: List.generate(
         6,
         (index) => Container(
-          width: 48,
-          height: 56,
+          width: 43,
+          height: 50,
           margin: const EdgeInsets.symmetric(horizontal: 4),
           child: Obx(
             () => TextField(

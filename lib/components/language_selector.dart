@@ -43,20 +43,12 @@ class LanguageSelector extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(right: 4),
-                      child: Image.asset(
-                        'assets/icons/Globe.png',
-                        width: 16,
-                        height: 16,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.language,
-                            size: 16,
-                            color: Color(0xFF727970),
-                          );
-                        },
-                      ),
-                    ),
+                        padding: const EdgeInsets.only(right: 4),
+                        child: Icon(
+                          Icons.language,
+                          size: 16,
+                          color: Color(0xFF727970),
+                        )),
                     Obx(() => Text(
                           controller.currentLanguage.value.toUpperCase(),
                           style: GoogleFonts.inter(
@@ -64,6 +56,8 @@ class LanguageSelector extends StatelessWidget {
                             fontSize: 14,
                           ),
                         )),
+                    Icon(Icons.arrow_drop_down,
+                        size: 16, color: Colors.grey[600]),
                   ],
                 ),
               ),

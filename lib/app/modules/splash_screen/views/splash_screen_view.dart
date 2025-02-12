@@ -8,7 +8,11 @@ class SplashScreenView extends GetView<SplashScreenController> {
   const SplashScreenView({super.key});
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final SplashScreenController controller = Get.put(SplashScreenController());
+=======
+    Get.put(SplashScreenController());
+>>>>>>> aa00429ed23ace176bbd3cf953cacb70234823fd
     return Scaffold(
       backgroundColor: Color(0xffF7FBF2),
       body: Center(

@@ -1,10 +1,58 @@
+import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translator/translator.dart';
 
 class HomeController extends GetxController {
+  static const String LANGUAGE_KEY = 'selected_language';
   final translator = GoogleTranslator();
   var currentLanguage = 'id'.obs;
   var isLoading = false.obs;
+
+  final translations = {
+    'createAccount': 'Create an Account'.obs,
+    'startDescription':
+        'Start with make an account and then you can start to check your health anytime, anywhere!'
+            .obs,
+    'apple': 'Apple'.obs,
+    'google': 'Google'.obs,
+    'orByEmail': 'Or by email'.obs,
+    'name': 'Name'.obs,
+    'fullName': 'Your full name'.obs,
+    'email': 'E-mail'.obs,
+    'enterEmail': 'Enter your email'.obs,
+    'phone': 'No. Telp'.obs,
+    'enterPhone': 'Enter a phone number'.obs,
+    'password': 'Password'.obs,
+    'confirmPassword': 'Confirm Password'.obs,
+    'agreeToTerms': 'I agree to the '.obs,
+    'termsAndConditions': ' terms and conditions'.obs,
+    'register': 'Register'.obs,
+    'haveAccount': 'have an account yet? '.obs,
+    // 'login': 'Login'.obs,
+  };
+
+  // Instance SharedPreferences
+  late final SharedPreferences _prefs;
+
+  @override
+  void onInit() async {
+    super.onInit();
+    // Inisialisasi SharedPreferences
+    _prefs = await SharedPreferences.getInstance();
+    // Mengambil bahasa yang tersimpan, default ke 'id' jika belum ada
+    currentLanguage.value = _prefs.getString(LANGUAGE_KEY) ?? 'id';
+  }
+
+  // Menyimpan bahasa yang dipilih
+  Future<void> _saveLanguage(String languageCode) async {
+    await _prefs.setString(LANGUAGE_KEY, languageCode);
+  }
+
+  Future<void> logout() async {
+    await _prefs.setBool('isLoggedIn', false);
+    Get.offAllNamed(Routes.LOGIN);
+  }
 
   Future<String> translateText(String text, String targetLanguage) async {
     try {
@@ -44,7 +92,8 @@ class HomeController extends GetxController {
         translations[entry.key]?.value = translatedTexts[index];
         index++;
       }
-      currentLanguage.value.toUpperCase();
+
+      await _saveLanguage(targetLanguage);
       currentLanguage.value = targetLanguage;
     } catch (e) {
       print('Error updating translations: $e');

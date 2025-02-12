@@ -1,9 +1,13 @@
+import 'package:clinic_ai/app/modules/login/views/login_view.dart';
+import 'package:clinic_ai/app/routes/app_pages.dart';
+import 'package:clinic_ai/components/button.dart';
 import 'package:clinic_ai/app/modules/home/controllers/home_controller.dart';
 import 'package:clinic_ai/components/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/onboarding_page_controller.dart';
 
 class OnboardingPageView extends GetView<OnboardingPageController> {
@@ -38,7 +42,7 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
                     'Logo',
                     style: GoogleFonts.poppins(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   LanguageSelector(
@@ -54,7 +58,7 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
                 width: MediaQuery.of(context).size.width,
                 child: Center(
                   child: Image.asset(
-                    'assets/images/fotoonboard.png',
+                    'assets/images/logoOnboarding.png',
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -66,14 +70,14 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Obx(() => Text(
-                          translations['welcome']!.value,
-                          style: GoogleFonts.poppins(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF35693E),
-                          ),
-                        )),
+                    Text(
+                      'Welcome to Clinic',
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF35693E),
+                      ),
+                    ),
                     Gap(8),
                     Obx(() => Text(
                           translations['description']!.value,
@@ -88,29 +92,23 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
               ),
               Gap(40),
               // Sign in with Google Button
-              SizedBox(
-                height: 55,
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    onBoardCtrl.loginWithGoogle();
-                  },
-                  icon: Image.asset(
-                    'assets/icons/google.png',
-                    height: 32,
-                  ),
-                  label: Obx(() => Text(translations['buttonText']!.value,
-                      style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black))),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
+              PrimaryButton(
+                  text: 'Login',
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool(
+                        OnboardingPageController.ONBOARDING_SHOWN_KEY, true);
+                    Get.offAllNamed(Routes.LOGIN);
+                  }),
+              Gap(16),
+              ButtonOutline(
+                  text: 'Create an Account',
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool(
+                        OnboardingPageController.ONBOARDING_SHOWN_KEY, true);
+                    Get.offAllNamed(Routes.REGISTER);
+                  }),
             ],
           ),
         ),
