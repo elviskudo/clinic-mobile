@@ -100,15 +100,8 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
                         OnboardingPageController.ONBOARDING_SHOWN_KEY, true);
                     Get.offAllNamed(Routes.LOGIN);
                   }),
-              Gap(16),
-              ButtonOutline(
-                  text: 'Create an Account',
-                  onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool(
-                        OnboardingPageController.ONBOARDING_SHOWN_KEY, true);
-                    Get.offAllNamed(Routes.REGISTER);
-                  }),
+              
+              
             ],
           ),
         ),

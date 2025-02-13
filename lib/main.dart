@@ -1,7 +1,7 @@
 import 'package:clinic_ai/app/translations/app_translations.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -9,22 +9,21 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app/routes/app_pages.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();  
+  await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
   try {
     await Supabase.initialize(
-      url: 'https://cgzijynmhqtuudtpouat.supabase.co',
-      anonKey:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNnemlqeW5taHF0dXVkdHBvdWF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkyMzk4MDIsImV4cCI6MjA1NDgxNTgwMn0.zs644gqSB5k1I4_3vNmqDpDzYvQOGeFa9pT3slyZZ0M',
-    );
+        url: dotenv.env['SUPABASE_URL']!, anonKey: dotenv.env['SUPABASE_KEY']!);
     EmailOTP.config(
       appName: 'Clinic AI',
       otpType: OTPType.numeric,
       expiry: 120000,
-      emailTheme: EmailTheme.v6,
+      emailTheme: EmailTheme.v1,
       appEmail: 'clinic.ai@gmail.com',
       otpLength: 6,
+
     );
-    
+
     print('Database connection successful!');
     runApp(
       GetMaterialApp(

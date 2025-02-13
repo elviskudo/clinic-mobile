@@ -1,15 +1,16 @@
+import 'package:clinic_ai/app/modules/account_settings/bindings/account_settings_binding.dart';
+import 'package:clinic_ai/app/modules/account_settings/views/account_settings_view.dart';
 import 'package:get/get.dart';
 
-import '../modules/account_settings/bindings/account_settings_binding.dart';
-import '../modules/account_settings/views/account_settings_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/onboarding_page/bindings/onboarding_page_binding.dart';
 import '../modules/onboarding_page/views/onboarding_page_view.dart';
-import '../modules/register/bindings/register_binding.dart';
-import '../modules/register/views/register_view.dart';
+import '../modules/personal_data/bindings/personal_data_binding.dart';
+import '../modules/personal_data/views/personal_data_view.dart';
+
 import '../modules/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/splash_screen/views/splash_screen_view.dart';
 import '../modules/verification/bindings/verification_binding.dart';
@@ -22,7 +23,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.ACCOUNT_SETTINGS;
+  static const INITIAL = Routes.SPLASH_SCREEN;
 
   static final routes = [
     GetPage(
@@ -55,10 +56,11 @@ class AppPages {
       page: () => const LoginView(),
       binding: LoginBinding(),
     ),
+    
     GetPage(
-      name: _Paths.REGISTER,
-      page: () => const RegisterView(),
-      binding: RegisterBinding(),
+      name: _Paths.PERSONAL_DATA,
+      page: () => const PersonalDataView(),
+      binding: PersonalDataBinding(),
     ),
     GetPage(
       name: _Paths.ACCOUNT_SETTINGS,
