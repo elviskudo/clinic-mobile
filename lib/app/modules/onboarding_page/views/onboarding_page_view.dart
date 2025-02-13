@@ -16,6 +16,7 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(HomeController());
+    final onBoardCtrl = Get.put(OnboardingPageController());
     final translations = {
       'welcome': 'Welcome to Clinic'.obs,
       'description': 'Enjoy the convenience of scheduling\n'
@@ -99,15 +100,8 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
                         OnboardingPageController.ONBOARDING_SHOWN_KEY, true);
                     Get.offAllNamed(Routes.LOGIN);
                   }),
-              Gap(16),
-              ButtonOutline(
-                  text: 'Create an Account',
-                  onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool(
-                        OnboardingPageController.ONBOARDING_SHOWN_KEY, true);
-                    Get.offAllNamed(Routes.REGISTER);
-                  }),
+              
+              
             ],
           ),
         ),

@@ -23,6 +23,12 @@ class OnboardingPageController extends GetxController {
     }
   }
 
+  void loginWithGoogle() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(ONBOARDING_SHOWN_KEY, true); // Mark onboarding as shown
+    // Implement Google login logic here
+  }
+
   @override
   void onReady() {
     super.onReady();

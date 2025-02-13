@@ -70,10 +70,10 @@ class LanguageSelector extends StatelessWidget {
                     value: 'en',
                     child: Text('English'),
                   ),
-                  const PopupMenuItem(
-                    value: 'es',
-                    child: Text('Español'),
-                  ),
+                  // const PopupMenuItem(
+                  //   value: 'es',
+                  //   child: Text('Español'),
+                  // ),
                   const PopupMenuItem(
                     value: 'id',
                     child: Text('Indonesia'),

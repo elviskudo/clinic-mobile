@@ -16,8 +16,8 @@ class SplashScreenView extends GetView<SplashScreenController> {
             width: 185,
             height: 185,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/images/logoclinicai.png")),
+              image:
+                  DecorationImage(image: AssetImage("assets/images/logo.png")),
             )),
       ),
     );

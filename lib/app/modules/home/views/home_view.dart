@@ -70,7 +70,7 @@ class HomeView extends GetView<HomeController> {
                   size: 32,
                   color: Color(0xFF35693E),
                 ),
-                onPressed: () {},
+                onPressed: () => controller.logout(),
               ),
             ],
           ),

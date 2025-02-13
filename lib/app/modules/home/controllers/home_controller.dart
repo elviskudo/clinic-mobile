@@ -1,5 +1,6 @@
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:translator/translator.dart';
 
@@ -33,24 +34,28 @@ class HomeController extends GetxController {
   };
 
   // Instance SharedPreferences
-  late final SharedPreferences _prefs;
 
   @override
   void onInit() async {
     super.onInit();
     // Inisialisasi SharedPreferences
-    _prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     // Mengambil bahasa yang tersimpan, default ke 'id' jika belum ada
-    currentLanguage.value = _prefs.getString(LANGUAGE_KEY) ?? 'id';
+    currentLanguage.value = prefs.getString(LANGUAGE_KEY) ?? 'id';
   }
 
   // Menyimpan bahasa yang dipilih
   Future<void> _saveLanguage(String languageCode) async {
-    await _prefs.setString(LANGUAGE_KEY, languageCode);
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(LANGUAGE_KEY, languageCode);
   }
 
   Future<void> logout() async {
-    await _prefs.setBool('isLoggedIn', false);
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool('isLoggedIn', false);
+    await GoogleSignIn().signOut();
     Get.offAllNamed(Routes.LOGIN);
   }
 
