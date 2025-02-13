@@ -1,3 +1,5 @@
+import 'package:clinic_ai/app/modules/(home)/home/controllers/home_controller.dart';
+import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -9,14 +11,17 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
 
   @override
   Widget build(BuildContext context) {
+    final homeCtrl = Get.put(HomeController());
     return Scaffold(
+      backgroundColor: Color(0xffF7FBF2),
       appBar: AppBar(
+        backgroundColor: Color(0xffF7FBF2),
         title: Text(
           'Account Settings',
           style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
-          onPressed: () => Get.back(),
+          onPressed: () => Get.offAllNamed(Routes.PROFILE),
           icon: Image.asset('assets/icons/back.png'),
         ),
       ),
@@ -95,7 +100,7 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
               title: 'Personal Data',
               subtitle: 'ID Number, Gender, Diagnosis',
               onTap: () {
-                // Handle personal data tap
+                Get.offAllNamed(Routes.PERSONAL_DATA);
               },
             ),
             _buildMenuItem(
@@ -118,7 +123,7 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
             // Logout Button
             ElevatedButton(
               onPressed: () {
-                // Handle logout
+                homeCtrl.logout();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,

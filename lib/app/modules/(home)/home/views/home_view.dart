@@ -60,7 +60,7 @@ class HomeView extends GetView<HomeController> {
                 radius: 24,
                 backgroundColor: Colors.grey,
                 child: InkWell(
-                  onTap: () => Get.toNamed(Routes.PERSONAL_DATA),
+                  onTap: () => Get.toNamed(Routes.PROFILE),
                   child: Icon(Icons.person, color: Colors.white, size: 30),
                 ),
               ),

@@ -22,6 +22,7 @@ abstract class Routes {
   static const LIST_USER = _Paths.LIST_USER;
   static const POLY = _Paths.POLY;
   static const DOCTOR = _Paths.DOCTOR;
+  static const PROFILE = _Paths.PROFILE;
 }
 
 abstract class _Paths {
@@ -45,4 +46,5 @@ abstract class _Paths {
   static const LIST_USER = '/list-user';
   static const POLY = '/poly';
   static const DOCTOR = '/doctor';
+  static const PROFILE = '/profile';
 }
