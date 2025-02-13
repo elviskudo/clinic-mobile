@@ -1,5 +1,7 @@
 import 'package:clinic_ai/app/modules/(admin)/clinic/controllers/clinic_controller.dart';
 import 'package:clinic_ai/app/modules/(admin)/clinic/views/clinic_view.dart';
+import 'package:clinic_ai/app/modules/(admin)/doctor/controllers/doctor_controller.dart';
+import 'package:clinic_ai/app/modules/(admin)/doctor/views/doctor_view.dart';
 import 'package:clinic_ai/app/modules/(admin)/list_user/controllers/list_user_controller.dart';
 import 'package:clinic_ai/app/modules/(admin)/list_user/views/list_user_view.dart';
 import 'package:clinic_ai/app/modules/(admin)/poly/controllers/poly_controller.dart';
@@ -19,6 +21,7 @@ class AdminPanelView extends GetView<AdminPanelController> {
     Get.put(ListUserController());
     Get.put(ClinicController());
     Get.put(PolyController());
+    Get.put(DoctorController());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -180,6 +183,7 @@ class AdminPanelView extends GetView<AdminPanelController> {
         _buildMenuItem(0, 'Dashboard', Icons.dashboard),
         _buildMenuItem(1, 'Clinic', Icons.people),
         _buildMenuItem(2, 'Poly', Icons.monochrome_photos),
+        _buildMenuItem(3, 'Doctor', Icons.medication),
       ],
     );
   }
@@ -215,6 +219,8 @@ class AdminPanelView extends GetView<AdminPanelController> {
         return const ClinicView();
       case 2:
         return const PolyView();
+      case 3:
+        return const DoctorView();
 
       default:
         return ListUserView();

@@ -6,6 +6,8 @@ import '../modules/(admin)/clinic/bindings/clinic_binding.dart';
 import '../modules/(admin)/clinic/views/clinic_view.dart';
 import '../modules/(admin)/list_user/bindings/list_user_binding.dart';
 import '../modules/(admin)/list_user/views/list_user_view.dart';
+import '../modules/(admin)/poly/bindings/poly_binding.dart';
+import '../modules/(admin)/poly/views/poly_view.dart';
 import '../modules/(home)/account_settings/bindings/account_settings_binding.dart';
 import '../modules/(home)/account_settings/views/account_settings_view.dart';
 import '../modules/(home)/home/bindings/home_binding.dart';
@@ -22,8 +24,8 @@ import '../modules/(home)/verification/bindings/verification_binding.dart';
 import '../modules/(home)/verification/views/verification_view.dart';
 import '../modules/(home)/verificationSuccess/bindings/verification_success_binding.dart';
 import '../modules/(home)/verificationSuccess/views/verification_success_view.dart';
-import '../modules/(admin)/poly/bindings/poly_binding.dart';
-import '../modules/(admin)/poly/views/poly_view.dart';
+import '../modules/(admin)/doctor/bindings/doctor_binding.dart';
+import '../modules/(admin)/doctor/views/doctor_view.dart';
 
 part 'app_routes.dart';
 
@@ -92,6 +94,11 @@ class AppPages {
       name: _Paths.POLY,
       page: () => const PolyView(),
       binding: PolyBinding(),
+    ),
+    GetPage(
+      name: _Paths.DOCTOR,
+      page: () => const DoctorView(),
+      binding: DoctorBinding(),
     ),
   ];
 }
