@@ -7,6 +7,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/routes/app_pages.dart';
+import 'app/modules/(home)/appointment/controllers/appointment_controller.dart';
+import 'app/modules/(home)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
+import 'app/modules/(home)/captureAppointment/controllers/capture_appointment_controller.dart';
+import 'app/modules/(home)/scheduleAppointment/controllers/schedule_appointment_controller.dart';
+import 'app/modules/(home)/symptomAppointment/controllers/symptom_appointment_controller.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -25,6 +30,15 @@ void main() async {
     );
 
     print('Database connection successful!');
+
+    // Inisialisasi controller di sini
+    Get.put(AppointmentController());
+    Get.put(ScheduleAppointmentController());
+    Get.put(BarcodeAppointmentController());
+    Get.put(SymptomAppointmentController());
+    Get.put(CaptureAppointmentController());
+
+
     runApp(
       GetMaterialApp(
         debugShowCheckedModeBanner: false,

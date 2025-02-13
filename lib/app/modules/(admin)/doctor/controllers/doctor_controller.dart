@@ -1,7 +1,7 @@
-import 'package:clinic_ai/model/doctorModel.dart';
-import 'package:clinic_ai/model/clinicsModel.dart';
 import 'package:clinic_ai/model/poliesModel.dart';
-import 'package:clinic_ai/model/userModel.dart';
+import 'package:clinic_ai/models/clinic_model.dart';
+import 'package:clinic_ai/models/doctor_model.dart';
+import 'package:clinic_ai/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -9,7 +9,7 @@ class DoctorController extends GetxController {
   final SupabaseClient supabase = Supabase.instance.client;
   RxList<Doctor> doctors = <Doctor>[].obs;
   RxList<Users> users = <Users>[].obs;
-  RxList<Clinics> clinics = <Clinics>[].obs;
+  RxList<Clinic> clinics = <Clinic>[].obs;
   RxList<Polies> polies = <Polies>[].obs;
   RxBool isLoading = false.obs;
   var selectedClinicId = ''.obs;
@@ -98,9 +98,9 @@ class DoctorController extends GetxController {
           .order('name', ascending: true);
 
       clinics.value = response
-          .map((item) => Clinics.fromJson(item))
+          .map((item) => Clinic.fromJson(item))
           .toList()
-          .cast<Clinics>();
+          .cast<Clinic>();
     } catch (e) {
       Get.snackbar('Error', 'Failed to fetch clinics: $e');
     } finally {

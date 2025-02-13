@@ -12,6 +12,11 @@ abstract class Routes {
   // static const REGISTER = _Paths.REGISTER;
   static const PERSONAL_DATA = _Paths.PERSONAL_DATA;
   static const ACCOUNT_SETTINGS = _Paths.ACCOUNT_SETTINGS;
+  static const APPOINTMENT = _Paths.APPOINTMENT;
+  static const SCHEDULE_APPOINTMENT = _Paths.SCHEDULE_APPOINTMENT;
+  static const BARCODE_APPOINTMENT = _Paths.BARCODE_APPOINTMENT;
+  static const SYMPTOM_APPOINTMENT = _Paths.SYMPTOM_APPOINTMENT;
+  static const CAPTURE_APPOINTMENT = _Paths.CAPTURE_APPOINTMENT;
   static const ADMIN_PANEL = _Paths.ADMIN_PANEL;
   static const CLINIC = _Paths.CLINIC;
   static const LIST_USER = _Paths.LIST_USER;
@@ -22,6 +27,7 @@ abstract class Routes {
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
+  static const ADMIN_PANEL = '/admin-panel';
   static const VERIVICATION = '/verivication';
   static const VERIVICATION_SUCCESS = '/verivication-success';
   static const SPLASH_SCREEN = '/splash-screen';
@@ -30,7 +36,11 @@ abstract class _Paths {
   // static const REGISTER = '/register';
   static const PERSONAL_DATA = '/personal-data';
   static const ACCOUNT_SETTINGS = '/account-settings';
-  static const ADMIN_PANEL = '/admin-panel';
+  static const APPOINTMENT = '/appointment';
+  static const SCHEDULE_APPOINTMENT = '/schedule-appointment';
+  static const BARCODE_APPOINTMENT = '/barcode-appointment';
+  static const SYMPTOM_APPOINTMENT = '/symptom-appointment';
+  static const CAPTURE_APPOINTMENT = '/capture-appointment';
   static const CLINIC = '/clinic';
   static const LIST_USER = '/list-user';
   static const POLY = '/poly';

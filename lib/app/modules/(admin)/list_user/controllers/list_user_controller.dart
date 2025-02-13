@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/helper/PasswordHasher.dart';
-import 'package:clinic_ai/model/userModel.dart';
+import 'package:clinic_ai/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';

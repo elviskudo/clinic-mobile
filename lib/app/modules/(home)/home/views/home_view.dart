@@ -1,8 +1,8 @@
-import 'package:clinic_ai/app/modules/(home)/home/controllers/home_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
@@ -64,14 +64,14 @@ class HomeView extends GetView<HomeController> {
                   child: Icon(Icons.person, color: Colors.white, size: 30),
                 ),
               ),
-              IconButton(
-                icon: const Icon(
+               Obx(() => IconButton(
+                icon:  Icon(
                   Icons.circle_notifications,
                   size: 32,
-                  color: Color(0xFF35693E),
+                  color: controller.isLoggedIn.value ?Color(0xFF35693E) : Colors.grey,
                 ),
                 onPressed: () => controller.logout(),
-              ),
+              ),),
             ],
           ),
           const SizedBox(height: 16),
@@ -368,6 +368,7 @@ class HomeView extends GetView<HomeController> {
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     color: Colors.blue[700],
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -382,7 +383,9 @@ class HomeView extends GetView<HomeController> {
     return SizedBox(
       width: 220,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          Get.toNamed(Routes.APPOINTMENT);
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF35693E),
           padding: const EdgeInsets.symmetric(vertical: 16),

@@ -1,5 +1,6 @@
-import 'package:clinic_ai/model/clinicsModel.dart';
+// import 'package:clinic_ai/model/clinicsModel.dart';
 import 'package:clinic_ai/model/poliesModel.dart';
+import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -7,7 +8,7 @@ class PolyController extends GetxController {
   final SupabaseClient supabase = Supabase.instance.client;
   RxList<Polies> polies = <Polies>[].obs;
   RxBool isLoading = false.obs;
-  RxList<Clinics> clinics = <Clinics>[].obs;
+  RxList<Clinic> clinics = <Clinic>[].obs;
    var selectedClinicId = ''.obs;
 
   @override
@@ -72,9 +73,9 @@ class PolyController extends GetxController {
           .select()
           .order('name', ascending: true);
 
-      List<Clinics> clinicsWithImages = [];
+      List<Clinic> clinicsWithImages = [];
       for (var item in response) {
-        final clinics = Clinics.fromJson(item);
+        final clinics = Clinic.fromJson(item);
 
         final fileResponse = await supabase
             .from('files')

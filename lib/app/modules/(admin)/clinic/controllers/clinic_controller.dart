@@ -1,10 +1,10 @@
-import 'package:clinic_ai/model/clinicsModel.dart';
+import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ClinicController extends GetxController {
   final SupabaseClient supabase = Supabase.instance.client;
-  RxList<Clinics> clinics = <Clinics>[].obs;
+  RxList<Clinic> clinics = <Clinic>[].obs;
   RxBool isLoading = false.obs;
 
   @override
@@ -22,9 +22,9 @@ class ClinicController extends GetxController {
           .select()
           .order('name', ascending: true);
 
-      List<Clinics> clinicsWithImages = [];
+      List<Clinic> clinicsWithImages = [];
       for (var item in response) {
-        final clinics = Clinics.fromJson(item);
+        final clinics = Clinic.fromJson(item);
 
         final fileResponse = await supabase
             .from('files')
@@ -50,7 +50,7 @@ class ClinicController extends GetxController {
   }
 
   // Add new category
-  Future<void> addClinics(Clinics clinics) async {
+  Future<void> addClinics(Clinic clinics) async {
     try {
       isLoading.value = true;
       await supabase.from('clinics').insert(clinics.toJson());
@@ -65,7 +65,7 @@ class ClinicController extends GetxController {
   }
 
   // Update category
-  Future<void> updateClinics(Clinics clinics) async {
+  Future<void> updateClinics(Clinic clinics) async {
     try {
       isLoading.value = true;
       await supabase

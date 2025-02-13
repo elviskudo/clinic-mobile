@@ -1,4 +1,4 @@
-import 'package:clinic_ai/model/userModel.dart';
+import 'package:clinic_ai/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

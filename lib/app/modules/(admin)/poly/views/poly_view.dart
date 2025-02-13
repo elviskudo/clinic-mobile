@@ -1,5 +1,6 @@
-import 'package:clinic_ai/model/clinicsModel.dart';
+// import 'package:clinic_ai/model/clinicsModel.dart';
 import 'package:clinic_ai/model/poliesModel.dart';
+import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
@@ -103,7 +104,7 @@ class PolyView extends GetView<PolyController> {
                       controller.selectedClinicId.value = value ?? '',
                   decoration: const InputDecoration(labelText: 'Category'),
                   items: controller.clinics
-                      .map((Clinics category) => DropdownMenuItem(
+                      .map((Clinic category) => DropdownMenuItem(
                             value: category.id,
                             child: Text(category.name.toString()),
                           ))
