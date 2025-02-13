@@ -1,4 +1,4 @@
-import 'package:clinic_ai/app/modules/home/controllers/home_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/home/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';

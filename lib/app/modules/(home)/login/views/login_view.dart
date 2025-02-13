@@ -1,5 +1,5 @@
-import 'package:clinic_ai/app/modules/home/controllers/home_controller.dart';
-import 'package:clinic_ai/app/modules/login/controllers/login_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/home/controllers/home_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/login/controllers/login_controller.dart';
 import 'package:clinic_ai/components/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

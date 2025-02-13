@@ -1,7 +1,7 @@
-import 'package:clinic_ai/app/modules/login/views/login_view.dart';
+import 'package:clinic_ai/app/modules/(home)/login/views/login_view.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/components/button.dart';
-import 'package:clinic_ai/app/modules/home/controllers/home_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/home/controllers/home_controller.dart';
 import 'package:clinic_ai/components/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

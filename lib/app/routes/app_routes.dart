@@ -12,6 +12,10 @@ abstract class Routes {
   // static const REGISTER = _Paths.REGISTER;
   static const PERSONAL_DATA = _Paths.PERSONAL_DATA;
   static const ACCOUNT_SETTINGS = _Paths.ACCOUNT_SETTINGS;
+  static const ADMIN_PANEL = _Paths.ADMIN_PANEL;
+  static const CLINIC = _Paths.CLINIC;
+  static const LIST_USER = _Paths.LIST_USER;
+  static const POLY = _Paths.POLY;
 }
 
 abstract class _Paths {
@@ -25,4 +29,8 @@ abstract class _Paths {
   // static const REGISTER = '/register';
   static const PERSONAL_DATA = '/personal-data';
   static const ACCOUNT_SETTINGS = '/account-settings';
+  static const ADMIN_PANEL = '/admin-panel';
+  static const CLINIC = '/clinic';
+  static const LIST_USER = '/list-user';
+  static const POLY = '/poly';
 }

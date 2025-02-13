@@ -17,13 +17,26 @@ class SplashScreenController extends GetxController {
 
     // Wait for 2 seconds before navigation
     await Future.delayed(const Duration(seconds: 2));
-    
+
     if (!isOnboardingSeen) {
       Get.offAllNamed(Routes.ONBOARDING_PAGE);
     } else {
       bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
       if (isLoggedIn) {
-        Get.offAllNamed(Routes.HOME);
+        String? userRole = prefs.getString('userRole');
+
+        if (isLoggedIn) {
+          // If user is logged in, check their role and redirect accordingly
+          if (userRole == 'admin') {
+            Get.offAllNamed(Routes.ADMIN_PANEL);
+          } else {
+            Get.offAllNamed(Routes.HOME);
+          }
+        } else {
+          Get.offAllNamed('/login');
+        }
+
+        
       } else {
         Get.offAllNamed(Routes.LOGIN);
       }
