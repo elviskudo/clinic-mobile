@@ -17,11 +17,13 @@ abstract class Routes {
   static const BARCODE_APPOINTMENT = _Paths.BARCODE_APPOINTMENT;
   static const SYMPTOM_APPOINTMENT = _Paths.SYMPTOM_APPOINTMENT;
   static const CAPTURE_APPOINTMENT = _Paths.CAPTURE_APPOINTMENT;
+  static const ADMIN_PANEL = _Paths.ADMIN_PANEL;
 }
 
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
+  static const ADMIN_PANEL = '/admin-panel';
   static const VERIVICATION = '/verivication';
   static const VERIVICATION_SUCCESS = '/verivication-success';
   static const SPLASH_SCREEN = '/splash-screen';
