@@ -12,7 +12,6 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(ScheduleAppointmentController);
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: () async {
@@ -91,15 +90,22 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
               SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: Obx(() => ElevatedButton(
-                  onPressed: controller.isFormValid() ? controller.onNextPressed : null,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: const Color(0xFF35693E),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('Next', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                )),
+                child: Obx(() {
+                  return ElevatedButton(
+                    onPressed: controller.isFormValid1() ? () {
+                      controller.onNextPressed();
+                    } : null,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: controller.isFormValid1() ? const Color(0xFF35693E) : Colors.grey,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text(
+                      'Next',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  );
+                }),
               ),
             ],
           ),
@@ -113,47 +119,14 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
       if (controller.isLoadingClinics.value) {
         return _buildLoadingIndicator();
       }
-      return InkWell(
-
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    controller.selectedClinic.value?.name ?? 'Select Clinic ...',
-                    style: TextStyle(color: controller.selectedClinic.value != null ? Colors.black : Colors.grey),
-                  ),
-                ),
-              ),
-              PopupMenuButton<Clinic>(
-                onSelected: (Clinic clinic) {
-                  controller.setClinic(clinic);
-                },
-                itemBuilder: (BuildContext context) {
-                  return controller.clinics.map((Clinic clinic) {
-                    return PopupMenuItem<Clinic>(
-                      value: clinic,
-                      child: Text(clinic.name),
-                    );
-                  }).toList();
-                },
-                 child: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
-        onTap: (){
-          print('hello');
+      return _buildDropdown<Clinic>(
+        hintText: 'Select Clinic ...',
+        value: controller.selectedClinic.value,
+        items: controller.clinics,
+        onSelected: (Clinic clinic) {
+          controller.setClinic(clinic);
         },
+        itemText: (Clinic clinic) => clinic.name,
       );
     });
   }
@@ -164,49 +137,14 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
         return _buildLoadingIndicator();
       }
 
-      return InkWell(
-        onTap: (){
-          print('hello');
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    controller.selectedPoly.value?.name ?? 'Pilih salah satu',
-                    style: TextStyle(color: controller.selectedPoly.value != null ? Colors.black : Colors.grey),
-                  ),
-                ),
-              ),
-              PopupMenuButton<Poly>(
-
-                onSelected: controller.selectedClinic.value != null
-                    ? (Poly poly) {
-                  controller.setPoly(poly);
-                }
-                    : null,
-                itemBuilder: (BuildContext context) {
-                  return controller.polies.map((Poly poly) {
-                    return PopupMenuItem<Poly>(
-                      value: poly,
-                      child: Text(poly.name),
-                    );
-                  }).toList();
-                },
-                 child: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
+      return _buildDropdown<Poly>(
+        hintText: 'Select Poly ...',
+        value: controller.selectedPoly.value,
+        items: controller.polies,
+        onSelected:  (controller.selectedClinic.value != null) ?(Poly poly) { //Menambahkan tanda tanya
+          controller.setPoly(poly);
+        }:(Poly poly){},
+        itemText: (Poly poly) => poly.name,
       );
     });
   }
@@ -217,46 +155,151 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
         return _buildLoadingIndicator();
       }
 
+      return _buildDropdown<Doctor>(
+        hintText: 'Select Doctor ...',
+        value: controller.selectedDoctor.value,
+        items: controller.doctors,
+        onSelected: (controller.selectedClinic.value != null && controller.selectedPoly.value != null)?(Doctor doctor) { //Menambahkan tanda tanya
+          controller.setDoctor(doctor);
+        }: (Doctor doctor){},
+        itemText: (Doctor doctor) => doctor.name,
+      );
+    });
+  }
+  Widget _buildDropdown<T>({
+    required String hintText,
+    required T? value,
+    required List<T> items,
+    required Function(T) onSelected,
+    required String Function(T) itemText,
+  }) {
+    return InkWell(
+      onTap: () {
+        showModalBottomSheet(
+          context: Get.context!,
+          backgroundColor: Colors.transparent,
+          builder: (BuildContext context) {
+            return Container(
+              margin: const EdgeInsets.only(top: 50),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: items.length,
+                separatorBuilder: (context, index) => const Divider(color: Colors.grey, height: 1),
+                itemBuilder: (BuildContext context, int index) {
+                  final item = items[index];
+                  return InkWell(
+                    onTap: () {
+                      onSelected(item);
+                      Navigator.pop(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        itemText(item),
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                value != null ? itemText(value) : hintText,
+                style: TextStyle(color: value != null ? Colors.black : Colors.grey),
+              ),
+            ),
+            const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+ Widget _buildDateField() {
+    return Obx(() {
+      bool isEnabled = controller.selectedDoctor.value != null;
+
+      if (controller.isLoadingScheduleDates.value) {
+        return _buildLoadingIndicator();
+      }
+
+      List<DateTime> availableDates = controller.scheduleDates
+          .map((scheduleDate) => scheduleDate.scheduleDate)
+          .toList();
+
+      DateTime? initialDate = availableDates.isNotEmpty ? availableDates.first : null;
+
       return InkWell(
-        onTap: (){
-          print('hello');
-        },
+        onTap: isEnabled
+            ? () async {
+          DateTime? pickedDate = await showDatePicker(
+            context: Get.context!,
+            initialDate: initialDate,
+            firstDate: DateTime.now(),
+            lastDate: DateTime(DateTime.now().year + 1),
+            selectableDayPredicate: (DateTime val) {
+              return availableDates.any((date) =>
+              date.year == val.year &&
+                  date.month == val.month &&
+                  date.day == val.day);
+            },
+            builder: (BuildContext context, Widget? child) { // Tambahkan builder
+              return Theme(
+                data: ThemeData.light().copyWith(
+                  colorScheme: ColorScheme.fromSwatch(
+                    primarySwatch: Colors.green, // Ubah warna primer
+                  ),
+                ),
+                child: child!,
+              );
+            },
+          );
+
+          if (pickedDate != null) {
+            controller.setSelectedDate(pickedDate);
+          }
+        }
+            : null,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isEnabled ? Colors.white : Colors.grey.shade200, // Atur warna background
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.grey.shade300),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    controller.selectedDoctor.value?.name ?? 'Select Doctor ...',
-                    style: TextStyle(color: controller.selectedDoctor.value != null ? Colors.black : Colors.grey),
-                  ),
+              Text(
+                controller.selectedDate.value != null
+                    ? DateFormat('dd/MM/yyyy').format(controller.selectedDate.value!)
+                    : 'Select Date', // Teks hint
+                style: TextStyle(
+                  color: isEnabled
+                      ? (controller.selectedDate.value != null ? Colors.black : Colors.grey)
+                      : Colors.grey.shade400, // Warna teks
                 ),
               ),
-              PopupMenuButton<Doctor>(
-
-                onSelected: controller.selectedClinic.value != null && controller.selectedPoly.value != null
-                    ? (Doctor doctor) {
-                  controller.setDoctor(doctor);
-                }
-                    : null,
-                itemBuilder: (BuildContext context) {
-                  return controller.doctors.map((Doctor doctor) {
-                    return PopupMenuItem<Doctor>(
-                      value: doctor,
-                      child: Text(doctor.name),
-                    );
-                  }).toList();
-                },
-                 child: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-              ),
+              Icon(Icons.calendar_today, color: isEnabled ? Colors.grey : Colors.grey.shade400), // Ikon kalender
             ],
           ),
         ),
@@ -264,82 +307,8 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
     });
   }
 
- Widget _buildDateField() {
-  return Obx(() {
-    bool isEnabled = controller.selectedDoctor.value != null;
 
-    if (controller.isLoadingScheduleDates.value) {
-      return _buildLoadingIndicator();
-    }
-
-    List<DateTime> availableDates = controller.scheduleDates
-        .map((scheduleDate) => scheduleDate.scheduleDate)
-        .toList();
-
-    DateTime? initialDate = availableDates.isNotEmpty ? availableDates.first : null;
-
-    return GetBuilder<ScheduleAppointmentController>( // Tambahkan GetBuilder
-      builder: (controller) {
-        return Builder(
-          builder: (BuildContext context) {
-            return InkWell(
-              onTap: isEnabled
-                  ? () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: initialDate,
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(DateTime.now().year + 1),
-                  selectableDayPredicate: (DateTime val) {
-                    return availableDates.any((date) =>
-                    date.year == val.year &&
-                        date.month == val.month &&
-                        date.day == val.day);
-                  },
-                );
-
-                if (pickedDate != null) {
-                  controller.setSelectedDate(pickedDate);
-                  controller.update(); // Panggil update untuk memicu rebuild
-                }
-              }
-                  : null,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                decoration: BoxDecoration(
-                  color: isEnabled ? Colors.white : Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.calendar_today, size: 20, color: isEnabled ? Colors.grey : Colors.grey.shade400),
-                        const SizedBox(width: 8),
-                        Text(
-                          controller.selectedDate.value != null
-                              ? DateFormat('dd/MM/yyyy').format(controller.selectedDate.value!)
-                              : 'DD/MM/YYYY',
-                          style: TextStyle(color: isEnabled ? Colors.grey.shade600 : Colors.grey.shade400),
-                        ),
-                      ],
-                    ),
-                    Icon(Icons.keyboard_arrow_down, color: isEnabled ? Colors.grey : Colors.grey.shade400),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  });
-}
-
-
-  Widget _buildDropdownField(String hint) {
+   Widget _buildDropdownField(String hint) {
     return Obx(() {
       bool isEnabled = controller.selectedScheduleDateId.value != null;
 
@@ -348,27 +317,44 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
       }
 
       return InkWell(
-        onTap: isEnabled ? () {
-          // Tampilkan BottomSheet atau dialog untuk pilihan waktu
+        onTap: isEnabled
+            ? () {
           showModalBottomSheet(
             context: Get.context!,
-            builder: (context) {
-              return ListView.builder(
-                itemCount: controller.scheduleTimes.length,
-                itemBuilder: (context, index) {
-                  final time = controller.scheduleTimes[index];
-                  return ListTile(
-                    title: Text(time.scheduleTime),
-                    onTap: () {
-                      controller.setSelectedScheduleTime(time);
-                      Navigator.pop(context); // Tutup BottomSheet
-                    },
-                  );
-                },
+            backgroundColor: Colors.transparent,
+            builder: (BuildContext context) {
+              return Container(
+                margin: const EdgeInsets.only(top: 50),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: controller.scheduleTimes.length,
+                  separatorBuilder: (context, index) => const Divider(color: Colors.grey, height: 1),
+                  itemBuilder: (BuildContext context, int index) {
+                    final time = controller.scheduleTimes[index];
+                    return InkWell(
+                      onTap: () {
+                        controller.setSelectedScheduleTime(time);
+                        Navigator.pop(context);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Text(
+                          time.scheduleTime,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               );
             },
           );
-        } : null,
+        }
+            : null,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           decoration: BoxDecoration(
@@ -380,10 +366,14 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                controller.selectedScheduleTime.value?.scheduleTime ?? 'Select Time',
-                style: TextStyle(color: isEnabled ? Colors.grey.shade600 : Colors.grey.shade400),
+                controller.selectedScheduleTime.value?.scheduleTime ?? hint, // Menggunakan hint sebagai placeholder
+                style: TextStyle(
+                  color: isEnabled
+                      ? (controller.selectedScheduleTime.value != null ? Colors.black : Colors.grey)
+                      : Colors.grey.shade400,
+                ),
               ),
-              Icon(Icons.keyboard_arrow_down, color: isEnabled ? Colors.grey : Colors.grey.shade400),
+              Icon(Icons.access_time, color: isEnabled ? Colors.grey : Colors.grey.shade400), // Menggunakan ikon waktu
             ],
           ),
         ),

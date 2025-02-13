@@ -11,6 +11,11 @@ class AppointmentController extends GetxController {
   void setDate(String date) {
     selectedDate.value = date;
   }
+  final currentIndex = 0.obs;
+
+  void changeTab(int index) {
+    currentIndex.value = index;
+  }
   
   // Add more methods as needed
 }
