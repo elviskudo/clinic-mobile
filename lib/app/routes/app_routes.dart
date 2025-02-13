@@ -12,6 +12,11 @@ abstract class Routes {
   // static const REGISTER = _Paths.REGISTER;
   static const PERSONAL_DATA = _Paths.PERSONAL_DATA;
   static const ACCOUNT_SETTINGS = _Paths.ACCOUNT_SETTINGS;
+  static const APPOINTMENT = _Paths.APPOINTMENT;
+  static const SCHEDULE_APPOINTMENT = _Paths.SCHEDULE_APPOINTMENT;
+  static const BARCODE_APPOINTMENT = _Paths.BARCODE_APPOINTMENT;
+  static const SYMPTOM_APPOINTMENT = _Paths.SYMPTOM_APPOINTMENT;
+  static const CAPTURE_APPOINTMENT = _Paths.CAPTURE_APPOINTMENT;
 }
 
 abstract class _Paths {
@@ -25,4 +30,9 @@ abstract class _Paths {
   // static const REGISTER = '/register';
   static const PERSONAL_DATA = '/personal-data';
   static const ACCOUNT_SETTINGS = '/account-settings';
+  static const APPOINTMENT = '/appointment';
+  static const SCHEDULE_APPOINTMENT = '/schedule-appointment';
+  static const BARCODE_APPOINTMENT = '/barcode-appointment';
+  static const SYMPTOM_APPOINTMENT = '/symptom-appointment';
+  static const CAPTURE_APPOINTMENT = '/capture-appointment';
 }
