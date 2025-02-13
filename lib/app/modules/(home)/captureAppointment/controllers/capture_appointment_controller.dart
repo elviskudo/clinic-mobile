@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 class CaptureAppointmentController extends GetxController {
   //TODO: Implement CaptureAppointmentController
-
+ RxBool isAccessible = false.obs;
   final count = 0.obs;
   @override
   void onInit() {

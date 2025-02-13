@@ -12,6 +12,7 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(ScheduleAppointmentController);
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: () async {
@@ -112,41 +113,47 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
       if (controller.isLoadingClinics.value) {
         return _buildLoadingIndicator();
       }
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  controller.selectedClinic.value?.name ?? 'Select Clinic ...',
-                  style: TextStyle(color: controller.selectedClinic.value != null ? Colors.black : Colors.grey),
+      return InkWell(
+
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    controller.selectedClinic.value?.name ?? 'Select Clinic ...',
+                    style: TextStyle(color: controller.selectedClinic.value != null ? Colors.black : Colors.grey),
+                  ),
                 ),
               ),
-            ),
-            PopupMenuButton<Clinic>(
-              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-              onSelected: (Clinic clinic) {
-                controller.setClinic(clinic);
-              },
-              itemBuilder: (BuildContext context) {
-                return controller.clinics.map((Clinic clinic) {
-                  return PopupMenuItem<Clinic>(
-                    value: clinic,
-                    child: Text(clinic.name),
-                  );
-                }).toList();
-              },
-            ),
-          ],
+              PopupMenuButton<Clinic>(
+                onSelected: (Clinic clinic) {
+                  controller.setClinic(clinic);
+                },
+                itemBuilder: (BuildContext context) {
+                  return controller.clinics.map((Clinic clinic) {
+                    return PopupMenuItem<Clinic>(
+                      value: clinic,
+                      child: Text(clinic.name),
+                    );
+                  }).toList();
+                },
+                 child: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
+        onTap: (){
+          print('hello');
+        },
       );
     });
   }
@@ -157,43 +164,48 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
         return _buildLoadingIndicator();
       }
 
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  controller.selectedPoly.value?.name ?? 'Pilih salah satu',
-                  style: TextStyle(color: controller.selectedPoly.value != null ? Colors.black : Colors.grey),
+      return InkWell(
+        onTap: (){
+          print('hello');
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    controller.selectedPoly.value?.name ?? 'Pilih salah satu',
+                    style: TextStyle(color: controller.selectedPoly.value != null ? Colors.black : Colors.grey),
+                  ),
                 ),
               ),
-            ),
-            PopupMenuButton<Poly>(
-              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-              onSelected: controller.selectedClinic.value != null
-                  ? (Poly poly) {
-                controller.setPoly(poly);
-              }
-                  : null,
-              itemBuilder: (BuildContext context) {
-                return controller.polies.map((Poly poly) {
-                  return PopupMenuItem<Poly>(
-                    value: poly,
-                    child: Text(poly.name),
-                  );
-                }).toList();
-              },
-              enabled: controller.selectedClinic.value != null,
-            ),
-          ],
+              PopupMenuButton<Poly>(
+
+                onSelected: controller.selectedClinic.value != null
+                    ? (Poly poly) {
+                  controller.setPoly(poly);
+                }
+                    : null,
+                itemBuilder: (BuildContext context) {
+                  return controller.polies.map((Poly poly) {
+                    return PopupMenuItem<Poly>(
+                      value: poly,
+                      child: Text(poly.name),
+                    );
+                  }).toList();
+                },
+                 child: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       );
     });
@@ -205,43 +217,48 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
         return _buildLoadingIndicator();
       }
 
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  controller.selectedDoctor.value?.name ?? 'Select Doctor ...',
-                  style: TextStyle(color: controller.selectedDoctor.value != null ? Colors.black : Colors.grey),
+      return InkWell(
+        onTap: (){
+          print('hello');
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    controller.selectedDoctor.value?.name ?? 'Select Doctor ...',
+                    style: TextStyle(color: controller.selectedDoctor.value != null ? Colors.black : Colors.grey),
+                  ),
                 ),
               ),
-            ),
-            PopupMenuButton<Doctor>(
-              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-              onSelected: controller.selectedClinic.value != null && controller.selectedPoly.value != null
-                  ? (Doctor doctor) {
-                controller.setDoctor(doctor);
-              }
-                  : null,
-              itemBuilder: (BuildContext context) {
-                return controller.doctors.map((Doctor doctor) {
-                  return PopupMenuItem<Doctor>(
-                    value: doctor,
-                    child: Text(doctor.name),
-                  );
-                }).toList();
-              },
-              enabled: controller.selectedClinic.value != null && controller.selectedPoly.value != null,
-            ),
-          ],
+              PopupMenuButton<Doctor>(
+
+                onSelected: controller.selectedClinic.value != null && controller.selectedPoly.value != null
+                    ? (Doctor doctor) {
+                  controller.setDoctor(doctor);
+                }
+                    : null,
+                itemBuilder: (BuildContext context) {
+                  return controller.doctors.map((Doctor doctor) {
+                    return PopupMenuItem<Doctor>(
+                      value: doctor,
+                      child: Text(doctor.name),
+                    );
+                  }).toList();
+                },
+                 child: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       );
     });
@@ -330,24 +347,46 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
         return _buildLoadingIndicator();
       }
 
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        decoration: BoxDecoration(
-          color: isEnabled ? Colors.white : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Row(
+      return InkWell(
+        onTap: isEnabled ? () {
+          // Tampilkan BottomSheet atau dialog untuk pilihan waktu
+          showModalBottomSheet(
+            context: Get.context!,
+            builder: (context) {
+              return ListView.builder(
+                itemCount: controller.scheduleTimes.length,
+                itemBuilder: (context, index) {
+                  final time = controller.scheduleTimes[index];
+                  return ListTile(
+                    title: Text(time.scheduleTime),
+                    onTap: () {
+                      controller.setSelectedScheduleTime(time);
+                      Navigator.pop(context); // Tutup BottomSheet
+                    },
+                  );
+                },
+              );
+            },
+          );
+        } : null,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: isEnabled ? Colors.white : Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Select Time',
-                style: TextStyle(color: Colors.grey.shade600),
+                controller.selectedScheduleTime.value?.scheduleTime ?? 'Select Time',
+                style: TextStyle(color: isEnabled ? Colors.grey.shade600 : Colors.grey.shade400),
               ),
-              Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+              Icon(Icons.keyboard_arrow_down, color: isEnabled ? Colors.grey : Colors.grey.shade400),
             ],
           ),
-
+        ),
       );
     });
   }

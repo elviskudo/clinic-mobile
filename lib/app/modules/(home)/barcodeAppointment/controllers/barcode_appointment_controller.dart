@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 class BarcodeAppointmentController extends GetxController {
   //TODO: Implement BarcodeAppointmentController
-
+ RxBool isAccessible = false.obs;
   final count = 0.obs;
   @override
   void onInit() {

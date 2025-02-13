@@ -6,6 +6,7 @@ import 'package:clinic_ai/models/scheduleTime_model.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:clinic_ai/app/modules/(home)/barcodeAppointment/controllers/barcode_appointment_controller.dart'; // Import BarcodeController
 
 class ScheduleAppointmentController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -40,6 +41,9 @@ class ScheduleAppointmentController extends GetxController {
   final RxList<ScheduleDate> scheduleDates = <ScheduleDate>[].obs;
   final RxBool isLoadingScheduleDates = false.obs;
 
+  // Tambahkan RxBool untuk menandakan form sudah valid
+  final RxBool isFormValid = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -54,6 +58,8 @@ class ScheduleAppointmentController extends GetxController {
         scheduleTimes.clear(); // bersihkan schdeuletimes
         isScheduleDateAvailable.value = true;
       }
+      // Reset isFormValid ketika dokter berubah
+      isFormValid.value = false;
     });
 
     // Reaktif terhadap perubahan pada selectedScheduleDateId
@@ -65,6 +71,14 @@ class ScheduleAppointmentController extends GetxController {
         selectedScheduleTime.value = null;
         isScheduleTimeAvailable.value = true;
       }
+      // Reset isFormValid ketika tanggal berubah
+      isFormValid.value = false;
+    });
+
+    // Reaktif terhadap perubahan pada selectedScheduleTime
+     ever(selectedScheduleTime, (ScheduleTime? time) {
+      // Setiap kali selectedScheduleTime berubah, periksa validasi form
+      validateForm();
     });
   }
 
@@ -99,6 +113,8 @@ class ScheduleAppointmentController extends GetxController {
       } else {
         isPolyAvailable.value = false;
       }
+      // Reset isFormValid ketika poly berubah
+      isFormValid.value = false;
     } catch (e) {
       Get.snackbar('Error', 'Failed to load polies: ${e.toString()}', snackPosition: SnackPosition.BOTTOM);
       isPolyAvailable.value = false;
@@ -130,6 +146,8 @@ class ScheduleAppointmentController extends GetxController {
       } else {
         isDoctorAvailable.value = false;
       }
+      // Reset isFormValid ketika dokter berubah
+      isFormValid.value = false;
     } catch (e) {
       Get.snackbar('Error', 'Failed to load doctors: ${e.toString()}', snackPosition: SnackPosition.BOTTOM);
       isDoctorAvailable.value = false;
@@ -158,6 +176,8 @@ class ScheduleAppointmentController extends GetxController {
       } else {
         isScheduleDateAvailable.value = false;
       }
+      // Reset isFormValid ketika schedule date berubah
+      isFormValid.value = false;
     } catch (e) {
       Get.snackbar('Error', 'Failed to load schedule dates: ${e.toString()}', snackPosition: SnackPosition.BOTTOM);
       isScheduleDateAvailable.value = false;
@@ -191,6 +211,8 @@ class ScheduleAppointmentController extends GetxController {
       } else {
         isScheduleTimeAvailable.value = false;
       }
+      // Reset isFormValid ketika schedule time berubah
+      isFormValid.value = false;
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -221,6 +243,9 @@ class ScheduleAppointmentController extends GetxController {
     scheduleTimes.clear(); // bersihkan scheduleTimes
     selectedScheduleTime.value = null;
     fetchPolies(clinic.id);
+
+    // Reset isFormValid ketika klinik berubah
+    isFormValid.value = false;
   }
 
   void setPoly(Poly poly) {
@@ -235,6 +260,9 @@ class ScheduleAppointmentController extends GetxController {
     if (selectedClinic.value != null) {
       fetchDoctors(selectedClinic.value!.id, poly.id);
     }
+
+    // Reset isFormValid ketika poly berubah
+    isFormValid.value = false;
   }
 
   void setDoctor(Doctor doctor) {
@@ -242,6 +270,9 @@ class ScheduleAppointmentController extends GetxController {
     if (selectedPoly.value != null) {
       fetchScheduleDates(selectedPoly.value!.id, doctor.id);
     }
+
+    // Reset isFormValid ketika dokter berubah
+    isFormValid.value = false;
   }
 
   void setSelectedDate(DateTime? date) {
@@ -269,11 +300,15 @@ class ScheduleAppointmentController extends GetxController {
       selectedScheduleDateId.value = null;
       print('Tanggal dibatalkan.');
     }
+
+    // Reset isFormValid ketika tanggal berubah
+    isFormValid.value = false;
   }
   // Method untuk mengatur selectedScheduleTime
   void setSelectedScheduleTime(ScheduleTime? time) {
     selectedScheduleTime.value = time;
     selectedTime.value = time?.scheduleTime ?? '';
+
   }
 
 
@@ -281,19 +316,22 @@ class ScheduleAppointmentController extends GetxController {
     selectedTime.value = time;
   }
 
-  bool isFormValid() {
-    return selectedClinic.value != null &&
+  void validateForm() {
+    isFormValid.value = selectedClinic.value != null &&
         selectedPoly.value != null &&
         selectedDoctor.value != null &&
         selectedDate.value != null &&
-        selectedScheduleTime.value != null; // Ubah validasi
+        selectedScheduleTime.value != null;
   }
 
   void onNextPressed() {
-    if (isFormValid()) {
+    if (isFormValid.value) {
       print("Selected Doctor ID: ${selectedDoctor.value!.id}");
       print("Selected ScheduleDate ID: ${selectedScheduleDateId.value}");
       print("Selected ScheduleTime ID: ${selectedScheduleTime.value!.id}"); // Tampilkan ID waktu
+
+      // Setelah form valid, aktifkan tab QRCode
+      Get.find<BarcodeAppointmentController>().isAccessible.value = true;
     }
   }
 }

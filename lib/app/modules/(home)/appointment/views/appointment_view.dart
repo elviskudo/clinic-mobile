@@ -15,66 +15,127 @@ class AppointmentView extends GetView<AppointmentController> {
 
   @override
   Widget build(BuildContext context) {
-    // Inisialisasi ScheduleAppointmentController dan controller lainnya
-    Get.put(ScheduleAppointmentController());
-    Get.put(BarcodeAppointmentController());
-    Get.put(SymptomAppointmentController());
-    Get.put(CaptureAppointmentController());
+    // Controller sudah diinisialisasi di tempat lain (misalnya, binding atau main.dart)
+    final scheduleController = Get.find<ScheduleAppointmentController>();
+    final barcodeController = Get.find<BarcodeAppointmentController>();
+    final symptomController = Get.find<SymptomAppointmentController>();
+    final captureController = Get.find<CaptureAppointmentController>();
 
-    return GetBuilder<ScheduleAppointmentController>(
-      init: Get.find<ScheduleAppointmentController>(),
-      builder: (scheduleController) {
-        return DefaultTabController(
-          length: 4,
-          child: Scaffold(
-            backgroundColor: const Color(0xFFF7FBF2),
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Get.back(),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF7FBF2),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Get.back(),
+          ),
+          title: const Text(
+            'Appointment',
+            style: TextStyle(color: Colors.black),
+          ),
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                child: Obx(
+                      () => Text(
+                    'Schedule',
+                    style: TextStyle(
+                      color: scheduleController.isFormValid.value
+                          ? Colors.green
+                          : const Color(0xFF35693E),
+                    ),
+                  ),
+                ),
               ),
-              title: const Text(
-                'Appointment',
-                style: TextStyle(color: Colors.black),
+              Tab(
+                child: Obx(() => Text(
+                  'QRCode',
+                  style: TextStyle(
+                    color: barcodeController.isAccessible.value ? const Color(0xFF35693E) : Colors.grey,
+                  ),
+                )),
               ),
-              bottom: TabBar(
-                tabs: const [
-                  Tab(text: 'Schedule'),
-                  Tab(text: 'QRCode'),
-                  Tab(text: 'Symptom'),
-                  Tab(text: 'Capture'),
-                ],
-                labelColor: const Color(0xFF35693E),
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: const Color(0xFF35693E),
-                onTap: (index) {
-                  if (index != 0 && !scheduleController.isFormValid()) {
+              Tab(
+                child: Obx(() => Text(
+                  'Symptom',
+                  style: TextStyle(
+                    color: symptomController.isAccessible.value ? const Color(0xFF35693E) : Colors.grey,
+                  ),
+                )),
+              ),
+              Tab(
+                child: Obx(() => Text(
+                  'Capture',
+                  style: TextStyle(
+                    color: captureController.isAccessible.value ? const Color(0xFF35693E) : Colors.grey,
+                  ),
+                )),
+              ),
+            ],
+            labelColor: const Color(0xFF35693E),
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: const Color(0xFF35693E),
+            onTap: (index) {
+              // Menggunakan Builder untuk mendapatkan konteks yang benar
+              Builder(
+                builder: (BuildContext context) {
+                  if (index > 0 && !scheduleController.isFormValid.value) {
                     Get.snackbar(
                       'Warning',
                       'Please complete the Schedule form first.',
                       snackPosition: SnackPosition.BOTTOM,
                     );
                     DefaultTabController.of(context)?.animateTo(0);
+                    return const SizedBox.shrink(); // Tambahkan return value
                   }
+
+                  if (index == 1 && !barcodeController.isAccessible.value) {
+                    Get.snackbar(
+                      'Information',
+                      'QRCode is not accessible. Please complete the previous steps.',
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                    DefaultTabController.of(context)?.animateTo(0);
+                    return const SizedBox.shrink(); // Tambahkan return value
+                  }
+
+                  if (index == 2 && !symptomController.isAccessible.value) {
+                    Get.snackbar(
+                      'Information',
+                      'Symptom is not accessible. Please complete the previous steps.',
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                    DefaultTabController.of(context)?.animateTo(1);
+                    return const SizedBox.shrink(); // Tambahkan return value
+                  }
+                  if (index == 3 && !captureController.isAccessible.value) {
+                    Get.snackbar(
+                      'Information',
+                      'Capture is not accessible. Please complete the previous steps.',
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                    DefaultTabController.of(context)?.animateTo(2);
+                    return const SizedBox.shrink(); // Tambahkan return value
+                  }
+                  return const SizedBox.shrink(); // Tambahkan return value
                 },
-              ),
-            ),
-            body: TabBarView(
-              physics: scheduleController.isFormValid()
-                  ? const AlwaysScrollableScrollPhysics()
-                  : const NeverScrollableScrollPhysics(),
-              children: const [
-                ScheduleAppointmentView(),
-                BarcodeAppointmentView(),
-                SymptomAppointmentView(),
-                CaptureAppointmentView(),
-              ],
-            ),
+              );
+            },
           ),
-        );
-      },
+        ),
+        body: TabBarView( // Ganti PageView dengan TabBarView
+          physics: NeverScrollableScrollPhysics(),
+          children: [
+            ScheduleAppointmentView(),
+            BarcodeAppointmentView(),
+            SymptomAppointmentView(),
+            CaptureAppointmentView(),
+          ],
+        ),
+      ),
     );
   }
 }
