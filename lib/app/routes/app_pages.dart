@@ -28,6 +28,14 @@ import '../modules/(home)/scheduleAppointment/bindings/schedule_appointment_bind
 import '../modules/(home)/scheduleAppointment/views/schedule_appointment_view.dart';
 import '../modules/(home)/symptomAppointment/bindings/symptom_appointment_binding.dart';
 import '../modules/(home)/symptomAppointment/views/symptom_appointment_view.dart';
+import '../modules/(admin)/clinic/bindings/clinic_binding.dart';
+import '../modules/(admin)/clinic/views/clinic_view.dart';
+import '../modules/(admin)/list_user/bindings/list_user_binding.dart';
+import '../modules/(admin)/list_user/views/list_user_view.dart';
+import '../modules/(admin)/poly/bindings/poly_binding.dart';
+import '../modules/(admin)/poly/views/poly_view.dart';
+import '../modules/(admin)/doctor/bindings/doctor_binding.dart';
+import '../modules/(admin)/doctor/views/doctor_view.dart';
 
 part 'app_routes.dart';
 
@@ -106,6 +114,26 @@ class AppPages {
       name: _Paths.ADMIN_PANEL,
       page: () => const AdminPanelView(),
       binding: AdminPanelBinding(),
+    ),
+    GetPage(
+      name: _Paths.CLINIC,
+      page: () => const ClinicView(),
+      binding: ClinicBinding(),
+    ),
+    GetPage(
+      name: _Paths.LIST_USER,
+      page: () => ListUserView(),
+      binding: ListUserBinding(),
+    ),
+    GetPage(
+      name: _Paths.POLY,
+      page: () => const PolyView(),
+      binding: PolyBinding(),
+    ),
+    GetPage(
+      name: _Paths.DOCTOR,
+      page: () => const DoctorView(),
+      binding: DoctorBinding(),
     ),
   ];
 }

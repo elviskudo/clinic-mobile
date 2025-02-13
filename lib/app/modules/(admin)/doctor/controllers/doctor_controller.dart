@@ -22,6 +22,7 @@ class DoctorController extends GetxController {
     getDoctors();
     getClinics();
     getPolies();
+    getUsers();
   }
 
   Future<void> getDoctors() async {

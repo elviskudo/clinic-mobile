@@ -1,3 +1,4 @@
+import 'package:clinic_ai/app/modules/(home)/home/controllers/home_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

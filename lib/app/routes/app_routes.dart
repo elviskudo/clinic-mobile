@@ -18,6 +18,10 @@ abstract class Routes {
   static const SYMPTOM_APPOINTMENT = _Paths.SYMPTOM_APPOINTMENT;
   static const CAPTURE_APPOINTMENT = _Paths.CAPTURE_APPOINTMENT;
   static const ADMIN_PANEL = _Paths.ADMIN_PANEL;
+  static const CLINIC = _Paths.CLINIC;
+  static const LIST_USER = _Paths.LIST_USER;
+  static const POLY = _Paths.POLY;
+  static const DOCTOR = _Paths.DOCTOR;
 }
 
 abstract class _Paths {
@@ -37,4 +41,8 @@ abstract class _Paths {
   static const BARCODE_APPOINTMENT = '/barcode-appointment';
   static const SYMPTOM_APPOINTMENT = '/symptom-appointment';
   static const CAPTURE_APPOINTMENT = '/capture-appointment';
+  static const CLINIC = '/clinic';
+  static const LIST_USER = '/list-user';
+  static const POLY = '/poly';
+  static const DOCTOR = '/doctor';
 }
