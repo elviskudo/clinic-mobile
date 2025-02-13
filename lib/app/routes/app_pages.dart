@@ -24,8 +24,8 @@ import '../modules/(home)/verification/bindings/verification_binding.dart';
 import '../modules/(home)/verification/views/verification_view.dart';
 import '../modules/(home)/verificationSuccess/bindings/verification_success_binding.dart';
 import '../modules/(home)/verificationSuccess/views/verification_success_view.dart';
-import '../modules/(admin)/doctor/bindings/doctor_binding.dart';
-import '../modules/(admin)/doctor/views/doctor_view.dart';
+import '../modules/doctor/bindings/doctor_binding.dart';
+import '../modules/doctor/views/doctor_view.dart';
 
 part 'app_routes.dart';
 
