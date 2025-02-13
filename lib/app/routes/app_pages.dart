@@ -37,13 +37,12 @@ import '../modules/(admin)/clinic/views/clinic_view.dart';
 import '../modules/(admin)/list_user/bindings/list_user_binding.dart';
 import '../modules/(admin)/list_user/views/list_user_view.dart';
 
-
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.SPLASH_SCREEN;
 
   static final routes = [
     GetPage(
@@ -88,7 +87,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.APPOINTMENT,
-      page: () =>  AppointmentView(),
+      page: () => AppointmentView(),
       binding: AppointmentBinding(),
     ),
     GetPage(

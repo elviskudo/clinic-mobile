@@ -1,6 +1,6 @@
-import 'package:clinic_ai/model/poliesModel.dart';
 import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:clinic_ai/models/doctor_model.dart';
+import 'package:clinic_ai/models/poly_model.dart';
 import 'package:clinic_ai/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -10,7 +10,7 @@ class DoctorController extends GetxController {
   RxList<Doctor> doctors = <Doctor>[].obs;
   RxList<Users> users = <Users>[].obs;
   RxList<Clinic> clinics = <Clinic>[].obs;
-  RxList<Polies> polies = <Polies>[].obs;
+  RxList<Poly> polies = <Poly>[].obs;
   RxBool isLoading = false.obs;
   var selectedClinicId = ''.obs;
   var selectedPolyId = ''.obs;
@@ -97,10 +97,8 @@ class DoctorController extends GetxController {
           .select()
           .order('name', ascending: true);
 
-      clinics.value = response
-          .map((item) => Clinic.fromJson(item))
-          .toList()
-          .cast<Clinic>();
+      clinics.value =
+          response.map((item) => Clinic.fromJson(item)).toList().cast<Clinic>();
     } catch (e) {
       Get.snackbar('Error', 'Failed to fetch clinics: $e');
     } finally {
@@ -115,7 +113,7 @@ class DoctorController extends GetxController {
           await supabase.from('polies').select().order('name', ascending: true);
 
       polies.value =
-          response.map((item) => Polies.fromJson(item)).toList().cast<Polies>();
+          response.map((item) => Poly.fromJson(item)).toList().cast<Poly>();
     } catch (e) {
       Get.snackbar('Error', 'Failed to fetch polies: $e');
     } finally {
