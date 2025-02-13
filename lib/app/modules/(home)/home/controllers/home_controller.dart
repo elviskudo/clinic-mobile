@@ -9,6 +9,7 @@ class HomeController extends GetxController {
   final translator = GoogleTranslator();
   var currentLanguage = 'id'.obs;
   var isLoading = false.obs;
+  final isLoggedIn = false.obs;
 
   final translations = {
     'createAccount': 'Create an Account'.obs,
@@ -42,6 +43,7 @@ class HomeController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     // Mengambil bahasa yang tersimpan, default ke 'id' jika belum ada
     currentLanguage.value = prefs.getString(LANGUAGE_KEY) ?? 'id';
+    isLoggedIn.value = prefs.getBool('isLoggedIn') ?? false;
   }
 
   // Menyimpan bahasa yang dipilih
@@ -55,6 +57,7 @@ class HomeController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setBool('isLoggedIn', false);
+    isLoggedIn.value = false;
     await GoogleSignIn().signOut();
     Get.offAllNamed(Routes.LOGIN);
   }
