@@ -1,5 +1,9 @@
 import 'package:clinic_ai/app/modules/(admin)/admin_panel/bindings/admin_panel_binding.dart';
 import 'package:clinic_ai/app/modules/(admin)/admin_panel/views/admin_panel_view.dart';
+import 'package:clinic_ai/app/modules/(admin)/doctor/bindings/doctor_binding.dart';
+import 'package:clinic_ai/app/modules/(admin)/doctor/views/doctor_view.dart';
+import 'package:clinic_ai/app/modules/(admin)/poly/bindings/poly_binding.dart';
+import 'package:clinic_ai/app/modules/(admin)/poly/views/poly_view.dart';
 import 'package:clinic_ai/app/modules/(home)/account_settings/bindings/account_settings_binding.dart';
 import 'package:clinic_ai/app/modules/(home)/account_settings/views/account_settings_view.dart';
 import 'package:clinic_ai/app/modules/(home)/home/bindings/home_binding.dart';
@@ -32,10 +36,6 @@ import '../modules/(admin)/clinic/bindings/clinic_binding.dart';
 import '../modules/(admin)/clinic/views/clinic_view.dart';
 import '../modules/(admin)/list_user/bindings/list_user_binding.dart';
 import '../modules/(admin)/list_user/views/list_user_view.dart';
-import '../modules/(admin)/poly/bindings/poly_binding.dart';
-import '../modules/(admin)/poly/views/poly_view.dart';
-import '../modules/(admin)/doctor/bindings/doctor_binding.dart';
-import '../modules/(admin)/doctor/views/doctor_view.dart';
 
 part 'app_routes.dart';
 
@@ -87,7 +87,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.APPOINTMENT,
-      page: () =>  AppointmentView(),
+      page: () => AppointmentView(),
       binding: AppointmentBinding(),
     ),
     GetPage(

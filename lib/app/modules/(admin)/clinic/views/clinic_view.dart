@@ -1,4 +1,4 @@
-import 'package:clinic_ai/model/clinicsModel.dart';
+import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -62,7 +62,7 @@ class ClinicView extends GetView<ClinicController> {
         ));
   }
 
-  void _showClinicDialog(BuildContext context, {Clinics? category}) {
+  void _showClinicDialog(BuildContext context, {Clinic? category}) {
     final nameController = TextEditingController(text: category?.name);
     final addressController = TextEditingController(text: category?.address);
     final accreditationController =
@@ -140,7 +140,7 @@ class ClinicView extends GetView<ClinicController> {
                     ? () {
                         if (category == null) {
                           // Add new clinic
-                          final newClinic = Clinics(
+                          final newClinic = Clinic(
                             id: Uuid().v4(),
                             name: nameController.text.trim(),
                             address: addressController.text.trim(),
@@ -148,6 +148,8 @@ class ClinicView extends GetView<ClinicController> {
                             contactName: contactNameController.text.trim(),
                             contactPhone: contactPhoneController.text.trim(),
                             contactEmail: contactEmailController.text.trim(),
+                            createdAt: DateTime.now(),
+                            updatedAt: DateTime.now()
                           );
                           Get.find<ClinicController>().addClinics(newClinic);
                         } else {

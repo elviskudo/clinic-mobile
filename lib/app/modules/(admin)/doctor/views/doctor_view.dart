@@ -1,4 +1,4 @@
-import 'package:clinic_ai/model/doctorModel.dart';
+import 'package:clinic_ai/models/doctor_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
@@ -190,6 +190,8 @@ class DoctorView extends GetView<DoctorController> {
                             status: statusController.value,
                             clinicId: controller.selectedClinicId.value,
                             polyId: controller.selectedPolyId.value,
+                            createdAt: DateTime.now(),
+                            updatedAt: DateTime.now(),
                           );
                           Get.find<DoctorController>().addDoctor(newDoctor);
                         } else {

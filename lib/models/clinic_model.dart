@@ -13,6 +13,7 @@ class Clinic {
     String name;
     String address;
     String accreditation;
+    String? imageUrl;
     String contactName;
     String contactPhone;
     String contactEmail;
@@ -23,6 +24,7 @@ class Clinic {
         required this.id,
         required this.name,
         required this.address,
+        this.imageUrl,
         required this.accreditation,
         required this.contactName,
         required this.contactPhone,
