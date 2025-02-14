@@ -1,17 +1,17 @@
 import 'dart:math';
-
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:clinic_ai/models/doctor_model.dart';
 import 'package:clinic_ai/models/poly_model.dart';
 import 'package:clinic_ai/models/scheduleDate_model.dart';
 import 'package:clinic_ai/models/scheduleTime_model.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:clinic_ai/app/modules/(home)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
-import 'package:uuid/uuid.dart'; // Import BarcodeController
+import 'package:uuid/uuid.dart';
 
 class ScheduleAppointmentController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -45,9 +45,6 @@ class ScheduleAppointmentController extends GetxController {
 
   final RxList<ScheduleDate> scheduleDates = <ScheduleDate>[].obs;
   final RxBool isLoadingScheduleDates = false.obs;
-
-  //Hapus isFormValid
-  //final RxBool isFormValid = false.obs;
 
   @override
   void onInit() {
@@ -238,9 +235,6 @@ class ScheduleAppointmentController extends GetxController {
     scheduleTimes.clear(); // bersihkan scheduleTimes
     selectedScheduleTime.value = null;
     fetchPolies(clinic.id);
-
-    // Reset isFormValid ketika klinik berubah
-    //isFormValid.value = false;
   }
 
   void setPoly(Poly poly) {
@@ -255,9 +249,6 @@ class ScheduleAppointmentController extends GetxController {
     if (selectedClinic.value != null) {
       fetchDoctors(selectedClinic.value!.id, poly.id);
     }
-
-    // Reset isFormValid ketika poly berubah
-    //isFormValid.value = false;
   }
 
   void setDoctor(Doctor doctor) {
@@ -265,9 +256,6 @@ class ScheduleAppointmentController extends GetxController {
     if (selectedPoly.value != null) {
       fetchScheduleDates(selectedPoly.value!.id, doctor.id);
     }
-
-    // Reset isFormValid ketika dokter berubah
-    //isFormValid.value = false;
   }
 
   void setSelectedDate(DateTime? date) {
@@ -293,9 +281,6 @@ class ScheduleAppointmentController extends GetxController {
       selectedScheduleDateId.value = null;
       print('Tanggal dibatalkan.');
     }
-
-    // Reset isFormValid ketika tanggal berubah
-    //isFormValid.value = false;
   }
   // Method untuk mengatur selectedScheduleTime
   void setSelectedScheduleTime(ScheduleTime? time) {
@@ -309,14 +294,6 @@ class ScheduleAppointmentController extends GetxController {
     selectedTime.value = time;
   }
 
-  //Hapus validate Form
-  /*void validateForm() {
-    isFormValid.value = selectedClinic.value != null &&
-        selectedPoly.value != null &&
-        selectedDoctor.value != null &&
-        selectedDate.value != null &&
-        selectedScheduleTime.value != null;
-  }*/
 String generateRandomQrCode(int length) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final random = Random();
@@ -324,32 +301,133 @@ String generateRandomQrCode(int length) {
         length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
   }
 
-  Future<void> createAppointment() async {
+  void resetForm() {
+    selectedClinic.value = null;
+    selectedPoly.value = null;
+    selectedDoctor.value = null;
+    selectedDate.value = null;
+    selectedScheduleDateId.value = null;
+    selectedScheduleTime.value = null;
+    selectedTime.value = '';
+    polies.clear();
+    doctors.clear();
+    scheduleDates.clear();
+    scheduleTimes.clear();
+    isPolyAvailable.value = true;
+    isDoctorAvailable.value = true;
+    isScheduleDateAvailable.value = true;
+    isScheduleTimeAvailable.value = true;
+  }
+
+Future<void> createAppointment() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+
+    if (userId == null) {
+      Get.snackbar('Error', 'User ID not found. Please login again.',
+          snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+
+    const uuid = Uuid();
+    final appointmentId = uuid.v4();
+    final qrCode = generateRandomQrCode(8);
+
+    final appointment = Appointment(
+      id: appointmentId,
+      userId: userId,
+      clinicId: selectedClinic.value!.id,
+      polyId: selectedPoly.value!.id,
+      doctorId: selectedDoctor.value!.id,
+      dateId: selectedScheduleDateId.value!,
+      timeId: selectedScheduleTime.value!.id,
+      status: 0,
+      qrCode: qrCode,
+      rejectedNote: null,
+      symptoms: null,
+      symptomDescription: null,
+      aiResponse: null,
+    );
+
+    final response = await supabase
+        .from('appointments')
+        .insert(appointment.toJson());
+
+    if (response == null) {
+      Get.snackbar('Success', 'Appointment created successfully!',
+          snackPosition: SnackPosition.BOTTOM);
+
+      final barcodeController = Get.find<BarcodeAppointmentController>();
+      barcodeController.setAppointmentData(appointment);
+      // Set isAccessible to true AFTER successful creation:
+      barcodeController.isAccessible.value = true;
+      // Reset form
+      resetForm();
+
+    } else {
+      Get.snackbar('Error', 'Failed to create appointment.',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  } catch (e) {
+    Get.snackbar('Error', 'Error creating appointment: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM);
+  }
+}
+
+  Future<void> onNextPressed(TabController tabController) async { // Teruskan TabController
+    final shouldProceed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('Confirm Appointment'),
+        content: const Text('Are you sure you want to create this appointment?'),
+        actions: [
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Get.back(result: false),
+          ),
+          TextButton(
+            child: const Text('Confirm'),
+            onPressed: () => Get.back(result: true),
+          ),
+        ],
+      ),
+    ) ?? false;
+
+    if (!shouldProceed) return;
+
     try {
+      // Show loading dialog
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
+        barrierDismissible: false,
+      );
+
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('userId');
 
       if (userId == null) {
+        Get.back(); // Close loading dialog
         Get.snackbar('Error', 'User ID not found. Please login again.',
             snackPosition: SnackPosition.BOTTOM);
         return;
       }
 
-      // Generate UUIDs
       const uuid = Uuid();
       final appointmentId = uuid.v4();
-      final qrCode = generateRandomQrCode(8); // Generate qrCode
+      final qrCode = generateRandomQrCode(8);
 
       final appointment = Appointment(
-        id: appointmentId, // Gunakan UUID yang dibuat
+        id: appointmentId,
         userId: userId,
         clinicId: selectedClinic.value!.id,
         polyId: selectedPoly.value!.id,
         doctorId: selectedDoctor.value!.id,
         dateId: selectedScheduleDateId.value!,
         timeId: selectedScheduleTime.value!.id,
-        status: 0, // Atau status default yang sesuai
-        qrCode: qrCode, // Set qrCode
+        status: 0,
+        qrCode: qrCode,
         rejectedNote: null,
         symptoms: null,
         symptomDescription: null,
@@ -360,30 +438,46 @@ String generateRandomQrCode(int length) {
           .from('appointments')
           .insert(appointment.toJson());
 
+      Get.back(); // Close loading dialog
+
       if (response == null) {
-        Get.snackbar('Success', 'Appointment created successfully!',
-            snackPosition: SnackPosition.BOTTOM);
+        final barcodeController = Get.find<BarcodeAppointmentController>();
+        barcodeController.setAppointmentData(appointment);
+        barcodeController.isAccessible.value = true;
+      
+        // Switch to QR Code tab
+        tabController.animateTo(1);
+      
+        Get.snackbar(
+          'Success', 
+          'Appointment created successfully!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white
+        );
+      
+        // Reset form
+        resetForm();
       } else {
-        print(response.error);
-        Get.snackbar('Error', 'Failed to create appointment.',
-            snackPosition: SnackPosition.BOTTOM);
+        Get.snackbar(
+          'Error', 
+          'Failed to create appointment.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white
+        );
       }
     } catch (e) {
-      Get.snackbar('Error', 'Error creating appointment: ${e.toString()}',
-          snackPosition: SnackPosition.BOTTOM);
+      print('dajjal ------- $e');
+      print('dajjal ------- $e');
+      Get.back(); // Close loading dialog
+      Get.snackbar(
+        'Error', 
+        'Error creating appointment: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white
+      );
     }
-  }
-
-  void onNextPressed() {
-    print("Selected clinic ID: ${selectedClinic.value!.id}");
-    print('gajeeee kintilllllllllllllllllllllll');
-
-    print("Selected poly ID: ${selectedPoly.value!.id}");
-    print("Selected Dozctor ID: ${selectedDoctor.value!.id}");
-    print("Selected ScheduleDate ID: ${selectedScheduleDateId.value}");
-    print("Selected ScheduleTime ID: ${selectedScheduleTime.value!.id}");
-
-    Get.find<BarcodeAppointmentController>().isAccessible.value = true;
-    createAppointment(); // Panggil fungsi createAppointment
   }
 }

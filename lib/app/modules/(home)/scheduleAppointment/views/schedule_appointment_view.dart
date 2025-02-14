@@ -1,3 +1,4 @@
+// schedule_appointment_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/schedule_appointment_controller.dart';
@@ -8,7 +9,9 @@ import 'package:clinic_ai/models/doctor_model.dart';
 import 'package:clinic_ai/models/scheduleTime_model.dart';
 
 class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
-  const ScheduleAppointmentView({Key? key}) : super(key: key);
+  final TabController tabController;
+
+  ScheduleAppointmentView({Key? key, required this.tabController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +192,7 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
                   return ElevatedButton(
                     onPressed: controller.isFormValid1()
                         ? () {
-                            controller.onNextPressed();
+                            controller.onNextPressed(tabController);
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
