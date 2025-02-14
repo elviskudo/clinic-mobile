@@ -49,6 +49,11 @@ dependencies:
   email_otp: ^3.0.2
   image_picker: ^1.1.2
   dio: ^5.8.0+1
+  qr_flutter: ^4.1.0
+  pdf: ^3.11.3
+  file_picker: ^8.3.5
+  permission_handler: ^11.3.1
+  device_info_plus: ^11.3.0
 
 dev_dependencies:
   flutter_test:

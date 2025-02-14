@@ -1,12 +1,17 @@
+import 'dart:math';
+
+import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:clinic_ai/models/doctor_model.dart';
 import 'package:clinic_ai/models/poly_model.dart';
 import 'package:clinic_ai/models/scheduleDate_model.dart';
 import 'package:clinic_ai/models/scheduleTime_model.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:clinic_ai/app/modules/(home)/barcodeAppointment/controllers/barcode_appointment_controller.dart'; // Import BarcodeController
+import 'package:clinic_ai/app/modules/(home)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
+import 'package:uuid/uuid.dart'; // Import BarcodeController
 
 class ScheduleAppointmentController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -312,17 +317,73 @@ class ScheduleAppointmentController extends GetxController {
         selectedDate.value != null &&
         selectedScheduleTime.value != null;
   }*/
+String generateRandomQrCode(int length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final random = Random();
+    return String.fromCharCodes(Iterable.generate(
+        length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
+  }
+
+  Future<void> createAppointment() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+
+      if (userId == null) {
+        Get.snackbar('Error', 'User ID not found. Please login again.',
+            snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+
+      // Generate UUIDs
+      const uuid = Uuid();
+      final appointmentId = uuid.v4();
+      final qrCode = generateRandomQrCode(8); // Generate qrCode
+
+      final appointment = Appointment(
+        id: appointmentId, // Gunakan UUID yang dibuat
+        userId: userId,
+        clinicId: selectedClinic.value!.id,
+        polyId: selectedPoly.value!.id,
+        doctorId: selectedDoctor.value!.id,
+        dateId: selectedScheduleDateId.value!,
+        timeId: selectedScheduleTime.value!.id,
+        status: 0, // Atau status default yang sesuai
+        qrCode: qrCode, // Set qrCode
+        rejectedNote: null,
+        symptoms: null,
+        symptomDescription: null,
+        aiResponse: null,
+      );
+
+      final response = await supabase
+          .from('appointments')
+          .insert(appointment.toJson());
+
+      if (response == null) {
+        Get.snackbar('Success', 'Appointment created successfully!',
+            snackPosition: SnackPosition.BOTTOM);
+      } else {
+        print(response.error);
+        Get.snackbar('Error', 'Failed to create appointment.',
+            snackPosition: SnackPosition.BOTTOM);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Error creating appointment: ${e.toString()}',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
 
   void onNextPressed() {
-    
-      print("Selected clinic ID: ${selectedClinic.value!.id}");
-      print('gajeeee kintilllllllllllllllllllllll');
-      
-      print("Selected poly ID: ${selectedPoly.value!.id}");
-      print("Selected Dozctor ID: ${selectedDoctor.value!.id}");
-      print("Selected ScheduleDate ID: ${selectedScheduleDateId.value}");
-      print("Selected ScheduleTime ID: ${selectedScheduleTime.value!.id}");
+    print("Selected clinic ID: ${selectedClinic.value!.id}");
+    print('gajeeee kintilllllllllllllllllllllll');
 
-      Get.find<BarcodeAppointmentController>().isAccessible.value = true;
+    print("Selected poly ID: ${selectedPoly.value!.id}");
+    print("Selected Dozctor ID: ${selectedDoctor.value!.id}");
+    print("Selected ScheduleDate ID: ${selectedScheduleDateId.value}");
+    print("Selected ScheduleTime ID: ${selectedScheduleTime.value!.id}");
+
+    Get.find<BarcodeAppointmentController>().isAccessible.value = true;
+    createAppointment(); // Panggil fungsi createAppointment
   }
 }

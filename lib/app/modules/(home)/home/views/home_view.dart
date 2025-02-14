@@ -56,12 +56,15 @@ class HomeView extends GetView<HomeController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.grey,
+              Container(
+                width: 50,
+                height: 50,
+                // radius: 24,
+                // backgroundColor: Colors.grey,
                 child: InkWell(
                   onTap: () => Get.toNamed(Routes.PROFILE),
-                  child: Icon(Icons.person, color: Colors.white, size: 30),
+                  // child: Icon(Icons.person, color: Colors.white, size: 30),
+                  child: Image.asset("assets/images/Asset 3@5x 2.png"),
                 ),
               ),
                Obx(() => IconButton(

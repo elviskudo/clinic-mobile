@@ -20,8 +20,8 @@ import '../modules/(home)/captureAppointment/bindings/capture_appointment_bindin
 import '../modules/(home)/captureAppointment/views/capture_appointment_view.dart';
 import '../modules/(home)/home/bindings/home_binding.dart';
 import '../modules/(home)/home/views/home_view.dart';
-import '../modules/(home)/login/bindings/login_binding.dart';
-import '../modules/(home)/login/views/login_view.dart';
+import '../modules/(auth)/login/bindings/login_binding.dart';
+import '../modules/(auth)/login/views/login_view.dart';
 import '../modules/(home)/onboarding_page/bindings/onboarding_page_binding.dart';
 import '../modules/(home)/onboarding_page/views/onboarding_page_view.dart';
 import '../modules/(home)/personal_data/bindings/personal_data_binding.dart';
@@ -32,10 +32,10 @@ import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
 import '../modules/(home)/symptomAppointment/bindings/symptom_appointment_binding.dart';
 import '../modules/(home)/symptomAppointment/views/symptom_appointment_view.dart';
-import '../modules/(home)/verification/bindings/verification_binding.dart';
-import '../modules/(home)/verification/views/verification_view.dart';
-import '../modules/(home)/verificationSuccess/bindings/verification_success_binding.dart';
-import '../modules/(home)/verificationSuccess/views/verification_success_view.dart';
+import '../modules/(auth)/verification/bindings/verification_binding.dart';
+import '../modules/(auth)/verification/views/verification_view.dart';
+import '../modules/(auth)/verificationSuccess/bindings/verification_success_binding.dart';
+import '../modules/(auth)/verificationSuccess/views/verification_success_view.dart';
 import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
 
