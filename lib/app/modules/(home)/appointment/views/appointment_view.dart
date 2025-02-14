@@ -1,3 +1,4 @@
+// appointment_view.dart
 import 'package:clinic_ai/app/modules/(home)/appointment/controllers/appointment_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/barcodeAppointment/views/barcode_appointment_view.dart';
@@ -16,6 +17,7 @@ class AppointmentView extends GetView<AppointmentController> {
   @override
   Widget build(BuildContext context) {
     final scheduleController = Get.find<ScheduleAppointmentController>();
+    Get.put(BarcodeAppointmentController());
     final barcodeController = Get.find<BarcodeAppointmentController>();
     final symptomController = Get.find<SymptomAppointmentController>();
     final captureController = Get.find<CaptureAppointmentController>();
@@ -25,7 +27,6 @@ class AppointmentView extends GetView<AppointmentController> {
       child: Builder(
         builder: (BuildContext context) {
           final TabController tabController = DefaultTabController.of(context);
-          
           return Scaffold(
             backgroundColor: const Color(0xFFF7FBF2),
             appBar: AppBar(
@@ -41,7 +42,6 @@ class AppointmentView extends GetView<AppointmentController> {
               ),
               bottom: TabBar(
                 physics: const NeverScrollableScrollPhysics(),
-                controller: tabController,
                 tabs: [
                   const Tab(
                     child: Text(
@@ -53,13 +53,13 @@ class AppointmentView extends GetView<AppointmentController> {
                   ),
                   Tab(
                     child: Obx(() => Text(
-                      'QRCode',
-                      style: TextStyle(
-                        color: scheduleController.isFormValid1() 
-                            ? const Color(0xFF35693E)
-                            : Colors.grey,
-                      ),
-                    )),
+                          'QRCode',
+                          style: TextStyle(
+                            color: barcodeController.isAccessible.value
+                                ? const Color(0xFF35693E)
+                                : Colors.grey,
+                          ),
+                        )),
                   ),
                   const Tab(
                     child: Text(
@@ -86,10 +86,10 @@ class AppointmentView extends GetView<AppointmentController> {
                     return;
                   }
 
-                  if (!scheduleController.isFormValid1()) {
+                  if (index == 1 && !barcodeController.isAccessible.value) {
                     Get.snackbar(
                       'Warning',
-                      'Please complete the Schedule form first.',
+                      'Please create an appointment first.',
                       snackPosition: SnackPosition.BOTTOM,
                     );
                     tabController.animateTo(0);
@@ -102,7 +102,11 @@ class AppointmentView extends GetView<AppointmentController> {
                       'Please proceed with the QRCode tab first.',
                       snackPosition: SnackPosition.BOTTOM,
                     );
-                    tabController.animateTo(1);
+                    if (barcodeController.isAccessible.value) {
+                      tabController.animateTo(1);
+                    } else {
+                      tabController.animateTo(0);
+                    }
                     return;
                   }
                 },
@@ -110,16 +114,21 @@ class AppointmentView extends GetView<AppointmentController> {
             ),
             body: TabBarView(
               physics: const NeverScrollableScrollPhysics(),
-              controller: tabController,
               children: [
-                ScheduleAppointmentView(),
+                ScheduleAppointmentView(tabController: tabController),
                 BarcodeAppointmentView(),
                 SymptomAppointmentView(),
                 CaptureAppointmentView(),
               ],
             ),
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: () {
+            //     scheduleController.onNextPressed(tabController);
+            //   },
+            //   child: const Icon(Icons.arrow_forward),
+            // ),
           );
-        }
+        },
       ),
     );
   }
