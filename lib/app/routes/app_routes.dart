@@ -25,6 +25,7 @@ abstract class Routes {
   static const SCHEDULE_DATE = _Paths.SCHEDULE_DATE;
   static const SCHEDULE_TIME = _Paths.SCHEDULE_TIME;
   static const UPLOAD = _Paths.UPLOAD;
+  static const PROFILE = _Paths.PROFILE;
 }
 
 abstract class _Paths {
@@ -51,4 +52,5 @@ abstract class _Paths {
   static const SCHEDULE_DATE = '/schedule-date';
   static const SCHEDULE_TIME = '/schedule-time';
   static const UPLOAD = '/upload';
+  static const PROFILE = '/profile';
 }

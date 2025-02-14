@@ -4,7 +4,6 @@ class PersonalDataController extends GetxController {
   //TODO: Implement PersonalDataController
 
   final count = 0.obs;
-  final isDarkMode = false.obs;
 
   @override
   void onInit() {
@@ -19,10 +18,6 @@ class PersonalDataController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-  }
-
-  void toggleDarkMode(bool value) {
-    isDarkMode.value = value;
   }
 
   void increment() => count.value++;

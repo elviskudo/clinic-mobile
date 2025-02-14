@@ -30,7 +30,7 @@ class ClinicController extends GetxController {
             .from('files')
             .select('file_name')
             .eq('module_class', 'clinics')
-            .eq('module_id', clinics.id!)
+            .eq('module_id', clinics.id)
             .limit(1)
             .maybeSingle();
 

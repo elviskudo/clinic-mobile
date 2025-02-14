@@ -1,7 +1,10 @@
 // lib/app/modules/personal_data/views/personal_data_view.dart
 
+import 'package:clinic_ai/app/routes/app_pages.dart';
+import 'package:clinic_ai/components/customdropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../controllers/personal_data_controller.dart';
 
 class PersonalDataView extends GetView<PersonalDataController> {
@@ -10,205 +13,208 @@ class PersonalDataView extends GetView<PersonalDataController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xffF7FBF2),
       appBar: AppBar(
-        title: const Text('Clinic',
-            style: TextStyle(color: Colors.black, fontSize: 18)),
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: Color(0xffF7FBF2),
+        title: Text(
+          'Personal Data',
+          style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Section
+              _buildTextField('Name*', 'John Doe'),
+              CustomDropdown(
+                  label: 'Place of birth*', items: ['Jakarta', 'Surabaya']),
+              _buildDateField('Date of birth*', '06/17/2004'),
+              CustomDropdown(label: 'Gender', items: ['Male', 'Female']),
+              _buildTextField('No. ID card', 'Enter Your ID Number ...'),
+              _buildTextField('Address', 'Enter your address ...'),
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.lightGreen[100],
-                    child: const Icon(
-                      Icons.person_outline,
-                      color: Colors.black,
-                      size: 30,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'John Doe',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'johndoe@email.com',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: _buildTextField('RT', 'No. RT'),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.lightGreen[100],
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Text(
-                      'Pasien',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 12,
-                      ),
-                    ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: _buildTextField('RW', 'No. RW'),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'View your account settings',
-                  style: TextStyle(color: Colors.green),
+              CustomDropdown(label: 'City', items: ['Jakarta', 'Surabaya']),
+              _buildTextField('Postal code', 'Enter your postal code ...'),
+              _buildExpandableSection('Responsible for Costs', [
+                'KIS / BPJS Kesehatan',
+                'BPJS Ketenagakerjaan',
+                'Asuransi Umum',
+                'Umum',
+              ]),
+              CustomDropdown(label: 'Blood Type', items: ['O', 'A', 'B', 'AB']),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle update
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.green,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 150),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    side: const BorderSide(color: Color(0xffC1C9BE), width: 1),
+                  ),
                 ),
-              ),
-
-              // Incomplete Data Card
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
+                child: Text(
+                  'Update',
+                  style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff35693E)),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Segera selesaikan data yang belum terselesaikan!',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Selesaikan Personal Data di profil kamu',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Image.asset(
-                          "assets/images/orangeBadge.png",
-                          width: 128,
-                          height: 92,
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Diagnosis Item
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[50],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text('Diagnosis (Alergi, Riwayat Trauma ...)'),
-                          Icon(Icons.check, color: Colors.blue),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Personal Data Item
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text('Data Personal (No. KTP, Gender)'),
-                          Text('String value'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Settings List
-              ListTile(
-                leading: const Icon(Icons.dark_mode),
-                title: const Text('Dark Mode'),
-                subtitle: const Text('Off'),
-                trailing: Switch(
-                  value: false,
-                  onChanged: (value) {},
-                ),
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.history),
-                title: const Text('Riwayat'),
-                subtitle: const Text("Doctor's appointments and purchases"),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.language),
-                title: const Text('Language'),
-                subtitle: const Text('English (Device Language)'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.help_outline),
-                title: const Text('Help Center'),
-                subtitle: const Text('General help, FAQs, Contact us'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.feedback_outlined),
-                title: const Text('Kirim umpan balik'),
-                subtitle: const Text('Give some feedback'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(String label, String hint) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        SizedBox(height: 8),
+        TextField(
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: GoogleFonts.inter(color: Colors.grey[400]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Color(0xff727970), width: 1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Color(0xff727970), width: 1),
+            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+        ),
+        SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildDateField(String label, String initialValue) {
+    TextEditingController _controller =
+        TextEditingController(text: initialValue);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 8),
+        TextField(
+          controller: _controller,
+          decoration: InputDecoration(
+            suffixIcon: Icon(Icons.calendar_today, size: 20),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Color(0xff727970)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Color(0xff727970)),
+            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          readOnly: true,
+          onTap: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: Get.context!,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1900),
+              lastDate: DateTime(2100),
+              builder: (context, child) {
+                return Theme(
+                  data: ThemeData.light().copyWith(
+                    primaryColor: Colors.green,
+                    hintColor: Colors.green,
+                    colorScheme: ColorScheme.light(primary: Colors.green),
+                    textButtonTheme: TextButtonThemeData(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.green,
+                      ),
+                    ),
+                  ),
+                  child: child!,
+                );
+              },
+            );
+
+            if (pickedDate != null) {
+              _controller.text =
+                  "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+            }
+          },
+        ),
+        SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildExpandableSection(String title, List<String> options) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Color(0xff727970)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: ExpansionTile(
+            title: Text('Pilih salah satu',
+                style: TextStyle(color: Color(0xff727970))),
+            children: options
+                .map((option) => ListTile(
+                      title: Text(option),
+                      onTap: () {},
+                    ))
+                .toList(),
+          ),
+        ),
+        SizedBox(height: 16),
+      ],
     );
   }
 }

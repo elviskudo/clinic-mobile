@@ -1,3 +1,5 @@
+import 'package:clinic_ai/app/modules/(home)/profile/bindings/profile_binding.dart';
+import 'package:clinic_ai/app/modules/(home)/profile/views/profile_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/(admin)/admin_panel/bindings/admin_panel_binding.dart';
@@ -43,118 +45,108 @@ import '../modules/(auth)/verificationSuccess/views/verification_success_view.da
 import '../modules/(admin)/upload/bindings/upload_binding.dart';
 import '../modules/(admin)/upload/views/upload_view.dart';
 
-part 'app_routes.dart';
+  part 'app_routes.dart';
 
-class AppPages {
-  AppPages._();
+  class AppPages {
+    AppPages._();
 
-  static const INITIAL = Routes.SPLASH_SCREEN;
+    static const INITIAL = Routes.HOME;
 
-  static final routes = [
-    GetPage(
-      name: _Paths.HOME,
-      page: () => HomeView(),
-      binding: HomeBinding(),
-    ),
-    GetPage(
-      name: _Paths.VERIVICATION,
-      page: () => const VerificationView(),
-      binding: VerivicationBinding(),
-    ),
-    GetPage(
-      name: _Paths.VERIVICATION_SUCCESS,
-      page: () => const VerificationSuccessView(),
-      binding: VerivicationSuccessBinding(),
-    ),
-    GetPage(
-      name: _Paths.SPLASH_SCREEN,
-      page: () => const SplashScreenView(),
-      binding: SplashScreenBinding(),
-    ),
-    GetPage(
-      name: _Paths.ONBOARDING_PAGE,
-      page: () => const OnboardingPageView(),
-      binding: OnboardingPageBinding(),
-    ),
-    GetPage(
-      name: _Paths.LOGIN,
-      page: () => const LoginView(),
-      binding: LoginBinding(),
-    ),
-    GetPage(
-      name: _Paths.PERSONAL_DATA,
-      page: () => const PersonalDataView(),
-      binding: PersonalDataBinding(),
-    ),
-    GetPage(
-      name: _Paths.ACCOUNT_SETTINGS,
-      page: () => const AccountSettingsView(),
-      binding: AccountSettingsBinding(),
-    ),
-    GetPage(
-      name: _Paths.APPOINTMENT,
-      page: () => AppointmentView(),
-      binding: AppointmentBinding(),
-    ),
-    GetPage(
-      name: _Paths.SCHEDULE_APPOINTMENT,
-      page: () => const ScheduleAppointmentView(),
-      binding: ScheduleAppointmentBinding(),
-    ),
-    GetPage(
-      name: _Paths.BARCODE_APPOINTMENT,
-      page: () => const BarcodeAppointmentView(),
-      binding: BarcodeAppointmentBinding(),
-    ),
-    GetPage(
-      name: _Paths.SYMPTOM_APPOINTMENT,
-      page: () => const SymptomAppointmentView(),
-      binding: SymptomAppointmentBinding(),
-    ),
-    GetPage(
-      name: _Paths.CAPTURE_APPOINTMENT,
-      page: () => const CaptureAppointmentView(),
-      binding: CaptureAppointmentBinding(),
-    ),
-    GetPage(
-      name: _Paths.ADMIN_PANEL,
-      page: () => const AdminPanelView(),
-      binding: AdminPanelBinding(),
-    ),
-    GetPage(
-      name: _Paths.CLINIC,
-      page: () => const ClinicView(),
-      binding: ClinicBinding(),
-    ),
-    GetPage(
-      name: _Paths.LIST_USER,
-      page: () => ListUserView(),
-      binding: ListUserBinding(),
-    ),
-    GetPage(
-      name: _Paths.POLY,
-      page: () => const PolyView(),
-      binding: PolyBinding(),
-    ),
-    GetPage(
-      name: _Paths.DOCTOR,
-      page: () => const DoctorView(),
-      binding: DoctorBinding(),
-    ),
-    GetPage(
-      name: _Paths.SCHEDULE_DATE,
-      page: () => const ScheduleDateView(),
-      binding: ScheduleDateBinding(),
-    ),
-    GetPage(
-      name: _Paths.SCHEDULE_TIME,
-      page: () => const ScheduleTimeView(),
-      binding: ScheduleTimeBinding(),
-    ),
-    GetPage(
-      name: _Paths.UPLOAD,
-      page: () => const UploadView(),
-      binding: UploadBinding(),
-    ),
-  ];
-}
+    static final routes = [
+      GetPage(
+        name: _Paths.HOME,
+        page: () => HomeView(),
+        binding: HomeBinding(),
+      ),
+      GetPage(
+        name: _Paths.VERIVICATION,
+        page: () => const VerificationView(),
+        binding: VerivicationBinding(),
+      ),
+      GetPage(
+        name: _Paths.VERIVICATION_SUCCESS,
+        page: () => const VerificationSuccessView(),
+        binding: VerivicationSuccessBinding(),
+      ),
+      GetPage(
+        name: _Paths.SPLASH_SCREEN,
+        page: () => const SplashScreenView(),
+        binding: SplashScreenBinding(),
+      ),
+      GetPage(
+        name: _Paths.ONBOARDING_PAGE,
+        page: () => const OnboardingPageView(),
+        binding: OnboardingPageBinding(),
+      ),
+      GetPage(
+        name: _Paths.LOGIN,
+        page: () => const LoginView(),
+        binding: LoginBinding(),
+      ),
+      GetPage(
+        name: _Paths.PERSONAL_DATA,
+        page: () => const PersonalDataView(),
+        binding: PersonalDataBinding(),
+      ),
+      GetPage(
+        name: _Paths.ACCOUNT_SETTINGS,
+        page: () => const AccountSettingsView(),
+        binding: AccountSettingsBinding(),
+      ),
+      GetPage(
+        name: _Paths.APPOINTMENT,
+        page: () => AppointmentView(),
+        binding: AppointmentBinding(),
+      ),
+      // GetPage(
+      //   name: _Paths.SCHEDULE_APPOINTMENT,
+      //   page: () =>  ScheduleAppointmentView(tabController: null,),
+      //   binding: ScheduleAppointmentBinding(),
+      // ),
+      GetPage(
+        name: _Paths.BARCODE_APPOINTMENT,
+        page: () => const BarcodeAppointmentView(),
+        binding: BarcodeAppointmentBinding(),
+      ),
+      GetPage(
+        name: _Paths.SYMPTOM_APPOINTMENT,
+        page: () => const SymptomAppointmentView(),
+        binding: SymptomAppointmentBinding(),
+      ),
+      GetPage(
+        name: _Paths.CAPTURE_APPOINTMENT,
+        page: () => const CaptureAppointmentView(),
+        binding: CaptureAppointmentBinding(),
+      ),
+      GetPage(
+        name: _Paths.ADMIN_PANEL,
+        page: () => const AdminPanelView(),
+        binding: AdminPanelBinding(),
+      ),
+      GetPage(
+        name: _Paths.CLINIC,
+        page: () => const ClinicView(),
+        binding: ClinicBinding(),
+      ),
+      GetPage(
+        name: _Paths.LIST_USER,
+        page: () => ListUserView(),
+        binding: ListUserBinding(),
+      ),
+      GetPage(
+        name: _Paths.POLY,
+        page: () => const PolyView(),
+        binding: PolyBinding(),
+      ),
+      GetPage(
+        name: _Paths.DOCTOR,
+        page: () => const DoctorView(),
+        binding: DoctorBinding(),
+      ),
+      GetPage(
+        name: _Paths.PROFILE,
+        page: () => const ProfileView(),
+        binding: ProfileBinding(),
+      ),
+    ];
+  }

@@ -1,3 +1,4 @@
+import 'package:clinic_ai/app/modules/(home)/profile/controllers/profile_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -49,6 +50,7 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildHeader() {
+    final profileCtrl = Get.put(ProfileController());
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -56,22 +58,29 @@ class HomeView extends GetView<HomeController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.grey,
+              Container(
+                width: 50,
+                height: 50,
+                // radius: 24,
+                // backgroundColor: Colors.grey,
                 child: InkWell(
-                  onTap: () => Get.toNamed(Routes.PERSONAL_DATA),
-                  child: Icon(Icons.person, color: Colors.white, size: 30),
+                  onTap: () => Get.toNamed(Routes.PROFILE),
+                  // child: Icon(Icons.person, color: Colors.white, size: 30),
+                  child: Image.asset("assets/images/Asset 3@5x 2.png"),
                 ),
               ),
-               Obx(() => IconButton(
-                icon:  Icon(
-                  Icons.circle_notifications,
-                  size: 32,
-                  color: controller.isLoggedIn.value ?Color(0xFF35693E) : Colors.grey,
+              Obx(
+                () => IconButton(
+                  icon: Icon(
+                    Icons.circle_notifications,
+                    size: 32,
+                    color: controller.isLoggedIn.value
+                        ? Color(0xFF35693E)
+                        : Colors.grey,
+                  ),
+                  onPressed: () => controller.logout(),
                 ),
-                onPressed: () => controller.logout(),
-              ),),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -80,13 +89,14 @@ class HomeView extends GetView<HomeController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Greetings on Clinic, John!',
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Obx(() => Text(
+                      'Greetings on Clinic, ${profileCtrl.user.value.name}',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff181D18),
+                      ),
+                    )),
                 Text(
                   'How are you?',
                   style: GoogleFonts.poppins(
