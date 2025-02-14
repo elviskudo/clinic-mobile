@@ -1,4 +1,5 @@
 import 'package:clinic_ai/app/modules/(home)/home/controllers/home_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/profile/controllers/profile_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -12,6 +13,7 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
   @override
   Widget build(BuildContext context) {
     final homeCtrl = Get.put(HomeController());
+    final profileCtrl = Get.put(ProfileController());
     return Scaffold(
       backgroundColor: Color(0xffF7FBF2),
       appBar: AppBar(
@@ -56,20 +58,17 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
             Center(
               child: Column(
                 children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xffD4E8D1),
-                      border: Border.all(color: Color(0xFF516351), width: 2),
-                    ),
-                    child: const Icon(
-                      Icons.person_outline,
-                      size: 50,
-                      color: Colors.black54,
-                    ),
-                  ),
+                  Obx(() => CircleAvatar(
+                        radius: 70,
+                        backgroundImage: profileCtrl.user.value.imageUrl != ''
+                            ? NetworkImage(profileCtrl.user.value.imageUrl!)
+                            : null,
+                        backgroundColor: Colors.lightGreen[100],
+                        child: profileCtrl.user.value.imageUrl == ''
+                            ? Icon(Icons.person_outline,
+                                color: Colors.black, size: 70)
+                            : null,
+                      )),
                   Gap(24),
                   TextButton(
                     onPressed: () {

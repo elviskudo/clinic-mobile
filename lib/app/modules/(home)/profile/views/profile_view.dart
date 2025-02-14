@@ -33,35 +33,37 @@ class ProfileView extends GetView<ProfileController> {
               // Profile Section
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.lightGreen[100],
-                    child: Icon(
-                      Icons.person_outline,
-                      color: Colors.black,
-                      size: 30,
-                    ),
-                  ),
+                  Obx(() => CircleAvatar(
+                        radius: 30,
+                        backgroundImage: controller.user.value.imageUrl != ''
+                            ? NetworkImage(controller.user.value.imageUrl!)
+                            : null,
+                        backgroundColor: Colors.lightGreen[100],
+                        child: controller.user.value.imageUrl == ''
+                            ? Icon(Icons.person_outline,
+                                color: Colors.black, size: 30)
+                            : null,
+                      )),
                   Gap(16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'John Doe',
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff181D18),
-                          ),
-                        ),
-                        Text(
-                          'johndoe@email.com',
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            color: Color(0xff181D18),
-                          ),
-                        ),
+                        Obx(() => Text(
+                              controller.user.value.name,
+                              style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff181D18),
+                              ),
+                            )),
+                        Obx(() => Text(
+                              controller.user.value.email,
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                color: Color(0xff181D18),
+                              ),
+                            )),
                         InkWell(
                           onTap: () {
                             Get.offAllNamed(Routes.ACCOUNT_SETTINGS);
@@ -90,14 +92,13 @@ class ProfileView extends GetView<ProfileController> {
                         width: 2, // Ketebalan border
                       ),
                     ),
-                    child: Text(
-                      'Pasien',
-                      style: GoogleFonts.inter(
-                        color: Color(0xFF516351),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    child: Obx(() => Text(
+                          controller.user.value.role,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: Color(0xff516351),
+                          ),
+                        )),
                   ),
                 ],
               ),

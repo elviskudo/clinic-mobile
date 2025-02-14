@@ -18,7 +18,7 @@ class Users {
     this.accessToken,
     DateTime? createdAt,
     DateTime? updatedAt,
-    this.imageUrl,
+    this.imageUrl = '',
   })  : createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
 
@@ -28,6 +28,7 @@ class Users {
       name: json['name'] as String? ?? '',
       email: json['email'] as String? ?? '',
       role: json['role'] as String? ?? '',
+      imageUrl: json['imageUrl'] as String? ?? '',
       phoneNumber: json['phone_number'] as String? ?? '',
       accessToken: json['access_token'] != null && json['access_token'] != ''
           ? json['access_token'] as String?
