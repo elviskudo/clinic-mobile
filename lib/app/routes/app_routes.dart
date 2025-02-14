@@ -22,6 +22,9 @@ abstract class Routes {
   static const LIST_USER = _Paths.LIST_USER;
   static const POLY = _Paths.POLY;
   static const DOCTOR = _Paths.DOCTOR;
+  static const SCHEDULE_DATE = _Paths.SCHEDULE_DATE;
+  static const SCHEDULE_TIME = _Paths.SCHEDULE_TIME;
+  static const UPLOAD = _Paths.UPLOAD;
 }
 
 abstract class _Paths {
@@ -45,4 +48,7 @@ abstract class _Paths {
   static const LIST_USER = '/list-user';
   static const POLY = '/poly';
   static const DOCTOR = '/doctor';
+  static const SCHEDULE_DATE = '/schedule-date';
+  static const SCHEDULE_TIME = '/schedule-time';
+  static const UPLOAD = '/upload';
 }

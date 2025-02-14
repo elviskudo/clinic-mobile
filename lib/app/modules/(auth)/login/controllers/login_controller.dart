@@ -87,7 +87,7 @@ class LoginController extends GetxController {
         'updated_at': DateTime.now().toIso8601String(),
       };
 
-      // await supabase.from('files').insert(fileData);
+      await supabase.from('files').insert(fileData);
       print('roleUsers: $roleUsers');
       print('idusers: $idUser');
 

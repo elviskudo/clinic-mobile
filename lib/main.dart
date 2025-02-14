@@ -12,6 +12,7 @@ import 'app/modules/(home)/barcodeAppointment/controllers/barcode_appointment_co
 import 'app/modules/(home)/captureAppointment/controllers/capture_appointment_controller.dart';
 import 'app/modules/(home)/scheduleAppointment/controllers/schedule_appointment_controller.dart';
 import 'app/modules/(home)/symptomAppointment/controllers/symptom_appointment_controller.dart';
+ 
 
 void main() async {
   await dotenv.load(fileName: ".env");

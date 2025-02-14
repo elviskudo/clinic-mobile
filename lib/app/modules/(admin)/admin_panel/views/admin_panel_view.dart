@@ -6,6 +6,12 @@ import 'package:clinic_ai/app/modules/(admin)/list_user/controllers/list_user_co
 import 'package:clinic_ai/app/modules/(admin)/list_user/views/list_user_view.dart';
 import 'package:clinic_ai/app/modules/(admin)/poly/controllers/poly_controller.dart';
 import 'package:clinic_ai/app/modules/(admin)/poly/views/poly_view.dart';
+import 'package:clinic_ai/app/modules/(admin)/schedule_date/controllers/schedule_date_controller.dart';
+import 'package:clinic_ai/app/modules/(admin)/schedule_date/views/schedule_date_view.dart';
+import 'package:clinic_ai/app/modules/(admin)/schedule_time/controllers/schedule_time_controller.dart';
+import 'package:clinic_ai/app/modules/(admin)/schedule_time/views/schedule_time_view.dart';
+import 'package:clinic_ai/app/modules/(admin)/upload/controllers/upload_controller.dart';
+import 'package:clinic_ai/app/modules/(admin)/upload/views/upload_view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -22,6 +28,9 @@ class AdminPanelView extends GetView<AdminPanelController> {
     Get.put(ClinicController());
     Get.put(PolyController());
     Get.put(DoctorController());
+    Get.put(ScheduleDateController());
+    Get.put(ScheduleTimeController());
+    Get.put(UploadController());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -184,6 +193,9 @@ class AdminPanelView extends GetView<AdminPanelController> {
         _buildMenuItem(1, 'Clinic', Icons.people),
         _buildMenuItem(2, 'Poly', Icons.monochrome_photos),
         _buildMenuItem(3, 'Doctor', Icons.medication),
+        _buildMenuItem(4, 'Schedule Date', Icons.schedule),
+        _buildMenuItem(5, 'Schedule Time', Icons.timer_sharp),
+        _buildMenuItem(6, 'Upload', Icons.upload_file),
       ],
     );
   }
@@ -215,12 +227,18 @@ class AdminPanelView extends GetView<AdminPanelController> {
     switch (index) {
       case 0:
         return ListUserView();
+      case 6:
+        return const UploadView();
       case 1:
         return const ClinicView();
       case 2:
         return const PolyView();
       case 3:
         return const DoctorView();
+      case 4:
+        return const ScheduleDateView();
+      case 5:
+        return const ScheduleTimeView();
 
       default:
         return ListUserView();

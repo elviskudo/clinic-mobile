@@ -65,6 +65,7 @@ class ListUserView extends GetView<ListUserController> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          
                           IconButton(
                             tooltip: 'edit',
                             icon: Icon(Icons.edit),
