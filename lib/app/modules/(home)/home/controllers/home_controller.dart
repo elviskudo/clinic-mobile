@@ -59,8 +59,8 @@ class HomeController extends GetxController {
     await prefs.setBool('isLoggedIn', false);
     await prefs.remove('userRole');
     await prefs.remove('userId');
-    isLoggedIn.value = false;
     await GoogleSignIn().signOut();
+    isLoggedIn.value = false;
     Get.offAllNamed(Routes.LOGIN);
   }
 

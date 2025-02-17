@@ -31,7 +31,7 @@ class ScheduleDateView extends GetView<ScheduleDateController> {
                       .firstWhere((d) => d.id == scheduleDate.doctorId);
                   final poly = controller.polies
                       .firstWhere((p) => p.id == scheduleDate.polyId);
-                  
+
                   return ListTile(
                     title: Text('${doctor.name} - ${poly.name}'),
                     subtitle: Text(
@@ -42,13 +42,14 @@ class ScheduleDateView extends GetView<ScheduleDateController> {
                         IconButton(
                           icon: const Icon(Icons.edit),
                           tooltip: 'edit',
-                          onPressed: () =>
-                              _showScheduleDateDialog(context, scheduleDate: scheduleDate),
+                          onPressed: () => _showScheduleDateDialog(context,
+                              scheduleDate: scheduleDate),
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete),
                           tooltip: 'delete',
-                          onPressed: () => _showDeleteConfirmation(scheduleDate.id),
+                          onPressed: () =>
+                              _showDeleteConfirmation(scheduleDate.id),
                         ),
                       ],
                     ),
@@ -59,8 +60,11 @@ class ScheduleDateView extends GetView<ScheduleDateController> {
     );
   }
 
-  void _showScheduleDateDialog(BuildContext context, {ScheduleDate? scheduleDate}) {
-    DateTime selectedDate = scheduleDate?.scheduleDate ?? DateTime.now();
+  void _showScheduleDateDialog(BuildContext context,
+      {ScheduleDate? scheduleDate}) {
+    // Menggunakan RxString untuk menyimpan tanggal yang dipilih
+    final selectedDate =
+        Rx<DateTime>(scheduleDate?.scheduleDate ?? DateTime.now());
 
     // Set initial values for poly and doctor if editing
     if (scheduleDate != null) {
@@ -80,26 +84,30 @@ class ScheduleDateView extends GetView<ScheduleDateController> {
 
     Get.dialog(
       AlertDialog(
-        title: Text(scheduleDate == null ? 'Add Schedule Date' : 'Edit Schedule Date'),
+        title: Text(
+            scheduleDate == null ? 'Add Schedule Date' : 'Edit Schedule Date'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                title: Text("Date: ${selectedDate.toString().split(' ')[0]}"),
-                trailing: Icon(Icons.calendar_today),
-                onTap: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: selectedDate,
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(Duration(days: 365)),
-                  );
-                  if (picked != null) {
-                    selectedDate = picked;
-                  }
-                },
-              ),
+              // Menggunakan Obx untuk memperbarui tampilan tanggal
+              Obx(() => ListTile(
+                    title: Text(
+                        "Date: ${selectedDate.value.toString().split(' ')[0]}"),
+                    trailing: Icon(Icons.calendar_today),
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDate.value,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(Duration(days: 365)),
+                      );
+                      if (picked != null) {
+                        selectedDate.value = picked;
+                        print('New date selected: ${selectedDate.value}');
+                      }
+                    },
+                  )),
               SizedBox(height: 10),
               Obx(
                 () => DropdownButtonFormField<String>(
@@ -154,15 +162,18 @@ class ScheduleDateView extends GetView<ScheduleDateController> {
                             id: Uuid().v4(),
                             polyId: controller.selectedPolyId.value,
                             doctorId: controller.selectedDoctorId.value,
-                            scheduleDate: selectedDate,
+                            scheduleDate: selectedDate
+                                .value, // Menggunakan .value dari Rx
                             createdAt: DateTime.now(),
                             updatedAt: DateTime.now(),
                           );
                           controller.addScheduleDate(newScheduleDate);
                         } else {
                           scheduleDate.polyId = controller.selectedPolyId.value;
-                          scheduleDate.doctorId = controller.selectedDoctorId.value;
-                          scheduleDate.scheduleDate = selectedDate;
+                          scheduleDate.doctorId =
+                              controller.selectedDoctorId.value;
+                          scheduleDate.scheduleDate =
+                              selectedDate.value; // Menggunakan .value dari Rx
                           scheduleDate.updatedAt = DateTime.now();
                           controller.updateScheduleDate(scheduleDate);
                         }

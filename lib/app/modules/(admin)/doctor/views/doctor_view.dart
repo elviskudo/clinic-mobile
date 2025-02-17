@@ -184,7 +184,7 @@ class DoctorView extends GetView<DoctorController> {
                     ? () {
                         if (doctor == null) {
                           final newDoctor = Doctor(
-                            id: Uuid().v4(),
+                            id: controller.selectedUserId.value,
                             name: nameController.text.trim(),
                             description: descriptionController.text.trim(),
                             status: statusController.value,
@@ -195,6 +195,7 @@ class DoctorView extends GetView<DoctorController> {
                           );
                           Get.find<DoctorController>().addDoctor(newDoctor);
                         } else {
+                          doctor.id = controller.selectedUserId.value;
                           doctor.name = nameController.text.trim();
                           doctor.description =
                               descriptionController.text.trim();

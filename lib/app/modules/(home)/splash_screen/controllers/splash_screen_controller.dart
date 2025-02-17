@@ -31,8 +31,8 @@ class SplashScreenController extends GetxController {
             Get.offAllNamed(Routes.ADMIN_PANEL);
           } else if (userRole == 'member') {
             Get.offAllNamed(Routes.HOME);
-          } else if (userRole == 'doctor') {
-            Get.offAllNamed(Routes.LIST_PATIENTS);
+          } else if (userRole == 'doctor') { 
+            Get.offAllNamed(Routes.HOME_DOCTOR);
           }
         } else {
           Get.offAllNamed('/login');
