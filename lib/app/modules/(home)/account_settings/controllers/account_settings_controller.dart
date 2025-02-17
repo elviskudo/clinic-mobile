@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AccountSettingsController extends GetxController {
   //TODO: Implement AccountSettingsController
   final user = Users().obs;
-
+  
   final count = 0.obs;
   @override
   void onInit() {

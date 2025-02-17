@@ -4,7 +4,7 @@ class CustomDropdown extends StatefulWidget {
   final String label;
   final List<String> items;
 
-  const CustomDropdown({Key? key, required this.label, required this.items})
+  const CustomDropdown({Key? key, required this.label, required this.items, required Function(dynamic value) onSelected, String? value})
       : super(key: key);
 
   @override

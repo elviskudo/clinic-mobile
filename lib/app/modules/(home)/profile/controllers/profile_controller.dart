@@ -16,6 +16,14 @@ class ProfileController extends GetxController {
 
   Future<void> getProfile() async {
     final prefs = await SharedPreferences.getInstance();
+
+    final userId = prefs.getString('userId');
+
+    if (userId == null) {
+      Get.snackbar('Error', 'User ID not found. Please login again.',
+          snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
     String? storedImageUrl = prefs.getString('imageUrl');
     if (storedImageUrl == null || storedImageUrl.isEmpty) {
       print('imageUrl is empty or not set');
@@ -32,6 +40,8 @@ class ProfileController extends GetxController {
     print('user.email: ${user.value.email}');
     print('user.imgUrl: ${user.value.imageUrl}');
     print('user.role: ${user.value.role}');
+    print('user.id: ${user.value}');
+    print('userId: $userId');
   }
 
   @override
