@@ -22,32 +22,34 @@ import '../modules/(auth)/verification/bindings/verification_binding.dart';
 import '../modules/(auth)/verification/views/verification_view.dart';
 import '../modules/(auth)/verificationSuccess/bindings/verification_success_binding.dart';
 import '../modules/(auth)/verificationSuccess/views/verification_success_view.dart';
-import '../modules/(home)/account_settings/bindings/account_settings_binding.dart';
-import '../modules/(home)/account_settings/views/account_settings_view.dart';
+import '../modules/(doctor)/list_patients/bindings/list_patients_binding.dart';
+import '../modules/(doctor)/list_patients/views/list_patients_view.dart';
+import '../modules/(doctor)/qr_scanner_screen/bindings/qr_scanner_screen_binding.dart';
+import '../modules/(doctor)/qr_scanner_screen/views/qr_scanner_screen_view.dart';
 import '../modules/(home)/(appoinment)/appointment/bindings/appointment_binding.dart';
 import '../modules/(home)/(appoinment)/appointment/views/appointment_view.dart';
 import '../modules/(home)/(appoinment)/barcodeAppointment/bindings/barcode_appointment_binding.dart';
 import '../modules/(home)/(appoinment)/barcodeAppointment/views/barcode_appointment_view.dart';
 import '../modules/(home)/(appoinment)/captureAppointment/bindings/capture_appointment_binding.dart';
 import '../modules/(home)/(appoinment)/captureAppointment/views/capture_appointment_view.dart';
+import '../modules/(home)/(appoinment)/scheduleAppointment/bindings/schedule_appointment_binding.dart';
+import '../modules/(home)/(appoinment)/scheduleAppointment/views/schedule_appointment_view.dart';
+import '../modules/(home)/(appoinment)/symptomAppointment/bindings/symptom_appointment_binding.dart';
+import '../modules/(home)/(appoinment)/symptomAppointment/views/symptom_appointment_view.dart';
+import '../modules/(home)/account_settings/bindings/account_settings_binding.dart';
+import '../modules/(home)/account_settings/views/account_settings_view.dart';
 import '../modules/(home)/home/bindings/home_binding.dart';
 import '../modules/(home)/home/views/home_view.dart';
-import '../modules/(doctor)/list_patients/bindings/list_patients_binding.dart';
-import '../modules/(doctor)/list_patients/views/list_patients_view.dart';
 import '../modules/(home)/onboarding_page/bindings/onboarding_page_binding.dart';
 import '../modules/(home)/onboarding_page/views/onboarding_page_view.dart';
 import '../modules/(home)/personal_data/bindings/personal_data_binding.dart';
 import '../modules/(home)/personal_data/views/personal_data_view.dart';
 import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
-import '../modules/(home)/(appoinment)/scheduleAppointment/bindings/schedule_appointment_binding.dart';
-import '../modules/(home)/(appoinment)/scheduleAppointment/views/schedule_appointment_view.dart';
 import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
-import '../modules/(home)/(appoinment)/symptomAppointment/bindings/symptom_appointment_binding.dart';
-import '../modules/(home)/(appoinment)/symptomAppointment/views/symptom_appointment_view.dart';
-import '../modules/(doctor)/qr_scanner_screen/bindings/qr_scanner_screen_binding.dart';
-import '../modules/(doctor)/qr_scanner_screen/views/qr_scanner_screen_view.dart';
+import '../modules/(doctor)/home_doctor/bindings/home_doctor_binding.dart';
+import '../modules/(doctor)/home_doctor/views/home_doctor_view.dart';
 
 part 'app_routes.dart';
 
@@ -161,6 +163,11 @@ class AppPages {
       name: _Paths.QR_SCANNER_SCREEN,
       page: () => const QrScannerScreenView(),
       binding: QrScannerScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.HOME_DOCTOR,
+      page: () => const HomeDoctorView(),
+      binding: HomeDoctorBinding(),
     ),
   ];
 }

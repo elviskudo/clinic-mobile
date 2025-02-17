@@ -1,16 +1,35 @@
+import 'dart:math';
+
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ListPatientsController extends GetxController {
   final supabase = Supabase.instance.client;
   var selectedFilter = 'All'.obs;
+  RxString currentUserId = ''.obs;
 
-   Stream<List<Appointment>> getAppointmentsStream() {
-    return supabase
+  @override
+  void onInit() {
+    super.onInit();
+    getCurrentUser();
+  }
+
+  Future<void> getCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    currentUserId.value = prefs.getString('userId') ?? '';
+  }
+
+  Stream<List<Appointment>> getAppointmentsStream() async* {
+    final prefs = await SharedPreferences.getInstance();
+    currentUserId.value = prefs.getString('userId') ?? '';
+    print('current user id: ${currentUserId.value}');
+    yield* supabase
         .from('appointments')
         .stream(primaryKey: ['id'])
+        .eq('doctor_id', currentUserId.value)
         .order('updated_at')
         .map((events) => events.map((item) async {
               // Create appointment object
@@ -46,13 +65,18 @@ class ListPatientsController extends GetxController {
         .asyncMap((appointments) => Future.wait(appointments));
   }
 
-  List<Appointment> filterAppointments(List<Appointment> appointments, String filter) {
+  List<Appointment> filterAppointments(
+      List<Appointment> appointments, String filter) {
     if (filter == 'All') {
       return appointments;
     } else if (filter == 'Waiting') {
-      return appointments.where((appointment) => appointment.status == 0).toList();
+      return appointments
+          .where((appointment) => appointment.status == 0)
+          .toList();
     } else {
-      return appointments.where((appointment) => appointment.status == 1).toList();
+      return appointments
+          .where((appointment) => appointment.status == 1)
+          .toList();
     }
   }
 
@@ -60,9 +84,8 @@ class ListPatientsController extends GetxController {
     try {
       await supabase
           .from('appointments')
-          .update({'status': status})
-          .eq('id', appointmentId);
-      
+          .update({'status': status}).eq('id', appointmentId);
+
       Get.snackbar(
         'Success',
         'Appointment status updated',
