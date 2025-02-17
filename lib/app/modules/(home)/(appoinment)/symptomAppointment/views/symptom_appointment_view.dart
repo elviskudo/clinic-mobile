@@ -1,4 +1,4 @@
-import 'package:clinic_ai/app/modules/(home)/scheduleAppointment/controllers/schedule_appointment_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/scheduleAppointment/controllers/schedule_appointment_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';

@@ -1,13 +1,13 @@
 // appointment_view.dart
-import 'package:clinic_ai/app/modules/(home)/appointment/controllers/appointment_controller.dart';
-import 'package:clinic_ai/app/modules/(home)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
-import 'package:clinic_ai/app/modules/(home)/barcodeAppointment/views/barcode_appointment_view.dart';
-import 'package:clinic_ai/app/modules/(home)/captureAppointment/controllers/capture_appointment_controller.dart';
-import 'package:clinic_ai/app/modules/(home)/captureAppointment/views/capture_appointment_view.dart';
-import 'package:clinic_ai/app/modules/(home)/scheduleAppointment/controllers/schedule_appointment_controller.dart';
-import 'package:clinic_ai/app/modules/(home)/scheduleAppointment/views/schedule_appointment_view.dart';
-import 'package:clinic_ai/app/modules/(home)/symptomAppointment/controllers/symptom_appointment_controller.dart';
-import 'package:clinic_ai/app/modules/(home)/symptomAppointment/views/symptom_appointment_view.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/appointment/controllers/appointment_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/views/barcode_appointment_view.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/captureAppointment/controllers/capture_appointment_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/captureAppointment/views/capture_appointment_view.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/scheduleAppointment/controllers/schedule_appointment_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/scheduleAppointment/views/schedule_appointment_view.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/symptomAppointment/controllers/symptom_appointment_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/symptomAppointment/views/symptom_appointment_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

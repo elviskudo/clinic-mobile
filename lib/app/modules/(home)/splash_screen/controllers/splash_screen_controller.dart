@@ -29,14 +29,14 @@ class SplashScreenController extends GetxController {
           // If user is logged in, check their role and redirect accordingly
           if (userRole == 'admin') {
             Get.offAllNamed(Routes.ADMIN_PANEL);
-          } else {
+          } else if (userRole == 'member') {
             Get.offAllNamed(Routes.HOME);
+          } else if (userRole == 'doctor') {
+            Get.offAllNamed(Routes.LIST_PATIENTS);
           }
         } else {
           Get.offAllNamed('/login');
         }
-
-        
       } else {
         Get.offAllNamed(Routes.LOGIN);
       }

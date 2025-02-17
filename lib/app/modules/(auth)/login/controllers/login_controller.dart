@@ -87,7 +87,7 @@ class LoginController extends GetxController {
         'updated_at': DateTime.now().toIso8601String(),
       };
 
-      await supabase.from('files').insert(fileData);
+      // await supabase.from('files').insert(fileData);
       print('roleUsers: $roleUsers');
       print('idusers: $idUser');
 
@@ -118,8 +118,10 @@ class LoginController extends GetxController {
       // Navigate based on role
       if (roleUsers == 'admin') {
         Get.offAllNamed(Routes.ADMIN_PANEL);
-      } else {
+      } else if (roleUsers == 'member') {
         Get.offAllNamed(Routes.HOME);
+      } else if (roleUsers == 'doctor') {
+        Get.offAllNamed(Routes.LIST_PATIENTS);
       }
     } catch (e) {
       print('eror: $e');

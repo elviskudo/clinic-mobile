@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -126,11 +127,13 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
         pw.Page(
           pageFormat: PdfPageFormat.a4, // Ensure A4 format
           build: (pw.Context context) {
-            return pw.Center( // Center content on the page
+            return pw.Center(
+              // Center content on the page
               child: pw.Container(
                 width: PdfPageFormat.a4.width * 0.8, // 80% of page width
                 decoration: pw.BoxDecoration(
-                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(10)),
+                  borderRadius:
+                      const pw.BorderRadius.all(pw.Radius.circular(10)),
                   gradient: pw.LinearGradient(
                     begin: pw.Alignment.topLeft,
                     end: pw.Alignment.bottomRight,
@@ -140,7 +143,8 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
                 child: pw.Padding(
                   padding: const pw.EdgeInsets.all(24),
                   child: pw.Column(
-                    mainAxisAlignment: pw.MainAxisAlignment.center, // Center content vertically
+                    mainAxisAlignment: pw
+                        .MainAxisAlignment.center, // Center content vertically
                     crossAxisAlignment: pw.CrossAxisAlignment.center,
                     children: [
                       pw.Text(
@@ -164,7 +168,8 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
                       pw.Container(
                         decoration: pw.BoxDecoration(
                           color: PdfColors.white,
-                          borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                          borderRadius:
+                              const pw.BorderRadius.all(pw.Radius.circular(8)),
                         ),
                         padding: const pw.EdgeInsets.all(16),
                         child: pw.BarcodeWidget(
@@ -242,121 +247,144 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  // Barcode Card
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFF70B67C),
-                          Color(0xFF35693E),
-                        ],
-                        stops: [0.0, 1.0],
+      body: // Dalam BarcodeAppointmentView, ubah bagian Column utama menjadi:
+          StreamBuilder<List<Appointment>>(
+        stream: controller.getAppointmentsStream(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No appointment data found'));
+          }
+
+          final appointment = snapshot.data!.first;
+
+          return Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      // Barcode Card
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFF70B67C),
+                              Color(0xFF35693E),
+                            ],
+                            stops: [0.0, 1.0],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${appointment.qrCode} - ${controller.userName.value}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Save this barcode and show it\nto the clinic staff',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: QrImageView(
+                                data: appointment.qrCode,
+                                version: QrVersions.auto,
+                                size: 200.0,
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () => _generatePDF(context),
+                      child: Text(
+                        'Download QR Code',
+                        style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xff35693E),
                         ),
-                      ],
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${controller.currentAppointment.value?.qrCode} - ${controller.userName.value}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Save this barcode and show it\nto the clinic staff',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: appointment.status == 1
+                            ? () {
+                                // Add next functionality here
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: const Color(0xFF35693E),
+                          disabledBackgroundColor: Colors.grey,
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: QrImageView(
-                            data: controller.currentAppointment.value!.qrCode,
-                            version: QrVersions.auto,
-                            size: 200.0,
-                            backgroundColor: Colors.white,
+                        ),
+                        child: const Text(
+                          'Next',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () => _generatePDF(context),
-                  child: Text(
-                    'Download QR Code',
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xff35693E),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Add next functionality here
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xFF35693E),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }

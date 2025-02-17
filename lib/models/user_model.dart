@@ -27,8 +27,6 @@ class Users {
       id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
       email: json['email'] as String? ?? '',
-      role: json['role'] as String? ?? '',
-      imageUrl: json['imageUrl'] as String? ?? '',
       phoneNumber: json['phone_number'] as String? ?? '',
       accessToken: json['access_token'] != null && json['access_token'] != ''
           ? json['access_token'] as String?
