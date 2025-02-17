@@ -180,7 +180,7 @@ class ScheduleAppointmentController extends GetxController {
       if (!isScheduleDateAvailable.value && selectedDoctor.value != null) {
         Get.snackbar(
           'Information',
-          'Tidak ada Schedule Date yang tersedia untuk Doctor ${selectedDoctor.value!.name}',
+          'Tidak ada Schedule Date yang tersedia untuk Doctor ${selectedDoctor.value!.degree}',
           snackPosition: SnackPosition.BOTTOM,
         );
       }
@@ -344,10 +344,12 @@ Future<void> createAppointment() async {
       timeId: selectedScheduleTime.value!.id,
       status: 0,
       qrCode: qrCode,
+      updatedAt: DateTime.now(),
       rejectedNote: null,
       symptoms: null,
       symptomDescription: null,
       aiResponse: null,
+      createdAt: DateTime.now()
     );
 
     final response = await supabase
@@ -432,6 +434,8 @@ Future<void> createAppointment() async {
         symptoms: null,
         symptomDescription: null,
         aiResponse: null,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now()
       );
 
       final response = await supabase

@@ -15,6 +15,7 @@ class ListPatientsView extends GetView<ListPatientsController> {
   const ListPatientsView({super.key});
   @override
   Widget build(BuildContext context) {
+    Get.put(ListPatientsController());
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -28,6 +29,7 @@ class ListPatientsView extends GetView<ListPatientsController> {
             await prefs.setBool('isLoggedIn', false);
             await prefs.remove('userRole');
             await prefs.remove('userId');
+            await prefs.remove('name');
             await GoogleSignIn().signOut();
             Get.offAllNamed(Routes.LOGIN);
           },

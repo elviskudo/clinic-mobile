@@ -10,6 +10,8 @@ class ListPatientsController extends GetxController {
   final supabase = Supabase.instance.client;
   var selectedFilter = 'All'.obs;
   RxString currentUserId = ''.obs;
+  final RxInt selectedIndex = 1.obs;
+
 
   @override
   void onInit() {

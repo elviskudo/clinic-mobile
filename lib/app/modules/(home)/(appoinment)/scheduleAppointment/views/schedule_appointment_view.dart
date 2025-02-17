@@ -11,7 +11,8 @@ import 'package:clinic_ai/models/scheduleTime_model.dart';
 class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
   final TabController tabController;
 
-  ScheduleAppointmentView({Key? key, required this.tabController}) : super(key: key);
+  ScheduleAppointmentView({Key? key, required this.tabController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -96,12 +97,12 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
                           CustomDropdown(
                             label: 'Doctor',
                             items: controller.doctors
-                                .map((doctor) => doctor.name)
+                                .map((doctor) => doctor.degree)
                                 .toList(),
-                            onSelected: (String doctorName) {
+                            onSelected: (String doctordegree) {
                               final selectedDoctor =
                                   controller.doctors.firstWhere(
-                                (doctor) => doctor.name == doctorName,
+                                (doctor) => doctor.degree == doctordegree,
                                 orElse: () => controller.doctors.first,
                               );
                               controller.setDoctor(selectedDoctor);
@@ -110,7 +111,7 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
                               // Navigator.pop(context); // Close dropdown after selection
                             },
                             selectedValue:
-                                controller.selectedDoctor.value?.name ??
+                                controller.selectedDoctor.value?.degree ??
                                     'Select Doctor',
                             isEnabled: controller.selectedPoly.value != null,
                           ),
@@ -351,9 +352,11 @@ class _CustomDropdownState extends State<CustomDropdown> {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: widget.isEnabled ? const Color(0xffF7FBF2) : Colors.grey[200],
+            color:
+                widget.isEnabled ? const Color(0xffF7FBF2) : Colors.grey[200],
             border: Border.all(
-                color: widget.isEnabled ? const Color(0xff727970) : Colors.grey),
+                color:
+                    widget.isEnabled ? const Color(0xff727970) : Colors.grey),
             borderRadius: BorderRadius.circular(8),
           ),
           child: ExpansionTile(
@@ -364,7 +367,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
               ),
             ),
             enabled: widget.isEnabled,
-            initiallyExpanded: _isExpanded, // Set ekspansi awal berdasarkan state
+            initiallyExpanded:
+                _isExpanded, // Set ekspansi awal berdasarkan state
             onExpansionChanged: (expanded) {
               if (expanded && widget.items.isEmpty) {
                 return;
