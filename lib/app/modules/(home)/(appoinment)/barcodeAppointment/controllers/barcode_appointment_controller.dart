@@ -1,3 +1,4 @@
+// barcode_appointment_controller.dart
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,7 +12,7 @@ class BarcodeAppointmentController extends GetxController {
   final Rxn<Appointment> currentAppointment = Rxn<Appointment>();
   final RxString userName = ''.obs;
   RxInt previousStatus = 0.obs;
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -22,34 +23,35 @@ class BarcodeAppointmentController extends GetxController {
     currentAppointment.value = appointment;
   }
 
- Stream<List<Appointment>> getAppointmentsStream() {
+  Stream<List<Appointment>> getAppointmentsStream() {
     if (currentAppointment.value == null) return Stream.value([]);
-    
+
     return supabase
         .from('appointments')
         .stream(primaryKey: ['id'])
         .eq('id', currentAppointment.value!.id)
         .map((list) {
-          final appointments = list.map((item) => Appointment.fromJson(item)).toList();
-          
-          // Check if status changed to 1
-          if (appointments.isNotEmpty) {
-            final appointment = appointments.first;
-            if (previousStatus.value == 0 && appointment.status == 1) {
-              Get.snackbar(
-                'Success',
-                'Barcode has been successfully scanned',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
-                duration: const Duration(seconds: 3),
-              );
-            }
-            previousStatus.value = appointment.status;
-          }
-          
-          return appointments;
-        });
+      final appointments =
+          list.map((item) => Appointment.fromJson(item)).toList();
+
+      // Check if status changed to 1
+      if (appointments.isNotEmpty) {
+        final appointment = appointments.first;
+        if (previousStatus.value == 0 && appointment.status == 1) {
+          Get.snackbar(
+            'Success',
+            'Barcode has been successfully scanned',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 3),
+          );
+        }
+        previousStatus.value = appointment.status;
+      }
+
+      return appointments;
+    });
   }
 
   Future<void> getUserName() async {
@@ -60,5 +62,12 @@ class BarcodeAppointmentController extends GetxController {
       print('Error getting user name from SharedPreferences: $e');
       userName.value = 'Unknown User';
     }
+  }
+
+  // Reset Method
+  void reset() {
+    isAccessible.value = false;
+    currentAppointment.value = null;
+    previousStatus.value = 0;
   }
 }

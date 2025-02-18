@@ -28,7 +28,7 @@ class DoctorView extends GetView<DoctorController> {
                 itemBuilder: (context, index) {
                   final doctor = controller.doctors[index];
                   return ListTile(
-                    title: Text(doctor.name),
+                    title: Text(doctor.degree),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -61,7 +61,7 @@ class DoctorView extends GetView<DoctorController> {
   }
 
   void _showDoctorDialog(BuildContext context, {Doctor? doctor}) {
-    final nameController = TextEditingController(text: doctor?.name);
+    final nameController = TextEditingController(text: doctor?.degree);
     final descriptionController =
         TextEditingController(text: doctor?.description);
     final statusController = RxInt(doctor?.status ?? 1);
@@ -185,7 +185,7 @@ class DoctorView extends GetView<DoctorController> {
                         if (doctor == null) {
                           final newDoctor = Doctor(
                             id: controller.selectedUserId.value,
-                            name: nameController.text.trim(),
+                            degree: nameController.text.trim(),
                             description: descriptionController.text.trim(),
                             status: statusController.value,
                             clinicId: controller.selectedClinicId.value,
@@ -196,7 +196,7 @@ class DoctorView extends GetView<DoctorController> {
                           Get.find<DoctorController>().addDoctor(newDoctor);
                         } else {
                           doctor.id = controller.selectedUserId.value;
-                          doctor.name = nameController.text.trim();
+                          doctor.degree = nameController.text.trim();
                           doctor.description =
                               descriptionController.text.trim();
                           doctor.status = statusController.value;

@@ -10,7 +10,7 @@ String doctorToJson(Doctor data) => json.encode(data.toJson());
 
 class Doctor {
     String id;
-    String name;
+    String degree;
     String description;
     String clinicId;
     String polyId;
@@ -20,7 +20,7 @@ class Doctor {
 
     Doctor({
         required this.id,
-        required this.name,
+        required this.degree,
         required this.description,
         required this.clinicId,
         required this.polyId,
@@ -31,7 +31,7 @@ class Doctor {
 
     factory Doctor.fromJson(Map<String, dynamic> json) => Doctor(
         id: json["id"],
-        name: json["name"],
+        degree: json["degree"],
         description: json["description"],
         clinicId: json["clinic_id"],
         polyId: json["poly_id"],
@@ -42,7 +42,7 @@ class Doctor {
 
     Map<String, dynamic> toJson() => {
         "id": id,
-        "name": name,
+        "degree": degree,
         "description": description,
         "clinic_id": clinicId,
         "poly_id": polyId,

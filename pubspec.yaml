@@ -59,6 +59,7 @@ dependencies:
   awesome_dialog: ^3.2.1
   shimmer: ^3.0.0
   awesome_notifications: ^0.10.0
+  flutter_launcher_icons: ^0.14.3
 
 
 dev_dependencies:
@@ -113,3 +114,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/Asset 3@5x 2.png"
+  min_sdk_android: 21 # Required for adaptive icons on Android 8.0+
+  remove_alpha_ios: true
