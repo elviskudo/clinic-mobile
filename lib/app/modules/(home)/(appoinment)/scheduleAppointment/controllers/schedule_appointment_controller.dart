@@ -1,5 +1,5 @@
-import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:clinic_ai/models/doctor_model.dart';
@@ -11,12 +11,15 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
+import 'dart:math';
 import 'package:uuid/uuid.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/appointment/controllers/appointment_controller.dart';
 
 class ScheduleAppointmentController extends GetxController {
   final supabase = Supabase.instance.client;
+  RxBool isFormReadOnly = false.obs; // Inisialisasi disini
 
+  // Rx variables untuk menyimpan data yang dipilih
   final Rxn<Clinic> selectedClinic = Rxn<Clinic>();
   final Rxn<Poly> selectedPoly = Rxn<Poly>();
   final Rxn<Doctor> selectedDoctor = Rxn<Doctor>();
@@ -51,7 +54,13 @@ class ScheduleAppointmentController extends GetxController {
   void onInit() {
     super.onInit();
     fetchClinics();
+     final appointmentController = Get.find<AppointmentController>();
+     isFormReadOnly.value = appointmentController.hasCreatedAppointment.value;
 
+    if (isFormReadOnly.value) {
+      // Load saved appointment data
+      loadSavedAppointmentData();
+    }
     ever(selectedDoctor, (Doctor? doctor) {
       if (selectedPoly.value != null && doctor != null) {
         fetchScheduleDates(selectedPoly.value!.id, doctor.id);
@@ -74,8 +83,150 @@ class ScheduleAppointmentController extends GetxController {
       }
     });
   }
+   Future<void> loadSavedAppointmentData() async {
+    final barcodeController = Get.find<BarcodeAppointmentController>();
+    final appointment = barcodeController.currentAppointment.value;
 
-  bool isFormValid1() {
+    if (appointment != null) {
+      // Load clinic
+      selectedClinic.value = clinics.firstWhere((c) => c.id == appointment.clinicId);
+      await fetchPolies(appointment.clinicId);
+
+      // Load poly
+      selectedPoly.value = polies.firstWhere((p) => p.id == appointment.polyId);
+      await fetchDoctors(appointment.clinicId, appointment.polyId);
+
+      // Load doctor
+      selectedDoctor.value = doctors.firstWhere((d) => d.id == appointment.doctorId);
+      await fetchScheduleDates(appointment.polyId, appointment.doctorId);
+
+      // Load date and time
+      final scheduleDate = scheduleDates.firstWhere((d) => d.id == appointment.dateId);
+      selectedDate.value = scheduleDate.scheduleDate;
+      selectedScheduleDateId.value = scheduleDate.id;
+
+      await fetchScheduleTimes(appointment.dateId);
+      selectedScheduleTime.value = scheduleTimes.firstWhere((t) => t.id == appointment.timeId);
+
+       isFormReadOnly.value = true; // Set form to read-only
+    }
+  }
+
+  Future<void> onNextPressed(TabController tabController) async { // Teruskan TabController
+
+   final appointmentController = Get.find<AppointmentController>();
+
+    if (appointmentController.hasCreatedAppointment.value) {
+      // Just navigate to QR code tab
+      tabController.animateTo(1);
+      return;
+    }
+    final shouldProceed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('Confirm Appointment'),
+        content: const Text('Are you sure you want to create this appointment?'),
+        actions: [
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Get.back(result: false),
+          ),
+          TextButton(
+            child: const Text('Confirm'),
+            onPressed: () => Get.back(result: true),
+          ),
+        ],
+      ),
+    ) ?? false;
+
+    if (!shouldProceed) return;
+
+    try {
+      // Show loading dialog
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
+        barrierDismissible: false,
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+
+      if (userId == null) {
+        Get.back(); // Close loading dialog
+        Get.snackbar('Error', 'User ID not found. Please login again.',
+            snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+
+      const uuid = Uuid();
+      final appointmentId = uuid.v4();
+      final qrCode = generateRandomQrCode(8);
+
+      final appointment = Appointment(
+        id: appointmentId,
+        userId: userId,
+        clinicId: selectedClinic.value!.id,
+        polyId: selectedPoly.value!.id,
+        doctorId: selectedDoctor.value!.id,
+        dateId: selectedScheduleDateId.value!,
+        timeId: selectedScheduleTime.value!.id,
+        status: 1,
+        qrCode: qrCode,
+        rejectedNote: null,
+        symptoms: null,
+        symptomDescription: null,
+        aiResponse: null,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now()
+      );
+
+      final response = await supabase
+          .from('appointments')
+          .insert(appointment.toJson());
+
+      Get.back(); // Close loading dialog
+
+      if (response == null) {
+       final barcodeController = Get.find<BarcodeAppointmentController>();
+      barcodeController.setAppointmentData(appointment); // Ini penting!!
+      barcodeController.isAccessible.value = true;
+      appointmentController.setAppointmentCreated(true);
+      isFormReadOnly.value = true; // Set form read-only setelah berhasil
+      // Switch to QR Code tab
+      tabController.animateTo(1);
+        Get.snackbar(
+            'Success',
+            'Appointment created successfully!',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white
+        );
+
+        // Reset form
+        // resetForm();
+      } else {
+        Get.snackbar(
+            'Error',
+            'Failed to create appointment.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white
+        );
+      }
+    } catch (e) {
+
+      Get.back(); // Close loading dialog
+      Get.snackbar(
+          'Error',
+          'Error creating appointment: ${e.toString()}',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white
+      );
+    }
+  }
+   bool isFormValid1() {
     return selectedClinic.value != null &&
         selectedPoly.value != null &&
         selectedDoctor.value != null &&
@@ -98,7 +249,6 @@ class ScheduleAppointmentController extends GetxController {
       isLoadingClinics.value = false;
     }
   }
-
   Future<void> fetchPolies(String clinicId) async {
     try {
       isLoadingPolies.value = true;
@@ -135,41 +285,89 @@ class ScheduleAppointmentController extends GetxController {
   }
 
   Future<void> fetchDoctors(String clinicId, String polyId) async {
-    try {
-      isLoadingDoctors.value = true;
-      final response = await supabase
-          .from('doctors')
-          .select()
-          .eq('clinic_id', clinicId)
-          .eq('poly_id', polyId);
-      if (response != null) {
-        final doctorsList =
-            (response as List).map((json) => Doctor.fromJson(json)).toList();
-        doctors.assignAll(doctorsList);
-        isDoctorAvailable.value = doctorsList.isNotEmpty;
+  try {
+    isLoadingDoctors.value = true;
+    print('1. Starting fetch doctors');
 
-        scheduleDates.clear();
-        selectedDate.value = null;
-        selectedScheduleDateId.value = null;
-        scheduleTimes.clear(); // bersihkan scheduleTimes
-      } else {
-        isDoctorAvailable.value = false;
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load doctors: ${e.toString()}',
-          snackPosition: SnackPosition.BOTTOM);
+    final response = await supabase
+        .from('doctors')
+        .select()
+        .eq('clinic_id', clinicId)
+        .eq('poly_id', polyId);
+
+    print('2. Response received: ${response != null ? 'not null' : 'null'}');
+
+    if (response != null && response is List) {
+      print('3. Processing response as List');
+
+      final doctorsList = response.map((json) {
+        // Add null checks for required fields
+        if (json['id'] == null ||
+            json['degree'] == null ||
+            json['description'] == null ||
+            json['clinic_id'] == null ||
+            json['poly_id'] == null ||
+            json['status'] == null ||
+            json['created_at'] == null ||
+            json['updated_at'] == null) {
+          print('Invalid doctor data: $json');
+          return null;
+        }
+
+        try {
+          return Doctor.fromJson(json);
+        } catch (e) {
+          print('Error parsing doctor: $e');
+          return null;
+        }
+      })
+      .where((doctor) => doctor != null)
+      .cast<Doctor>()
+      .toList();
+
+      print('4. Doctors list created with ${doctorsList.length} items');
+
+      doctors.assignAll(doctorsList);
+      isDoctorAvailable.value = doctorsList.isNotEmpty;
+
+      print('5. Doctors assigned to list');
+
+      scheduleDates.clear();
+      selectedDate.value = null;
+      selectedScheduleDateId.value = null;
+      scheduleTimes.clear();
+
+      print('6. Related fields cleared');
+    } else {
+      print('7. No valid response received');
       isDoctorAvailable.value = false;
-    } finally {
-      isLoadingDoctors.value = false;
-      if (!isDoctorAvailable.value && selectedPoly.value != null) {
-        Get.snackbar(
-          'Information',
-          'Tidak ada Doctor yang tersedia untuk Poly ${selectedPoly.value!.name}',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      }
+      doctors.clear();
+    }
+  } catch (e, stackTrace) {
+    print('Error in fetchDoctors: $e');
+    print('Stack trace: $stackTrace');
+    Get.snackbar(
+      'Error',
+      'Failed to load doctors: ${e.toString()}',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red,
+      colorText: Colors.white
+    );
+    isDoctorAvailable.value = false;
+    doctors.clear();
+  } finally {
+    isLoadingDoctors.value = false;
+    if (!isDoctorAvailable.value && selectedPoly.value != null) {
+      Get.snackbar(
+        'Information',
+        'Tidak ada Doctor yang tersedia untuk Poly ${selectedPoly.value!.name}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white
+      );
     }
   }
+}
 
   Future<void> fetchScheduleDates(String polyId, String doctorId) async {
     try {
@@ -319,7 +517,7 @@ class ScheduleAppointmentController extends GetxController {
         length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
   }
 
-  void resetForm() {
+    void resetForm() {
     selectedClinic.value = null;
     selectedPoly.value = null;
     selectedDoctor.value = null;
@@ -335,185 +533,9 @@ class ScheduleAppointmentController extends GetxController {
     isDoctorAvailable.value = true;
     isScheduleDateAvailable.value = true;
     isScheduleTimeAvailable.value = true;
-  }
 
-  Future<void> createAppointment() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.getString('userId');
-
-      if (userId == null) {
-        Get.snackbar('Error', 'User ID not found. Please login again.',
-            snackPosition: SnackPosition.BOTTOM);
-        return;
-      }
-
-      const uuid = Uuid();
-      final appointmentId = uuid.v4();
-      final qrCode = generateRandomQrCode(8);
-
-      final appointment = Appointment(
-          id: appointmentId,
-          userId: userId,
-          clinicId: selectedClinic.value!.id,
-          polyId: selectedPoly.value!.id,
-          doctorId: selectedDoctor.value!.id,
-          dateId: selectedScheduleDateId.value!,
-          timeId: selectedScheduleTime.value!.id,
-          status: 0,
-          qrCode: qrCode,
-          updatedAt: DateTime.now(),
-          rejectedNote: null,
-          symptoms: null,
-          symptomDescription: null,
-          aiResponse: null,
-          createdAt: DateTime.now());
-
-      final response =
-          await supabase.from('appointments').insert(appointment.toJson());
-
-      if (response == null) {
-        Get.snackbar('Success', 'Appointment created successfully!',
-            snackPosition: SnackPosition.BOTTOM);
-
-        final barcodeController = Get.find<BarcodeAppointmentController>();
-        barcodeController.setAppointmentData(appointment);
-        // Set isAccessible to true AFTER successful creation:
-        barcodeController.isAccessible.value = true;
-        // Reset form
-        resetForm();
-      } else {
-        Get.snackbar('Error', 'Failed to create appointment.',
-            snackPosition: SnackPosition.BOTTOM);
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Error creating appointment: ${e.toString()}',
-          snackPosition: SnackPosition.BOTTOM);
-    }
-  }
-
-  Future<void> onNextPressed(TabController tabController) async {
-    // Teruskan TabController
-    final shouldProceed = await Get.dialog<bool>(
-          AlertDialog(
-            title: const Text('Confirm Appointment'),
-            content:
-                const Text('Are you sure you want to create this appointment?'),
-            actions: [
-              TextButton(
-                child: const Text('Cancel'),
-                onPressed: () => Get.back(result: false),
-              ),
-              TextButton(
-                child: const Text('Confirm'),
-                onPressed: () => Get.back(result: true),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-
-    if (!shouldProceed) return;
-
-    try {
-      // Show loading dialog
-      Get.dialog(
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
-        barrierDismissible: false,
-      );
-
-      final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.getString('userId');
-      var user = await supabase
-          .from('users')
-          .select('name')
-          .eq('id', userId!)
-          .single();
-
-      if (userId == null) {
-        Get.back(); // Close loading dialog
-        Get.snackbar('Error', 'User ID not found. Please login again.',
-            snackPosition: SnackPosition.BOTTOM);
-        return;
-      }
-
-      const uuid = Uuid();
-      final appointmentId = uuid.v4();
-      final qrCode = generateRandomQrCode(8);
-
-      final appointment = Appointment(
-          id: appointmentId,
-          userId: userId,
-          clinicId: selectedClinic.value!.id,
-          polyId: selectedPoly.value!.id,
-          doctorId: selectedDoctor.value!.id,
-          dateId: selectedScheduleDateId.value!,
-          timeId: selectedScheduleTime.value!.id,
-          status: 0,
-          qrCode: qrCode,
-          rejectedNote: null,
-          symptoms: null,
-          symptomDescription: null,
-          aiResponse: null,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now());
-
-      final response =
-          await supabase.from('appointments').insert(appointment.toJson());
-
-      if (response == null) {
-        final barcodeController = Get.find<BarcodeAppointmentController>();
-        barcodeController.setAppointmentData(appointment);
-        barcodeController.isAccessible.value = true;
-
-        // Switch to QR Code tab
-        tabController.animateTo(1);
-
-        Get.snackbar('Success', 'Appointment created successfully!',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green,
-            colorText: Colors.white);
-
-        String formattedDate = '';
-        if (selectedDate.value != null) {
-          formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate.value!);
-        }
-
-        String formattedTime = selectedScheduleTime.value?.scheduleTime ?? '';
-        String clinicName = selectedClinic.value?.name ?? '';
-        String polyName = selectedPoly.value?.name ?? '';
-        String doctorName = selectedDoctor.value?.degree ?? '';
-// Kirim notifikasi hanya ke dokter
-        await sendNotificationToDoctor(
-          doctorId: selectedDoctor.value!.id,
-          patientName: user["name"],
-          date: formattedDate,
-          time: formattedTime,
-          clinic: clinicName,
-          poly: polyName,
-          doctorName: doctorName,
-        );
-
-        // Reset form
-        Get.back(); // Close loading dialog
-        resetForm();
-      } else {
-        Get.snackbar('Error', 'Failed to create appointment.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white);
-      }
-    } catch (e) {
-      print('dajjal ------- $e');
-      print('dajjal ------- $e');
-      Get.back(); // Close loading dialog
-      Get.snackbar('Error', 'Error creating appointment: ${e.toString()}',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white);
-    }
+    // Tambahkan baris ini:
+    isFormReadOnly.value = false;
   }
 
   Future<void> sendNotificationToDoctor({

@@ -1,3 +1,4 @@
+import 'package:clinic_ai/app/modules/(home)/personal_data/controllers/personal_data_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -11,6 +12,7 @@ class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
   @override
   Widget build(BuildContext context) {
+    final personalDataCtrl = Get.put(PersonalDataController());
     return Scaffold(
       backgroundColor: Color(0xffF7FBF2),
       appBar: AppBar(
@@ -197,12 +199,16 @@ class ProfileView extends GetView<ProfileController> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Data Personal (No. KTP, Gender)',
-                              style: TextStyle(
-                                  color: Color(0xFF39656D),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700),
+                            Obx(
+                              () => Text(
+                                'Data Personal (${personalDataCtrl.cardNumberController.value})',
+                                style: TextStyle(
+                                    color: Color(0xFF39656D),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
                             Gap(5),
                             Row(

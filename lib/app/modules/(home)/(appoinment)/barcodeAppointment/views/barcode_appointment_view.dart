@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
@@ -218,6 +219,8 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
 
       // Show success message
       if (context.mounted) {
+        print("ini -----------> ${savedFile.path}");
+        print("ini -----------> ${savedFile.path.codeUnits}");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('PDF saved to: ${savedFile.path}'),
@@ -359,7 +362,10 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
                       child: ElevatedButton(
                         onPressed: appointment.status == 1
                             ? () {
-                                // Add next functionality here
+                                final TabController tabController =
+                                    DefaultTabController.of(context);
+                                tabController
+                                    .animateTo(2); // Navigate to Symptom tab
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
@@ -370,6 +376,7 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
+                        
                         child: const Text(
                           'Next',
                           style: TextStyle(

@@ -7,12 +7,36 @@ import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:clinic_ai/models/poly_model.dart';
 import 'package:clinic_ai/models/doctor_model.dart';
 import 'package:clinic_ai/models/scheduleTime_model.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/appointment/controllers/appointment_controller.dart';
 
-class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
+class ScheduleAppointmentView extends StatefulWidget {
   final TabController tabController;
 
   ScheduleAppointmentView({Key? key, required this.tabController})
       : super(key: key);
+
+  @override
+  State<ScheduleAppointmentView> createState() => _ScheduleAppointmentViewState();
+}
+
+class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
+  late ScheduleAppointmentController controller;
+  late AppointmentController appointmentController;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<ScheduleAppointmentController>();
+    appointmentController = Get.find<AppointmentController>();
+
+    // Pindahkan logika pengecekan hasCreatedAppointment ke initState
+    if (appointmentController.hasCreatedAppointment.value) {
+      // Langsung pindah ke tab QR code jika appointment sudah dibuat
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.tabController.animateTo(1);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +70,8 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
                   },
                   selectedValue:
                       controller.selectedClinic.value?.name ?? 'Select Clinic',
+                       isEnabled: !controller.isFormReadOnly.value, // Disable if form is read-only
+                  isReadOnly: controller.isFormReadOnly.value,
                 );
               }),
 
@@ -75,7 +101,8 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
                             selectedValue:
                                 controller.selectedPoly.value?.name ??
                                     'Select Poly',
-                            isEnabled: controller.selectedClinic.value != null,
+                             isEnabled: controller.selectedClinic.value != null && !controller.isFormReadOnly.value, // Disable if form is read-only
+                              isReadOnly: controller.isFormReadOnly.value,
                           ),
                       ],
                     )
@@ -113,7 +140,8 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
                             selectedValue:
                                 controller.selectedDoctor.value?.degree ??
                                     'Select Doctor',
-                            isEnabled: controller.selectedPoly.value != null,
+                             isEnabled: controller.selectedPoly.value != null && !controller.isFormReadOnly.value, // Disable if form is read-only
+                               isReadOnly: controller.isFormReadOnly.value,
                           ),
                       ],
                     )
@@ -172,7 +200,8 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
                                     .selectedScheduleTime.value?.scheduleTime ??
                                 'Select Time',
                             isEnabled:
-                                controller.selectedScheduleDateId.value != null,
+                                controller.selectedScheduleDateId.value != null && !controller.isFormReadOnly.value, // Disable if form is read-only
+                                 isReadOnly: controller.isFormReadOnly.value,
                           ),
                       ],
                     )
@@ -191,9 +220,9 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
                 height: 50,
                 child: Obx(() {
                   return ElevatedButton(
-                    onPressed: controller.isFormValid1()
+                    onPressed: controller.isFormValid1() && !controller.isFormReadOnly.value // Disable button if form is read-only
                         ? () {
-                            controller.onNextPressed(tabController);
+                            controller.onNextPressed(widget.tabController);
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
@@ -221,7 +250,8 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
 
   Widget _buildDateField() {
     return Obx(() {
-      bool isEnabled = controller.selectedDoctor.value != null;
+      bool isEnabled = controller.selectedDoctor.value != null &&
+          !controller.isFormReadOnly.value;
 
       if (controller.isLoadingScheduleDates.value) {
         return _buildLoadingIndicator();
@@ -231,15 +261,16 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
           .map((scheduleDate) => scheduleDate.scheduleDate)
           .toList();
 
-      DateTime? initialDate =
-          availableDates.isNotEmpty ? availableDates.first : null;
+      // DateTime? initialDate =
+      //     availableDates.isNotEmpty ? availableDates.first : null;
 
       return InkWell(
         onTap: isEnabled
             ? () async {
                 DateTime? pickedDate = await showDatePicker(
                   context: Get.context!,
-                  initialDate: initialDate ?? DateTime.now(),
+                  initialDate: DateTime.now(),
+                  // initialDate: initialDate ?? DateTime.now(),
                   firstDate: DateTime.now(),
                   lastDate: DateTime(DateTime.now().year + 1),
                   selectableDayPredicate: (DateTime val) {
@@ -320,6 +351,7 @@ class CustomDropdown extends StatefulWidget {
   final Function(String) onSelected;
   final String selectedValue;
   final bool isEnabled;
+  final bool isReadOnly; // New prop for form read-only state
 
   const CustomDropdown({
     Key? key,
@@ -328,6 +360,7 @@ class CustomDropdown extends StatefulWidget {
     required this.onSelected,
     required this.selectedValue,
     this.isEnabled = true,
+    this.isReadOnly = false, // Default to false
   }) : super(key: key);
 
   @override
@@ -335,7 +368,7 @@ class CustomDropdown extends StatefulWidget {
 }
 
 class _CustomDropdownState extends State<CustomDropdown> {
-  bool _isExpanded = false; // Tambahkan state untuk mengontrol ekspansi
+  bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -352,29 +385,32 @@ class _CustomDropdownState extends State<CustomDropdown> {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color:
-                widget.isEnabled ? const Color(0xffF7FBF2) : Colors.grey[200],
+            color: (widget.isEnabled && !widget.isReadOnly)
+                ? const Color(0xffF7FBF2)
+                : Colors.grey[200],
             border: Border.all(
-                color:
-                    widget.isEnabled ? const Color(0xff727970) : Colors.grey),
+                color: (widget.isEnabled && !widget.isReadOnly)
+                    ? const Color(0xff727970)
+                    : Colors.grey),
             borderRadius: BorderRadius.circular(8),
           ),
           child: ExpansionTile(
             title: Text(
               widget.selectedValue,
               style: TextStyle(
-                color: widget.isEnabled ? const Color(0xff727970) : Colors.grey,
+                color: (widget.isEnabled && !widget.isReadOnly)
+                    ? const Color(0xff727970)
+                    : Colors.grey,
               ),
             ),
-            enabled: widget.isEnabled,
-            initiallyExpanded:
-                _isExpanded, // Set ekspansi awal berdasarkan state
+            enabled: widget.isEnabled && !widget.isReadOnly,
+            initiallyExpanded: _isExpanded,
             onExpansionChanged: (expanded) {
               if (expanded && widget.items.isEmpty) {
                 return;
               }
               setState(() {
-                _isExpanded = expanded; // Update state ekspansi
+                _isExpanded = expanded;
               });
             },
             children: widget.items.map((String item) {
@@ -383,9 +419,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 onTap: () {
                   widget.onSelected(item);
                   setState(() {
-                    _isExpanded = false; // Tutup dropdown
+                    _isExpanded = false;
                   });
-                  //FocusScope.of(context).unfocus(); // Ini mungkin tidak perlu lagi
                 },
               );
             }).toList(),

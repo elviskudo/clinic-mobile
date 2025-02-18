@@ -17,6 +17,7 @@ class AppointmentView extends GetView<AppointmentController> {
   @override
   Widget build(BuildContext context) {
     final scheduleController = Get.find<ScheduleAppointmentController>();
+    final appointmentController = Get.find<AppointmentController>(); // ADD THIS
     Get.put(BarcodeAppointmentController());
     final barcodeController = Get.find<BarcodeAppointmentController>();
     final symptomController = Get.find<SymptomAppointmentController>();
@@ -27,6 +28,60 @@ class AppointmentView extends GetView<AppointmentController> {
       child: Builder(
         builder: (BuildContext context) {
           final TabController tabController = DefaultTabController.of(context);
+          final PageController pageController = PageController(); // Tambahkan PageController
+
+          // Fungsi validasi yang akan digunakan di TabBar dan PageView
+          void validateAndChangeTab(int index) {
+            if (index == 0) {
+              return;
+            }
+
+            if (index == 1 && !barcodeController.isAccessible.value) {
+              Get.snackbar(
+                'Warning',
+                'Please create an appointment first.',
+                snackPosition: SnackPosition.BOTTOM,
+              );
+              tabController.animateTo(0);
+              pageController.animateToPage(0, duration: Duration(milliseconds: 300), curve: Curves.ease); // Kembali ke halaman 0
+              return;
+            }
+
+            if (index == 2) {
+              final appointment =
+                  barcodeController.currentAppointment.value;
+              if (appointment?.status != 1) {
+                Get.snackbar(
+                  'Information',
+                  'Please complete QR code scanning first.',
+                  snackPosition: SnackPosition.BOTTOM,
+                );
+                if (barcodeController.isAccessible.value) {
+                  tabController.animateTo(1);
+                   pageController.animateToPage(1, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                } else {
+                  tabController.animateTo(0);
+                   pageController.animateToPage(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                }
+                return;
+              }
+            }
+
+            if (index == 3) {
+              Get.snackbar(
+                'Information',
+                'Please complete symptom form first.',
+                snackPosition: SnackPosition.BOTTOM,
+              );
+              tabController.animateTo(2);
+               pageController.animateToPage(2, duration: Duration(milliseconds: 300), curve: Curves.ease);
+              return;
+            }
+            // Jika semua validasi lolos, pindah ke halaman yang dipilih
+            tabController.animateTo(index);
+             pageController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+          }
+
           return Scaffold(
             backgroundColor: const Color(0xFFF7FBF2),
             appBar: AppBar(
@@ -34,14 +89,20 @@ class AppointmentView extends GetView<AppointmentController> {
               elevation: 0,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Get.back(),
+                onPressed: () {
+                  // Reset the form and barcode data when the back button is pressed
+                  appointmentController.resetAppointmentCreated(); // ADD THIS
+                  scheduleController.resetForm();
+                  barcodeController.reset(); // Reset BarcodeController
+                  Get.back();
+                },
               ),
               title: const Text(
                 'Appointment',
                 style: TextStyle(color: Colors.black),
               ),
               bottom: TabBar(
-                physics: const NeverScrollableScrollPhysics(),
+                //Hapus physics: const NeverScrollableScrollPhysics(),
                 tabs: [
                   const Tab(
                     child: Text(
@@ -82,38 +143,15 @@ class AppointmentView extends GetView<AppointmentController> {
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: const Color(0xFF35693E),
                 onTap: (index) {
-                  if (index == 0) {
-                    return;
-                  }
-
-                  if (index == 1 && !barcodeController.isAccessible.value) {
-                    Get.snackbar(
-                      'Warning',
-                      'Please create an appointment first.',
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                    tabController.animateTo(0);
-                    return;
-                  }
-
-                  if (index > 1) {
-                    Get.snackbar(
-                      'Information',
-                      'Please proceed with the QRCode tab first.',
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                    if (barcodeController.isAccessible.value) {
-                      tabController.animateTo(1);
-                    } else {
-                      tabController.animateTo(0);
-                    }
-                    return;
-                  }
+                  validateAndChangeTab(index);
                 },
               ),
             ),
-            body: TabBarView(
-              physics: const NeverScrollableScrollPhysics(),
+            body: PageView( //Ganti TabBarView dengan PageView
+              controller: pageController,
+              onPageChanged: (index) {
+               validateAndChangeTab(index);
+              },
               children: [
                 ScheduleAppointmentView(tabController: tabController),
                 BarcodeAppointmentView(),

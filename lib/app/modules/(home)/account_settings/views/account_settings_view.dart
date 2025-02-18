@@ -102,14 +102,14 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
                 Get.offAllNamed(Routes.PERSONAL_DATA);
               },
             ),
-            _buildMenuItem(
-              iconPath: 'assets/icons/key.png',
-              title: 'Accounts',
-              subtitle: 'Change Email, Change Password',
-              onTap: () {
-                // Handle accounts tap
-              },
-            ),
+            // _buildMenuItem(
+            //   iconPath: 'assets/icons/key.png',
+            //   title: 'Accounts',
+            //   subtitle: 'Change Email, Change Password',
+            //   onTap: () {
+            //     // Handle accounts tap
+            //   },
+            // ),
             _buildMenuItem(
               iconPath: 'assets/icons/personaldata.png',
               title: 'Notifications',
