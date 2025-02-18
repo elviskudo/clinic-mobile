@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SkeletonLoading extends StatelessWidget {
   final double width;
@@ -18,84 +19,33 @@ class SkeletonLoading extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.grey[300],
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: ShaderMask(
-          shaderCallback: (bounds) {
-            return LinearGradient(
-              colors: [
-                Colors.grey[300]!,
-                Colors.grey[200]!,
-                Colors.grey[300]!,
-              ],
-              stops: const [0.1, 0.5, 0.9],
-              begin: const Alignment(-1.0, -0.3),
-              end: const Alignment(1.0, 0.3),
-              tileMode: TileMode.mirror,
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.srcATop,
-          child: Container(color: Colors.grey[300]),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
         ),
       ),
     );
   }
 }
 
-class ShimmerEffect extends StatefulWidget {
+class ShimmerEffect extends StatelessWidget {
   final Widget child;
 
   const ShimmerEffect({Key? key, required this.child}) : super(key: key);
 
   @override
-  State<ShimmerEffect> createState() => _ShimmerEffectState();
-}
-
-class _ShimmerEffectState extends State<ShimmerEffect>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return ShaderMask(
-          shaderCallback: (bounds) {
-            return LinearGradient(
-              colors: [
-                Colors.grey[300]!,
-                Colors.grey[100]!,
-                Colors.grey[300]!,
-              ],
-              stops: const [0.1, 0.5, 0.9],
-              begin: Alignment(-1.0 + _controller.value * 2, -0.3),
-              end: Alignment(-0.2 + _controller.value * 2, 0.3),
-              tileMode: TileMode.clamp,
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.srcATop,
-          child: widget.child,
-        );
-      },
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: child,
     );
   }
 }

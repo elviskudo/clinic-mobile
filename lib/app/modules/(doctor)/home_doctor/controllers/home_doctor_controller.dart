@@ -156,6 +156,27 @@ class AppointmentStatus {
     }
   }
 
+  static int getStatusValue(String statusText) {
+    switch (statusText) {
+      case 'Waiting':
+        return waiting;
+      case 'Approved':
+        return approved;
+      case 'Rejected':
+        return rejected;
+      case 'Diagnose':
+        return diagnose;
+      case 'Unpaid':
+        return unpaid;
+      case 'Waiting for Drugs':
+        return waitingForDrugs;
+      case 'Completed':
+        return completed;
+      default:
+        return -1; // Unknown status
+    }
+  }
+
   static Color getStatusColor(int status) {
     switch (status) {
       case waiting:

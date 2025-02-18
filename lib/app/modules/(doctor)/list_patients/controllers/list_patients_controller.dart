@@ -1,10 +1,12 @@
 import 'dart:math';
 
+import 'package:clinic_ai/app/modules/(doctor)/home_doctor/controllers/home_doctor_controller.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:intl/intl.dart';
 
 class ListPatientsController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -12,6 +14,23 @@ class ListPatientsController extends GetxController {
   RxString currentUserId = ''.obs;
   final RxInt selectedIndex = 1.obs;
 
+  // Date filter
+  final selectedDate = Rx<DateTime?>(null);
+  final isDateFilterActive = false.obs;
+
+  // Status filter
+  final selectedStatus = 'All'.obs;
+  final isStatusFilterActive = false.obs;
+  final List<String> statusOptions = [
+    'All',
+    'Waiting',
+    'Approved',
+    'Rejected',
+    'Diagnose',
+    'Unpaid',
+    'Waiting for Drugs',
+    'Completed',
+  ];
 
   @override
   void onInit() {
@@ -67,19 +86,80 @@ class ListPatientsController extends GetxController {
         .asyncMap((appointments) => Future.wait(appointments));
   }
 
+  void setDateFilter(DateTime? date) {
+    selectedDate.value = date;
+    isDateFilterActive.value = date != null;
+
+    if (isDateFilterActive.value) {
+      selectedFilter.value = 'Date';
+    } else if (isStatusFilterActive.value) {
+      selectedFilter.value = 'Status';
+    } else {
+      selectedFilter.value = 'All';
+    }
+  }
+
+  void setStatusFilter(String status) {
+    if (status == 'All') {
+      isStatusFilterActive.value = false;
+      selectedStatus.value = 'All';
+    } else {
+      isStatusFilterActive.value = true;
+      selectedStatus.value = status;
+      selectedFilter.value = 'Status';
+    }
+
+    // If no filters are active, set to 'All'
+    if (!isDateFilterActive.value && !isStatusFilterActive.value) {
+      selectedFilter.value = 'All';
+    }
+  }
+
+  void clearFilters() {
+    selectedDate.value = null;
+    isDateFilterActive.value = false;
+    selectedStatus.value = 'All';
+    isStatusFilterActive.value = false;
+    selectedFilter.value = 'All';
+  }
+
   List<Appointment> filterAppointments(
       List<Appointment> appointments, String filter) {
-    if (filter == 'All') {
-      return appointments;
-    } else if (filter == 'Waiting') {
-      return appointments
-          .where((appointment) => appointment.status == 0)
-          .toList();
-    } else {
-      return appointments
-          .where((appointment) => appointment.status == 1)
-          .toList();
+    List<Appointment> filteredList = List.from(appointments);
+
+    // Apply date filter if active
+    if (isDateFilterActive.value && selectedDate.value != null) {
+      filteredList = filteredList.where((appointment) {
+        if (appointment.updatedAt == null) return false;
+
+        final appointmentDate = DateTime(
+          appointment.updatedAt!.year,
+          appointment.updatedAt!.month,
+          appointment.updatedAt!.day,
+        );
+
+        final filterDate = DateTime(
+          selectedDate.value!.year,
+          selectedDate.value!.month,
+          selectedDate.value!.day,
+        );
+
+        return appointmentDate.isAtSameMomentAs(filterDate);
+      }).toList();
     }
+
+    // Apply status filter if active
+    if (isStatusFilterActive.value && selectedStatus.value != 'All') {
+      final statusValue =
+          AppointmentStatus.getStatusValue(selectedStatus.value);
+      if (statusValue != -1) {
+        filteredList = filteredList
+            .where((appointment) => appointment.status == statusValue)
+            .toList();
+      }
+    }
+
+    return filteredList;
   }
 
   Future<void> updateAppointmentStatus(String appointmentId, int status) async {

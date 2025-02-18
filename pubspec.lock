@@ -86,6 +86,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  awesome_dialog:
+    dependency: "direct main"
+    description:
+      name: awesome_dialog
+      sha256: "41c41ae4b30b5c7f26bb3d9f9c87010ed1cab0bb4d4ac0cc513e5799c37e9d82"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.1"
+  awesome_notifications:
+    dependency: "direct main"
+    description:
+      name: awesome_notifications
+      sha256: d051ffb694a53da216ff13d02c8ec645d75320048262f7e6b3c1d95a4f54c902
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.0"
   barcode:
     dependency: transitive
     description:
@@ -533,6 +549,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.1"
+  graphs:
+    dependency: transitive
+    description:
+      name: graphs
+      sha256: "741bbf84165310a68ff28fe9e727332eef1407342fca52759cb21ad8177bb8d0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.2"
   gtk:
     dependency: transitive
     description:
@@ -1021,6 +1045,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
+  rive:
+    dependency: transitive
+    description:
+      name: rive
+      sha256: "2551a44fa766a7ed3f52aa2b94feda6d18d00edc25dee5f66e72e9b365bb6d6c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.20"
+  rive_common:
+    dependency: transitive
+    description:
+      name: rive_common
+      sha256: "2ba42f80d37a4efd0696fb715787c4785f8a13361e8aea9227c50f1e78cf763a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.15"
   rxdart:
     dependency: transitive
     description:
@@ -1101,6 +1141,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
+  shimmer:
+    dependency: "direct main"
+    description:
+      name: shimmer
+      sha256: "5f88c883a22e9f9f299e5ba0e4f7e6054857224976a5d9f839d4ebdc94a14ac9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
