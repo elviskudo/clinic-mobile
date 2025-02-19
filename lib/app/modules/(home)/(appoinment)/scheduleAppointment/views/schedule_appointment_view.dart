@@ -1,4 +1,3 @@
-// schedule_appointment_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/schedule_appointment_controller.dart';
@@ -10,10 +9,7 @@ import 'package:clinic_ai/models/scheduleTime_model.dart';
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/appointment/controllers/appointment_controller.dart';
 
 class ScheduleAppointmentView extends StatefulWidget {
-  final TabController tabController;
-
-  ScheduleAppointmentView({Key? key, required this.tabController})
-      : super(key: key);
+  const ScheduleAppointmentView({Key? key}) : super(key: key);
 
   @override
   State<ScheduleAppointmentView> createState() => _ScheduleAppointmentViewState();
@@ -28,14 +24,6 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
     super.initState();
     controller = Get.find<ScheduleAppointmentController>();
     appointmentController = Get.find<AppointmentController>();
-
-    // Pindahkan logika pengecekan hasCreatedAppointment ke initState
-    if (appointmentController.hasCreatedAppointment.value) {
-      // Langsung pindah ke tab QR code jika appointment sudah dibuat
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        widget.tabController.animateTo(1);
-      });
-    }
   }
 
   @override
@@ -50,7 +38,6 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Clinic Dropdown
               Obx(() {
                 if (controller.isLoadingClinics.value) {
                   return _buildLoadingIndicator();
@@ -58,62 +45,53 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                 return CustomDropdown(
                   label: 'Clinic',
                   items:
-                      controller.clinics.map((clinic) => clinic.name).toList(),
+                  controller.clinics.map((clinic) => clinic.name).toList(),
                   onSelected: (String clinicName) {
                     final selectedClinic = controller.clinics.firstWhere(
-                      (clinic) => clinic.name == clinicName,
+                          (clinic) => clinic.name == clinicName,
                       orElse: () => controller.clinics.first,
                     );
                     controller.setClinic(selectedClinic);
-                    // Get.back();
-                    // Navigator.pop(context); // Close dropdown after selection
                   },
                   selectedValue:
-                      controller.selectedClinic.value?.name ?? 'Select Clinic',
-                       isEnabled: !controller.isFormReadOnly.value, // Disable if form is read-only
+                  controller.selectedClinic.value?.name ?? 'Select Clinic',
+                  isEnabled: !controller.isFormReadOnly.value,
                   isReadOnly: controller.isFormReadOnly.value,
                 );
               }),
-
-              // Poly Dropdown
               Obx(() => controller.isPolyAvailable.value
                   ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (controller.isLoadingPolies.value)
-                          _buildLoadingIndicator()
-                        else
-                          CustomDropdown(
-                            label: 'Poly',
-                            items: controller.polies
-                                .map((poly) => poly.name)
-                                .toList(),
-                            onSelected: (String polyName) {
-                              final selectedPoly = controller.polies.firstWhere(
-                                (poly) => poly.name == polyName,
-                                orElse: () => controller.polies.first,
-                              );
-                              controller.setPoly(selectedPoly);
-                              // Get.back();
-
-                              // Navigator.pop(context); // Close dropdown after selection
-                            },
-                            selectedValue:
-                                controller.selectedPoly.value?.name ??
-                                    'Select Poly',
-                             isEnabled: controller.selectedClinic.value != null && !controller.isFormReadOnly.value, // Disable if form is read-only
-                              isReadOnly: controller.isFormReadOnly.value,
-                          ),
-                      ],
-                    )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (controller.isLoadingPolies.value)
+                    _buildLoadingIndicator()
+                  else
+                    CustomDropdown(
+                      label: 'Poly',
+                      items: controller.polies
+                          .map((poly) => poly.name)
+                          .toList(),
+                      onSelected: (String polyName) {
+                        final selectedPoly = controller.polies.firstWhere(
+                              (poly) => poly.name == polyName,
+                          orElse: () => controller.polies.first,
+                        );
+                        controller.setPoly(selectedPoly);
+                      },
+                      selectedValue:
+                      controller.selectedPoly.value?.name ??
+                          'Select Poly',
+                      isEnabled: controller.selectedClinic.value != null && !controller.isFormReadOnly.value,
+                      isReadOnly: controller.isFormReadOnly.value,
+                    ),
+                ],
+              )
                   : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          'Tidak ada Poly yang tersedia untuk klinik ini.',
-                          style: TextStyle(color: Colors.red)),
-                    )),
-
-              // Doctor Dropdown
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                    'Tidak ada Poly yang tersedia untuk klinik ini.',
+                    style: TextStyle(color: Colors.red)),
+              )),
               Obx(() => controller.isDoctorAvailable.value
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,10 +104,10 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                             items: controller.doctors
                                 .map((doctor) => doctor.degree)
                                 .toList(),
-                            onSelected: (String doctordegree) {
+                            onSelected: (String doctorName) {
                               final selectedDoctor =
                                   controller.doctors.firstWhere(
-                                (doctor) => doctor.degree == doctordegree,
+                                (doctor) => doctor.degree == doctorName,
                                 orElse: () => controller.doctors.first,
                               );
                               controller.setDoctor(selectedDoctor);
@@ -146,84 +124,74 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                       ],
                     )
                   : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          'Tidak ada Doctor yang tersedia untuk poly ini.',
-                          style: TextStyle(color: Colors.red)),
-                    )),
-
-              // Date Selection
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                    'Tidak ada Doctor yang tersedia untuk poly ini.',
+                    style: TextStyle(color: Colors.red)),
+              )),
               Obx(() => controller.isScheduleDateAvailable.value
                   ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Select Date',
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w500)),
-                        const SizedBox(height: 8),
-                        _buildDateField(),
-                        const SizedBox(height: 24),
-                      ],
-                    )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Select Date',
+                      style: TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 8),
+                  _buildDateField(),
+                  const SizedBox(height: 24),
+                ],
+              )
                   : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          'Tidak ada Schedule Date yang tersedia untuk doctor ini.',
-                          style: TextStyle(color: Colors.red)),
-                    )),
-
-              // Time Selection using CustomDropdown
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                    'Tidak ada Schedule Date yang tersedia untuk doctor ini.',
+                    style: TextStyle(color: Colors.red)),
+              )),
               Obx(() => controller.isScheduleTimeAvailable.value
                   ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (controller.isLoadingScheduleTimes.value)
-                          _buildLoadingIndicator()
-                        else
-                          CustomDropdown(
-                            label: 'Time',
-                            items: controller.scheduleTimes
-                                .map((time) => time.scheduleTime)
-                                .toList(),
-                            onSelected: (String timeString) {
-                              final selectedTime =
-                                  controller.scheduleTimes.firstWhere(
-                                (time) => time.scheduleTime == timeString,
-                                orElse: () => controller.scheduleTimes.first,
-                              );
-                              controller.setSelectedScheduleTime(selectedTime);
-                              // Get.back();
-
-                              // Navigator.pop(context); // Close dropdown after selection
-                            },
-                            selectedValue: controller
-                                    .selectedScheduleTime.value?.scheduleTime ??
-                                'Select Time',
-                            isEnabled:
-                                controller.selectedScheduleDateId.value != null && !controller.isFormReadOnly.value, // Disable if form is read-only
-                                 isReadOnly: controller.isFormReadOnly.value,
-                          ),
-                      ],
-                    )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (controller.isLoadingScheduleTimes.value)
+                    _buildLoadingIndicator()
+                  else
+                    CustomDropdown(
+                      label: 'Time',
+                      items: controller.scheduleTimes
+                          .map((time) => time.scheduleTime)
+                          .toList(),
+                      onSelected: (String timeString) {
+                        final selectedTime =
+                        controller.scheduleTimes.firstWhere(
+                              (time) => time.scheduleTime == timeString,
+                          orElse: () => controller.scheduleTimes.first,
+                        );
+                        controller.setSelectedScheduleTime(selectedTime);
+                      },
+                      selectedValue: controller
+                          .selectedScheduleTime.value?.scheduleTime ??
+                          'Select Time',
+                      isEnabled:
+                      controller.selectedScheduleDateId.value != null && !controller.isFormReadOnly.value,
+                      isReadOnly: controller.isFormReadOnly.value,
+                    ),
+                ],
+              )
                   : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          'Tidak ada Schedule Time yang tersedia untuk tanggal ini.',
-                          style: TextStyle(color: Colors.red)),
-                    )),
-
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                    'Tidak ada Schedule Time yang tersedia untuk tanggal ini.',
+                    style: TextStyle(color: Colors.red)),
+              )),
               const SizedBox(height: 32),
-
-              // Next Button
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: Obx(() {
                   return ElevatedButton(
-                    onPressed: controller.isFormValid1() && !controller.isFormReadOnly.value // Disable button if form is read-only
+                    onPressed: controller.isFormValid1() && !controller.isFormReadOnly.value
                         ? () {
-                            controller.onNextPressed(widget.tabController);
-                          }
+                      controller.onNextPressed();
+                    }
                         : null,
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -236,7 +204,7 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                     child: const Text(
                       'Next',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   );
                 }),
@@ -261,40 +229,36 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
           .map((scheduleDate) => scheduleDate.scheduleDate)
           .toList();
 
-      // DateTime? initialDate =
-      //     availableDates.isNotEmpty ? availableDates.first : null;
-
       return InkWell(
         onTap: isEnabled
             ? () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: Get.context!,
-                  initialDate: DateTime.now(),
-                  // initialDate: initialDate ?? DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(DateTime.now().year + 1),
-                  selectableDayPredicate: (DateTime val) {
-                    return availableDates.any((date) =>
-                        date.year == val.year &&
-                        date.month == val.month &&
-                        date.day == val.day);
-                  },
-                  builder: (BuildContext context, Widget? child) {
-                    return Theme(
-                      data: ThemeData.light().copyWith(
-                        colorScheme: ColorScheme.fromSwatch(
-                          primarySwatch: Colors.green,
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
-                );
+          DateTime? pickedDate = await showDatePicker(
+            context: Get.context!,
+            initialDate: DateTime.now(),
+            firstDate: DateTime.now(),
+            lastDate: DateTime(DateTime.now().year + 1),
+            selectableDayPredicate: (DateTime val) {
+              return availableDates.any((date) =>
+              date.year == val.year &&
+                  date.month == val.month &&
+                  date.day == val.day);
+            },
+            builder: (BuildContext context, Widget? child) {
+              return Theme(
+                data: ThemeData.light().copyWith(
+                  colorScheme: ColorScheme.fromSwatch(
+                    primarySwatch: Colors.green,
+                  ),
+                ),
+                child: child!,
+              );
+            },
+          );
 
-                if (pickedDate != null) {
-                  controller.setSelectedDate(pickedDate);
-                }
-              }
+          if (pickedDate != null) {
+            controller.setSelectedDate(pickedDate);
+          }
+        }
             : null,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -309,13 +273,13 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
               Text(
                 controller.selectedDate.value != null
                     ? DateFormat('dd/MM/yyyy')
-                        .format(controller.selectedDate.value!)
+                    .format(controller.selectedDate.value!)
                     : 'Select Date',
                 style: TextStyle(
                   color: isEnabled
                       ? (controller.selectedDate.value != null
-                          ? Colors.black
-                          : Color(0xff727970))
+                      ? Colors.black
+                      : Color(0xff727970))
                       : Colors.grey.shade400,
                 ),
               ),
@@ -351,7 +315,7 @@ class CustomDropdown extends StatefulWidget {
   final Function(String) onSelected;
   final String selectedValue;
   final bool isEnabled;
-  final bool isReadOnly; // New prop for form read-only state
+  final bool isReadOnly;
 
   const CustomDropdown({
     Key? key,
@@ -360,7 +324,7 @@ class CustomDropdown extends StatefulWidget {
     required this.onSelected,
     required this.selectedValue,
     this.isEnabled = true,
-    this.isReadOnly = false, // Default to false
+    this.isReadOnly = false,
   }) : super(key: key);
 
   @override
