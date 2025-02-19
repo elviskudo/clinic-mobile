@@ -66,7 +66,7 @@ class HomeView extends GetView<HomeController> {
                 child: InkWell(
                   onTap: () => Get.toNamed(Routes.PROFILE),
                   // child: Icon(Icons.person, color: Colors.white, size: 30),
-                  child: Image.asset("assets/images/Asset 3@5x 2.png"),
+                  child: Image.asset("assets/images/logo_clinic.png"),
                 ),
               ),
               Obx(

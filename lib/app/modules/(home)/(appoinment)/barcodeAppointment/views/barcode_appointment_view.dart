@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/symptomAppointment/controllers/symptom_appointment_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -250,8 +251,7 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: // Dalam BarcodeAppointmentView, ubah bagian Column utama menjadi:
-          StreamBuilder<List<Appointment>>(
+      body: StreamBuilder<List<Appointment>>(
         stream: controller.getAppointmentsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -267,6 +267,12 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
           }
 
           final appointment = snapshot.data!.first;
+
+          // Inisialisasi SymptomAppointmentController DISINI, setelah data appointment tersedia
+          final symptomController = Get.put(SymptomAppointmentController());
+           WidgetsBinding.instance.addPostFrameCallback((_) {
+                symptomController.fetchSymptoms();
+                 });
 
           return Column(
             children: [
@@ -376,7 +382,6 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        
                         child: const Text(
                           'Next',
                           style: TextStyle(

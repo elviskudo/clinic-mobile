@@ -1,4 +1,3 @@
-// barcode_appointment_controller.dart
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +12,8 @@ class BarcodeAppointmentController extends GetxController {
   final RxString userName = ''.obs;
   RxInt previousStatus = 0.obs;
 
+  RxBool isSymptomsUpdated = false.obs; // State untuk menandai apakah gejala sudah diupdate
+
   @override
   void onInit() {
     super.onInit();
@@ -21,6 +22,8 @@ class BarcodeAppointmentController extends GetxController {
 
   void setAppointmentData(Appointment appointment) {
     currentAppointment.value = appointment;
+    // Periksa apakah gejala sudah diisi saat data appointment di-set
+    isSymptomsUpdated.value = appointment.symptoms != null && appointment.symptoms!.isNotEmpty;
   }
 
   Stream<List<Appointment>> getAppointmentsStream() {
@@ -48,6 +51,11 @@ class BarcodeAppointmentController extends GetxController {
           );
         }
         previousStatus.value = appointment.status;
+
+           // Check if symptoms are updated and set the flag
+        if (appointment.symptoms != null && appointment.symptoms!.isNotEmpty) {
+          isSymptomsUpdated.value = true;
+        }
       }
 
       return appointments;
@@ -69,5 +77,6 @@ class BarcodeAppointmentController extends GetxController {
     isAccessible.value = false;
     currentAppointment.value = null;
     previousStatus.value = 0;
+    isSymptomsUpdated.value = false; // Reset state gejala saat reset
   }
 }
