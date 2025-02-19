@@ -1,3 +1,4 @@
+import 'package:clinic_ai/app/modules/(doctor)/home_doctor/controllers/home_doctor_controller.dart';
 import 'package:clinic_ai/app/modules/(doctor)/qr_scanner_screen/views/qr_scanner_screen_view.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/color/color.dart';
@@ -15,19 +16,21 @@ class ListPatientsView extends GetView<ListPatientsController> {
   const ListPatientsView({super.key});
   @override
   Widget build(BuildContext context) {
+    Get.put(ListPatientsController());
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('List Patients'),
+        title: const Text('List Patients'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () async {
             final prefs = await SharedPreferences.getInstance();
 
             await prefs.setBool('isLoggedIn', false);
             await prefs.remove('userRole');
             await prefs.remove('userId');
+            await prefs.remove('name');
             await GoogleSignIn().signOut();
             Get.offAllNamed(Routes.LOGIN);
           },
@@ -37,12 +40,25 @@ class ListPatientsView extends GetView<ListPatientsController> {
       body: Column(
         children: [
           _buildFilterOptions(),
+          Obx(() {
+            // Show date picker if date filter is selected
+            if (controller.selectedFilter.value == 'Date') {
+              return _buildDateFilter();
+            }
+
+            // Show status filter if status filter is selected
+            if (controller.selectedFilter.value == 'Status') {
+              return _buildStatusFilter();
+            }
+
+            return const SizedBox.shrink();
+          }),
           Expanded(
             child: StreamBuilder<List<Appointment>>(
               stream: controller.getAppointmentsStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (snapshot.hasError) {
@@ -52,7 +68,7 @@ class ListPatientsView extends GetView<ListPatientsController> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Text('No appointments found'),
                   );
                 }
@@ -60,8 +76,14 @@ class ListPatientsView extends GetView<ListPatientsController> {
                 final filteredAppointments = controller.filterAppointments(
                     snapshot.data!, controller.selectedFilter.value);
 
+                if (filteredAppointments.isEmpty) {
+                  return const Center(
+                    child: Text('No appointments match your filters'),
+                  );
+                }
+
                 return ListView.builder(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   itemCount: filteredAppointments.length,
                   itemBuilder: (context, index) {
                     return _buildAppointmentCard(
@@ -79,15 +101,25 @@ class ListPatientsView extends GetView<ListPatientsController> {
 
   Widget _buildFilterOptions() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: Colors.white,
       child: Row(
         children: [
           _buildFilterChip('All'),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           _buildFilterChip('Date'),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           _buildFilterChip('Status'),
+          const Spacer(),
+          Obx(() {
+            if (controller.selectedFilter.value != 'All') {
+              return IconButton(
+                icon: const Icon(Icons.clear, color: Colors.grey),
+                onPressed: () => controller.clearFilters(),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
         ],
       ),
     );
@@ -97,11 +129,27 @@ class ListPatientsView extends GetView<ListPatientsController> {
     return Obx(() {
       bool isSelected = controller.selectedFilter.value == label;
       return GestureDetector(
-        // onTap: () => controller.filterByStatus(label),
+        onTap: () {
+          controller.selectedFilter.value = label;
+          if (label == 'All') {
+            controller.clearFilters();
+          } else if (label == 'Date') {
+            // If date is already selected, keep it active
+            controller.isDateFilterActive.value =
+                controller.selectedDate.value != null;
+            controller.isStatusFilterActive.value = false;
+          } else if (label == 'Status') {
+            // If status is already selected, keep it active
+            controller.isStatusFilterActive.value =
+                controller.selectedStatus.value != 'All';
+            controller.isDateFilterActive.value = false;
+          }
+        },
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? Color(0xFFD7F1D8) : Color(0xFFEAEAEA),
+            color:
+                isSelected ? const Color(0xFFD7F1D8) : const Color(0xFFEAEAEA),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -116,8 +164,148 @@ class ListPatientsView extends GetView<ListPatientsController> {
     });
   }
 
+  Widget _buildDateFilter() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: Colors.white,
+      child: Row(
+        children: [
+          Expanded(
+            child: Obx(() {
+              final selectedDate = controller.selectedDate.value;
+              final dateText = selectedDate != null
+                  ? DateFormat('yyyy-MM-dd').format(selectedDate)
+                  : 'Select date';
+
+              return OutlinedButton.icon(
+                icon: const Icon(Icons.calendar_today),
+                label: Text(dateText),
+                onPressed: () async {
+                  final pickedDate = await showDatePicker(
+                    context: Get.context!,
+                    initialDate: selectedDate ?? DateTime.now(),
+                    firstDate: DateTime(2020),
+                    lastDate: DateTime(2030),
+                  );
+
+                  if (pickedDate != null) {
+                    controller.setDateFilter(pickedDate);
+                  }
+                },
+              );
+            }),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () => controller.setDateFilter(null),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusFilter() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: Colors.white,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: controller.statusOptions
+            .map((status) => _buildStatusFilterChip(status))
+            .toList(),
+      ),
+    );
+  }
+
+  Widget _buildStatusFilterChip(String status) {
+    return Obx(() {
+      final isSelected = controller.selectedStatus.value == status;
+      Color chipColor;
+
+      // Choose color based on status
+      switch (status) {
+        case 'Waiting':
+          chipColor = Colors.orange;
+          break;
+        case 'Approved':
+          chipColor = Colors.blue;
+          break;
+        case 'Rejected':
+          chipColor = Colors.red;
+          break;
+        case 'Diagnose':
+          chipColor = Colors.purple;
+          break;
+        case 'Unpaid':
+          chipColor = Colors.amber;
+          break;
+        case 'Waiting for Drugs':
+          chipColor = Colors.teal;
+          break;
+        case 'Completed':
+          chipColor = Colors.green;
+          break;
+        default:
+          chipColor = Colors.grey;
+      }
+
+      return GestureDetector(
+        onTap: () => controller.setStatusFilter(status),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? chipColor.withOpacity(0.3)
+                : const Color(0xFFEAEAEA),
+            borderRadius: BorderRadius.circular(20),
+            border: isSelected ? Border.all(color: chipColor) : null,
+          ),
+          child: Text(
+            status,
+            style: TextStyle(
+              color: isSelected ? chipColor : Colors.grey[800],
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
   Widget _buildAppointmentCard(Appointment appointment) {
-    bool isCompleted = appointment.status == 1;
+    // Use AppointmentStatus to get the status text
+    String statusText = AppointmentStatus.getStatusText(appointment.status);
+    Color statusColor;
+
+    // Choose color based on status
+    switch (appointment.status) {
+      case AppointmentStatus.waiting:
+        statusColor = Colors.orange;
+        break;
+      case AppointmentStatus.approved:
+        statusColor = Colors.blue;
+        break;
+      case AppointmentStatus.rejected:
+        statusColor = Colors.red;
+        break;
+      case AppointmentStatus.diagnose:
+        statusColor = Colors.purple;
+        break;
+      case AppointmentStatus.unpaid:
+        statusColor = Colors.amber;
+        break;
+      case AppointmentStatus.waitingForDrugs:
+        statusColor = Colors.teal;
+        break;
+      case AppointmentStatus.completed:
+        statusColor = Colors.green;
+        break;
+      default:
+        statusColor = Colors.grey;
+    }
+
     String formattedDate = '';
 
     if (appointment.updatedAt != null) {
@@ -127,21 +315,26 @@ class ListPatientsView extends GetView<ListPatientsController> {
 
     return InkWell(
       onTap: () {
-        if (!isCompleted) {
-          // Only allow scanning for non-completed appointments
+        // Allow scanning only for appointments that are not completed or rejected
+        if (appointment.status != AppointmentStatus.completed &&
+            appointment.status != AppointmentStatus.rejected) {
           Get.toNamed(Routes.QR_SCANNER_SCREEN, arguments: appointment);
         }
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: isCompleted ? Colors.white : Color(0xFFE8F5E9),
+          color: appointment.status == AppointmentStatus.rejected
+              ? const Color(0xFFFFF3F0) // Light red for rejected
+              : appointment.status == AppointmentStatus.completed
+                  ? Colors.white // White for completed
+                  : const Color(0xFFE8F5E9), // Light green for others
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 4,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -149,7 +342,8 @@ class ListPatientsView extends GetView<ListPatientsController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 16, right: 8, top: 12, bottom: 0),
+              padding:
+                  const EdgeInsets.only(left: 16, right: 8, top: 12, bottom: 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -175,7 +369,7 @@ class ListPatientsView extends GetView<ListPatientsController> {
               ),
               title: Text(
                 appointment.user_name ?? "no name",
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -187,9 +381,7 @@ class ListPatientsView extends GetView<ListPatientsController> {
                   fontSize: 14,
                 ),
               ),
-              trailing: isCompleted
-                  ? _buildStatusChip('Approved', Colors.blue)
-                  : _buildStatusChip('Waiting', Colors.orange),
+              trailing: _buildStatusChip(statusText, statusColor),
             ),
           ],
         ),
@@ -199,7 +391,7 @@ class ListPatientsView extends GetView<ListPatientsController> {
 
   Widget _buildStatusChip(String label, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),

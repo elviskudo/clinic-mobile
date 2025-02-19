@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:clinic_ai/models/clinic_model.dart';
@@ -188,6 +189,8 @@ class ScheduleAppointmentController extends GetxController {
         symptoms: null,
         symptomDescription: null,
         aiResponse: null,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now()
       );
 
       final response = await supabase
@@ -249,10 +252,12 @@ class ScheduleAppointmentController extends GetxController {
       isLoadingClinics.value = true;
       final response = await supabase.from('clinics').select();
       if (response != null) {
-        clinics.assignAll((response as List).map((json) => Clinic.fromJson(json)).toList());
+        clinics.assignAll(
+            (response as List).map((json) => Clinic.fromJson(json)).toList());
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load clinics: ${e.toString()}', snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', 'Failed to load clinics: ${e.toString()}',
+          snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoadingClinics.value = false;
     }
@@ -260,9 +265,11 @@ class ScheduleAppointmentController extends GetxController {
   Future<void> fetchPolies(String clinicId) async {
     try {
       isLoadingPolies.value = true;
-      final response = await supabase.from('polies').select().eq('clinic_id', clinicId);
+      final response =
+          await supabase.from('polies').select().eq('clinic_id', clinicId);
       if (response != null) {
-        final poliesList = (response as List).map((json) => Poly.fromJson(json)).toList();
+        final poliesList =
+            (response as List).map((json) => Poly.fromJson(json)).toList();
         polies.assignAll(poliesList);
         isPolyAvailable.value = poliesList.isNotEmpty;
         doctors.clear();
@@ -275,7 +282,8 @@ class ScheduleAppointmentController extends GetxController {
         isPolyAvailable.value = false;
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load polies: ${e.toString()}', snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', 'Failed to load polies: ${e.toString()}',
+          snackPosition: SnackPosition.BOTTOM);
       isPolyAvailable.value = false;
     } finally {
       isLoadingPolies.value = false;
@@ -377,9 +385,15 @@ class ScheduleAppointmentController extends GetxController {
   Future<void> fetchScheduleDates(String polyId, String doctorId) async {
     try {
       isLoadingScheduleDates.value = true;
-      final response = await supabase.from('schedule_dates').select().eq('poly_id', polyId).eq('doctor_id', doctorId);
+      final response = await supabase
+          .from('schedule_dates')
+          .select()
+          .eq('poly_id', polyId)
+          .eq('doctor_id', doctorId);
       if (response != null) {
-        final scheduleDatesList = (response as List).map((json) => ScheduleDate.fromJson(json)).toList();
+        final scheduleDatesList = (response as List)
+            .map((json) => ScheduleDate.fromJson(json))
+            .toList();
         scheduleDates.assignAll(scheduleDatesList);
         isScheduleDateAvailable.value = scheduleDatesList.isNotEmpty;
         scheduleTimes.clear(); // bersihkan scheduleTimes
@@ -388,7 +402,8 @@ class ScheduleAppointmentController extends GetxController {
         isScheduleDateAvailable.value = false;
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load schedule dates: ${e.toString()}', snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', 'Failed to load schedule dates: ${e.toString()}',
+          snackPosition: SnackPosition.BOTTOM);
       isScheduleDateAvailable.value = false;
     } finally {
       isLoadingScheduleDates.value = false;
@@ -408,10 +423,8 @@ class ScheduleAppointmentController extends GetxController {
   Future<void> fetchScheduleTimes(String dateId) async {
     try {
       isLoadingScheduleTimes.value = true;
-      final response = await supabase
-          .from('schedule_times')
-          .select()
-          .eq('date_id', dateId);
+      final response =
+          await supabase.from('schedule_times').select().eq('date_id', dateId);
 
       if (response != null) {
         final scheduleTimesList = (response as List)
@@ -484,14 +497,16 @@ class ScheduleAppointmentController extends GetxController {
     scheduleTimes.clear(); // Bersihkan daftar waktu
 
     if (date != null) {
-      ScheduleDate? selectedScheduleDate = scheduleDates.firstWhereOrNull((scheduleDate) =>
-      scheduleDate.scheduleDate.year == date.year &&
-          scheduleDate.scheduleDate.month == date.month &&
-          scheduleDate.scheduleDate.day == date.day);
+      ScheduleDate? selectedScheduleDate = scheduleDates.firstWhereOrNull(
+          (scheduleDate) =>
+              scheduleDate.scheduleDate.year == date.year &&
+              scheduleDate.scheduleDate.month == date.month &&
+              scheduleDate.scheduleDate.day == date.day);
 
       if (selectedScheduleDate != null) {
         selectedScheduleDateId.value = selectedScheduleDate.id;
-        print('selectedScheduleDateId.value sekarang: ${selectedScheduleDateId.value}');
+        print(
+            'selectedScheduleDateId.value sekarang: ${selectedScheduleDateId.value}');
       } else {
         selectedScheduleDateId.value = null;
         print('Tidak ada ScheduleDate yang cocok.');
@@ -501,13 +516,12 @@ class ScheduleAppointmentController extends GetxController {
       print('Tanggal dibatalkan.');
     }
   }
+
   // Method untuk mengatur selectedScheduleTime
   void setSelectedScheduleTime(ScheduleTime? time) {
     selectedScheduleTime.value = time;
     selectedTime.value = time?.scheduleTime ?? '';
-
   }
-
 
   void setTime(String time) {
     selectedTime.value = time;
@@ -539,5 +553,39 @@ class ScheduleAppointmentController extends GetxController {
 
     // Tambahkan baris ini:
     isFormReadOnly.value = false;
+  }
+
+  Future<void> sendNotificationToDoctor({
+    required String doctorId,
+    required String patientName,
+    required String date,
+    required String time,
+    required String clinic,
+    required String poly,
+    required String doctorName,
+  }) async {
+    try {
+      // Ambil data dokter dari database
+      final doctor = await supabase
+          .from('doctors')
+          .select('id') // Pastikan ada kolom `user_id` untuk dokter
+          .eq('id', doctorId)
+          .single();
+
+      if (doctor != null && doctor['id'] != null) {
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
+            channelKey: 'doctor_channel',
+            title: 'New Patient Appointment',
+            body:
+                'Patient: $patientName\nDate: $date\nTime: $time\nClinic: $clinic\nPoly: $poly\nDoctor: $doctorName',
+            notificationLayout: NotificationLayout.BigText,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Failed to send notification to doctor: $e');
+    }
   }
 }

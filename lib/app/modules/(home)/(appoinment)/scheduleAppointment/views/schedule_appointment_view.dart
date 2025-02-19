@@ -94,32 +94,35 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
               )),
               Obx(() => controller.isDoctorAvailable.value
                   ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (controller.isLoadingDoctors.value)
-                    _buildLoadingIndicator()
-                  else
-                    CustomDropdown(
-                      label: 'Doctor',
-                      items: controller.doctors
-                          .map((doctor) => doctor.degree)
-                          .toList(),
-                      onSelected: (String doctorName) {
-                        final selectedDoctor =
-                        controller.doctors.firstWhere(
-                              (doctor) => doctor.degree == doctorName,
-                          orElse: () => controller.doctors.first,
-                        );
-                        controller.setDoctor(selectedDoctor);
-                      },
-                      selectedValue:
-                      controller.selectedDoctor.value?.degree ??
-                          'Select Doctor',
-                      isEnabled: controller.selectedPoly.value != null && !controller.isFormReadOnly.value,
-                      isReadOnly: controller.isFormReadOnly.value,
-                    ),
-                ],
-              )
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (controller.isLoadingDoctors.value)
+                          _buildLoadingIndicator()
+                        else
+                          CustomDropdown(
+                            label: 'Doctor',
+                            items: controller.doctors
+                                .map((doctor) => doctor.degree)
+                                .toList(),
+                            onSelected: (String doctorName) {
+                              final selectedDoctor =
+                                  controller.doctors.firstWhere(
+                                (doctor) => doctor.degree == doctorName,
+                                orElse: () => controller.doctors.first,
+                              );
+                              controller.setDoctor(selectedDoctor);
+                              // Get.back();
+
+                              // Navigator.pop(context); // Close dropdown after selection
+                            },
+                            selectedValue:
+                                controller.selectedDoctor.value?.degree ??
+                                    'Select Doctor',
+                             isEnabled: controller.selectedPoly.value != null && !controller.isFormReadOnly.value, // Disable if form is read-only
+                               isReadOnly: controller.isFormReadOnly.value,
+                          ),
+                      ],
+                    )
                   : Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(

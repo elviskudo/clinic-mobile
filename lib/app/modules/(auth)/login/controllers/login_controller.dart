@@ -121,7 +121,7 @@ class LoginController extends GetxController {
       } else if (roleUsers == 'member') {
         Get.offAllNamed(Routes.HOME);
       } else if (roleUsers == 'doctor') {
-        Get.offAllNamed(Routes.LIST_PATIENTS);
+        Get.offAllNamed(Routes.HOME_DOCTOR);
       }
     } catch (e) {
       print('eror: $e');

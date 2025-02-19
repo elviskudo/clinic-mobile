@@ -8,7 +8,8 @@ class Appointment {
   String timeId;
   int status;
   String? rejectedNote;
-  DateTime? updatedAt;
+  DateTime updatedAt;
+  DateTime createdAt;
   String qrCode; // Ubah di sini
   String? symptoms;
   String? symptomDescription;
@@ -27,8 +28,9 @@ class Appointment {
     required this.status,
     this.user_name,
     this.poly_name,
+    required this.createdAt,
     this.rejectedNote,
-    this.updatedAt,
+    required this.updatedAt,
     required this.qrCode,
     this.symptoms,
     this.symptomDescription,
@@ -45,9 +47,8 @@ class Appointment {
         timeId: json["time_id"],
         status: json["status"],
         rejectedNote: json["rejected_note"],
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+        createdAt:  DateTime.parse(json["created_at"]),
         qrCode: json["qr_code"], // Ubah di sini
         symptoms: json["symptoms"],
         symptomDescription: json["symptom_description"],
@@ -81,6 +82,7 @@ class Appointment {
     int? status,
     String? rejectedNote,
     DateTime? updatedAt,
+    DateTime? createdAt,
     String? qrCode,
     String? symptoms,
     String? symptomDescription,
@@ -105,6 +107,7 @@ class Appointment {
       aiResponse: aiResponse ?? this.aiResponse,
       user_name: user_name ?? this.user_name,
       poly_name: poly_name ?? this.poly_name,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:clinic_ai/app/translations/app_translations.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,31 @@ import 'app/modules/(home)/(appoinment)/barcodeAppointment/controllers/barcode_a
 import 'app/modules/(home)/(appoinment)/captureAppointment/controllers/capture_appointment_controller.dart';
 import 'app/modules/(home)/(appoinment)/scheduleAppointment/controllers/schedule_appointment_controller.dart';
 import 'app/modules/(home)/(appoinment)/symptomAppointment/controllers/symptom_appointment_controller.dart';
- 
+
+void requestNotificationPermission() async {
+  await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  });
+}
+
+Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
+  // Handle different routes based on channel key
+  switch (receivedAction.channelKey) {
+    case 'doctor_channel':
+      Get.toNamed(Routes.QR_SCANNER_SCREEN);
+      break;
+    case 'transaction_service':
+      // If you need to pass transaction data
+      final payload =
+          receivedAction.payload; // Get any additional data if needed
+      Get .toNamed(Routes.QR_SCANNER_SCREEN);
+      break;
+    default:
+      Get.toNamed(Routes.QR_SCANNER_SCREEN); // Default route
+  }
+}
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -20,6 +45,26 @@ void main() async {
   try {
     await Supabase.initialize(
         url: dotenv.env['SUPABASE_URL']!, anonKey: dotenv.env['SUPABASE_KEY']!);
+    bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+    if (!isAllowed) {
+      await AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+    await AwesomeNotifications().initialize(
+      null,
+      [
+        NotificationChannel(
+          channelKey: 'doctor_channel',
+          channelName: 'Doctor channel',
+          channelDescription: 'Notifications from User',
+          defaultColor: Colors.blue,
+          importance: NotificationImportance.High,
+        ),
+      ],
+    );
+    AwesomeNotifications().setListeners(
+      onActionReceivedMethod: onActionReceivedMethod,
+    );
+
     EmailOTP.config(
       appName: 'Clinic AI',
       otpType: OTPType.numeric,
@@ -27,7 +72,6 @@ void main() async {
       emailTheme: EmailTheme.v1,
       appEmail: 'clinic.ai@gmail.com',
       otpLength: 6,
-
     );
 
     print('Database connection successful!');
@@ -38,7 +82,6 @@ void main() async {
     Get.put(BarcodeAppointmentController());
     Get.put(SymptomAppointmentController());
     Get.put(CaptureAppointmentController());
-
 
     runApp(
       GetMaterialApp(

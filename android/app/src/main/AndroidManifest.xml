@@ -12,6 +12,10 @@
     
     <!-- Izin untuk akses kamera -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
     
     <!-- Izin untuk mengelola semua file (hanya diperlukan jika aplikasi benar-benar membutuhkannya) -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
