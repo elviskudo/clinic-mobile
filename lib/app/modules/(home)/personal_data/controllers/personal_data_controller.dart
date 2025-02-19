@@ -358,7 +358,7 @@ class PersonalDataController extends GetxController {
         title: 'Data updated successfully!',
         desc: 'Yeay, your data has been successfully updated, let\'s continue!',
         btnOkOnPress: () {
-          Get.offAllNamed(Routes.ACCOUNT_SETTINGS);
+          Get.offAllNamed(Routes.HOME);
         },
         btnOkText: 'OK',
         btnOkColor: Colors.green,

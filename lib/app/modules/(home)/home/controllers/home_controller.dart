@@ -1,4 +1,5 @@
 import 'package:clinic_ai/app/routes/app_pages.dart';
+import 'package:clinic_ai/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ class HomeController extends GetxController {
   var currentLanguage = 'id'.obs;
   var isLoading = false.obs;
   final isLoggedIn = false.obs;
+  final user = Users().obs;
 
   final translations = {
     'createAccount': 'Create an Account'.obs,
@@ -111,5 +113,27 @@ class HomeController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> getProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final userId = prefs.getString('userId');
+
+    if (userId == null) {
+      Get.snackbar('Error', 'User ID not found. Please login again.',
+          snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+    String? storedImageUrl = prefs.getString('imageUrl');
+    if (storedImageUrl == null || storedImageUrl.isEmpty) {
+      print('imageUrl is empty or not set');
+    } else {
+      print('imageUrl found: $storedImageUrl');
+    }
+    user.value = Users(
+      name: prefs.getString('name') ?? 'Guest User',
+    );
+    print('user.name: ${user.value.name}');
   }
 }

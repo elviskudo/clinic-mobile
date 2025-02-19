@@ -23,7 +23,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
           style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
-          onPressed: () => Get.offAllNamed(Routes.PROFILE),
+          onPressed: () => Get.toNamed(Routes.PROFILE),
           icon: Icon(Icons.arrow_back),
         ),
       ),

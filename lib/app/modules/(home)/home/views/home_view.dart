@@ -50,7 +50,7 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildHeader() {
-    final profileCtrl = Get.put(ProfileController());
+    final ProfileCtrl = Get.put(ProfileController());
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -90,7 +90,7 @@ class HomeView extends GetView<HomeController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Obx(() => Text(
-                      'Greetings on Clinic, ${profileCtrl.user.value.name}',
+                      'Greetings on Clinic, ${ProfileCtrl.userName.value}',
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
