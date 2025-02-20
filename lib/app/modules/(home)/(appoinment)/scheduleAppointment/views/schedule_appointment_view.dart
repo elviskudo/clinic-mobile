@@ -89,11 +89,28 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                           ),
                       ],
                     )
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          'Tidak ada Poly yang tersedia untuk klinik ini.',
-                          style: TextStyle(color: Colors.red)),
+                  : Container(
+                      margin: EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red[200]!),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.warning_amber_rounded,
+                              color: Colors.red[700], size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Tidak ada poli yang tersedia untuk klinik yang anda pilih. Silakan pilih klinik lain atau hubungi klinik.',
+                              style: TextStyle(
+                                  color: Colors.red[700], fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
                     )),
               Obx(() => controller.isDoctorAvailable.value
                   ? Column(
@@ -128,11 +145,28 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                           ),
                       ],
                     )
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          'Tidak ada Doctor yang tersedia untuk poly ini.',
-                          style: TextStyle(color: Colors.red)),
+                  : Container(
+                      margin: EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red[200]!),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.warning_amber_rounded,
+                              color: Colors.red[700], size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Tidak ada dokter yang tersedia untuk poli yang anda pilih. Silakan pilih poli lain atau hubungi klinik.',
+                              style: TextStyle(
+                                  color: Colors.red[700], fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
                     )),
               Obx(() => controller.isScheduleDateAvailable.value
                   ? Column(
@@ -146,11 +180,29 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                         const SizedBox(height: 24),
                       ],
                     )
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          'Tidak ada Schedule Date yang tersedia untuk doctor ini.',
-                          style: TextStyle(color: Colors.red)),
+                  : Container(
+                      margin: EdgeInsets.only(bottom: 6),
+
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red[200]!),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.warning_amber_rounded,
+                              color: Colors.red[700], size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Tidak ada jadwal yang tersedia untuk dokter yang anda pilih. Silakan pilih dokter lain atau hubungi klinik.',
+                              style: TextStyle(
+                                  color: Colors.red[700], fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
                     )),
               Obx(() => controller.isScheduleTimeAvailable.value
                   ? Column(
@@ -183,11 +235,29 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                           ),
                       ],
                     )
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          'Tidak ada Schedule Time yang tersedia untuk tanggal ini.',
-                          style: TextStyle(color: Colors.red)),
+                  : Container(
+                      margin: EdgeInsets.only(bottom: 6),
+
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red[200]!),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.warning_amber_rounded,
+                              color: Colors.red[700], size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Tidak ada jadwal yang tersedia untuk tanggal yang anda pilih. Silakan pilih tanggal lain atau hubungi klinik.',
+                              style: TextStyle(
+                                  color: Colors.red[700], fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
                     )),
               const SizedBox(height: 32),
               SizedBox(
@@ -224,119 +294,119 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
     );
   }
 
- Widget _buildDateField() {
-  return Obx(() {
-    bool isEnabled = controller.selectedDoctor.value != null &&
-        !controller.isFormReadOnly.value;
+  Widget _buildDateField() {
+    return Obx(() {
+      bool isEnabled = controller.selectedDoctor.value != null &&
+          !controller.isFormReadOnly.value;
 
-    if (controller.isLoadingScheduleDates.value) {
-      return _buildLoadingIndicator();
-    }
+      if (controller.isLoadingScheduleDates.value) {
+        return _buildLoadingIndicator();
+      }
 
-    List<DateTime> availableDates = controller.scheduleDates
-        .map((scheduleDate) => scheduleDate.scheduleDate)
-        .toList();
+      List<DateTime> availableDates = controller.scheduleDates
+          .map((scheduleDate) => scheduleDate.scheduleDate)
+          .toList();
 
-    // Check if there are no available dates
-    if (availableDates.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.red[50],
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.red[200]!),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.red[700], size: 20),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                'Tidak ada jadwal yang tersedia untuk dokter ini. Silakan pilih dokter lain atau hubungi klinik.',
-                style: TextStyle(color: Colors.red[700], fontSize: 13),
+      // Check if there are no available dates
+      // if (availableDates.isEmpty) {
+      //   return Container(
+      //     padding: const EdgeInsets.all(12),
+      //     decoration: BoxDecoration(
+      //       color: Colors.red[50],
+      //       borderRadius: BorderRadius.circular(8),
+      //       border: Border.all(color: Colors.red[200]!),
+      //     ),
+      //     child: Row(
+      //       children: [
+      //         Icon(Icons.warning_amber_rounded, color: Colors.red[700], size: 20),
+      //         const SizedBox(width: 8),
+      //         Expanded(
+      //           child: Text(
+      //             'Tidak ada jadwal yang tersedia untuk dokter ini. Silakan pilih dokter lain atau hubungi klinik.',
+      //             style: TextStyle(color: Colors.red[700], fontSize: 13),
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   );
+      // }
+
+      // Find the first available date that's not before today
+      DateTime now = DateTime.now();
+      DateTime initialDate = now;
+
+      // Find the first available date that's today or after
+      for (DateTime date in availableDates) {
+        if (!date.isBefore(DateTime(now.year, now.month, now.day))) {
+          initialDate = date;
+          break;
+        }
+      }
+
+      return InkWell(
+        onTap: isEnabled
+            ? () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: Get.context!,
+                  initialDate: initialDate,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime(DateTime.now().year + 1),
+                  selectableDayPredicate: (DateTime val) {
+                    return availableDates.any((date) =>
+                        date.year == val.year &&
+                        date.month == val.month &&
+                        date.day == val.day);
+                  },
+                  builder: (BuildContext context, Widget? child) {
+                    return Theme(
+                      data: ThemeData.light().copyWith(
+                        colorScheme: ColorScheme.fromSwatch(
+                          primarySwatch: Colors.green,
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+
+                if (pickedDate != null) {
+                  controller.setSelectedDate(pickedDate);
+                }
+              }
+            : null,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xffF7FBF2),
+            border: Border.all(color: const Color(0xff727970)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                controller.selectedDate.value != null
+                    ? DateFormat('dd/MM/yyyy')
+                        .format(controller.selectedDate.value!)
+                    : 'Select Date',
+                style: TextStyle(
+                  color: isEnabled
+                      ? (controller.selectedDate.value != null
+                          ? Colors.black
+                          : const Color(0xff727970))
+                      : Colors.grey.shade400,
+                ),
               ),
-            ),
-          ],
+              Icon(Icons.calendar_today,
+                  color: isEnabled
+                      ? const Color(0xff727970)
+                      : Colors.grey.shade400),
+            ],
+          ),
         ),
       );
-    }
-
-    // Find the first available date that's not before today
-    DateTime now = DateTime.now();
-    DateTime initialDate = now;
-    
-    // Find the first available date that's today or after
-    for (DateTime date in availableDates) {
-      if (!date.isBefore(DateTime(now.year, now.month, now.day))) {
-        initialDate = date;
-        break;
-      }
-    }
-
-    return InkWell(
-      onTap: isEnabled
-          ? () async {
-              DateTime? pickedDate = await showDatePicker(
-                context: Get.context!,
-                initialDate: initialDate,
-                firstDate: DateTime.now(),
-                lastDate: DateTime(DateTime.now().year + 1),
-                selectableDayPredicate: (DateTime val) {
-                  return availableDates.any((date) =>
-                      date.year == val.year &&
-                      date.month == val.month &&
-                      date.day == val.day);
-                },
-                builder: (BuildContext context, Widget? child) {
-                  return Theme(
-                    data: ThemeData.light().copyWith(
-                      colorScheme: ColorScheme.fromSwatch(
-                        primarySwatch: Colors.green,
-                      ),
-                    ),
-                    child: child!,
-                  );
-                },
-              );
-
-              if (pickedDate != null) {
-                controller.setSelectedDate(pickedDate);
-              }
-            }
-          : null,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xffF7FBF2),
-          border: Border.all(color: const Color(0xff727970)),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              controller.selectedDate.value != null
-                  ? DateFormat('dd/MM/yyyy')
-                      .format(controller.selectedDate.value!)
-                  : 'Select Date',
-              style: TextStyle(
-                color: isEnabled
-                    ? (controller.selectedDate.value != null
-                        ? Colors.black
-                        : const Color(0xff727970))
-                    : Colors.grey.shade400,
-              ),
-            ),
-            Icon(Icons.calendar_today,
-                color: isEnabled
-                    ? const Color(0xff727970)
-                    : Colors.grey.shade400),
-          ],
-        ),
-      ),
-    );
-  });
-}
+    });
+  }
 
   Widget _buildLoadingIndicator() {
     return const Padding(

@@ -2,7 +2,6 @@ import 'package:clinic_ai/models/symptom_model.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
-
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
 
 class SymptomAppointmentController extends GetxController {
@@ -19,12 +18,49 @@ class SymptomAppointmentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    loadExistingSymptoms();
     fetchSymptoms();
 
     // Listener untuk deskripsi gejala
     symptomDescription.listen((value) {
       isDescriptionValid.value = value.isNotEmpty; // Deskripsi harus tidak kosong
     });
+  }
+
+  void loadExistingSymptoms() {
+    try {
+      final barcodeController = Get.find<BarcodeAppointmentController>();
+      final appointment = barcodeController.currentAppointment.value;
+
+      if (appointment != null && appointment.symptoms != null) {
+        // Split the stored symptoms string back into a list
+        final existingSymptoms = appointment.symptoms!.split(',');
+
+        // Reset all selections first
+        isSymptomSelected.value = {
+          for (var symptom in symptoms) symptom.id: false
+        };
+        selectedSymptomIds.clear();
+
+        // Set the existing selections
+        for (var symptomId in existingSymptoms) {
+          if (symptomId.isNotEmpty) {
+            isSymptomSelected[symptomId] = true;
+            selectedSymptomIds.add(symptomId);
+          }
+        }
+
+        // Load existing description if any
+        if (appointment.symptomDescription != null) {
+          symptomDescription.value = appointment.symptomDescription!;
+        }
+
+        isSymptomSelected.refresh();
+        selectedSymptomIds.refresh();
+      }
+    } catch (error) {
+      print("Error loading existing symptoms: $error");
+    }
   }
 
   Future<void> fetchSymptoms() async {
@@ -41,16 +77,16 @@ class SymptomAppointmentController extends GetxController {
 
       final polyId = appointment.polyId;
 
-      final response = await supabase
-          .from('symptoms')
-          .select('*')
-          .eq('poly_id', polyId);
+      final response =
+          await supabase.from('symptoms').select('*').eq('poly_id', polyId);
 
       print("Response dari Supabase: ${response}");
 
       if (response != null && response is List) {
         symptoms.value = response.map((e) => Symptom.fromJson(e)).toList();
-        isSymptomSelected.value = {for (var symptom in symptoms) symptom.id: false};
+        isSymptomSelected.value = {
+          for (var symptom in symptoms) symptom.id: false
+        };
         print("Jumlah gejala yang ditemukan: ${symptoms.length}");
       } else {
         print("Error fetching symptoms: ${response}");
@@ -109,28 +145,24 @@ class SymptomAppointmentController extends GetxController {
         return;
       }
 
-      final symptomString = selectedSymptomIds.join(','); // Gabungkan ID dengan koma
+      final symptomString =
+          selectedSymptomIds.join(','); // Gabungkan ID dengan koma
       final description = symptomDescription.value;
 
-      await supabase
-          .from('appointments')
-          .update({
+      await supabase.from('appointments').update({
         'symptoms': symptomString,
         'symptom_description': description,
-      
-      })
-          .eq('id', appointment.id);
+      }).eq('id', appointment.id);
 
-       // Perbarui state di BarcodeAppointmentController
-    barcodeController.currentAppointment.value = appointment.copyWith(
-      symptoms: symptomString,
-      symptomDescription: description,
-      status: 1,
-    );
+      // Perbarui state di BarcodeAppointmentController
+      barcodeController.currentAppointment.value = appointment.copyWith(
+        symptoms: symptomString,
+        symptomDescription: description,
+        status: 1,
+      );
 
-    // Tandai bahwa gejala sudah diupdate
-    barcodeController.isSymptomsUpdated.value = true;
-
+      // Tandai bahwa gejala sudah diupdate
+      barcodeController.isSymptomsUpdated.value = true;
       Get.snackbar(
         'Success',
         'Appointment updated successfully!',
@@ -139,6 +171,7 @@ class SymptomAppointmentController extends GetxController {
         colorText: Colors.white,
       );
     } catch (error) {
+      print('---------------------->>>>>>${error}');
       Get.snackbar(
         'Error',
         'Failed to update appointment: $error',

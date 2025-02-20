@@ -15,7 +15,7 @@ class AppointmentView extends GetView<AppointmentController> {
   @override
   Widget build(BuildContext context) {
     // Pastikan semua controller dipanggil Get.put disini.
-     final scheduleController = Get.put(ScheduleAppointmentController());
+    final scheduleController = Get.put(ScheduleAppointmentController());
     final appointmentController = Get.find<AppointmentController>();
     Get.put(BarcodeAppointmentController());
     final barcodeController = Get.find<BarcodeAppointmentController>();
@@ -81,10 +81,10 @@ class AppointmentView extends GetView<AppointmentController> {
                   'Please scan barcode first.',
                   snackPosition: SnackPosition.BOTTOM,
                 );
-                validateAndChangeTab(1, force: true); // Kembali ke tab Symptom
+                validateAndChangeTab(1, force: true); // Kembali ke tab QRCode
                 return;
               }
-                 if (!barcodeController.isSymptomsUpdated.value) {
+              if (!barcodeController.isSymptomsUpdated.value) {
                 Get.snackbar(
                   'Information',
                   'Please complete symptom first.',
@@ -129,33 +129,33 @@ class AppointmentView extends GetView<AppointmentController> {
                   ),
                   Tab(
                     child: Obx(() => Text(
-                      'QRCode',
-                      style: TextStyle(
-                        color: barcodeController.isAccessible.value
-                            ? const Color(0xFF35693E)
-                            : Colors.grey,
-                      ),
-                    )),
+                          'QRCode',
+                          style: TextStyle(
+                            color: barcodeController.isAccessible.value
+                                ? const Color(0xFF35693E)
+                                : Colors.grey,
+                          ),
+                        )),
                   ),
                   Tab(
                     child: Obx(() => Text( // Perbarui warna tab "Symptom"
-                      'Symptom',
-                      style: TextStyle(
-                        color: barcodeController.isSymptomsUpdated.value
-                            ? const Color(0xFF35693E)
-                            : Colors.grey,
-                      ),
-                    )),
+                          'Symptom',
+                          style: TextStyle(
+                            color: barcodeController.isSymptomsUpdated.value
+                                ? const Color(0xFF35693E)
+                                : Colors.grey,
+                          ),
+                        )),
                   ),
                   Tab(
                     child: Obx(() => Text( // Perbarui warna tab "Capture"
-                      'Capture',
-                      style: TextStyle(
-                        color: barcodeController.isSymptomsUpdated.value
-                            ? const Color(0xFF35693E)
-                            : Colors.grey,
-                      ),
-                    )),
+                          'Capture',
+                          style: TextStyle(
+                            color: barcodeController.isSymptomsUpdated.value
+                                ? const Color(0xFF35693E)
+                                : Colors.grey,
+                          ),
+                        )),
                   ),
                 ],
                 labelColor: const Color(0xFF35693E),
@@ -174,7 +174,11 @@ class AppointmentView extends GetView<AppointmentController> {
               children: [
                 ScheduleAppointmentView(),
                 BarcodeAppointmentView(),
-                SymptomAppointmentView(),
+                SymptomAppointmentView(
+                  onTabChange: () {  //Berikan Callback
+                    tabController.animateTo(3);
+                  },
+                ),
                 CaptureAppointmentView(),
               ],
             ),

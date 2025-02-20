@@ -108,11 +108,11 @@ class AppPages {
       page: () => const BarcodeAppointmentView(),
       binding: BarcodeAppointmentBinding(),
     ),
-    GetPage(
-      name: _Paths.SYMPTOM_APPOINTMENT,
-      page: () => const SymptomAppointmentView(),
-      binding: SymptomAppointmentBinding(),
-    ),
+    // GetPage(
+    //   name: _Paths.SYMPTOM_APPOINTMENT,
+    //   page: () => const SymptomAppointmentView(),
+    //   binding: SymptomAppointmentBinding(),
+    // ),
     GetPage(
       name: _Paths.CAPTURE_APPOINTMENT,
       page: () => const CaptureAppointmentView(),
