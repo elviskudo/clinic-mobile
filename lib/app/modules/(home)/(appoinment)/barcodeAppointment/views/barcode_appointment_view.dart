@@ -366,7 +366,7 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: appointment.status == 1
+                        onPressed: appointment.status == 2
                             ? () {
                                 final TabController tabController =
                                     DefaultTabController.of(context);
