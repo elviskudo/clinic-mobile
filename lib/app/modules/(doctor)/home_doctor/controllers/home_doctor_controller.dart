@@ -127,13 +127,13 @@ class HomeDoctorController extends GetxController {
 }
 
 class AppointmentStatus {
-  static const int waiting = 0;
-  static const int approved = 1;
-  static const int rejected = 2;
-  static const int diagnose = 3;
-  static const int unpaid = 4;
-  static const int waitingForDrugs = 5;
-  static const int completed = 6;
+  static const int waiting = 1;
+  static const int approved = 2;
+  static const int rejected = 3;
+  static const int diagnose = 4;
+  static const int unpaid = 5;
+  static const int waitingForDrugs = 6;
+  static const int completed = 7;
 
   static String getStatusText(int status) {
     switch (status) {

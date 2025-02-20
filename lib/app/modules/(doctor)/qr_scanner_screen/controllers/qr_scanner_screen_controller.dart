@@ -36,16 +36,12 @@ class QrScannerScreenController extends GetxController {
     if (rawValue == appointment.qrCode) {
       // Stop scanner when valid QR code is detected
       scannerController.stop();
-
-      updateAppointmentStatus();
-      Get.snackbar(
-        'Success',
-        'Appointment status updated to Completed',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      
+      // Navigate back to list_patients first
       Get.back();
+      
+      // Show confirmation dialog
+      showConfirmationDialog();
     } else {
       Get.snackbar(
         'Error',
@@ -58,11 +54,51 @@ class QrScannerScreenController extends GetxController {
     }
   }
 
+  void showConfirmationDialog() {
+    Get.dialog(
+      AlertDialog(
+        title: Text('Confirm Action'),
+        content: Text('Do you really want to approve this patient?'),
+        actions: [
+          TextButton(
+            child: Text('Reject', style: TextStyle(color: Colors.red)),
+            onPressed: () {
+              Get.back(); // Close dialog
+              isProcessingResult.value = false;
+            },
+          ),
+          TextButton(
+            child: Text('Approve', style: TextStyle(color: Colors.green)),
+            onPressed: () async {
+              Get.back(); // Close dialog
+              await updateAppointmentStatus();
+              Get.snackbar(
+                'Success',
+                'Appointment status updated to Completed',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+              );
+            },
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
   Future<void> updateAppointmentStatus() async {
     try {
-      await appointmentController.updateAppointmentStatus(appointment.id, 1);
+      await appointmentController.updateAppointmentStatus(appointment.id, 2);
     } catch (error) {
       print('Error updating appointment status: $error');
+      Get.snackbar(
+        'Error',
+        'Failed to update appointment status',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 

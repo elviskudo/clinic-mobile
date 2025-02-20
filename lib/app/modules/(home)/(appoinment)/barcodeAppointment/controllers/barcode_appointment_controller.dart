@@ -40,7 +40,7 @@ class BarcodeAppointmentController extends GetxController {
       // Check if status changed to 1
       if (appointments.isNotEmpty) {
         final appointment = appointments.first;
-        if (previousStatus.value == 0 && appointment.status == 1) {
+        if (previousStatus.value == 1 && appointment.status == 2) {
           Get.snackbar(
             'Success',
             'Barcode has been successfully scanned',

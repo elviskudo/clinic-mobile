@@ -48,7 +48,7 @@ class ScheduleAppointmentController extends GetxController {
   final RxList<ScheduleDate> scheduleDates = <ScheduleDate>[].obs;
   final RxBool isLoadingScheduleDates = false.obs;
 
-  late TabController tabController;  // Tambahkan ini
+  late TabController tabController; // Tambahkan ini
 
   @override
   void onInit() {
@@ -78,10 +78,12 @@ class ScheduleAppointmentController extends GetxController {
       }
     });
   }
+
   // Inisialisasi TabController
   void setTabController(TabController controller) {
     tabController = controller;
   }
+
   void _clearScheduleData() {
     scheduleDates.clear();
     selectedDate.value = null;
@@ -95,13 +97,15 @@ class ScheduleAppointmentController extends GetxController {
     selectedScheduleTime.value = null;
     isScheduleTimeAvailable.value = true;
   }
+
   Future<void> loadSavedAppointmentData() async {
     final barcodeController = Get.find<BarcodeAppointmentController>();
     final appointment = barcodeController.currentAppointment.value;
 
     if (appointment != null) {
       // Load clinic
-      selectedClinic.value = clinics.firstWhere((c) => c.id == appointment.clinicId);
+      selectedClinic.value =
+          clinics.firstWhere((c) => c.id == appointment.clinicId);
       await fetchPolies(appointment.clinicId);
 
       // Load poly
@@ -109,22 +113,25 @@ class ScheduleAppointmentController extends GetxController {
       await fetchDoctors(appointment.clinicId, appointment.polyId);
 
       // Load doctor
-      selectedDoctor.value = doctors.firstWhere((d) => d.id == appointment.doctorId);
+      selectedDoctor.value =
+          doctors.firstWhere((d) => d.id == appointment.doctorId);
       await fetchScheduleDates(appointment.polyId, appointment.doctorId);
 
       // Load date and time
-      final scheduleDate = scheduleDates.firstWhere((d) => d.id == appointment.dateId);
+      final scheduleDate =
+          scheduleDates.firstWhere((d) => d.id == appointment.dateId);
       selectedDate.value = scheduleDate.scheduleDate;
       selectedScheduleDateId.value = scheduleDate.id;
 
       await fetchScheduleTimes(appointment.dateId);
-      selectedScheduleTime.value = scheduleTimes.firstWhere((t) => t.id == appointment.timeId);
+      selectedScheduleTime.value =
+          scheduleTimes.firstWhere((t) => t.id == appointment.timeId);
 
       isFormReadOnly.value = true; // Set form to read-only
     }
   }
-  Future<void> onNextPressed() async {
 
+  Future<void> onNextPressed() async {
     final appointmentController = Get.find<AppointmentController>();
 
     if (appointmentController.hasCreatedAppointment.value) {
@@ -134,21 +141,23 @@ class ScheduleAppointmentController extends GetxController {
     }
 
     final shouldProceed = await Get.dialog<bool>(
-      AlertDialog(
-        title: const Text('Confirm Appointment'),
-        content: const Text('Are you sure you want to create this appointment?'),
-        actions: [
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Get.back(result: false),
+          AlertDialog(
+            title: const Text('Confirm Appointment'),
+            content:
+                const Text('Are you sure you want to create this appointment?'),
+            actions: [
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () => Get.back(result: false),
+              ),
+              TextButton(
+                child: const Text('Confirm'),
+                onPressed: () => Get.back(result: true),
+              ),
+            ],
           ),
-          TextButton(
-            child: const Text('Confirm'),
-            onPressed: () => Get.back(result: true),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
 
     if (!shouldProceed) return;
 
@@ -176,30 +185,30 @@ class ScheduleAppointmentController extends GetxController {
       final qrCode = generateRandomQrCode(8);
 
       final appointment = Appointment(
-        id: appointmentId,
-        userId: userId,
-        clinicId: selectedClinic.value!.id,
-        polyId: selectedPoly.value!.id,
-        doctorId: selectedDoctor.value!.id,
-        dateId: selectedScheduleDateId.value!,
-        timeId: selectedScheduleTime.value!.id,
-        status: 1,
-        qrCode: qrCode,
-        rejectedNote: null,
-        symptoms: null,
-        symptomDescription: null,
-        aiResponse: null,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now()
-      );
+          id: appointmentId,
+          userId: userId,
+          clinicId: selectedClinic.value!.id,
+          polyId: selectedPoly.value!.id,
+          doctorId: selectedDoctor.value!.id,
+          dateId: selectedScheduleDateId.value!,
+          timeId: selectedScheduleTime.value!.id,
+          status: 1,
+          qrCode: qrCode,
+          rejectedNote: null,
+          symptoms: null,
+          symptomDescription: null,
+          aiResponse: null,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now());
 
       final response = await supabase
           .from('appointments')
-          .insert(appointment.toJson()).select();
+          .insert(appointment.toJson())
+          .select();
 
       Get.back(); // Close loading dialog
 
-       if (response != null && response.isNotEmpty) {
+      if (response != null && response.isNotEmpty) {
         final appointmentController = Get.find<AppointmentController>();
         final barcodeController = Get.find<BarcodeAppointmentController>();
 
@@ -208,6 +217,7 @@ class ScheduleAppointmentController extends GetxController {
         barcodeController.isAccessible.value = true;
         appointmentController.setAppointmentCreated(true);
         isFormReadOnly.value = true;
+
         //resetForm();
 
         tabController.animateTo(1);
@@ -239,6 +249,7 @@ class ScheduleAppointmentController extends GetxController {
       );
     }
   }
+
   bool isFormValid1() {
     return selectedClinic.value != null &&
         selectedPoly.value != null &&
@@ -262,6 +273,7 @@ class ScheduleAppointmentController extends GetxController {
       isLoadingClinics.value = false;
     }
   }
+
   Future<void> fetchPolies(String clinicId) async {
     try {
       isLoadingPolies.value = true;
@@ -313,27 +325,28 @@ class ScheduleAppointmentController extends GetxController {
       if (response != null && response is List) {
         print('3. Processing response as List');
 
-        final doctorsList = response.map((json) {
-          // Add null checks for required fields
-          if (json['id'] == null ||
-              json['degree'] == null ||
-              json['description'] == null ||
-              json['clinic_id'] == null ||
-              json['poly_id'] == null ||
-              json['status'] == null ||
-              json['created_at'] == null ||
-              json['updated_at'] == null) {
-            print('Invalid doctor data: $json');
-            return null;
-          }
+        final doctorsList = response
+            .map((json) {
+              // Add null checks for required fields
+              if (json['id'] == null ||
+                  json['degree'] == null ||
+                  json['description'] == null ||
+                  json['clinic_id'] == null ||
+                  json['poly_id'] == null ||
+                  json['status'] == null ||
+                  json['created_at'] == null ||
+                  json['updated_at'] == null) {
+                print('Invalid doctor data: $json');
+                return null;
+              }
 
-          try {
-            return Doctor.fromJson(json);
-          } catch (e) {
-            print('Error parsing doctor: $e');
-            return null;
-          }
-        })
+              try {
+                return Doctor.fromJson(json);
+              } catch (e) {
+                print('Error parsing doctor: $e');
+                return null;
+              }
+            })
             .where((doctor) => doctor != null)
             .cast<Doctor>()
             .toList();
@@ -557,7 +570,6 @@ class ScheduleAppointmentController extends GetxController {
 
   Future<void> sendNotificationToDoctor({
     required String doctorId,
-    required String patientName,
     required String date,
     required String time,
     required String clinic,
@@ -568,10 +580,14 @@ class ScheduleAppointmentController extends GetxController {
       // Ambil data dokter dari database
       final doctor = await supabase
           .from('doctors')
-          .select('id') // Pastikan ada kolom `user_id` untuk dokter
+          .select('id')
           .eq('id', doctorId)
           .single();
-
+      final user = await supabase
+          .from('users')
+          .select('name')
+          .eq('id', doctorId)
+          .single();
       if (doctor != null && doctor['id'] != null) {
         await AwesomeNotifications().createNotification(
           content: NotificationContent(
@@ -579,7 +595,7 @@ class ScheduleAppointmentController extends GetxController {
             channelKey: 'doctor_channel',
             title: 'New Patient Appointment',
             body:
-                'Patient: $patientName\nDate: $date\nTime: $time\nClinic: $clinic\nPoly: $poly\nDoctor: $doctorName',
+                'Patient: ${user["name"]}\nDate: $date\nTime: $time\nClinic: $clinic\nPoly: $poly\nDoctor: $doctorName',
             notificationLayout: NotificationLayout.BigText,
           ),
         );
