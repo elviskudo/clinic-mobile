@@ -267,7 +267,19 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                   return ElevatedButton(
                     onPressed: controller.isFormValid1() &&
                             !controller.isFormReadOnly.value
-                        ? () {
+                        ? () async {
+                            String formattedDate = DateFormat('dd/MM/yyyy')
+                                .format(controller.selectedDate.value!);
+
+                            await controller.sendNotificationToDoctor(
+                                doctorId: controller.selectedDoctor.value!.id,
+                                date: formattedDate,
+                                time: controller
+                                    .selectedScheduleTime.value!.scheduleTime,
+                                clinic: controller.selectedClinic.value!.name,
+                                poly: controller.selectedPoly.value!.name,
+                                doctorName:
+                                    controller.selectedDoctor.value!.degree);
                             controller.onNextPressed();
                           }
                         : null,

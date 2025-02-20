@@ -366,14 +366,12 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: appointment.status == 1
-                            ? () {
-                                final TabController tabController =
+                        onPressed: () {
+                           final TabController tabController =
                                     DefaultTabController.of(context);
                                 tabController
-                                    .animateTo(2); // Navigate to Symptom tab
-                              }
-                            : null,
+                                    .animateTo(2); 
+                        },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: const Color(0xFF35693E),

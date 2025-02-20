@@ -1,3 +1,5 @@
+import 'package:clinic_ai/app/modules/notification-user/bindings/notification_user_binding.dart';
+import 'package:clinic_ai/app/modules/notification-user/views/notification_user_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/(admin)/admin_panel/bindings/admin_panel_binding.dart';
@@ -40,10 +42,11 @@ import '../modules/(home)/onboarding_page/bindings/onboarding_page_binding.dart'
 import '../modules/(home)/onboarding_page/views/onboarding_page_view.dart';
 import '../modules/(home)/personal_data/bindings/personal_data_binding.dart';
 import '../modules/(home)/personal_data/views/personal_data_view.dart';
-import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
-import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
 import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
+import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
+import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
+
 
 part 'app_routes.dart';
 
@@ -164,6 +167,11 @@ class AppPages {
       name: _Paths.HOME_DOCTOR,
       page: () => const HomeDoctorView(),
       binding: HomeDoctorBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATION_USER,
+      page: () => const NotificationUserView(),
+      binding: NotificationUserBinding(),
     ),
   ];
 }
