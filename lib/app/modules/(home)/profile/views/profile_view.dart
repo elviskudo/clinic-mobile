@@ -80,7 +80,8 @@ class ProfileView extends GetView<ProfileController> {
                       Obx(() {
                         return CircleAvatar(
                           radius: 30,
-                          backgroundImage: controller.profileImageUrl.value != ''
+                          backgroundImage: controller.profileImageUrl.value !=
+                                  ''
                               ? NetworkImage(controller.profileImageUrl.value)
                               : null,
                           backgroundColor: Colors.lightGreen[100],
@@ -203,7 +204,8 @@ class ProfileView extends GetView<ProfileController> {
                               height: 120,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: AssetImage('assets/images/badge.png')),
+                                    image:
+                                        AssetImage('assets/images/badge.png')),
                               ),
                             ),
                           ],
@@ -257,13 +259,13 @@ class ProfileView extends GetView<ProfileController> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Data Personal (${personalDatCtrl.cardNumberController.value.text}, ${personalDatCtrl.selectedGender.value})',
+                                  'Data Personal (${personalDatCtrl.nameController.value.text}, ${personalDatCtrl.cardNumberController.value.text})',
                                   style: TextStyle(
                                       color: Color(0xFF39656D),
                                       fontSize: 12,
                                       fontWeight: FontWeight.w700),
                                   overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
+                                  maxLines: 1,
                                 ),
                                 Gap(5),
                                 Icon(Icons.arrow_forward_ios,

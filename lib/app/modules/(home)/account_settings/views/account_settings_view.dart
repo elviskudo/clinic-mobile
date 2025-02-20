@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import '../controllers/account_settings_controller.dart';
 
 class AccountSettingsView extends GetView<AccountSettingsController> {
@@ -14,6 +15,34 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
   Widget build(BuildContext context) {
     final homeCtrl = Get.put(HomeController());
     final profileCtrl = Get.put(ProfileController());
+
+    Future<void> handleImagePicker() async {
+      final ImagePicker picker = ImagePicker();
+      try {
+        final XFile? image =
+            await picker.pickImage(source: ImageSource.gallery);
+        if (image != null) {
+          profileCtrl.uploadController.selectedImage.value = image;
+          profileCtrl.isLoading.value = true; // Set loading to true
+
+          await controller.updateProfileImage();
+          await profileCtrl.loadUserData();
+
+          profileCtrl.isLoading.value = false; // Set loading to false
+        }
+      } catch (e) {
+        profileCtrl.isLoading.value = false; // Set loading to false on error
+        Get.snackbar(
+          'Error',
+          'Failed to pick image: $e',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 2),
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    }
+
     return Scaffold(
       backgroundColor: Color(0xffF7FBF2),
       appBar: AppBar(
@@ -31,15 +60,14 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Small Card above Profile
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: const Color(0xffD4E8D1),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: const Color(0xFF516351), // Warna border
-                  width: 2, // Ketebalan border
+                  color: const Color(0xFF516351),
+                  width: 2,
                 ),
               ),
               child: Text(
@@ -51,29 +79,43 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
                 ),
               ),
             ),
-
             Gap(24),
-
-            // Profile Photo Section
             Center(
               child: Column(
                 children: [
-                  Obx(() => CircleAvatar(
-                        radius: 70,
-                        backgroundImage: profileCtrl.user.value.imageUrl != ''
-                            ? NetworkImage(profileCtrl.user.value.imageUrl!)
-                            : null,
-                        backgroundColor: Colors.lightGreen[100],
-                        child: profileCtrl.user.value.imageUrl == ''
-                            ? Icon(Icons.person_outline,
-                                color: Colors.black, size: 70)
-                            : null,
+                  Obx(() => Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 70,
+                            backgroundImage: profileCtrl.user.value.imageUrl !=
+                                    ''
+                                ? NetworkImage(profileCtrl.user.value.imageUrl!)
+                                : null,
+                            backgroundColor: Colors.lightGreen[100],
+                            child: profileCtrl.user.value.imageUrl == ''
+                                ? Icon(Icons.person_outline,
+                                    color: Colors.black, size: 70)
+                                : null,
+                          ),
+                          if (profileCtrl.isLoading.value)
+                            Positioned.fill(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black26,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       )),
                   Gap(24),
                   TextButton(
-                    onPressed: () {
-                      // Handle change profile photo
-                    },
+                    onPressed: () => handleImagePicker(),
                     child: Text(
                       'Change Profile Photo',
                       style: GoogleFonts.inter(
@@ -92,8 +134,6 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
               color: Color(0xFFC1C9BE),
             ),
             Gap(16),
-
-            // Menu Items
             _buildMenuItem(
               iconPath: 'assets/icons/personaldata.png',
               title: 'Personal Data',
@@ -102,14 +142,6 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
                 Get.offAllNamed(Routes.PERSONAL_DATA);
               },
             ),
-            // _buildMenuItem(
-            //   iconPath: 'assets/icons/key.png',
-            //   title: 'Accounts',
-            //   subtitle: 'Change Email, Change Password',
-            //   onTap: () {
-            //     // Handle accounts tap
-            //   },
-            // ),
             _buildMenuItem(
               iconPath: 'assets/icons/personaldata.png',
               title: 'Notifications',
@@ -119,7 +151,6 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
               },
             ),
             Gap(24),
-            // Logout Button
             ElevatedButton(
               onPressed: () {
                 homeCtrl.logout();
@@ -137,9 +168,10 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
               child: Text(
                 'Logout',
                 style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff35693E)),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff35693E),
+                ),
               ),
             ),
           ],

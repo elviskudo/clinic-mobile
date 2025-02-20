@@ -24,22 +24,30 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _loadUserIdFromPrefs();
     loadUserData().then((_) => loadProfileImage());
+  }
+
+  Future<void> _loadUserIdFromPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+    final savedUserId = _prefs?.getString('userId') ?? '';
+
+    if (savedUserId.isNotEmpty) {
+      currentUserId.value = savedUserId;
+      print('Loaded userId from SharedPreferences: $savedUserId');
+      await loadUserData();
+      await loadProfileImage();
+    } else {
+      print('Error: userId not found in SharedPreferences.');
+    }
   }
 
   Future<void> loadUserData() async {
     try {
       isLoading.value = true;
-      final prefs = await SharedPreferences.getInstance();
-
-      userEmail.value = prefs.getString('userEmail') ?? '';
-      userName.value = prefs.getString('userName') ?? '';
-      currentUserId.value = prefs.getString('userId') ?? '';
-
-      print("Loaded userId from SharedPreferences: '${currentUserId.value}'");
 
       if (currentUserId.value.isEmpty) {
-        print('Error: userId is empty. Make sure it is set during login.');
+        print('Error: userId is empty.');
         return;
       }
 
@@ -47,24 +55,64 @@ class ProfileController extends GetxController {
           .from('users')
           .select('*')
           .eq('id', currentUserId.value)
-          .single();
-        
-      if (response != null) {
-        userEmail.value = response['email'] ?? '';
-        userName.value = response['name'] ?? '';
-        roleUser.value = response['role'] ?? '';
-        namaController.text = userName.value;
-        roleUser.value = roleUser.value;
-        emailController.text = userEmail.value;
-      }
+          .maybeSingle();
 
-      print(
-          "ID: ${currentUserId.value}, Name: ${userName.value}, Role: ${roleUser.value}, Email: ${userEmail.value}");
+      if (response != null) {
+        final userRole = await supabase
+            .from('user_roles')
+            .select()
+            .eq('user_id', response['id'])
+            .limit(1)
+            .single();
+
+        final roles = await supabase
+            .from('roles')
+            .select()
+            .eq('id', userRole['role_id'])
+            .single();
+
+        final roleName = roles['name'] ?? 'member';
+
+        // Fetch user image from files
+        String? imageUrl;
+        final fileResponse = await supabase
+            .from('files')
+            .select('file_name')
+            .eq('module_class', 'users')
+            .eq('module_id', response['id'])
+            .limit(1)
+            .maybeSingle();
+
+        if (fileResponse != null) {
+          imageUrl = fileResponse['file_name'];
+        }
+
+        user.value = Users(
+          id: response['id'] as String,
+          name: response['name'] as String,
+          email: response['email'] as String,
+          role: roleName,
+          phoneNumber: response['phone_number'] as String,
+          accessToken: response['access_token'] as String,
+          imageUrl: imageUrl,
+          createdAt: DateTime.parse(response['created_at'] as String),
+          updatedAt: DateTime.parse(response['updated_at'] as String),
+        );
+
+        // Update UI elements
+        userName.value = user.value.name;
+        userEmail.value = user.value.email;
+        roleUser.value = user.value.role;
+        namaController.text = user.value.name;
+        emailController.text = user.value.email;
+        print('User data: ${user.value.toString()}');
+        print('fileName: $imageUrl');
+      }
     } catch (e) {
-      print('Error loading user data: $e');
+      print('Error fetching user: $e');
       Get.snackbar(
         'Error',
-        'Gagal memuat data profil: $e',
+        'Failed to fetch user: $e',
         backgroundColor: Color(0xFF35693E),
         colorText: Color(0xffffffff),
       );
@@ -92,6 +140,7 @@ class ProfileController extends GetxController {
           .select()
           .eq('module_class', 'users')
           .eq('module_id', currentUserId.value)
+          .limit(1)
           .single();
 
       print('Profile image response: $response');
