@@ -52,13 +52,17 @@ class AppointmentView extends GetView<AppointmentController> {
           void validateAndChangeTab(int index, {bool force = false}) {
             if (force) {
               tabController.animateTo(index);
-              pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+              pageController.animateToPage(index,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.ease);
               return;
             }
 
             if (index == 0) {
               tabController.animateTo(index);
-              pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+              pageController.animateToPage(index,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.ease);
               return;
             }
 
@@ -69,7 +73,9 @@ class AppointmentView extends GetView<AppointmentController> {
                 snackPosition: SnackPosition.BOTTOM,
               );
               tabController.animateTo(0);
-              pageController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+              pageController.animateToPage(0,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.ease);
               return;
             }
 
@@ -96,7 +102,9 @@ class AppointmentView extends GetView<AppointmentController> {
             }
 
             tabController.animateTo(index);
-            pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+            pageController.animateToPage(index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.ease);
           }
 
           return Scaffold(
@@ -138,7 +146,8 @@ class AppointmentView extends GetView<AppointmentController> {
                         )),
                   ),
                   Tab(
-                    child: Obx(() => Text( // Perbarui warna tab "Symptom"
+                    child: Obx(() => Text(
+                          // Perbarui warna tab "Symptom"
                           'Symptom',
                           style: TextStyle(
                             color: barcodeController.isSymptomsUpdated.value
@@ -148,7 +157,8 @@ class AppointmentView extends GetView<AppointmentController> {
                         )),
                   ),
                   Tab(
-                    child: Obx(() => Text( // Perbarui warna tab "Capture"
+                    child: Obx(() => Text(
+                          // Perbarui warna tab "Capture"
                           'Capture',
                           style: TextStyle(
                             color: barcodeController.isSymptomsUpdated.value
@@ -175,7 +185,8 @@ class AppointmentView extends GetView<AppointmentController> {
                 ScheduleAppointmentView(),
                 BarcodeAppointmentView(),
                 SymptomAppointmentView(
-                  onTabChange: () {  //Berikan Callback
+                  onTabChange: () {
+                    //Berikan Callback
                     tabController.animateTo(3);
                   },
                 ),
