@@ -64,22 +64,9 @@ class HomeView extends GetView<HomeController> {
                 // radius: 24,
                 // backgroundColor: Colors.grey,
                 child: InkWell(
-                  onTap: () => Get.toNamed(Routes.PROFILE),
-                  // child: Icon(Icons.person, color: Colors.white, size: 30),
-                  child: Obx(() {
-                    return CircleAvatar(
-                      radius: 30,
-                      backgroundImage: ProfileCtrl.profileImageUrl.value != ''
-                          ? NetworkImage(ProfileCtrl.profileImageUrl.value)
-                          : null,
-                      backgroundColor: Colors.lightGreen[100],
-                      child: ProfileCtrl.profileImageUrl.value == ''
-                          ? Icon(Icons.person_outline,
-                              color: Colors.black, size: 30)
-                          : null,
-                    );
-                  }),
-                ),
+                    onTap: () => Get.toNamed(Routes.PROFILE),
+                    // child: Icon(Icons.person, color: Colors.white, size: 30),
+                    child: Image.asset('assets/images/logo_clinic.png')),
               ),
               Obx(
                 () => IconButton(

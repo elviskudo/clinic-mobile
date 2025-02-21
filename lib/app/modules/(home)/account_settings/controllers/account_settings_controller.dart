@@ -14,6 +14,7 @@ class AccountSettingsController extends GetxController {
   final uploadController = Get.put(UploadController());
   Rx<Users> user = Users().obs;
   RxString uploadedFileUrl = ''.obs;
+  final ProfileController profileController = Get.put(ProfileController());
 
   @override
   void onInit() {
@@ -97,7 +98,7 @@ class AccountSettingsController extends GetxController {
 
       // Opsional: Refresh data profil di ProfileController
       // final profileController = Get.find<ProfileController>();
-      // await profileController.loadProfileImage();
+      await profileController.loadProfileImage();
       
     } catch (e) {
       print('Error updating profile image: $e');
