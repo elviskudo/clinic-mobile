@@ -5,6 +5,7 @@ import 'package:clinic_ai/app/modules/(home)/(appoinment)/captureAppointment/con
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/captureAppointment/views/capture_appointment_view.dart';
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/scheduleAppointment/controllers/schedule_appointment_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/scheduleAppointment/views/schedule_appointment_view.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/summaryAppointment/controllers/summary_appointment_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/symptomAppointment/views/symptom_appointment_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +25,7 @@ class AppointmentView extends GetView<AppointmentController> {
     // Salah satu cara: Pindahkan inisialisasi symptomController KE DALAM Obx() di BarcodeAppointmentView
     // final symptomController = Get.put(SymptomAppointmentController()); HAPUS BARIS INI
     final captureController = Get.put(CaptureAppointmentController());
+    // final summarycontroller = Get.put(SummaryAppointmentController());
 
     return DefaultTabController(
       length: 4,

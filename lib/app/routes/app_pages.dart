@@ -1,5 +1,3 @@
-import 'package:clinic_ai/app/modules/notification-user/bindings/notification_user_binding.dart';
-import 'package:clinic_ai/app/modules/notification-user/views/notification_user_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/(admin)/admin_panel/bindings/admin_panel_binding.dart';
@@ -46,7 +44,10 @@ import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
 import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
-
+import '../modules/notification-user/bindings/notification_user_binding.dart';
+import '../modules/notification-user/views/notification_user_view.dart';
+import '../modules/(home)/(appoinment)/summaryAppointment/bindings/summary_appointment_binding.dart';
+import '../modules/(home)/(appoinment)/summaryAppointment/views/summary_appointment_view.dart';
 
 part 'app_routes.dart';
 
@@ -172,6 +173,11 @@ class AppPages {
       name: _Paths.NOTIFICATION_USER,
       page: () => const NotificationUserView(),
       binding: NotificationUserBinding(),
+    ),
+    GetPage(
+      name: _Paths.SUMMARY_APPOINTMENT,
+      page: () => const SummaryAppointmentView(),
+      binding: SummaryAppointmentBinding(),
     ),
   ];
 }

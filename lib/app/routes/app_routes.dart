@@ -30,6 +30,7 @@ abstract class Routes {
   static const QR_SCANNER_SCREEN = _Paths.QR_SCANNER_SCREEN;
   static const HOME_DOCTOR = _Paths.HOME_DOCTOR;
   static const NOTIFICATION_USER = _Paths.NOTIFICATION_USER;
+  static const SUMMARY_APPOINTMENT = _Paths.SUMMARY_APPOINTMENT;
 }
 
 abstract class _Paths {
@@ -61,4 +62,5 @@ abstract class _Paths {
   static const QR_SCANNER_SCREEN = '/qr-scanner-screen';
   static const HOME_DOCTOR = '/home-doctor';
   static const NOTIFICATION_USER = '/notification-user';
+  static const SUMMARY_APPOINTMENT = '/summary-appointment';
 }
