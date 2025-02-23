@@ -24,11 +24,11 @@ class AccountSettingsController extends GetxController {
   Future<void> updateProfileImage() async {
     try {
       isLoading.value = true;
-      
+
       // Ambil user ID dari SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final savedUserId = prefs.getString('userId');
-      
+
       if (savedUserId == null || savedUserId.isEmpty) {
         print('User ID not found in SharedPreferences');
         Get.offAllNamed(Routes.LOGIN);
@@ -58,7 +58,7 @@ class AccountSettingsController extends GetxController {
             .delete()
             .eq('module_class', 'users')
             .eq('module_id', currentUserId.value);
-        
+
         print('Berhasil menghapus file lama');
       } catch (e) {
         print('Error saat menghapus file lama: $e');
@@ -66,9 +66,8 @@ class AccountSettingsController extends GetxController {
       }
 
       // Upload gambar baru ke Cloudinary
-      await uploadController.uploadFileToCloudinary(
-        uploadController.selectedImage.value!
-      );
+      await uploadController
+          .uploadFileToCloudinary(uploadController.selectedImage.value!);
 
       // Ambil URL file yang sudah diupload
       final uploadedFileUrl = uploadController.imageUrl.value;
@@ -99,7 +98,6 @@ class AccountSettingsController extends GetxController {
       // Opsional: Refresh data profil di ProfileController
       // final profileController = Get.find<ProfileController>();
       await profileController.loadProfileImage();
-      
     } catch (e) {
       print('Error updating profile image: $e');
       Get.snackbar(

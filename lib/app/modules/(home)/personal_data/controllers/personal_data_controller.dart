@@ -413,18 +413,18 @@ class PersonalDataController extends GetxController {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 
-  @override
-  void onClose() {
-    _debounce?.cancel();
-    citySearchController.dispose();
-    nameController.dispose();
-    placeOfBirthController.dispose();
-    dateOfBirthController.dispose();
-    cardNumberController.dispose();
-    addressController.dispose();
-    rtController.dispose();
-    rwController.dispose();
-    postalCodeController.dispose();
-    super.onClose();
-  }
+  // @override
+  // void onClose() {
+  //   _debounce?.cancel();
+  //   // citySearchController.dispose();
+  //   // nameController.dispose();
+  //   // placeOfBirthController.dispose();
+  //   // dateOfBirthController.dispose();
+  //   // cardNumberController.dispose();
+  //   // addressController.dispose();
+  //   // rtController.dispose();
+  //   // rwController.dispose();
+  //   // postalCodeController.dispose();
+  //   super.onClose();
+  // }
 }

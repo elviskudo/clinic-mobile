@@ -155,14 +155,16 @@ class ProfileController extends GetxController {
     }
   }
 
-  @override
-  void onClose() {
-    user.close();
-    isLoading.close();
-    errorMessage.close();
-    isDarkMode.close();
-    _prefs = null;
-    Get.delete<ProfileController>();
-    super.onClose();
-  }
+  // @override
+  // void onClose() {
+  //   namaController.dispose();
+  //   emailController.dispose();
+  //   user.close();
+  //   isLoading.close();
+  //   errorMessage.close();
+  //   isDarkMode.close();
+  //   _prefs = null;
+  //   Get.delete<ProfileController>();
+  //   super.onClose();
+  // }
 }

@@ -13,6 +13,7 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     final personalDatCtrl = Get.put(PersonalDataController());
+    final profileCtrl = Get.put(ProfileController());
     return Scaffold(
       backgroundColor: Color(0xffF7FBF2),
       appBar: AppBar(
