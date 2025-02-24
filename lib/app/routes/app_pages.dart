@@ -30,6 +30,8 @@ import '../modules/(home)/(appoinment)/captureAppointment/bindings/capture_appoi
 import '../modules/(home)/(appoinment)/captureAppointment/views/capture_appointment_view.dart';
 import '../modules/(home)/(appoinment)/scheduleAppointment/bindings/schedule_appointment_binding.dart';
 import '../modules/(home)/(appoinment)/scheduleAppointment/views/schedule_appointment_view.dart';
+import '../modules/(home)/(appoinment)/summaryAppointment/bindings/summary_appointment_binding.dart';
+import '../modules/(home)/(appoinment)/summaryAppointment/views/summary_appointment_view.dart';
 import '../modules/(home)/(appoinment)/symptomAppointment/bindings/symptom_appointment_binding.dart';
 import '../modules/(home)/(appoinment)/symptomAppointment/views/symptom_appointment_view.dart';
 import '../modules/(home)/account_settings/bindings/account_settings_binding.dart';
@@ -44,10 +46,10 @@ import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
 import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
+import '../modules/(home)/help_center/bindings/help_center_binding.dart';
+import '../modules/(home)/help_center/views/help_center_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
-import '../modules/(home)/(appoinment)/summaryAppointment/bindings/summary_appointment_binding.dart';
-import '../modules/(home)/(appoinment)/summaryAppointment/views/summary_appointment_view.dart';
 
 part 'app_routes.dart';
 
@@ -178,6 +180,11 @@ class AppPages {
       name: _Paths.SUMMARY_APPOINTMENT,
       page: () => const SummaryAppointmentView(),
       binding: SummaryAppointmentBinding(),
+    ),
+    GetPage(
+      name: _Paths.HELP_CENTER,
+      page: () =>  HelpCenterView(),
+      binding: HelpCenterBinding(),
     ),
   ];
 }

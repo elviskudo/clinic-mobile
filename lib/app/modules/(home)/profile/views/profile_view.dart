@@ -310,13 +310,23 @@ class ProfileView extends GetView<ProfileController> {
                     title: Text('Help Center'),
                     subtitle: Text('General help, FAQs, Contact us'),
                     trailing: Icon(Icons.chevron_right),
-                    onTap: () {},
+                    onTap: () {
+                      Get.offAllNamed(Routes.HELP_CENTER);
+                    },
                   ),
                   Divider(),
                   ListTile(
                     leading: Icon(Icons.feedback_outlined),
-                    title: Text('Kirim umpan balik'),
+                    title: Text('Send Feedback'),
                     subtitle: Text('Give some feedback'),
+                    trailing: Icon(Icons.chevron_right),
+                    onTap: () {},
+                  ),
+                  Divider(),
+                  ListTile(
+                    leading: Icon(Icons.info_outlined),
+                    title: Text('About Us'),
+                    subtitle: Text('About Application'),
                     trailing: Icon(Icons.chevron_right),
                     onTap: () {},
                   ),

@@ -31,6 +31,7 @@ abstract class Routes {
   static const HOME_DOCTOR = _Paths.HOME_DOCTOR;
   static const NOTIFICATION_USER = _Paths.NOTIFICATION_USER;
   static const SUMMARY_APPOINTMENT = _Paths.SUMMARY_APPOINTMENT;
+  static const HELP_CENTER = _Paths.HELP_CENTER;
 }
 
 abstract class _Paths {
@@ -63,4 +64,5 @@ abstract class _Paths {
   static const HOME_DOCTOR = '/home-doctor';
   static const NOTIFICATION_USER = '/notification-user';
   static const SUMMARY_APPOINTMENT = '/summary-appointment';
+  static const HELP_CENTER = '/help-center';
 }

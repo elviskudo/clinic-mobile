@@ -15,8 +15,8 @@ class ProfileController extends GetxController {
   RxString userName = ''.obs;
   RxString userEmail = ''.obs;
   RxString currentUserId = ''.obs;
-  final namaController = TextEditingController();
-  final emailController = TextEditingController();
+  late final TextEditingController namaController;
+  late final TextEditingController emailController;
   SharedPreferences? _prefs;
   final UploadController uploadController = Get.put(UploadController());
   RxString profileImageUrl = ''.obs;
@@ -24,8 +24,19 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Initialize controllers in onInit
+    namaController = TextEditingController();
+    emailController = TextEditingController();
     _loadUserIdFromPrefs();
     loadUserData().then((_) => loadProfileImage());
+  }
+
+  @override
+  void onClose() {
+    // Properly dispose controllers in onClose
+    namaController.dispose();
+    emailController.dispose();
+    super.onClose();
   }
 
   Future<void> _loadUserIdFromPrefs() async {
@@ -73,7 +84,6 @@ class ProfileController extends GetxController {
 
         final roleName = roles['name'] ?? 'member';
 
-        // Fetch user image from files
         String? imageUrl;
         final fileResponse = await supabase
             .from('files')
@@ -99,30 +109,34 @@ class ProfileController extends GetxController {
           updatedAt: DateTime.parse(response['updated_at'] as String),
         );
 
-        // Update UI elements
+        // Only update controllers if they haven't been disposed
+        if (!Get.isRegistered<ProfileController>()) return;
+
         userName.value = user.value.name;
         userEmail.value = user.value.email;
         roleUser.value = user.value.role;
         namaController.text = user.value.name;
         emailController.text = user.value.email;
-        print('User data: ${user.value.toString()}');
-        print('fileName: $imageUrl');
       }
     } catch (e) {
       print('Error fetching user: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to fetch user: $e',
-        backgroundColor: Color(0xFF35693E),
-        colorText: Color(0xffffffff),
-      );
+      // if (Get.isRegistered<ProfileController>()) {
+      //   Get.snackbar(
+      //     'Error',
+      //     'Failed to fetch user: $e',
+      //     backgroundColor: Color(0xFF35693E),
+      //     colorText: Color(0xffffffff),
+      //   );
+      // }
     } finally {
       isLoading.value = false;
     }
   }
 
   Future<void> refreshProfile() async {
-    await loadUserData();
+    if (Get.isRegistered<ProfileController>()) {
+      await loadUserData();
+    }
   }
 
   void toggleDarkMode(bool value) {
@@ -143,28 +157,14 @@ class ProfileController extends GetxController {
           .limit(1)
           .single();
 
-      print('Profile image response: $response');
-
-      if (response != null) {
+      if (response != null && Get.isRegistered<ProfileController>()) {
         profileImageUrl.value = response['file_name'];
-        print('Profile image URL: ${profileImageUrl.value}');
       }
     } catch (e) {
       print('Error loading profile image: $e');
-      profileImageUrl.value = '';
+      if (Get.isRegistered<ProfileController>()) {
+        profileImageUrl.value = '';
+      }
     }
   }
-
-  // @override
-  // void onClose() {
-  //   namaController.dispose();
-  //   emailController.dispose();
-  //   user.close();
-  //   isLoading.close();
-  //   errorMessage.close();
-  //   isDarkMode.close();
-  //   _prefs = null;
-  //   Get.delete<ProfileController>();
-  //   super.onClose();
-  // }
 }
