@@ -5,19 +5,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/help_center_controller.dart';
 
-// FAQ Item Model
-class FaqItem {
-  final String title;
-  final String content;
-  bool isExpanded;
-
-  FaqItem({
-    required this.title,
-    required this.content,
-    this.isExpanded = false,
-  });
-}
-
 class HelpCenterView extends StatefulWidget {
   const HelpCenterView({super.key});
 
@@ -26,33 +13,47 @@ class HelpCenterView extends StatefulWidget {
 }
 
 class _HelpCenterViewState extends State<HelpCenterView> {
-  final List<FaqItem> list = [
-    FaqItem(
-      title: 'What is ClinicAI?',
-      content:
-          'ClinicAI is an advanced healthcare platform that combines artificial intelligence with medical expertise to provide better healthcare services.',
-    ),
-    FaqItem(
-      title: 'Why choose ClinicAI?',
-      content:
-          'ClinicAI offers personalized healthcare solutions, quick access to medical professionals, and AI-powered health monitoring to ensure comprehensive care.',
-    ),
-    FaqItem(
-      title: 'What if i can do?',
-      content:
-          'With ClinicAI, you can schedule appointments, consult with doctors, access your medical records, and receive personalized health recommendations.',
-    ),
-    FaqItem(
-      title: 'Is there are have Medical Record?',
-      content:
-          'Yes, ClinicAI maintains secure digital medical records that you can access anytime. All your health information is stored safely and confidentially.',
-    ),
-    FaqItem(
-      title: 'How ClinicAI Works?',
-      content:
-          'ClinicAI uses advanced AI algorithms to analyze your health data, connect you with appropriate healthcare providers, and provide personalized health insights.',
-    ),
-  ];
+  final HelpCenterController controller = Get.put(HelpCenterController());
+  final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      controller.setSearchQuery(searchController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  // Build highlighted text from the controller's segments
+  Widget buildHighlightedText(String text, double fontSize,
+      {FontWeight? fontWeight, Color? color}) {
+    List<Map<String, dynamic>> segments = controller.highlightText(text);
+
+    return RichText(
+      text: TextSpan(
+        children: segments.map((segment) {
+          return TextSpan(
+            text: segment["text"],
+            style: GoogleFonts.inter(
+              fontSize: fontSize,
+              fontWeight: segment["highlighted"] ? FontWeight.bold : fontWeight,
+              color: segment["highlighted"]
+                  ? const Color(0xff2D5A27)
+                  : (color ?? const Color(0xff727970)),
+              backgroundColor:
+                  segment["highlighted"] ? const Color(0xFFE8F5E9) : null,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,13 +93,15 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                           color: Color(0xff181D18)),
                     ),
                     Gap(8),
-                    Text(
-                      'Lorem ipsum dolor sit amet consectetur. Sed justo bibendum magna accumsan scelerisque. Eleifmod at donec neque velit id lobortis. Pulvinar pretium vitae nisi ultricies non nulla dignissim. Purus in vestibulum dictum magna leo convallis sed.',
-                      style: GoogleFonts.inter(
-                        fontSize: 15,
-                        color: Color(0xff727970),
-                      ),
-                    ),
+                    Obx(() => Text(
+                          controller.isLoading.value
+                              ? 'Loading...'
+                              : controller.helpCenterSummary.value,
+                          style: GoogleFonts.inter(
+                            fontSize: 15,
+                            color: Color(0xff727970),
+                          ),
+                        )),
                   ],
                 ),
               ),
@@ -111,11 +114,20 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: TextField(
+                  controller: searchController,
                   decoration: InputDecoration(
-                    hintText: 'Can Chat, Kategori',
+                    hintText: 'Search FAQ',
                     hintStyle: TextStyle(color: Colors.grey[400]),
                     border: InputBorder.none,
-                    suffixIcon: Icon(Icons.search, color: Colors.grey[400]),
+                    suffixIcon: Obx(() => controller.searchQuery.isEmpty
+                        ? Icon(Icons.search, color: Colors.grey[400])
+                        : IconButton(
+                            icon: Icon(Icons.close, color: Colors.grey[400]),
+                            onPressed: () {
+                              searchController.clear();
+                              controller.clearSearch();
+                            },
+                          )),
                   ),
                 ),
               ),
@@ -131,61 +143,68 @@ class _HelpCenterViewState extends State<HelpCenterView> {
               const SizedBox(height: 8),
 
               // FAQ Accordion List
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: list.length,
-                separatorBuilder: (context, index) => const Gap(8),
-                itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Theme(
-                      data: Theme.of(context)
-                          .copyWith(dividerColor: Colors.transparent),
-                      child: ExpansionTile(
-                        tilePadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        title: Text(
-                          list[index].title,
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xff181D18),
+              Obx(() => ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: controller.filteredFaqItems.length,
+                    separatorBuilder: (context, index) => const Gap(8),
+                    itemBuilder: (context, index) {
+                      final item = controller.filteredFaqItems[index];
+
+                      // Check if this FAQ item contains the search query
+                      bool containsQuery = controller.searchQuery.isEmpty
+                          ? false
+                          : item.title.toLowerCase().contains(
+                                  controller.searchQuery.value.toLowerCase()) ||
+                              item.content.toLowerCase().contains(
+                                  controller.searchQuery.value.toLowerCase());
+
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xffF7FBF2),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: containsQuery
+                                ? Color(0xff2D5A27)
+                                : Color(0xff727970),
+                            width: containsQuery ? 2.0 : 1.0,
                           ),
                         ),
-                        trailing: Icon(
-                          list[index].isExpanded ? Icons.remove : Icons.add,
-                          color: const Color(0xff2D5A27),
+                        child: Theme(
+                          data: Theme.of(context)
+                              .copyWith(dividerColor: Colors.transparent),
+                          child: Obx(() => ExpansionTile(
+                                initiallyExpanded: item.isExpanded,
+                                tilePadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                title: buildHighlightedText(item.title, 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xff181D18)),
+                                trailing: Icon(
+                                  item.isExpanded ? Icons.remove : Icons.add,
+                                  color: const Color(0xff2D5A27),
+                                ),
+                                onExpansionChanged: (expanded) {
+                                  // Toggle expansion through controller
+                                  controller.toggleExpansion(index);
+                                },
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 16,
+                                      right: 16,
+                                      bottom: 16,
+                                    ),
+                                    child:
+                                        buildHighlightedText(item.content, 14),
+                                  ),
+                                ],
+                              )),
                         ),
-                        onExpansionChanged: (expanded) {
-                          setState(() {
-                            list[index].isExpanded = expanded;
-                          });
-                        },
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                              bottom: 16,
-                            ),
-                            child: Text(
-                              list[index].content,
-                              style: GoogleFonts.inter(
-                                fontSize: 14,
-                                color: const Color(0xff727970),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+                      );
+                    },
+                  )),
 
               const SizedBox(height: 32),
 
