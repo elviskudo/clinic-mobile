@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "752059788700",
+    "project_id": "clinic-ai-66a1a",
+    "storage_bucket": "clinic-ai-66a1a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752059788700:android:5035a39adf6776c4e16c59",
+        "android_client_info": {
+          "package_name": "clinicai.com.clinic_ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752059788700-ibipifql3mpp6gupie9t6u1n1vqqhuh2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "clinicai.com.clinic_ai",
+            "certificate_hash": "c728e9a65bbea00342ad64ee896892ffe464fa68"
+          }
+        },
+        {
+          "client_id": "752059788700-onmbo16m4te7nauf9c1bmblqr3sujfg3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "clinicai.com.clinic_ai",
+            "certificate_hash": "3f11c7ec5ebd6f49d848cee57e28d71881e1b858"
+          }
+        },
+        {
+          "client_id": "752059788700-s8una6ki56hhuirqf04q0ubb4c9deagc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "clinicai.com.clinic_ai",
+            "certificate_hash": "33125ad9f591be5e42e2922ffc26ae315018a263"
+          }
+        },
+        {
+          "client_id": "752059788700-kvnie3b615t55bfk2p2lucirqqs07i4g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBC5ibtD1apvQ5X8COjZXYscUvFqF07eAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752059788700-kvnie3b615t55bfk2p2lucirqqs07i4g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

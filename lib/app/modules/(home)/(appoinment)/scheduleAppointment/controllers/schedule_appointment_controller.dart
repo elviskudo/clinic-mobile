@@ -604,4 +604,6 @@ class ScheduleAppointmentController extends GetxController {
       print('Failed to send notification to doctor: $e');
     }
   }
+
 }
+

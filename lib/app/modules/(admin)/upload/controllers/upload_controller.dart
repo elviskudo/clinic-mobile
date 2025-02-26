@@ -29,10 +29,7 @@ class UploadController extends GetxController {
   final RxList<FileModel> fileList = <FileModel>[].obs;
   final RxList<String> moduleClasses = <String>[
     'users',
-    'categories',
-    'companies',
-    'charities',
-    'banks',
+    'appointments',
     'all'
   ].obs; // Contoh data module class
   final RxList<FileModel> filteredFileList = <FileModel>[].obs;
@@ -167,11 +164,11 @@ class UploadController extends GetxController {
 
         final userResponse = await supabase
             .from(moduleClass)
-            .select(moduleClass == 'charities' ? 'title' : 'name')
+            .select(moduleClass == 'appointments' ? 'id ' : 'name')
             .eq('id', moduleId)
             .single();
         moduleName =
-            userResponse['${moduleClass == 'charities' ? 'title' : 'name'}']
+            userResponse['${moduleClass == 'appointments' ? 'id' : 'name'}']
                 as String;
 
         // Add data to files list with hasFile flag

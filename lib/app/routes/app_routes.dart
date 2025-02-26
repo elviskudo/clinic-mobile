@@ -32,6 +32,7 @@ abstract class Routes {
   static const NOTIFICATION_USER = _Paths.NOTIFICATION_USER;
   static const SUMMARY_APPOINTMENT = _Paths.SUMMARY_APPOINTMENT;
   static const HELP_CENTER = _Paths.HELP_CENTER;
+  static const DETAIL_DIAGNOSE = _Paths.DETAIL_DIAGNOSE;
 }
 
 abstract class _Paths {
@@ -65,4 +66,5 @@ abstract class _Paths {
   static const NOTIFICATION_USER = '/notification-user';
   static const SUMMARY_APPOINTMENT = '/summary-appointment';
   static const HELP_CENTER = '/help-center';
+  static const DETAIL_DIAGNOSE = '/detail-diagnose';
 }
