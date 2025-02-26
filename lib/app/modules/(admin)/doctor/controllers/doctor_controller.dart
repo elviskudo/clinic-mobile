@@ -14,7 +14,7 @@ class DoctorController extends GetxController {
   RxBool isLoading = false.obs;
   var selectedClinicId = ''.obs;
   var selectedPolyId = ''.obs;
-  var selectedUserId = ''.obs;
+   var selectedUserId = ''.obs;
 
   @override
   void onInit() {

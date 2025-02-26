@@ -121,26 +121,35 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                         else
                           CustomDropdown(
                             label: 'Doctor',
-                            items: controller.doctors
-                                .map((doctor) => doctor.degree)
+                            items: controller.doctors.map((doctor) {
+                             String doctorDegree = doctor.degree ?? 'Unknown';
+                             String doctorName = doctor.name ?? 'Unknown';
+                             String doctorSpecialize = doctor.specialize ?? 'Unknown';
+                              return  "$doctorDegree $doctorName - $doctorSpecialize";})
                                 .toList(),
-                            onSelected: (String doctorName) {
-                              final selectedDoctor =
-                                  controller.doctors.firstWhere(
-                                (doctor) => doctor.degree == doctorName,
-                                orElse: () => controller.doctors.first,
-                              );
-                              controller.setDoctor(selectedDoctor);
-                              // Get.back();
+                             onSelected: (String doctorName) {
+                          Doctor? selectedDoctor = controller.doctors.firstWhereOrNull((doctor) {
+                               String doctorDegree = doctor.degree ?? 'Unknown';
+                             String doctorName2 = doctor.name ?? 'Unknown';
+                             String doctorSpecialize = doctor.specialize ?? 'Unknown';
+                               return "$doctorDegree $doctorName2 - $doctorSpecialize" == doctorName;
+                          });
+                           if(selectedDoctor != null){
+                                  controller.setDoctor(selectedDoctor);
+                           }
 
-                              // Navigator.pop(context); // Close dropdown after selection
-                            },
-                            selectedValue:
-                                controller.selectedDoctor.value?.degree ??
-                                    'Select Doctor',
+                             // final selectedDoctor =
+                             //      controller.doctors.firstWhere(
+                             //    (doctor) => "${doctor.degree} ${controller.selectedDoctorProfile.value?.name ?? 'N/A'}" == doctorName,
+                             //    orElse: () => controller.doctors.first,
+                             //  );
+                             //  controller.setDoctor(selectedDoctor);
+                           },
+                           selectedValue:
+                           controller.selectedDoctor.value != null ? "${controller.selectedDoctor.value?.degree ?? 'Unknown'} ${controller.selectedDoctor.value?.name ?? 'Unknown'} - ${controller.selectedDoctor.value?.specialize ?? 'Unknown'}"
+                                 :'Select Doctor',
                             isEnabled: controller.selectedPoly.value != null &&
-                                !controller.isFormReadOnly
-                                    .value, // Disable if form is read-only
+                                !controller.isFormReadOnly.value,
                             isReadOnly: controller.isFormReadOnly.value,
                           ),
                       ],
@@ -168,42 +177,48 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                         ],
                       ),
                     )),
-              Obx(() => controller.isScheduleDateAvailable.value
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Select Date',
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w500)),
-                        const SizedBox(height: 8),
-                        _buildDateField(),
-                        const SizedBox(height: 24),
-                      ],
-                    )
-                  : Container(
-                      margin: EdgeInsets.only(bottom: 6),
-
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.red[50],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.red[200]!),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.warning_amber_rounded,
-                              color: Colors.red[700], size: 20),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Tidak ada jadwal yang tersedia untuk dokter yang anda pilih. Silakan pilih dokter lain atau hubungi klinik.',
-                              style: TextStyle(
-                                  color: Colors.red[700], fontSize: 13),
-                            ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Select Date',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 8),
+                  Obx(() => _buildDateField(
+                      isEnabled: controller.selectedDoctor.value != null &&
+                          controller.isScheduleDateAvailable.value)),
+                  const SizedBox(height: 24),
+                  Obx(() => (controller.selectedClinic.value != null &&
+                          controller.selectedPoly.value != null &&
+                          controller.selectedDoctor.value != null &&
+                          controller.scheduleDates
+                              .isEmpty) // Cek jika clinic, poly, dokter dipilih dan tidak ada tanggal yang tersedia
+                      ? Container(
+                          margin: EdgeInsets.only(bottom: 6),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.red[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.red[200]!),
                           ),
-                        ],
-                      ),
-                    )),
+                          child: Row(
+                            children: [
+                              Icon(Icons.warning_amber_rounded,
+                                  color: Colors.red[700], size: 20),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Tidak ada jadwal yang tersedia untuk dokter yang anda pilih. Silakan pilih dokter lain atau hubungi klinik.',
+                                  style: TextStyle(
+                                      color: Colors.red[700], fontSize: 13),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : const SizedBox()),
+                ],
+              ),
               Obx(() => controller.isScheduleTimeAvailable.value
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,7 +252,6 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                     )
                   : Container(
                       margin: EdgeInsets.only(bottom: 6),
-
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.red[50],
@@ -268,19 +282,38 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                     onPressed: controller.isFormValid1() &&
                             !controller.isFormReadOnly.value
                         ? () async {
-                            String formattedDate = DateFormat('dd/MM/yyyy')
-                                .format(controller.selectedDate.value!);
+                            try {
+                              if (controller.selectedDate.value == null) {
+                                Get.snackbar(
+                                  'Warning',
+                                  'Please select a valid date',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                );
+                                return;
+                              }
 
-                            await controller.sendNotificationToDoctor(
-                                doctorId: controller.selectedDoctor.value!.id,
-                                date: formattedDate,
-                                time: controller
-                                    .selectedScheduleTime.value!.scheduleTime,
-                                clinic: controller.selectedClinic.value!.name,
-                                poly: controller.selectedPoly.value!.name,
-                                doctorName:
-                                    controller.selectedDoctor.value!.degree);
-                            controller.onNextPressed();
+                              String formattedDate = DateFormat('dd/MM/yyyy')
+                                  .format(controller.selectedDate.value!);
+
+                              // await controller.sendNotificationToDoctor(
+                              //     doctorId: controller.selectedDoctor.value!.id,
+                              //     date: formattedDate,
+                              //     time: controller
+                              //         .selectedScheduleTime.value!.scheduleTime,
+                              //     clinic: controller.selectedClinic.value!.name,
+                              //     poly: controller.selectedPoly.value!.name,
+                              //     doctorName:
+                              //         controller.selectedDoctor.value!.degree);
+                              controller.onNextPressed();
+                            } catch (e) {
+                              Get.snackbar(
+                                'Error',
+                                'Failed to proceed: ${e.toString()}',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.red[100],
+                                colorText: Colors.red[800],
+                              );
+                            }
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
@@ -306,11 +339,8 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
     );
   }
 
-  Widget _buildDateField() {
+  Widget _buildDateField({required bool isEnabled}) {
     return Obx(() {
-      bool isEnabled = controller.selectedDoctor.value != null &&
-          !controller.isFormReadOnly.value;
-
       if (controller.isLoadingScheduleDates.value) {
         return _buildLoadingIndicator();
       }
@@ -319,78 +349,85 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
           .map((scheduleDate) => scheduleDate.scheduleDate)
           .toList();
 
-      // Check if there are no available dates
-      // if (availableDates.isEmpty) {
-      //   return Container(
-      //     padding: const EdgeInsets.all(12),
-      //     decoration: BoxDecoration(
-      //       color: Colors.red[50],
-      //       borderRadius: BorderRadius.circular(8),
-      //       border: Border.all(color: Colors.red[200]!),
-      //     ),
-      //     child: Row(
-      //       children: [
-      //         Icon(Icons.warning_amber_rounded, color: Colors.red[700], size: 20),
-      //         const SizedBox(width: 8),
-      //         Expanded(
-      //           child: Text(
-      //             'Tidak ada jadwal yang tersedia untuk dokter ini. Silakan pilih dokter lain atau hubungi klinik.',
-      //             style: TextStyle(color: Colors.red[700], fontSize: 13),
-      //           ),
-      //         ),
-      //       ],
-      //     ),
-      //   );
-      // }
-
-      // Find the first available date that's not before today
+      // Find the first available date that's not before today with null safety
       DateTime now = DateTime.now();
       DateTime initialDate = now;
+      bool hasValidDate = false;
 
       // Find the first available date that's today or after
       for (DateTime date in availableDates) {
         if (!date.isBefore(DateTime(now.year, now.month, now.day))) {
           initialDate = date;
+          hasValidDate = true;
           break;
         }
       }
 
-      return InkWell(
-        onTap: isEnabled
-            ? () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: Get.context!,
-                  initialDate: initialDate,
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime(DateTime.now().year + 1),
-                  selectableDayPredicate: (DateTime val) {
-                    return availableDates.any((date) =>
-                        date.year == val.year &&
-                        date.month == val.month &&
-                        date.day == val.day);
-                  },
-                  builder: (BuildContext context, Widget? child) {
-                    return Theme(
-                      data: ThemeData.light().copyWith(
-                        colorScheme: ColorScheme.fromSwatch(
-                          primarySwatch: Colors.green,
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
-                );
+      // If no valid dates found, use today's date as fallback
+      if (!hasValidDate && availableDates.isNotEmpty) {
+        initialDate = availableDates.first;
+      }
 
-                if (pickedDate != null) {
-                  controller.setSelectedDate(pickedDate);
+      return InkWell(
+        onTap: isEnabled && availableDates.isNotEmpty
+            ? () async {
+                try {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: Get.context!,
+                    initialDate: initialDate,
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(DateTime.now().year + 1),
+                    selectableDayPredicate: (DateTime val) {
+                      return availableDates.any((date) =>
+                          date.year == val.year &&
+                          date.month == val.month &&
+                          date.day == val.day);
+                    },
+                    builder: (BuildContext context, Widget? child) {
+                      return Theme(
+                        data: ThemeData.light().copyWith(
+                          colorScheme: ColorScheme.fromSwatch(
+                            primarySwatch: Colors.green,
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+
+                  if (pickedDate != null) {
+                    controller.setSelectedDate(pickedDate);
+                    // Check if time slots are available after date selection
+                    if (controller.scheduleTimes.isEmpty) {
+                      Get.snackbar(
+                        'Information',
+                        'No time slots available for selected date',
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    }
+                  }
+                } catch (e) {
+                  // Handle any exceptions that might occur
+                  Get.snackbar(
+                    'Error',
+                    'Failed to open date picker: ${e.toString()}',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.red[100],
+                    colorText: Colors.red[800],
+                  );
                 }
               }
             : null,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           decoration: BoxDecoration(
-            color: const Color(0xffF7FBF2),
-            border: Border.all(color: const Color(0xff727970)),
+            color: isEnabled && availableDates.isNotEmpty
+                ? const Color(0xffF7FBF2)
+                : Colors.grey[200],
+            border: Border.all(
+                color: isEnabled && availableDates.isNotEmpty
+                    ? const Color(0xff727970)
+                    : Colors.grey[400]!),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -400,9 +437,11 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                 controller.selectedDate.value != null
                     ? DateFormat('dd/MM/yyyy')
                         .format(controller.selectedDate.value!)
-                    : 'Select Date',
+                    : availableDates.isEmpty
+                        ? 'No dates available'
+                        : 'Select Date',
                 style: TextStyle(
-                  color: isEnabled
+                  color: isEnabled && availableDates.isNotEmpty
                       ? (controller.selectedDate.value != null
                           ? Colors.black
                           : const Color(0xff727970))
@@ -410,7 +449,7 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                 ),
               ),
               Icon(Icons.calendar_today,
-                  color: isEnabled
+                  color: isEnabled && availableDates.isNotEmpty
                       ? const Color(0xff727970)
                       : Colors.grey.shade400),
             ],
@@ -491,7 +530,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
               widget.selectedValue,
               style: TextStyle(
                 color: (widget.isEnabled && !widget.isReadOnly)
-                    ? const Color(0xff727970)
+                    ? (widget.selectedValue.startsWith('Select')
+                        ? const Color(0xff727970)
+                        : Colors.black)
                     : Colors.grey,
               ),
             ),
@@ -499,6 +540,11 @@ class _CustomDropdownState extends State<CustomDropdown> {
             initiallyExpanded: _isExpanded,
             onExpansionChanged: (expanded) {
               if (expanded && widget.items.isEmpty) {
+                Get.snackbar(
+                  'Information',
+                  'No items available to select',
+                  snackPosition: SnackPosition.BOTTOM,
+                );
                 return;
               }
               setState(() {

@@ -36,6 +36,8 @@ import '../modules/(home)/(appoinment)/symptomAppointment/bindings/symptom_appoi
 import '../modules/(home)/(appoinment)/symptomAppointment/views/symptom_appointment_view.dart';
 import '../modules/(home)/account_settings/bindings/account_settings_binding.dart';
 import '../modules/(home)/account_settings/views/account_settings_view.dart';
+import '../modules/(home)/help_center/bindings/help_center_binding.dart';
+import '../modules/(home)/help_center/views/help_center_view.dart';
 import '../modules/(home)/home/bindings/home_binding.dart';
 import '../modules/(home)/home/views/home_view.dart';
 import '../modules/(home)/onboarding_page/bindings/onboarding_page_binding.dart';
@@ -46,10 +48,10 @@ import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
 import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
-import '../modules/(home)/help_center/bindings/help_center_binding.dart';
-import '../modules/(home)/help_center/views/help_center_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
+import '../modules/redeemMedicine/bindings/redeem_medicine_binding.dart';
+import '../modules/redeemMedicine/views/redeem_medicine_view.dart';
 
 part 'app_routes.dart';
 
@@ -183,8 +185,13 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.HELP_CENTER,
-      page: () =>  HelpCenterView(),
+      page: () => HelpCenterView(),
       binding: HelpCenterBinding(),
+    ),
+    GetPage(
+      name: _Paths.REDEEM_MEDICINE,
+      page: () => const RedeemMedicineView(),
+      binding: RedeemMedicineBinding(),
     ),
   ];
 }
