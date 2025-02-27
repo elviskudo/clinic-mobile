@@ -21,9 +21,6 @@ class AppointmentView extends GetView<AppointmentController> {
     Get.put(BarcodeAppointmentController());
     final barcodeController = Get.find<BarcodeAppointmentController>();
 
-    // PASTIKAN barcodeController.currentAppointment.value sudah terisi sebelum memanggil ini
-    // Salah satu cara: Pindahkan inisialisasi symptomController KE DALAM Obx() di BarcodeAppointmentView
-    // final symptomController = Get.put(SymptomAppointmentController()); HAPUS BARIS INI
     final captureController = Get.put(CaptureAppointmentController());
     // final summarycontroller = Get.put(SummaryAppointmentController());
 

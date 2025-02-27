@@ -28,7 +28,7 @@ class DoctorView extends GetView<DoctorController> {
                 itemBuilder: (context, index) {
                   final doctor = controller.doctors[index];
                   return ListTile(
-                    title: Text("${doctor.degree} - ${doctor.name}"), // Menampilkan degree dan name
+                    title: Text("${doctor.degree} ${doctor.name},${doctor.specialize}"), // Menampilkan degree dan name
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

@@ -12,8 +12,15 @@ class CaptureAppointmentController extends GetxController {
   final imageUrl = ''.obs;
   final fileType = ''.obs;
   final isLoading = false.obs;
+  // Tambahkan variabel Rx untuk File gambar yang dipilih
+  final selectedImage = Rx<File?>(null);
 
   final supabase = Supabase.instance.client;
+
+  // Function untuk update gambar
+  void updateSelectedImage(File? image) {
+    selectedImage.value = image;
+  }
 
   // Function to upload file to Cloudinary
   Future<void> uploadFileToCloudinary(XFile file, String appointmentId) async {
@@ -77,6 +84,7 @@ class CaptureAppointmentController extends GetxController {
   void onClose() {
     imageUrl.value = '';
     fileType.value = '';
+    selectedImage.value = null; // Clear gambar saat controller ditutup
     super.onClose();
   }
 }
