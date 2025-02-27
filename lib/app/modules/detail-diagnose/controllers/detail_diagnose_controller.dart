@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:translator/translator.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DetailDiagnoseController extends GetxController {
   final TextEditingController doctorAnalystController = TextEditingController();
@@ -19,14 +20,14 @@ class DetailDiagnoseController extends GetxController {
 
   final RxList<Symptom> symptomsList = <Symptom>[].obs;
   final RxBool isLoadingSymptoms = RxBool(false);
-  final String openRouterApiKey =
-      "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";
+  final String openRouterApiKey = dotenv.env['AI_API_KEY']!;
 
   final _supabase = Supabase.instance.client;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
+    await dotenv.load(fileName: ".env");
     if (Get.arguments != null && Get.arguments is Appointment) {
       appointment.value = Get.arguments as Appointment;
       fetchCapturedImage();
