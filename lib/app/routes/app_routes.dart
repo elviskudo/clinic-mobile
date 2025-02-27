@@ -33,6 +33,7 @@ abstract class Routes {
   static const SUMMARY_APPOINTMENT = _Paths.SUMMARY_APPOINTMENT;
   static const HELP_CENTER = _Paths.HELP_CENTER;
   static const DETAIL_DIAGNOSE = _Paths.DETAIL_DIAGNOSE;
+  static const REDEEM_MEDICINE = _Paths.REDEEM_MEDICINE;
 }
 
 abstract class _Paths {
@@ -67,4 +68,5 @@ abstract class _Paths {
   static const SUMMARY_APPOINTMENT = '/summary-appointment';
   static const HELP_CENTER = '/help-center';
   static const DETAIL_DIAGNOSE = '/detail-diagnose';
+  static const REDEEM_MEDICINE = '/redeem-medicine';
 }

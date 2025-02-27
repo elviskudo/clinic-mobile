@@ -28,11 +28,13 @@ class DoctorView extends GetView<DoctorController> {
                 itemBuilder: (context, index) {
                   final doctor = controller.doctors[index];
                   return ListTile(
-                    title: Text(doctor.degree),
+                    title: Text("${doctor.degree} - ${doctor.name}"), // Menampilkan degree dan name
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Text(doctor.summary ?? ''), // Tampilkan summary
                         Text(doctor.description),
+                        Text('Spesialisasi: ${doctor.specialize}'), // Tampilkan spesialisasi
                         Text(
                             'Status: ${doctor.status == 1 ? 'Active' : 'Inactive'}'),
                       ],
@@ -62,9 +64,12 @@ class DoctorView extends GetView<DoctorController> {
 
   void _showDoctorDialog(BuildContext context, {Doctor? doctor}) {
     final nameController = TextEditingController(text: doctor?.degree);
+      final namePController = TextEditingController(text: doctor?.name);
     final descriptionController =
         TextEditingController(text: doctor?.description);
     final statusController = RxInt(doctor?.status ?? 1);
+    final specializeController = TextEditingController(text: doctor?.specialize ?? ''); // Tambahkan controller untuk spesialisasi
+    //  final summaryController = TextEditingController(text: doctor?.summary ?? '');
 
     // Set initial values for clinic and poly if editing
     if (doctor != null) {
@@ -79,13 +84,19 @@ class DoctorView extends GetView<DoctorController> {
 
     void validateForm() {
       isFormValid.value = nameController.text.trim().isNotEmpty &&
+        namePController.text.trim().isNotEmpty &&
           descriptionController.text.trim().isNotEmpty &&
+          specializeController.text.trim().isNotEmpty && // Validasi spesialisasi
+          //  summaryController.text.trim().isNotEmpty && // Validasi spesialisasi
           controller.selectedClinicId.value.isNotEmpty &&
           controller.selectedPolyId.value.isNotEmpty;
     }
 
     nameController.addListener(validateForm);
+       namePController.addListener(validateForm);
     descriptionController.addListener(validateForm);
+    specializeController.addListener(validateForm); // Tambahkan listener untuk spesialisasi
+    // summaryController.addListener(validateForm);
 
     Get.dialog(
       AlertDialog(
@@ -96,13 +107,25 @@ class DoctorView extends GetView<DoctorController> {
             children: [
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(labelText: 'Doctor Name'),
+                decoration: InputDecoration(labelText: 'Doctor degree'),
+              ),
+                 TextField(
+                controller: namePController,
+                decoration: InputDecoration(labelText: 'Doctor name'),
               ),
               TextField(
                 controller: descriptionController,
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 2,
               ),
+                TextField( // Tambahkan TextField untuk spesialisasi
+                controller: specializeController,
+                decoration: InputDecoration(labelText: 'Spesialisasi'),
+              ),
+              //  TextField(
+              //   controller: summaryController,
+              //   decoration: InputDecoration(labelText: 'Doctor Summary'),
+              // ),
               SizedBox(height: 10),
               Obx(
                 () => DropdownButtonFormField<String>(
@@ -122,8 +145,7 @@ class DoctorView extends GetView<DoctorController> {
                       .toList(),
                 ),
               ),
-              SizedBox(height: 10),
-              Obx(
+                Obx(
                 () => DropdownButtonFormField<String>(
                   value: controller.selectedUserId.value.isEmpty
                       ? null
@@ -141,6 +163,7 @@ class DoctorView extends GetView<DoctorController> {
                       .toList(),
                 ),
               ),
+              SizedBox(height: 10),
               Obx(
                 () => DropdownButtonFormField<String>(
                   value: controller.selectedPolyId.value.isEmpty
@@ -188,6 +211,9 @@ class DoctorView extends GetView<DoctorController> {
                             degree: nameController.text.trim(),
                             
                             description: descriptionController.text.trim(),
+                               name: namePController.text.trim(),
+                              // summary: summaryController.text.trim(),
+                            specialize: specializeController.text.trim(), // Dapatkan nilai spesialisasi
                             status: statusController.value,
                             clinicId: controller.selectedClinicId.value,
                             polyId: controller.selectedPolyId.value,
@@ -196,10 +222,13 @@ class DoctorView extends GetView<DoctorController> {
                           );
                           Get.find<DoctorController>().addDoctor(newDoctor);
                         } else {
-                          doctor.id = controller.selectedUserId.value;
+                           doctor.id = controller.selectedUserId.value;
                           doctor.degree = nameController.text.trim();
                           doctor.description =
                               descriptionController.text.trim();
+                             doctor.name = namePController.text.trim();
+                              // doctor.summary = summaryController.text.trim();
+                          doctor.specialize = specializeController.text.trim(); // Update spesialisasi
                           doctor.status = statusController.value;
                           doctor.clinicId = controller.selectedClinicId.value;
                           doctor.polyId = controller.selectedPolyId.value;

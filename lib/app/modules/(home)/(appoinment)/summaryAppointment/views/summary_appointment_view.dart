@@ -14,7 +14,8 @@ class SummaryAppointmentView extends StatefulWidget {
 }
 
 class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
-  final SummaryAppointmentController controller = Get.put(SummaryAppointmentController());
+  final SummaryAppointmentController controller =
+      Get.put(SummaryAppointmentController());
   String? appointmentId;
 
   @override
@@ -22,9 +23,11 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     super.initState();
     appointmentId = Get.arguments as String?; // Dapatkan ID dari arguments
     if (appointmentId != null) {
-      controller.fetchAppointmentAndDoctor(appointmentId!); // Panggil fetch dengan ID yang benar
+      controller.fetchAppointmentAndDoctor(
+          appointmentId!); // Panggil fetch dengan ID yang benar
     } else {
-      controller.errorMessage.value = 'Appointment ID tidak tersedia.'; // Atur pesan error
+      controller.errorMessage.value =
+          'Appointment ID tidak tersedia.'; // Atur pesan error
     }
   }
 
@@ -37,7 +40,8 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           } else if (controller.errorMessage.value.isNotEmpty) {
-            return Center(child: Text('Error: ${controller.errorMessage.value}'));
+            return Center(
+                child: Text('Error: ${controller.errorMessage.value}'));
           } else if (controller.appointment.value == null ||
               controller.doctor.value == null) {
             return const Center(child: Text('Data tidak ditemukan.'));
@@ -63,7 +67,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                     const SizedBox(height: 24),
                     _buildSymptomDescriptions(),
                     const SizedBox(height: 40),
-                    _buildWaitingForResultsButton(),
+                    _buildResultButton(context),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -94,172 +98,550 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
   }
 
   Widget _buildDoctorInfo() {
-    return Center(
-      child: Column(
+    try {
+      // Pastikan data dokter dan profil tersedia
+      if (controller.doctor.value == null) {
+        return const Center(
+          child: Text('Data dokter tidak tersedia.'),
+        );
+      }
+
+      // Ambil data yang dibutuhkan
+      final doctorName = controller.doctor.value!.name ?? 'Unknown';
+      final doctorDegree = controller.doctor.value!.degree ?? 'Unknown';
+      final doctorSpecialize = controller.doctor.value!.specialize ?? 'Unknown';
+
+      return Center(
+          child: Column(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
-            child: Image.network(
-              "https://plus.unsplash.com/premium_photo-1736165168647-e216dcd23720?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Ubah URL gambar di sini
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
+            child: Obx(
+              () => controller.doctorProfilePictureUrl.value.isNotEmpty
+                  ? Image.network(
+                      controller.doctorProfilePictureUrl.value,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                          Icons.error), // Handle error jika gambar gagal dimuat
+                    )
+                  : Image.network(
+                      "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
           const SizedBox(height: 12),
           Text(
-            "Doctor ${controller.doctor.value?.degree}" ?? 'Nama Dokter',
+            "$doctorDegree $doctorName-$doctorSpecialize",
             style: GoogleFonts.inter(
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
           ),
+          
           Text(
-              controller.poly.value!.name.toString() ?? "Unknown Poly",
-             // Ubah ke data yang sesuai jika ada
+            controller.poly.value?.name.toString() ?? 'Unknown Poly',
             style: GoogleFonts.inter(
               fontSize: 14,
               color: const Color(0xFF6B7280),
             ),
           ),
         ],
-      ),
+      ));
+    } catch (e) {
+      return Center(child: Text('Error in _buildDoctorInfo: ${e.toString()}'));
+    }
+  }
+
+  Widget _buildAppointmentDetails() {
+    try {
+      final formattedDate = controller.scheduleDate.value != null
+          ? DateFormat('dd/MM/yyyy')
+              .format(controller.scheduleDate.value!.scheduleDate)
+          : 'Tanggal Tidak Tersedia';
+      final time =
+          controller.scheduleTime.value?.scheduleTime ?? 'Waktu Tidak Tersedia';
+
+      return Center(
+        child: Text(
+          '$time | $formattedDate',
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      );
+    } catch (e) {
+      return Center(
+          child: Text('Error in _buildAppointmentDetails: ${e.toString()}'));
+    }
+  }
+
+  // Improved Alert Dialog for Appointment Details
+  void _showAppointmentDetailsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 5,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with icon
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD4E8D1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.article_rounded,
+                        color: Color(0xFF4CAF50),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "Appointment Details",
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 20),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+                const Divider(height: 24),
+
+                // QR Code section
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF7FBF2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.qr_code, color: Colors.black54),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Kode QR',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              '${controller.appointment.value?.qrCode ?? "Tidak Ada"}',
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Patient name section
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF7FBF2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.person, color: Colors.black54),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Nama Pasien',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              controller.userName.value,
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Close button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF4CAF50),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      "Close",
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
- Widget _buildAppointmentDetails() {
-  final formattedDate = controller.scheduleDate.value != null
-      ? DateFormat('dd/MM/yyyy').format(controller.scheduleDate.value!.scheduleDate)
-      : 'Tanggal Tidak Tersedia';
-  final time = controller.scheduleTime.value?.scheduleTime ?? 'Waktu Tidak Tersedia';
+// Improved Alert Dialog for Captured Image
+  void _showImageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 5,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with icon
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD4E8D1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.image,
+                        color: Color(0xFF4CAF50),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        "Captured Image",
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 20),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+                const Divider(height: 24),
 
-  return Center(
-    child: Text(
-      '$time | $formattedDate',
-      style: GoogleFonts.inter(
-        fontSize: 14,
-        color: Colors.black,
-        fontWeight: FontWeight.w400,
-      ),
-    ),
-  );
-}
+                // Image container with rounded corners
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF7FBF2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade200),
+                    ),
+                    child: Obx(() {
+                      if (controller.isLoading.value) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(40.0),
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF4CAF50)),
+                            ),
+                          ),
+                        );
+                      }
+                      if (controller.imageUrl.value.isNotEmpty) {
+                        return Image.network(
+                          controller.imageUrl.value,
+                          fit: BoxFit.contain,
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace? stackTrace) {
+                            return Container(
+                              padding: const EdgeInsets.all(40),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.broken_image,
+                                    size: 48,
+                                    color: Colors.grey,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Failed to load image',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            }
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(40.0),
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  valueColor:
+                                      const AlwaysStoppedAnimation<Color>(
+                                          Color(0xFF4CAF50)),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return Container(
+                          padding: const EdgeInsets.all(40),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.no_photography,
+                                size: 48,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No image captured',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Button row
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFF4CAF50)),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          "Close",
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF4CAF50),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Add download functionality here if needed
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Image saved to gallery'),
+                              backgroundColor: Color(0xFF4CAF50),
+                            ),
+                          );
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4CAF50),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          "Save",
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+// Update the onTap handlers in your _buildPatientCode method to use these new dialogs
   Widget _buildPatientCode(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 350; // Ukuran layar kecil
-    final maxTextWidth = screenWidth * 0.4; // Lebar maksimum teks 40% dari lebar layar
-    final fontSize = isSmallScreen ? 13.0 : 15.0; // Ukuran font responsif
-    final paddingVertical = isSmallScreen ? 8.0 : 16.0; // Padding Vertical
-    final paddingHorizontal = isSmallScreen ? 12.0 : 26.0; // Padding Horizontal
+    final isSmallScreen = screenWidth < 350;
+    final maxTextWidth = screenWidth * 0.4;
+    final fontSize = isSmallScreen ? 13.0 : 15.0;
+    final paddingVertical = isSmallScreen ? 8.0 : 16.0;
+    final paddingHorizontal = isSmallScreen ? 12.0 : 26.0;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-      InkWell(
-        onTap: () {
-          // Tampilkan informasi ketika Container ditekan
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text("Appointment Details"),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Kode QR: ${controller.appointment.value?.qrCode ?? "Tidak Ada"}'),
-                    Text('Nama: ${controller.userName.value}'),
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                    child: const Text("Close"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+        InkWell(
+          onTap: () => _showAppointmentDetailsDialog(context),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxTextWidth),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                  horizontal: paddingHorizontal, vertical: paddingVertical),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.grey.shade300, width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
                   ),
                 ],
-              );
-            },
-          );
-        },
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxTextWidth),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: paddingHorizontal, vertical: paddingVertical),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.grey.shade300, width: 1),
-            ),
-            child: Text(
-              '${controller.appointment.value?.qrCode}-${controller.userName.value}',
-              style: GoogleFonts.inter(
-                fontSize: fontSize, // Ukuran font responsif
-                color: Colors.black87,
-                fontWeight: FontWeight.w400,
               ),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+              child: Text(
+                '${controller.appointment.value?.qrCode ?? "Tidak Ada"}-${controller.userName.value}',
+                style: GoogleFonts.inter(
+                  fontSize: fontSize,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             ),
           ),
         ),
-      ),
-       const SizedBox(width: 12),
-       InkWell(
-           onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text("Captured Image"),
-                  content: SingleChildScrollView(
-                    child: Obx(() {
-                      if (controller.isLoading.value) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                       if (controller.imageUrl.value.isNotEmpty) {
-                        return Image.network(
-                          controller.imageUrl.value,
-                          fit: BoxFit.contain,
-                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                            // Tampilkan pesan error jika gambar gagal dimuat
-                            return const Text('Failed to load image');
-                          },
-                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                         if (loadingProgress == null) {
-                             return child;
-                             }
-                        return Center(
-                           child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                             ? loadingProgress.cumulativeBytesLoaded /
-                                 loadingProgress.expectedTotalBytes!
-                              : null,
-                           ),
-                         );
-                      }
-                        );
-                      } else {
-                        return const Text('No image captured.');
-                      }
-                    }),
-                  ),
-                  actions: [
-                    TextButton(
-                      child: const Text("Close"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          },
+        const SizedBox(width: 12),
+        InkWell(
+          onTap: () => _showImageDialog(context),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: paddingHorizontal, vertical: paddingVertical),
+            padding: EdgeInsets.symmetric(
+                horizontal: paddingHorizontal, vertical: paddingVertical),
             decoration: BoxDecoration(
               color: const Color(0xFFD4E8D1),
               borderRadius: BorderRadius.circular(15),
@@ -267,6 +649,13 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                 color: Colors.green.shade300,
                 width: 1,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.green.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -274,7 +663,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                 Text(
                   'Image Captured',
                   style: GoogleFonts.inter(
-                    fontSize: fontSize - 1, // Ukuran font responsif
+                    fontSize: fontSize - 1,
                     color: Colors.green[700],
                     fontWeight: FontWeight.w500,
                   ),
@@ -283,12 +672,12 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                 Icon(
                   Icons.check,
                   color: Colors.green[700],
-                  size: fontSize + 1, // Ukuran icon responsif
+                  size: fontSize + 1,
                 ),
               ],
             ),
           ),
-       ),
+        ),
       ],
     );
   }
@@ -316,40 +705,42 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     );
   }
 
- Widget _buildSymptoms() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        'Symptoms',
-        style: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+Widget _buildSymptoms() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Symptoms',
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-      ),
-      const SizedBox(height: 8),
-      if (controller.symptoms.isNotEmpty)
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: controller.symptoms.map((symptom) => Text(
-            "${symptom.enName}, ", // Ganti enName dengan kolom yang ingin ditampilkan
+        const SizedBox(height: 8),
+        if (controller.symptoms.isNotEmpty)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: controller.symptoms
+                .map((symptom) => Text(
+                      "${symptom.enName}, ", // Ganti enName dengan kolom yang ingin ditampilkan
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: Colors.black87,
+                      ),
+                    ))
+                .toList(),
+          )
+        else
+          Text(
+            'Tidak ada gejala',
             style: GoogleFonts.inter(
               fontSize: 14,
               color: Colors.black87,
             ),
-          )).toList(),
-        )
-      else
-        Text(
-          'Tidak ada gejala',
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: Colors.black87,
           ),
-        ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   Widget _buildSymptomDescriptions() {
     return Column(
@@ -364,7 +755,8 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
         ),
         const SizedBox(height: 8),
         Text(
-          controller.appointment.value?.symptomDescription ?? 'Tidak ada deskripsi', // Ubah ke data dari appointment
+          controller.appointment.value?.symptomDescription ??
+              'Tidak ada deskripsi', // Ubah ke data dari appointment
           style: GoogleFonts.inter(
             fontSize: 14,
             color: Colors.black87,
@@ -372,6 +764,35 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
         ),
       ],
     );
+  }
+
+  Widget _buildResultButton(BuildContext context) {
+    return Obx(() {
+      Color buttonColor = controller.isAppointmentCompleted.value
+          ? Color(0xFF35693E) // Ubah ke hijau jika isAppointmentCompleted true
+          : Colors.grey.shade200; // Tetap abu-abu jika tidak
+
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: buttonColor,
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Center(
+          child: Text(
+            controller.buttonText.value,
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              color:
+                  buttonColor == Color(0xFF35693E) ? Colors.white : Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildWaitingForResultsButton() {
@@ -385,7 +806,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
       ),
       child: Center(
         child: Text(
-          'Waiting for the result ...',
+          controller.buttonText.value, // Gunakan buttonText.value
           style: GoogleFonts.inter(
             fontSize: 16,
             color: Colors.grey[600],

@@ -1,3 +1,5 @@
+import 'package:clinic_ai/app/modules/detail-diagnose/bindings/detail_diagnose_binding.dart';
+import 'package:clinic_ai/app/modules/detail-diagnose/views/detail_diagnose_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/(admin)/admin_panel/bindings/admin_panel_binding.dart';
@@ -48,10 +50,10 @@ import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
 import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
-import '../modules/(doctor)/detail-diagnose/bindings/detail_diagnose_binding.dart';
-import '../modules/(doctor)/detail-diagnose/views/detail_diagnose_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
+import '../modules/redeemMedicine/bindings/redeem_medicine_binding.dart';
+import '../modules/redeemMedicine/views/redeem_medicine_view.dart';
 
 part 'app_routes.dart';
 
@@ -189,7 +191,12 @@ class AppPages {
       binding: HelpCenterBinding(),
     ),
     GetPage(
-      name: _Paths.DETAIL_DIAGNOSE,
+      name: _Paths.REDEEM_MEDICINE,
+      page: () => const RedeemMedicineView(),
+      binding: RedeemMedicineBinding(),
+    ),
+    GetPage(
+    name: _Paths.DETAIL_DIAGNOSE,
       page: () => const DetailDiagnoseView(),
       binding: DetailDiagnoseBinding(),
     ),

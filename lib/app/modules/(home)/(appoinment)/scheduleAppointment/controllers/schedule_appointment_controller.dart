@@ -136,7 +136,10 @@ class ScheduleAppointmentController extends GetxController {
 
     if (appointmentController.hasCreatedAppointment.value) {
       // Just navigate to QR code tab
-      tabController.animateTo(1);
+      // tabController.animateTo(1);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        tabController.animateTo(1);
+      });
       return;
     }
 
@@ -316,7 +319,8 @@ class ScheduleAppointmentController extends GetxController {
 
       final response = await supabase
           .from('doctors')
-          .select()
+          .select(
+              'id, degree, specialize, name') // Hanya ambil field yang dibutuhkan
           .eq('clinic_id', clinicId)
           .eq('poly_id', polyId);
 
@@ -330,18 +334,27 @@ class ScheduleAppointmentController extends GetxController {
               // Add null checks for required fields
               if (json['id'] == null ||
                   json['degree'] == null ||
-                  json['description'] == null ||
-                  json['clinic_id'] == null ||
-                  json['poly_id'] == null ||
-                  json['status'] == null ||
-                  json['created_at'] == null ||
-                  json['updated_at'] == null) {
+                  json['specialize'] == null ||
+                  json['name'] == null) {
                 print('Invalid doctor data: $json');
                 return null;
               }
 
               try {
-                return Doctor.fromJson(json);
+                return Doctor(
+                  id: json['id'],
+                  degree: json['degree'],
+                  specialize: json['specialize'],
+                  description:
+                      "", // Provide default values for other properties if needed
+                  clinicId: "",
+                  polyId: "",
+                  status: 1,
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                  name: json['name'], // Ambil nama langsung dari response
+                  // summary: "",
+                );
               } catch (e) {
                 print('Error parsing doctor: $e');
                 return null;
@@ -445,8 +458,13 @@ class ScheduleAppointmentController extends GetxController {
             .toList();
         scheduleTimes.assignAll(scheduleTimesList);
         isScheduleTimeAvailable.value = scheduleTimesList.isNotEmpty;
+
+        print("Apakah scheduleTimesList kosong? ${scheduleTimesList.isEmpty}");
+
+        // PERUBAHAN: Hapus snackbar di sini
       } else {
         isScheduleTimeAvailable.value = false;
+        // PERUBAHAN: Hapus snackbar di sini
       }
     } catch (e) {
       Get.snackbar(
@@ -457,15 +475,6 @@ class ScheduleAppointmentController extends GetxController {
       isScheduleTimeAvailable.value = false;
     } finally {
       isLoadingScheduleTimes.value = false;
-      if (!isScheduleTimeAvailable.value && selectedDate.value != null) {
-        Get.snackbar(
-          'Information',
-          'Tidak ada Schedule Time yang tersedia untuk tanggal ${DateFormat('dd/MM/yyyy').format(selectedDate.value!)}',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-        );
-      }
     }
   }
 
@@ -503,7 +512,7 @@ class ScheduleAppointmentController extends GetxController {
     }
   }
 
-  void setSelectedDate(DateTime? date) {
+  void setSelectedDate(DateTime? date) async {
     selectedDate.value = date;
 
     selectedScheduleTime.value = null; // Reset selectedScheduleTime
@@ -520,6 +529,20 @@ class ScheduleAppointmentController extends GetxController {
         selectedScheduleDateId.value = selectedScheduleDate.id;
         print(
             'selectedScheduleDateId.value sekarang: ${selectedScheduleDateId.value}');
+
+        await fetchScheduleTimes(
+            selectedScheduleDateId.value!); // Fetch times setelah ID diatur
+
+        if (scheduleTimes.isEmpty) {
+          // PERUBAHAN: Tampilkan snackbar hanya jika scheduleTimesList kosong
+          Get.snackbar(
+            'Information',
+            'Tidak ada Schedule Time yang tersedia untuk tanggal ${DateFormat('dd/MM/yyyy').format(selectedDate.value!)}',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+          );
+        }
       } else {
         selectedScheduleDateId.value = null;
         print('Tidak ada ScheduleDate yang cocok.');
