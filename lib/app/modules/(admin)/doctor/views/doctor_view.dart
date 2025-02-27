@@ -209,6 +209,7 @@ class DoctorView extends GetView<DoctorController> {
                           final newDoctor = Doctor(
                             id: controller.selectedUserId.value,
                             degree: nameController.text.trim(),
+                            
                             description: descriptionController.text.trim(),
                                name: namePController.text.trim(),
                               // summary: summaryController.text.trim(),

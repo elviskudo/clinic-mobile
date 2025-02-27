@@ -1,3 +1,5 @@
+import 'package:clinic_ai/app/modules/detail-diagnose/bindings/detail_diagnose_binding.dart';
+import 'package:clinic_ai/app/modules/detail-diagnose/views/detail_diagnose_view.dart';
 import 'package:get/get.dart';
 
 import '../modules/(admin)/admin_panel/bindings/admin_panel_binding.dart';
@@ -192,6 +194,11 @@ class AppPages {
       name: _Paths.REDEEM_MEDICINE,
       page: () => const RedeemMedicineView(),
       binding: RedeemMedicineBinding(),
+    ),
+    GetPage(
+    name: _Paths.DETAIL_DIAGNOSE,
+      page: () => const DetailDiagnoseView(),
+      binding: DetailDiagnoseBinding(),
     ),
   ];
 }

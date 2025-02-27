@@ -1,8 +1,11 @@
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
+import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:clinic_ai/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:translator/translator.dart';
 
 class HomeController extends GetxController {
@@ -36,12 +39,17 @@ class HomeController extends GetxController {
     // 'login': 'Login'.obs,
   };
 
+  final supabase = Supabase.instance.client;
+  final hasCreatedAppointment = false.obs;
+  final Rxn<Appointment> existingAppointment = Rxn<Appointment>();
+
   // Instance SharedPreferences
 
   @override
   void onInit() async {
     super.onInit();
     // Inisialisasi SharedPreferences
+    checkExistingAppointment();
     final prefs = await SharedPreferences.getInstance();
     // Mengambil bahasa yang tersimpan, default ke 'id' jika belum ada
     currentLanguage.value = prefs.getString(LANGUAGE_KEY) ?? 'id';
@@ -64,6 +72,40 @@ class HomeController extends GetxController {
     await GoogleSignIn().signOut();
     isLoggedIn.value = false;
     Get.offAllNamed(Routes.LOGIN);
+  }
+
+  Future<void> checkExistingAppointment() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+
+      if (userId != null) {
+        final response = await supabase
+            .from('appointments')
+            .select()
+            .eq('user_id', userId)
+            .eq('status', 1)
+            .limit(1);
+
+        if (response != null && response.isNotEmpty) {
+          existingAppointment.value = Appointment.fromJson(response.first);
+          hasCreatedAppointment.value = true;
+
+          // Also update the barcode controller
+          if (Get.isRegistered<BarcodeAppointmentController>()) {
+            final barcodeController = Get.find<BarcodeAppointmentController>();
+            barcodeController.setAppointmentData(existingAppointment.value!);
+            barcodeController.isAccessible.value = true;
+          }
+        }
+      }
+    } catch (e) {
+      print('Error checking existing appointment: $e');
+    }
+  }
+
+  void setAppointmentCreated(bool value) {
+    hasCreatedAppointment.value = value;
   }
 
   Future<String> translateText(String text, String targetLanguage) async {

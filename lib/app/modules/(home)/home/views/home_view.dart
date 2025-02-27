@@ -3,6 +3,8 @@ import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -389,35 +391,89 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildAppointmentButton() {
-    return SizedBox(
-      width: 220,
-      child: ElevatedButton(
-        onPressed: () {
-          Get.toNamed(Routes.APPOINTMENT);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF35693E),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.calendar_today_rounded, color: Colors.white),
-            const SizedBox(width: 8),
-            Text(
-              'Add Appointment',
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
+    // Create a reactive variable to track appointment status
+    final Rx<bool> hasActiveAppointment = false.obs;
+    final Rx<bool> isLoading = true.obs;
+
+    // Check for active appointments when the widget builds
+    Future<void> checkActiveAppointment() async {
+      try {
+        isLoading.value = true;
+        final supabase = Supabase.instance.client;
+        final prefs = await SharedPreferences.getInstance();
+        final userId = prefs.getString('userId');
+
+        if (userId != null) {
+          final response = await supabase
+              .from('appointments')
+              .select()
+              .eq('user_id', userId)
+              .eq('status', 1)
+              .limit(1);
+
+          hasActiveAppointment.value = response != null && response.isNotEmpty;
+        }
+      } catch (e) {
+        print('Error checking appointment: $e');
+      } finally {
+        isLoading.value = false;
+      }
+    }
+
+    // Check on first build
+    checkActiveAppointment();
+
+    return Obx(() => SizedBox(
+          width: 220,
+          child: ElevatedButton(
+            onPressed: isLoading.value
+                ? null // Disable button while loading
+                : () {
+                    final appointmentController = Get.find<HomeController>();
+                    if (hasActiveAppointment.value) {
+                      // If there's an active appointment, set the controller state accordingly
+                      appointmentController.setAppointmentCreated(true);
+                    }
+                    Get.toNamed(Routes.APPOINTMENT);
+                  },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF35693E),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-          ],
-        ),
-      ),
-    );
+            child: isLoading.value
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                          hasActiveAppointment.value
+                              ? Icons.arrow_forward
+                              : Icons.calendar_today_rounded,
+                          color: Colors.white),
+                      const SizedBox(width: 8),
+                      Text(
+                        hasActiveAppointment.value
+                            ? 'Continue Appointment'
+                            : 'Add Appointment',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ));
   }
 }
 
