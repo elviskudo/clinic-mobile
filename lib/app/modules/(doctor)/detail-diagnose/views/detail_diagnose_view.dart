@@ -1,4 +1,5 @@
 import 'package:clinic_ai/color/color.dart';
+import 'package:clinic_ai/components/AIresponse.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/detail_diagnose_controller.dart';
@@ -10,28 +11,29 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: bgColor,
         title: const Text('New Appointment'),
         centerTitle: true,
       ),
       backgroundColor: bgColor,
       body: Obx(() {
-        // Ambil data appointment dari controller
+        // Get appointment data from controller
         final appointment = controller.appointment.value;
 
-        // Jika appointment null, tampilkan indikator atau teks
+        // If appointment is null, show indicator or text
         if (appointment == null) {
           return const Center(
             child: Text('No appointment data'),
           );
         }
 
-        // Jika appointment tidak null, tampilkan detailnya
+        // If appointment is not null, show details
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Bagian "Patient"
+              // Patient section
               const Text(
                 'Patient',
                 style: TextStyle(
@@ -51,7 +53,7 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
               ),
               const SizedBox(height: 4),
               Text(
-                appointment.user_name ?? '-', // <-- data dinamis
+                appointment.user_name ?? '-',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -59,7 +61,7 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
               ),
               const SizedBox(height: 16),
 
-              // Patient Code (bisa juga menampilkan QR Code)
+              // Patient Code
               const Text(
                 'Patient Code',
                 style: TextStyle(
@@ -69,7 +71,7 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
               ),
               const SizedBox(height: 4),
               Text(
-                appointment.qrCode, // <-- data dinamis
+                appointment.qrCode,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -85,13 +87,33 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
                   color: Colors.grey,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                appointment.symptoms ?? '-', // <-- data dinamis
-                style: const TextStyle(
-                  fontSize: 16,
+              const SizedBox(height: 8),
+
+              // Display symptoms list
+              if (controller.isLoadingSymptoms.value)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              else if (controller.symptomsList.isEmpty)
+                Text(
+                  'No symptoms found. ',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontStyle: FontStyle.italic,
+                  ),
+                )
+              else
+                Text(
+                  controller.symptomsList.map((s) => s.enName).join(', '),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
+
               const SizedBox(height: 16),
 
               // Symptom Descriptions
@@ -104,14 +126,14 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
               ),
               const SizedBox(height: 4),
               Text(
-                appointment.symptomDescription ?? '-', // <-- data dinamis
+                appointment.symptomDescription ?? '-',
                 style: const TextStyle(
                   fontSize: 16,
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Image Captured (Contoh statis, ganti URL sesuai data yang diambil)
+              // Image Captured section
               const Text(
                 'Image Captured',
                 style: TextStyle(
@@ -120,16 +142,80 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
                 ),
               ),
               const SizedBox(height: 8),
-              // ClipRRect(
-              //   borderRadius: BorderRadius.circular(8),
-              //   child: Image.network(
-              //     // Ganti dengan URL gambar dari server, jika tersedia
-              //     'https://via.placeholder.com/400x200?text=Captured+Image',
-              //     fit: BoxFit.cover,
-              //     height: 180,
-              //     width: double.infinity,
-              //   ),
-              // ),
+
+              // Image display with validation
+              if (controller.isLoadingImage.value)
+                const Center(
+                  child: CircularProgressIndicator(),
+                )
+              else if (controller.hasImage.value)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    controller.capturedImageUrl.value,
+                    fit: BoxFit.cover,
+                    height: 180,
+                    width: double.infinity,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return SizedBox(
+                        height: 180,
+                        width: double.infinity,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return SizedBox(
+                        height: 180,
+                        width: double.infinity,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.error_outline, color: Colors.red),
+                              SizedBox(height: 8),
+                              Text(
+                                'Error loading image',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              else
+                Container(
+                  height: 180,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.image_not_supported_outlined,
+                            size: 40, color: Colors.grey),
+                        SizedBox(height: 8),
+                        Text(
+                          'No image uploaded by patient. Please request upload.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               const SizedBox(height: 24),
 
               // Doctor Analyst
@@ -144,7 +230,7 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
               TextField(
                 controller: controller.doctorAnalystController,
                 decoration: InputDecoration(
-                  hintText: 'Ask here...',
+                  hintText: 'Ask AI about the symptoms or image...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -155,19 +241,66 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
                 ),
                 maxLines: 3,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               // Submit AI Button
               SizedBox(
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: () {
-                    controller.submitAI();
-                  },
-                  child: const Text('Submit AI'),
+                  onPressed: controller.isProcessingAI.value
+                      ? null
+                      : () => controller.submitAI(),
+                  style: ElevatedButton.styleFrom(
+                    disabledBackgroundColor: Colors.grey,
+                  ),
+                  child: controller.isProcessingAI.value
+                      ? const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Text('Processing...'),
+                          ],
+                        )
+                      : const Text('Submit AI'),
                 ),
               ),
+              const SizedBox(height: 24),
+
+              // AI Response Section (only shown when there's a response)
+              if (controller.aiResponse.value.isNotEmpty) ...[
+                const Text(
+                  'AI Analysis',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: AnimatedAIResponse(
+                    response: controller.aiResponse.value,
+                    fontSize: 14,
+                    lineHeight: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
             ],
           ),
         );

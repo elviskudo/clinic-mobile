@@ -182,7 +182,6 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                     )
                   : Container(
                       margin: EdgeInsets.only(bottom: 6),
-
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.red[50],
@@ -237,7 +236,6 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                     )
                   : Container(
                       margin: EdgeInsets.only(bottom: 6),
-
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.red[50],
@@ -271,15 +269,6 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                             String formattedDate = DateFormat('dd/MM/yyyy')
                                 .format(controller.selectedDate.value!);
 
-                            await controller.sendNotificationToDoctor(
-                                doctorId: controller.selectedDoctor.value!.id,
-                                date: formattedDate,
-                                time: controller
-                                    .selectedScheduleTime.value!.scheduleTime,
-                                clinic: controller.selectedClinic.value!.name,
-                                poly: controller.selectedPoly.value!.name,
-                                doctorName:
-                                    controller.selectedDoctor.value!.degree);
                             controller.onNextPressed();
                           }
                         : null,

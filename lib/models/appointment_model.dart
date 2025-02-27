@@ -110,4 +110,18 @@ class Appointment {
       createdAt: createdAt ?? this.createdAt,
     );
   }
+  List<int> getSymptomIds() {
+    if (symptoms == null || symptoms!.isEmpty) {
+      return [];
+    }
+    
+    return symptoms!
+        .split(',')
+        .map((id) => id.trim())
+        .where((id) => id.isNotEmpty)
+        .map((id) => int.tryParse(id) ?? -1)
+        .where((id) => id != -1)
+        .toList();
+  }
 }
+
