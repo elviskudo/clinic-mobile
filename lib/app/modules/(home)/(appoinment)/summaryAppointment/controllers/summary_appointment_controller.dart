@@ -295,7 +295,7 @@ class SummaryAppointmentController extends GetxController {
       errorMessage.value = 'Error: ${e.toString()}';
     } finally {
       isLoading.value = false;
-    }
+    } 
     print("Memanggil fetchAppointmentImage dengan appointmentId: $appointmentId");
     await fetchAppointmentImage(appointmentId);
   }

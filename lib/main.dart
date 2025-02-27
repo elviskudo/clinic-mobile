@@ -41,7 +41,7 @@ Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
 
 void main() async {
   await dotenv.load(fileName: ".env");
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBeinding.ensureInitialized();
   try {
     await Supabase.initialize(
         url: dotenv.env['SUPABASE_URL']!, anonKey: dotenv.env['SUPABASE_KEY']!);
