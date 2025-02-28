@@ -1,10 +1,13 @@
 import 'package:clinic_ai/app/modules/(home)/profile/controllers/profile_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
+import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:intl/intl.dart'; // Import intl
+
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -22,25 +25,29 @@ class HomeView extends GetView<HomeController> {
           children: [
             _buildHeader(),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSection(
-                      title: 'Medical Record',
-                      seeAll: true,
-                      child: _buildMedicalRecordsList(),
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    _buildSection(
-                      title: 'Redeem Medicine',
-                      seeAll: true,
-                      child: _buildMedicineCards(),
-                    ),
-                    const SizedBox(height: 80),
-                  ],
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await controller.fetchMedicalRecords(); // Refresh data saat ditarik
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSection(
+                        title: 'Medical Record',
+                        seeAll: true,
+                        child: _buildMedicalRecordsList(),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildSection(
+                        title: 'Redeem Medicine',
+                        seeAll: true,
+                        child: _buildMedicineCards(),
+                      ),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -63,12 +70,10 @@ class HomeView extends GetView<HomeController> {
               Container(
                 width: 50,
                 height: 50,
-                // radius: 24,
-                // backgroundColor: Colors.grey,
                 child: InkWell(
-                    onTap: () => Get.toNamed(Routes.PROFILE),
-                    // child: Icon(Icons.person, color: Colors.white, size: 30),
-                    child: Image.asset('assets/images/logo_clinic.png')),
+                  onTap: () => Get.toNamed(Routes.PROFILE),
+                  child: Image.asset('assets/images/logo_clinic.png'),
+                ),
               ),
               Obx(
                 () => IconButton(
@@ -76,7 +81,7 @@ class HomeView extends GetView<HomeController> {
                     Icons.circle_notifications,
                     size: 32,
                     color: controller.isLoggedIn.value
-                        ? Color(0xFF35693E)
+                        ? const Color(0xFF35693E)
                         : Colors.grey,
                   ),
                   onPressed: () => controller.logout(),
@@ -95,7 +100,7 @@ class HomeView extends GetView<HomeController> {
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xff181D18),
+                        color: const Color(0xff181D18),
                       ),
                     )),
                 Text(
@@ -139,7 +144,7 @@ class HomeView extends GetView<HomeController> {
                 Text(
                   'See All',
                   style: GoogleFonts.poppins(
-                      color: Color(0xff35693E),
+                      color: const Color(0xff35693E),
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                       decoration: TextDecoration.underline),
@@ -154,133 +159,163 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildMedicalRecordsList() {
-    return SizedBox(
-      height: 120,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: 5,
-        itemBuilder: (context, index) => _buildMedicalRecordCard(
-          index: index,
-          isAlternate: index % 2 == 1,
-        ),
-      ),
-    );
+    return Obx(() {
+      if (controller.isLoadingMedicalRecords.value) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (controller.medicalRecords.isEmpty) {
+        return const Center(child: Text('No medical records found.'));
+      } else {
+        return SizedBox(
+          height: 120,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: controller.medicalRecords.length,
+            itemBuilder: (context, index) {
+              final record = controller.medicalRecords[index];
+              final isAlternate = index % 2 == 1;
+              return _buildMedicalRecordCard(
+                record: record,
+                isAlternate: isAlternate,
+              );
+            },
+          ),
+        );
+      }
+    });
   }
 
-  Widget _buildMedicalRecordCard(
-      {required int index, required bool isAlternate}) {
+  Widget _buildMedicalRecordCard({required Appointment record, required bool isAlternate}) {
     return Container(
       width: MediaQuery.of(Get.context!).size.width * 0.75,
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isAlternate ? const Color(0xFFD4E8D1) : const Color(0xFFA7E8A7),
+        color: isAlternate ? const Color(0xFFD4E8D1) : const Color(0xFFB7F1BA),
         borderRadius: BorderRadius.circular(20),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: ClipOval(
-                        child: Image.network(
-                          'https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0=',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Doctor Name',
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            'Clinic Name',
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          Text(
-                            'Poly Name',
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.more_horiz, color: Colors.grey[800], size: 20),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return Obx(() {
+            final doctor = controller.existingDoctor.value;
+            final poly = controller.existingPoly.value;
+            final scheduleDate = controller.existingScheduleDate.value;
+            final scheduleTime = controller.existingScheduleTime.value;
+            final clinic = controller.existingClinic.value;
+            String formattedDate = scheduleDate?.scheduleDate != null
+                ? DateFormat('dd MMM yyyy').format(
+                    DateTime.parse(scheduleDate!.scheduleDate!.toString()))
+                : 'Unknown Date';
+
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Day, DD Month YYYY',
-                            style: GoogleFonts.poppins(
-                              color: Colors.grey[700],
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            '00:00 - 00:00 WIB',
-                            style: GoogleFonts.poppins(
-                              color: Colors.grey[700],
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                        width: 44,
+                        height: 44,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE3F2FD),
-                          borderRadius: BorderRadius.circular(8),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
                         ),
-                        child: Text(
-                          'Completed',
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            color: Colors.blue[700],
-                            fontWeight: FontWeight.w500,
-                          ),
+                        child: ClipOval(
+                          child: Obx(() => Image.network(
+                                controller.doctorProfilePictureUrl.value.isNotEmpty
+                                    ? controller.doctorProfilePictureUrl.value
+                                    : 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
+                                fit: BoxFit.cover,
+                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                  // Handle the error, e.g., display a placeholder
+                                  print('Error loading image: $exception');
+                                  return const Icon(Icons.error_outline);
+                                },
+                              )),
                         ),
                       ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              doctor?.name ?? 'Unknown Doctor',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              clinic?.name ?? 'Unknown Clinic',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            Text(
+                              poly?.name ?? 'Unknown Poly',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.more_horiz, color: Colors.grey[800], size: 20),
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
+                  const SizedBox(height: 12),
+                  IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              formattedDate,
+                              style: GoogleFonts.poppins(
+                                color: Colors.grey[700],
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              scheduleTime?.scheduleTime ?? 'Unknown Time',
+                              style: GoogleFonts.poppins(
+                                color: Colors.grey[700],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE3F2FD),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            controller.getStatusText(record.status ?? 0),
+                            style: GoogleFonts.poppins(
+                              fontSize: 11,
+                              color: Colors.blue[700],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          });
         },
       ),
     );
@@ -330,7 +365,7 @@ class HomeView extends GetView<HomeController> {
                 ),
                 child: ClipOval(
                   child: Image.network(
-                    'https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0=',
+                    'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -475,35 +510,35 @@ class HomeView extends GetView<HomeController> {
           ),
         ));
   }
-}
 
-Widget _buildBottomBar() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: Container(
-      margin: EdgeInsets.only(bottom: 16, top: 8),
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFD4E8D1),
-        borderRadius: BorderRadius.circular(24),
+  Widget _buildBottomBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16, top: 8),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFD4E8D1),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildBottomBarItem(Icons.home, true),
+            _buildBottomBarItem(Icons.history, false),
+            // _buildBottomBarItem(Icons.chat_bubble_outline, false),
+            _buildBottomBarItem(Icons.person_outline, false),
+          ],
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildBottomBarItem(Icons.home, true),
-          _buildBottomBarItem(Icons.history, false),
-          _buildBottomBarItem(Icons.chat_bubble_outline, false),
-          _buildBottomBarItem(Icons.person_outline, false),
-        ],
-      ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildBottomBarItem(IconData icon, bool isSelected) {
-  return Icon(
-    icon,
-    color: isSelected ? const Color(0xFF35693E) : Colors.grey,
-    size: 24,
-  );
+  Widget _buildBottomBarItem(IconData icon, bool isSelected) {
+    return Icon(
+      icon,
+      color: isSelected ? const Color(0xFF35693E) : Colors.grey,
+      size: 24,
+    );
+  }
 }

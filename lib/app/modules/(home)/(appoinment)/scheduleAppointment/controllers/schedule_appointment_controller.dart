@@ -436,7 +436,7 @@ class ScheduleAppointmentController extends GetxController {
       if (!isScheduleDateAvailable.value && selectedDoctor.value != null) {
         Get.snackbar(
           'Information',
-          'Tidak ada Schedule Date yang tersedia untuk Doctor ${selectedDoctor.value!.degree}',
+          'Tidak ada Schedule Date yang tersedia untuk Doctor ${selectedDoctor.value!.degree} ${selectedDoctor.value!.name}-${selectedDoctor.value!.specialize}',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.orange,
           colorText: Colors.white,

@@ -35,6 +35,7 @@ abstract class Routes {
   static const DETAIL_DIAGNOSE = _Paths.DETAIL_DIAGNOSE;
   static const REDEEM_MEDICINE = _Paths.REDEEM_MEDICINE;
   static const DRUG_ADMIN = _Paths.DRUG_ADMIN;
+  static const MEDICAL_HISTORY = _Paths.MEDICAL_HISTORY;
 }
 
 abstract class _Paths {
@@ -71,4 +72,5 @@ abstract class _Paths {
   static const DETAIL_DIAGNOSE = '/detail-diagnose';
   static const REDEEM_MEDICINE = '/redeem-medicine';
   static const DRUG_ADMIN = '/drug-admin';
+  static const MEDICAL_HISTORY = '/medical-history';
 }

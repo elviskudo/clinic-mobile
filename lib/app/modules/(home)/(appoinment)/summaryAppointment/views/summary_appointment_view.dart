@@ -1,3 +1,4 @@
+import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -84,7 +85,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
       children: [
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, size: 20),
-          onPressed: () => Get.back(),
+         onPressed: () => Get.offAllNamed(Routes.HOME),
         ),
         Text(
           'Appointment',
@@ -136,7 +137,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           ),
           const SizedBox(height: 12),
           Text(
-            "$doctorDegree $doctorName-$doctorSpecialize",
+            "$doctorDegree $doctorName, $doctorSpecialize",
             style: GoogleFonts.inter(
               fontSize: 20,
               fontWeight: FontWeight.w600,
