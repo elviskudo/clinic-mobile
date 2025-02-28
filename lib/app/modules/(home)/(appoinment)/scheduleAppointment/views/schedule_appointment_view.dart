@@ -125,11 +125,10 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                                 .map((doctor) => '${doctor.degree} ${doctor.name},${doctor.specialize}')
                                 .toList(),
                             onSelected: (String doctorName) {
-                              final selectedDoctor =
-                                  controller.doctors.firstWhere(
-                                (doctor) => '${doctor.degree} ${doctor.name}-${doctor.specialize}' == doctorName,
-                                orElse: () => controller.doctors.first,
-                              );
+                              final selectedDoctor = controller.doctors.firstWhere(
+  (doctor) => '${doctor.degree} ${doctor.name},${doctor.specialize}' == doctorName,
+  orElse: () => controller.doctors.first,
+);
                               controller.setDoctor(selectedDoctor);
                               // Get.back();
 
