@@ -201,8 +201,8 @@ class ScheduleAppointmentController extends GetxController {
           symptoms: null,
           symptomDescription: null,
           aiResponse: null,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now());
+          createdAt: DateTime.now().toLocal(),
+          updatedAt: DateTime.now().toLocal());
 
       final response = await supabase
           .from('appointments')

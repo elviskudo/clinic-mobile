@@ -6,12 +6,14 @@ class AnimatedAIResponse extends StatefulWidget {
   final String response;
   final double fontSize;
   final double lineHeight;
+  final bool animate; // Add this parameter to control animation
 
   const AnimatedAIResponse({
     Key? key,
     required this.response,
     this.fontSize = 14,
     this.lineHeight = 1.5,
+    this.animate = true, // Default to true for backward compatibility
   }) : super(key: key);
 
   @override
@@ -27,14 +29,33 @@ class _AnimatedAIResponseState extends State<AnimatedAIResponse> {
   @override
   void initState() {
     super.initState();
-    _startTypingAnimation();
+    if (widget.animate) {
+      _startTypingAnimation();
+    } else {
+      // If animation is disabled, display full text immediately
+      setState(() {
+        _displayedText = widget.response;
+        _animationComplete = true;
+      });
+    }
   }
 
   @override
   void didUpdateWidget(AnimatedAIResponse oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.response != widget.response) {
+    // Check if the content actually changed (not just truncated/expanded)
+    bool contentChanged = oldWidget.response != widget.response && 
+                         !widget.response.startsWith(oldWidget.response) && 
+                         !oldWidget.response.startsWith(widget.response);
+    
+    if (contentChanged && widget.animate) {
       _resetAnimation();
+    } else if (oldWidget.response != widget.response) {
+      // Just update the display text without animation
+      setState(() {
+        _displayedText = widget.response;
+        _animationComplete = true;
+      });
     }
   }
 
@@ -49,7 +70,7 @@ class _AnimatedAIResponseState extends State<AnimatedAIResponse> {
   }
 
   void _startTypingAnimation() {
-    _timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
+    _timer = Timer.periodic(Duration(milliseconds: 1), (timer) {
       if (_currentIndex < widget.response.length) {
         setState(() {
           _displayedText = widget.response.substring(0, _currentIndex + 1);
@@ -76,7 +97,7 @@ class _AnimatedAIResponseState extends State<AnimatedAIResponse> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildMarkdownText(_displayedText),
-        if (!_animationComplete)
+        if (!_animationComplete && widget.animate)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Row(

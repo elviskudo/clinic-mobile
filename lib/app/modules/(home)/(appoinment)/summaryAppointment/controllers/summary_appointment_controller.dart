@@ -9,9 +9,9 @@ import 'package:clinic_ai/models/doctor_model.dart';
 import 'package:clinic_ai/models/poly_model.dart';
 import 'package:clinic_ai/models/scheduleDate_model.dart';
 import 'package:clinic_ai/models/scheduleTime_model.dart';
-import 'package:clinic_ai/models/file_model.dart'; // Import FileModel
-import 'package:clinic_ai/models/symptom_model.dart'; // Import Symptom Model
-import 'package:clinic_ai/models/profile_model.dart'; // Import Profile Model
+import 'package:clinic_ai/models/file_model.dart';
+import 'package:clinic_ai/models/symptom_model.dart';
+import 'package:clinic_ai/models/profile_model.dart';
 
 class SummaryAppointmentController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -24,82 +24,75 @@ class SummaryAppointmentController extends GetxController {
   RxString errorMessage = ''.obs;
   final RxString userName = ''.obs;
   RxString imageUrl = ''.obs;
-  RxList<Symptom> symptoms = <Symptom>[].obs; // List untuk menyimpan gejala
-  Rxn<Profile> profile = Rxn<Profile>(); // Rxn untuk menyimpan data profil
-  RxString doctorProfilePictureUrl = ''.obs; // URL gambar profil dokter
+  RxList<Symptom> symptoms = <Symptom>[].obs;
+  Rxn<Profile> profile = Rxn<Profile>();
+  RxString doctorProfilePictureUrl = ''.obs;
 
   RxBool isAppointmentCompleted = false.obs;
   RxString buttonText = 'Waiting for the result ...'.obs;
-
-  Timer? _timer;
+  StreamSubscription? _appointmentStreamSubscription;
+  String? _currentUserId;
 
   @override
   void onInit() {
     super.onInit();
     getUserName();
     fetchAppointmentAndDoctor(Get.arguments as String? ?? '');
-    startAppointmentStatusCheck(); // Memulai pemeriksaan status
   }
 
   @override
   void onClose() {
-    _timer?.cancel(); // Memastikan timer dibatalkan saat controller ditutup
+    _appointmentStreamSubscription?.cancel();
     super.onClose();
-  }
-
-  // Fungsi untuk memeriksa status appointment secara periodik
-  void startAppointmentStatusCheck() {
-    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      checkAppointmentStatus();
-    });
-  }
-
-  // Fungsi untuk memeriksa status appointment
-  Future<void> checkAppointmentStatus() async {
-    print('Memeriksa status appointment...');
-    if (appointment.value == null || appointment.value!.id == null) {
-      print('Appointment atau ID Appointment NULL');
-      return;
-    }
-
-    try {
-      final response = await supabase
-          .from('appointments')
-          .select('status')
-          .eq('id', appointment.value!.id)
-          .maybeSingle();
-
-      if (response != null) {
-        final status = response['status'] as int?;
-        print('Status appointment: $status');
-        if (status == 5) {
-          isAppointmentCompleted.value = true;
-          buttonText.value = 'Next'; // Ubah teks tombol
-        } else {
-          isAppointmentCompleted.value = false;
-          buttonText.value = 'Waiting for the result ...'; // Ubah teks tombol
-        }
-      } else {
-        print('Failed to fetch appointment status.');
-      }
-    } catch (e) {
-      print('Error checking appointment status: ${e.toString()}');
-    }
   }
 
   Future<void> getUserName() async {
     try {
-       print("Memulai fungsi getUserName");
+      print("Memulai fungsi getUserName");
       final prefs = await SharedPreferences.getInstance();
       final name = prefs.getString('name');
-       print("Name value: $name");
-      print('User name from SharedPreferences: $name'); // Debugging
+      _currentUserId = prefs.getString('userId');
+      print("Name value: $name");
+      print("User ID: $_currentUserId");
       userName.value = name ?? 'Unknown User';
-         print("Berhasil menjalankan fungsi getUserName");
+      print("Berhasil menjalankan fungsi getUserName");
     } catch (e) {
-      print('Error getting user name from SharedPreferences: $e');
+      print('Error getting user data from SharedPreferences: $e');
       userName.value = 'Unknown User';
     }
+  }
+
+  void startAppointmentStatusStream(String appointmentId) {
+    print('Starting appointment status stream for ID: $appointmentId');
+    
+    // Cancel any existing subscription first
+    _appointmentStreamSubscription?.cancel();
+    
+    _appointmentStreamSubscription = supabase
+        .from('appointments')
+        .stream(primaryKey: ['id'])
+        .eq('id', appointmentId)
+        .listen((List<Map<String, dynamic>> data) {
+          if (data.isNotEmpty) {
+            final appointmentData = data.first;
+            final status = appointmentData['status'] as int?;
+            
+            print('Real-time appointment status update: $status');
+            
+            if (status == 5) {
+              isAppointmentCompleted.value = true;
+              buttonText.value = 'Next';
+            } else {
+              isAppointmentCompleted.value = false;
+              buttonText.value = 'Waiting for the result ...';
+            }
+            
+            // Update the appointment object as well
+            appointment.value = Appointment.fromJson(appointmentData);
+          }
+        }, onError: (error) {
+          print('Error in appointment stream: $error');
+        });
   }
 
   // Fungsi untuk mendapatkan URL gambar profil dokter
@@ -118,20 +111,17 @@ class SummaryAppointmentController extends GetxController {
         print('Doctor profile picture file name: $fileName'); // Debugging
         doctorProfilePictureUrl.value = fileName ?? '';
       } else {
-        doctorProfilePictureUrl.value =
-            ''; // Set ke string kosong jika tidak ada gambar
+        doctorProfilePictureUrl.value = '';
       }
-        print("Berhasil menjalankan fungsi fetchDoctorProfilePicture");
+      print("Berhasil menjalankan fungsi fetchDoctorProfilePicture");
     } catch (e) {
       print('Gagal mengambil URL gambar profil dokter: $e');
-      doctorProfilePictureUrl.value =
-          ''; // Set ke string kosong jika terjadi kesalahan
+      doctorProfilePictureUrl.value = '';
     }
   }
 
   Future<void> fetchAppointmentImage(String appointmentId) async {
-    print(
-        "Fungsi fetchAppointmentImage dijalankan dengan appointmentId: $appointmentId");
+    print("Fungsi fetchAppointmentImage dijalankan dengan appointmentId: $appointmentId");
     try {
       final fileResponse = await supabase
           .from('files')
@@ -145,12 +135,12 @@ class SummaryAppointmentController extends GetxController {
         print('Appointment image file name: $fileName'); // Debugging
         imageUrl.value = fileName ?? '';
       } else {
-        imageUrl.value = ''; // Set default value jika tidak ada gambar
+        imageUrl.value = '';
       }
-        print("Berhasil menjalankan fungsi fetchAppointmentImage");
+      print("Berhasil menjalankan fungsi fetchAppointmentImage");
     } catch (e) {
       print('Gagal mengambil URL gambar appointment: $e');
-      imageUrl.value = ''; // Set ke string kosong jika terjadi kesalahan
+      imageUrl.value = '';
     }
   }
 
@@ -166,7 +156,7 @@ class SummaryAppointmentController extends GetxController {
           .select()
           .eq('id', appointmentId)
           .single();
-       print('1. Response Appointment $appointmentResponse');
+      print('1. Response Appointment $appointmentResponse');
       if (appointmentResponse == null) {
         errorMessage.value = 'Gagal mengambil data appointment.';
         return;
@@ -174,6 +164,19 @@ class SummaryAppointmentController extends GetxController {
 
       appointment.value = Appointment.fromJson(appointmentResponse);
       print('Appointment data: ${appointment.value}'); // Debugging
+      
+      // Check initial status
+      final status = appointmentResponse['status'] as int?;
+      if (status == 5) {
+        isAppointmentCompleted.value = true;
+        buttonText.value = 'Next';
+      } else {
+        isAppointmentCompleted.value = false;
+        buttonText.value = 'Waiting for the result ...';
+      }
+
+      // Start real-time stream for this appointment
+      startAppointmentStatusStream(appointmentId);
 
       // Ambil Daftar Gejala
       final symptomsString = appointment.value?.symptoms;
@@ -183,8 +186,8 @@ class SummaryAppointmentController extends GetxController {
         final symptomsResponse = await supabase
             .from('symptoms')
             .select()
-            .inFilter('id', symptomIds); // Gunakan inFilter untuk daftar ID
- print('3. Response symptom $symptomsResponse');
+            .inFilter('id', symptomIds);
+        print('3. Response symptom $symptomsResponse');
         if (symptomsResponse != null && symptomsResponse is List) {
           symptoms.assignAll(
               symptomsResponse.map((json) => Symptom.fromJson(json)).toList());
@@ -218,7 +221,7 @@ class SummaryAppointmentController extends GetxController {
           .select()
           .eq('id', appointment.value!.polyId)
           .single();
-          print('6. Response Poly $polyResponse');
+      print('6. Response Poly $polyResponse');
       poly.value = Poly.fromJson(polyResponse);
       print('Poly data: ${poly.value}'); // Debugging
 
@@ -226,14 +229,13 @@ class SummaryAppointmentController extends GetxController {
       if (appointment.value != null) {
         print('Appointment value tidak null');
         if (appointment.value!.doctorId != null) {
-          print('iniiiiiiiiiiiiiiiiii ${appointment.value!.doctorId}');
+          print('Doctor ID: ${appointment.value!.doctorId}');
           final doctorResponse = await supabase
               .from('doctors')
               .select()
               .eq('id', appointment.value!.doctorId)
-              .maybeSingle(); // Use maybeSingle()
-           print('7. Response doctor $doctorResponse');
-          print('konciiiiiiii ${doctorResponse}');
+              .maybeSingle();
+          print('7. Response doctor $doctorResponse');
 
           if (doctorResponse == null) {
             errorMessage.value = 'Gagal mengambil data dokter.';
@@ -242,7 +244,6 @@ class SummaryAppointmentController extends GetxController {
 
           doctor.value = Doctor.fromJson(doctorResponse);
           print('Doctor data: ${doctor.value}'); // Debugging
-          print('kocaccccccccckkkkkk: ${doctor.value}'); // Debugging
         } else {
           print('Dokter ID null');
           errorMessage.value = 'Dokter ID null.';
@@ -260,9 +261,8 @@ class SummaryAppointmentController extends GetxController {
             .from('users')
             .select('id')
             .eq('id', doctor.value!.id)
-            .maybeSingle(); // Use maybeSingle()
-            print('8. Response User $userResponse');
-        print('User response raw data: $userResponse'); // Tambahkan ini
+            .maybeSingle();
+        print('8. Response User $userResponse');
 
         if (userResponse != null) {
           String userId = userResponse['id'];
@@ -273,16 +273,14 @@ class SummaryAppointmentController extends GetxController {
               .select('file_name')
               .eq('module_class', 'users')
               .eq('module_id', userId)
-              .maybeSingle(); // Use maybeSingle()
-           print('9. Respons file user $fileResponse');
+              .maybeSingle();
+          print('9. Respons file user $fileResponse');
           if (fileResponse != null) {
             doctorProfilePictureUrl.value =
                 fileResponse['file_name'] as String? ?? '';
           } else {
-            doctorProfilePictureUrl.value =
-                ''; // Set default value jika tidak ada gambar
+            doctorProfilePictureUrl.value = '';
           }
-          // await fetchDoctorProfile(userId);
         } else {
           errorMessage.value = 'Gagal mengambil userId dokter.';
           return;
@@ -298,5 +296,23 @@ class SummaryAppointmentController extends GetxController {
     }
     print("Memanggil fetchAppointmentImage dengan appointmentId: $appointmentId");
     await fetchAppointmentImage(appointmentId);
+  }
+  
+  // Method to handle button press
+  void handleResultButtonPressed() {
+    if (isAppointmentCompleted.value) {
+      // Navigate to results page or perform next action
+      Get.toNamed('/appointment-result', arguments: appointment.value?.id);
+    } else {
+      // Show a message that results are not ready yet
+      Get.snackbar(
+        'Info',
+        'Please wait for the doctor to complete your consultation',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.amber[100],
+        colorText: Colors.black87,
+        margin: const EdgeInsets.all(10),
+      );
+    }
   }
 }

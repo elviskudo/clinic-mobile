@@ -2,6 +2,8 @@ import 'package:clinic_ai/app/modules/(admin)/clinic/controllers/clinic_controll
 import 'package:clinic_ai/app/modules/(admin)/clinic/views/clinic_view.dart';
 import 'package:clinic_ai/app/modules/(admin)/doctor/controllers/doctor_controller.dart';
 import 'package:clinic_ai/app/modules/(admin)/doctor/views/doctor_view.dart';
+import 'package:clinic_ai/app/modules/(admin)/drug_admin/controllers/drug_admin_controller.dart';
+import 'package:clinic_ai/app/modules/(admin)/drug_admin/views/drug_admin_view.dart';
 import 'package:clinic_ai/app/modules/(admin)/list_user/controllers/list_user_controller.dart';
 import 'package:clinic_ai/app/modules/(admin)/list_user/views/list_user_view.dart';
 import 'package:clinic_ai/app/modules/(admin)/poly/controllers/poly_controller.dart';
@@ -30,6 +32,7 @@ class AdminPanelView extends GetView<AdminPanelController> {
     Get.put(DoctorController());
     Get.put(ScheduleDateController());
     Get.put(ScheduleTimeController());
+    Get.put(DrugAdminController());
     Get.put(UploadController());
 
     return Scaffold(
@@ -196,6 +199,7 @@ class AdminPanelView extends GetView<AdminPanelController> {
         _buildMenuItem(4, 'Schedule Date', Icons.schedule),
         _buildMenuItem(5, 'Schedule Time', Icons.timer_sharp),
         _buildMenuItem(6, 'Upload', Icons.upload_file),
+        _buildMenuItem(7, 'Drugs', Icons.medical_information),
       ],
     );
   }
@@ -227,8 +231,6 @@ class AdminPanelView extends GetView<AdminPanelController> {
     switch (index) {
       case 0:
         return ListUserView();
-      case 6:
-        return const UploadView();
       case 1:
         return const ClinicView();
       case 2:
@@ -239,6 +241,10 @@ class AdminPanelView extends GetView<AdminPanelController> {
         return const ScheduleDateView();
       case 5:
         return const ScheduleTimeView();
+      case 6:
+        return const UploadView();
+      case 7:
+        return const DrugAdminView();
 
       default:
         return ListUserView();
