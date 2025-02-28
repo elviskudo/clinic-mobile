@@ -1,3 +1,4 @@
+import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -84,7 +85,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
       children: [
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, size: 20),
-          onPressed: () => Get.back(),
+         onPressed: () => Get.offAllNamed(Routes.HOME),
         ),
         Text(
           'Appointment',
@@ -136,13 +137,12 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           ),
           const SizedBox(height: 12),
           Text(
-            "$doctorDegree $doctorName-$doctorSpecialize",
+            "$doctorDegree $doctorName, $doctorSpecialize",
             style: GoogleFonts.inter(
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
           ),
-          
           Text(
             controller.poly.value?.name.toString() ?? 'Unknown Poly',
             style: GoogleFonts.inter(
@@ -705,7 +705,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     );
   }
 
-Widget _buildSymptoms() {
+  Widget _buildSymptoms() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -767,32 +767,90 @@ Widget _buildSymptoms() {
   }
 
   Widget _buildResultButton(BuildContext context) {
-    return Obx(() {
-      Color buttonColor = controller.isAppointmentCompleted.value
-          ? Color(0xFF35693E) // Ubah ke hijau jika isAppointmentCompleted true
-          : Colors.grey.shade200; // Tetap abu-abu jika tidak
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: controller.supabase
+          .from('appointments')
+          .stream(primaryKey: ['id'])
+          .eq('id', appointmentId ?? '')
+          .execute(),
+      builder: (context, snapshot) {
+        // Show loading indicator while connection is being established
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            !snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: buttonColor,
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: Center(
-          child: Text(
-            controller.buttonText.value,
-            style: GoogleFonts.inter(
-              fontSize: 16,
-              color:
-                  buttonColor == Color(0xFF35693E) ? Colors.white : Colors.grey[600],
-              fontWeight: FontWeight.w500,
+        // Show error if any
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        // Process data when available
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          final appointmentData = snapshot.data!.first;
+          final status = appointmentData['status'] as int?;
+
+          // Check if status has changed to 5
+          final isCompleted = status == 5;
+
+          // If status changed to completed and wasn't before, show snackbar
+          if (isCompleted && !controller.isAppointmentCompleted.value) {
+            // Update controller value
+            controller.isAppointmentCompleted.value = true;
+            controller.buttonText.value = 'Next';
+
+            // Show snackbar (delayed to avoid build errors)
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Your consultation has been completed!'),
+                  backgroundColor: Colors.green,
+                  duration: Duration(seconds: 5),
+                  action: SnackBarAction(
+                    label: 'VIEW',
+                    textColor: Colors.white,
+                    onPressed: () {
+                      controller.handleResultButtonPressed();
+                    },
+                  ),
+                ),
+              );
+            });
+          }
+
+          // Update button color based on completion status
+          Color buttonColor = isCompleted
+              ? Color(0xFF35693E) // Green if completed
+              : Colors.grey.shade200; // Grey if not
+
+          return GestureDetector(
+            onTap: () => controller.handleResultButtonPressed(),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: buttonColor,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Center(
+                child: Text(
+                  isCompleted ? 'Next' : 'Waiting for the result ...',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    color: isCompleted ? Colors.white : Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      );
-    });
+          );
+        }
+
+        // Fallback if no data is available
+        return _buildWaitingForResultsButton();
+      },
+    );
   }
 
   Widget _buildWaitingForResultsButton() {

@@ -33,7 +33,7 @@ class ScheduleDateView extends GetView<ScheduleDateController> {
                       .firstWhere((p) => p.id == scheduleDate.polyId);
 
                   return ListTile(
-                    title: Text('${doctor.degree} - ${poly.name}'),
+                    title: Text('${doctor.degree} ${doctor.name},${doctor.specialize} - ${poly.name}'),
                     subtitle: Text(
                         'Date: ${scheduleDate.scheduleDate.toString().split(' ')[0]}'),
                     trailing: Row(
@@ -141,7 +141,7 @@ class ScheduleDateView extends GetView<ScheduleDateController> {
                   items: controller.doctors
                       .map((doctor) => DropdownMenuItem(
                             value: doctor.id,
-                            child: Text(doctor.degree),
+                            child: Text('${doctor.degree} ${doctor.name}, ${doctor.specialize}'),
                           ))
                       .toList(),
                 ),

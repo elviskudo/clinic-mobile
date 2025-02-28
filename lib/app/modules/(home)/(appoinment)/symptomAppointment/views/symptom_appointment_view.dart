@@ -13,9 +13,8 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<SymptomAppointmentController>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.loadExistingSymptoms();
-    });
+    // Pindahkan pemanggilan loadExistingSymptoms() ke onInit controller
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7FBF2),
       body: LayoutBuilder(

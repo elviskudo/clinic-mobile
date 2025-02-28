@@ -1,4 +1,5 @@
 import 'package:clinic_ai/app/modules/(doctor)/list_patients/controllers/list_patients_controller.dart';
+import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -80,8 +81,10 @@ class QrScannerScreenController extends GetxController {
                   // Reject Button
                   Expanded(
                     child: TextButton(
-                      onPressed: () {
+                      onPressed: () async {
                         Get.back();
+                        await updateAppointmentStatusReject();
+
                         isProcessingResult.value = false;
                       },
                       style: TextButton.styleFrom(
@@ -105,15 +108,50 @@ class QrScannerScreenController extends GetxController {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        Get.back();
-                        await updateAppointmentStatus();
-                        Get.snackbar(
-                          'Success',
-                          'Appointment status updated to Completed',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.green,
-                          colorText: Colors.white,
-                        );
+                        Get.back(); // Tutup dialog
+
+                        try {
+                          // Tampilkan loading indicator
+                          Get.dialog(
+                            const Center(child: CircularProgressIndicator()),
+                            barrierDismissible: false,
+                          );
+
+                          // Update status
+                          await updateAppointmentStatus();
+
+                          // Tutup loading dialog
+                          Get.back();
+
+                          // Tampilkan snackbar sukses
+                          Get.snackbar(
+                            'Success',
+                            'Appointment status updated to Completed',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.green,
+                            colorText: Colors.white,
+                          );
+
+                          // Pastikan scanner benar-benar berhenti dan di-dispose
+                          await scannerController.stop();
+                          scannerController.dispose();
+
+                          // Navigasi ke halaman detail diagnose
+                          Get.toNamed(Routes.DETAIL_DIAGNOSE,
+                              arguments: appointment);
+                        } catch (e) {
+                          // Tutup loading dialog jika masih ada
+                          if (Get.isDialogOpen ?? false) Get.back();
+
+                          Get.snackbar(
+                            'Error',
+                            'An error occurred: $e',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                          isProcessingResult.value = false;
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
@@ -145,6 +183,21 @@ class QrScannerScreenController extends GetxController {
   Future<void> updateAppointmentStatus() async {
     try {
       await appointmentController.updateAppointmentStatus(appointment.id, 2);
+    } catch (error) {
+      print('Error updating appointment status: $error');
+      Get.snackbar(
+        'Error',
+        'Failed to update appointment status',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> updateAppointmentStatusReject() async {
+    try {
+      await appointmentController.updateAppointmentStatus(appointment.id, 3);
     } catch (error) {
       print('Error updating appointment status: $error');
       Get.snackbar(

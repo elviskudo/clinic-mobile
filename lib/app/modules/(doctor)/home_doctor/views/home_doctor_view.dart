@@ -435,17 +435,19 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
 
   String _getStatusText(int status) {
     switch (status) {
-      case 0:
-        return 'Waiting';
       case 1:
-        return 'Approved';
+        return 'Waiting';
       case 2:
-        return 'Diagnose';
+        return 'Approved';
       case 3:
-        return 'Unpaid';
+        return 'Rejected';
       case 4:
-        return 'Waiting For Drugs';
+        return 'Diagnose';
       case 5:
+        return 'Unpaid';
+      case 6:
+        return 'Waiting For Drugs';
+      case 7:
         return 'Completed';
       default:
         return 'Unknown';
@@ -454,17 +456,19 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
 
   Color _getStatusColor(int status) {
     switch (status) {
-      case 0:
-        return Colors.orange;
       case 1:
-        return Colors.blue;
+        return Colors.orange;
       case 2:
-        return Colors.purple;
+        return Colors.blue;
       case 3:
         return Colors.red;
       case 4:
-        return Colors.amber;
+        return Colors.purple;
       case 5:
+        return Colors.redAccent;
+      case 6:
+        return Colors.amber;
+      case 7:
         return Colors.green;
       default:
         return Colors.grey;

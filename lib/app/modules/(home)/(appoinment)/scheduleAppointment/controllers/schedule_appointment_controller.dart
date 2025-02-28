@@ -201,8 +201,8 @@ class ScheduleAppointmentController extends GetxController {
           symptoms: null,
           symptomDescription: null,
           aiResponse: null,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now());
+          createdAt: DateTime.now().toLocal(),
+          updatedAt: DateTime.now().toLocal());
 
       final response = await supabase
           .from('appointments')
@@ -436,7 +436,7 @@ class ScheduleAppointmentController extends GetxController {
       if (!isScheduleDateAvailable.value && selectedDoctor.value != null) {
         Get.snackbar(
           'Information',
-          'Tidak ada Schedule Date yang tersedia untuk Doctor ${selectedDoctor.value!.degree}',
+          'Tidak ada Schedule Date yang tersedia untuk Doctor ${selectedDoctor.value!.degree} ${selectedDoctor.value!.name}-${selectedDoctor.value!.specialize}',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.orange,
           colorText: Colors.white,
@@ -591,40 +591,5 @@ class ScheduleAppointmentController extends GetxController {
     isFormReadOnly.value = false;
   }
 
-  // Future<void> sendNotificationToDoctor({
-  //   required String doctorId,
-  //   required String date,
-  //   required String time,
-  //   required String clinic,
-  //   required String poly,
-  //   required String doctorName,
-  // }) async {
-  //   try {
-  //     // Ambil data dokter dari database
-  //     final doctor = await supabase
-  //         .from('doctors')
-  //         .select('id')
-  //         .eq('id', doctorId)
-  //         .single();
-  //     final user = await supabase
-  //         .from('users')
-  //         .select('name')
-  //         .eq('id', doctorId)
-  //         .single();
-  //     if (doctor != null && doctor['id'] != null) {
-  //       await AwesomeNotifications().createNotification(
-  //         content: NotificationContent(
-  //           id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
-  //           channelKey: 'doctor_channel',
-  //           title: 'New Patient Appointment',
-  //           body:
-  //               'Patient: ${user["name"]}\nDate: $date\nTime: $time\nClinic: $clinic\nPoly: $poly\nDoctor: $doctorName',
-  //           notificationLayout: NotificationLayout.BigText,
-  //         ),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     print('Failed to send notification to doctor: $e');
-  //   }
-  // }
 }
+
