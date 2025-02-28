@@ -259,14 +259,16 @@ class ProfileView extends GetView<ProfileController> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  'Data Personal (${personalDatCtrl.nameController.value.text}, ${personalDatCtrl.cardNumberController.value.text})',
-                                  style: TextStyle(
-                                      color: Color(0xFF39656D),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+                                Obx(
+                                  () => Text(
+                                    'Data Personal (${personalDatCtrl.nameController.value.text}, ${personalDatCtrl.cardNumberController.value.text})',
+                                    style: TextStyle(
+                                        color: Color(0xFF39656D),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
                                 ),
                                 Gap(5),
                                 Icon(Icons.arrow_forward_ios,
@@ -328,7 +330,9 @@ class ProfileView extends GetView<ProfileController> {
                     title: Text('About Us'),
                     subtitle: Text('About Application'),
                     trailing: Icon(Icons.chevron_right),
-                    onTap: () {},
+                    onTap: () {
+                      Get.offAllNamed(Routes.ABOUT_APP);
+                    },
                   ),
                 ],
               ),

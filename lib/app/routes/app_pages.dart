@@ -48,6 +48,8 @@ import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
 import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
+import '../modules/(home)/about_app/bindings/about_app_binding.dart';
+import '../modules/(home)/about_app/views/about_app_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
 import '../modules/redeemMedicine/bindings/redeem_medicine_binding.dart';
@@ -192,6 +194,11 @@ class AppPages {
       name: _Paths.REDEEM_MEDICINE,
       page: () => const RedeemMedicineView(),
       binding: RedeemMedicineBinding(),
+    ),
+    GetPage(
+      name: _Paths.ABOUT_APP,
+      page: () => const AboutAppView(),
+      binding: AboutAppBinding(),
     ),
   ];
 }
