@@ -122,22 +122,26 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
                           CustomDropdown(
                             label: 'Doctor',
                             items: controller.doctors
-                                .map((doctor) => '${doctor.degree} ${doctor.name},${doctor.specialize}')
+                                .map((doctor) =>
+                                    '${doctor.degree} ${doctor.name},${doctor.specialize}')
                                 .toList(),
                             onSelected: (String doctorName) {
-                              final selectedDoctor = controller.doctors.firstWhere(
-  (doctor) => '${doctor.degree} ${doctor.name},${doctor.specialize}' == doctorName,
-  orElse: () => controller.doctors.first,
-);
+                              final selectedDoctor =
+                                  controller.doctors.firstWhere(
+                                (doctor) =>
+                                    '${doctor.degree} ${doctor.name},${doctor.specialize}' ==
+                                    doctorName,
+                                orElse: () => controller.doctors.first,
+                              );
                               controller.setDoctor(selectedDoctor);
                               // Get.back();
 
                               // Navigator.pop(context); // Close dropdown after selection
                             },
-                            selectedValue:
-                               controller.selectedDoctor.value == null
-    ? 'Select Doctor'
-    : '${controller.selectedDoctor.value!.degree} ${controller.selectedDoctor.value!.name},${controller.selectedDoctor.value!.specialize}',
+                            selectedValue: controller.selectedDoctor.value ==
+                                    null
+                                ? 'Select Doctor'
+                                : '${controller.selectedDoctor.value!.degree} ${controller.selectedDoctor.value!.name},${controller.selectedDoctor.value!.specialize}',
                             isEnabled: controller.selectedPoly.value != null &&
                                 !controller.isFormReadOnly
                                     .value, // Disable if form is read-only
