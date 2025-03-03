@@ -259,17 +259,21 @@ class ProfileView extends GetView<ProfileController> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Obx(
-                                  () => Text(
-                                    'Data Personal (${personalDatCtrl.nameController.value.text}, ${personalDatCtrl.cardNumberController.value.text})',
-                                    style: TextStyle(
-                                        color: Color(0xFF39656D),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
+                              Obx(() {
+                                  if (personalDatCtrl.isLoading.value) {
+                                    return SizedBox();
+                                  } else {
+                                    return Text(
+                                      'Data Personal (${personalDatCtrl.nameController.value.text}, ${personalDatCtrl.cardNumberController.value.text})',
+                                      style: TextStyle(
+                                          color: Color(0xFF39656D),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    );
+                                  }
+                                }),
                                 Gap(5),
                                 Icon(Icons.arrow_forward_ios,
                                     size: 12, color: Color(0xFF39656D)),

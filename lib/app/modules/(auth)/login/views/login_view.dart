@@ -81,11 +81,11 @@ class LoginView extends GetView<LoginController> {
 
                 const Gap(16),
 
-                _LoginButton(
-                  onPressed: () {},
-                  iconUrl: 'assets/icons/ic_baseline-apple.png',
-                  text: translations['apple']!.value,
-                ),
+                // _LoginButton(
+                //   onPressed: () {},
+                //   iconUrl: 'assets/icons/ic_baseline-apple.png',
+                //   text: translations['apple']!.value,
+                // ),
 
                 const Gap(16),
 
