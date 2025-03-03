@@ -54,8 +54,8 @@ import '../modules/(doctor)/detail-diagnose/bindings/detail_diagnose_binding.dar
 import '../modules/(doctor)/detail-diagnose/views/detail_diagnose_view.dart';
 import '../modules/(admin)/drug_admin/bindings/drug_admin_binding.dart';
 import '../modules/(admin)/drug_admin/views/drug_admin_view.dart';
-import '../modules/medicalHistory/bindings/medical_history_binding.dart';
-import '../modules/medicalHistory/views/medical_history_view.dart';
+import '../modules/(home)/medicalHistory/bindings/medical_history_binding.dart';
+import '../modules/(home)/medicalHistory/views/medical_history_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
 import '../modules/redeemMedicine/bindings/redeem_medicine_binding.dart';

@@ -11,8 +11,8 @@ import 'package:intl/intl.dart'; // Import intl
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
-  const HomeView({Key? key}) : super(key: key);
-
+  HomeView({Key? key}) : super(key: key);
+  final ProfileController profileCtrl = Get.find<ProfileController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +27,8 @@ class HomeView extends GetView<HomeController> {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () async {
-                  await controller.fetchMedicalRecords(); // Refresh data saat ditarik
+                  await controller
+                      .fetchMedicalRecords(); // Refresh data saat ditarik
                 },
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -59,7 +60,6 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildHeader() {
-    final ProfileCtrl = Get.put(ProfileController());
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -71,7 +71,7 @@ class HomeView extends GetView<HomeController> {
                 width: 50,
                 height: 50,
                 child: InkWell(
-                  onTap: () => Get.toNamed(Routes.PROFILE),
+                  // onTap: () => Get.toNamed(Routes.PROFILE),
                   child: Image.asset('assets/images/logo_clinic.png'),
                 ),
               ),
@@ -95,14 +95,19 @@ class HomeView extends GetView<HomeController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Obx(() => Text(
-                      'Greetings on Clinic, ${ProfileCtrl.userName.value}',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xff181D18),
-                      ),
-                    )),
+                Obx(() {
+                  if (profileCtrl.isLoading.value) {
+                    return SizedBox(); // Tampilkan loading jika data belum siap
+                  }
+                  return Text(
+                    'Greetings on Clinic, ${profileCtrl.user.value.name}',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xff181D18),
+                    ),
+                  );
+                }),
                 Text(
                   'How are you?',
                   style: GoogleFonts.poppins(
@@ -185,7 +190,8 @@ class HomeView extends GetView<HomeController> {
     });
   }
 
-  Widget _buildMedicalRecordCard({required Appointment record, required bool isAlternate}) {
+  Widget _buildMedicalRecordCard(
+      {required Appointment record, required bool isAlternate}) {
     return Container(
       width: MediaQuery.of(Get.context!).size.width * 0.75,
       margin: const EdgeInsets.only(right: 12),
@@ -224,11 +230,13 @@ class HomeView extends GetView<HomeController> {
                         ),
                         child: ClipOval(
                           child: Obx(() => Image.network(
-                                controller.doctorProfilePictureUrl.value.isNotEmpty
+                                controller.doctorProfilePictureUrl.value
+                                        .isNotEmpty
                                     ? controller.doctorProfilePictureUrl.value
                                     : 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
                                 fit: BoxFit.cover,
-                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace? stackTrace) {
                                   // Handle the error, e.g., display a placeholder
                                   print('Error loading image: $exception');
                                   return const Icon(Icons.error_outline);
@@ -524,21 +532,26 @@ class HomeView extends GetView<HomeController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildBottomBarItem(Icons.home, true),
-            _buildBottomBarItem(Icons.history, false),
-            // _buildBottomBarItem(Icons.chat_bubble_outline, false),
-            _buildBottomBarItem(Icons.person_outline, false),
+            _buildBottomBarItem(Icons.home, true, () => Get.toNamed('/home')),
+            _buildBottomBarItem(
+                Icons.history, false, () => Get.toNamed('/medical-history')),
+            // _buildBottomBarItem(Icons.chat_bubble_outline, false, () => Get.toNamed('/chat')),
+            _buildBottomBarItem(
+                Icons.person_outline, false, () => Get.toNamed(Routes.PROFILE)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBottomBarItem(IconData icon, bool isSelected) {
-    return Icon(
-      icon,
-      color: isSelected ? const Color(0xFF35693E) : Colors.grey,
-      size: 24,
+  Widget _buildBottomBarItem(IconData icon, bool isSelected, Function() onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Icon(
+        icon,
+        color: isSelected ? const Color(0xFF35693E) : Colors.grey,
+        size: 24,
+      ),
     );
   }
 }

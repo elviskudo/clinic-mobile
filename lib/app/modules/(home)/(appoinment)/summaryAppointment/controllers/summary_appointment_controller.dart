@@ -27,11 +27,12 @@ class SummaryAppointmentController extends GetxController {
   RxList<Symptom> symptoms = <Symptom>[].obs;
   Rxn<Profile> profile = Rxn<Profile>();
   RxString doctorProfilePictureUrl = ''.obs;
-
+  
   RxBool isAppointmentCompleted = false.obs;
   RxString buttonText = 'Waiting for the result ...'.obs;
   StreamSubscription? _appointmentStreamSubscription;
   String? _currentUserId;
+    RxBool isShowingAllSymptoms = false.obs;
 
   @override
   void onInit() {
@@ -64,10 +65,10 @@ class SummaryAppointmentController extends GetxController {
 
   void startAppointmentStatusStream(String appointmentId) {
     print('Starting appointment status stream for ID: $appointmentId');
-    
+
     // Cancel any existing subscription first
     _appointmentStreamSubscription?.cancel();
-    
+
     _appointmentStreamSubscription = supabase
         .from('appointments')
         .stream(primaryKey: ['id'])
@@ -76,9 +77,9 @@ class SummaryAppointmentController extends GetxController {
           if (data.isNotEmpty) {
             final appointmentData = data.first;
             final status = appointmentData['status'] as int?;
-            
+
             print('Real-time appointment status update: $status');
-            
+
             if (status == 5) {
               isAppointmentCompleted.value = true;
               buttonText.value = 'Next';
@@ -86,7 +87,7 @@ class SummaryAppointmentController extends GetxController {
               isAppointmentCompleted.value = false;
               buttonText.value = 'Waiting for the result ...';
             }
-            
+
             // Update the appointment object as well
             appointment.value = Appointment.fromJson(appointmentData);
           }
@@ -121,7 +122,8 @@ class SummaryAppointmentController extends GetxController {
   }
 
   Future<void> fetchAppointmentImage(String appointmentId) async {
-    print("Fungsi fetchAppointmentImage dijalankan dengan appointmentId: $appointmentId");
+    print(
+        "Fungsi fetchAppointmentImage dijalankan dengan appointmentId: $appointmentId");
     try {
       final fileResponse = await supabase
           .from('files')
@@ -129,7 +131,7 @@ class SummaryAppointmentController extends GetxController {
           .eq('module_class', 'appointments')
           .eq('module_id', appointmentId)
           .maybeSingle();
-    print('Response file appoinment $fileResponse');
+      print('Response file appoinment $fileResponse');
       if (fileResponse != null) {
         final fileName = fileResponse['file_name'] as String?;
         print('Appointment image file name: $fileName'); // Debugging
@@ -145,7 +147,8 @@ class SummaryAppointmentController extends GetxController {
   }
 
   Future<void> fetchAppointmentAndDoctor(String appointmentId) async {
-    print("Fungsi fetchAppointmentAndDoctor dijalankan dengan ID: $appointmentId");
+    print(
+        "Fungsi fetchAppointmentAndDoctor dijalankan dengan ID: $appointmentId");
     isLoading.value = true;
     errorMessage.value = '';
 
@@ -164,7 +167,7 @@ class SummaryAppointmentController extends GetxController {
 
       appointment.value = Appointment.fromJson(appointmentResponse);
       print('Appointment data: ${appointment.value}'); // Debugging
-      
+
       // Check initial status
       final status = appointmentResponse['status'] as int?;
       if (status == 5) {
@@ -183,10 +186,8 @@ class SummaryAppointmentController extends GetxController {
       print('2. Daftar gejala $symptomsString');
       if (symptomsString != null && symptomsString.isNotEmpty) {
         final symptomIds = symptomsString.split(',');
-        final symptomsResponse = await supabase
-            .from('symptoms')
-            .select()
-            .inFilter('id', symptomIds);
+        final symptomsResponse =
+            await supabase.from('symptoms').select().inFilter('id', symptomIds);
         print('3. Response symptom $symptomsResponse');
         if (symptomsResponse != null && symptomsResponse is List) {
           symptoms.assignAll(
@@ -293,11 +294,12 @@ class SummaryAppointmentController extends GetxController {
       errorMessage.value = 'Error: ${e.toString()}';
     } finally {
       isLoading.value = false;
-    } 
-    print("Memanggil fetchAppointmentImage dengan appointmentId: $appointmentId");
+    }
+    print(
+        "Memanggil fetchAppointmentImage dengan appointmentId: $appointmentId");
     await fetchAppointmentImage(appointmentId);
   }
-  
+
   // Method to handle button press
   void handleResultButtonPressed() {
     if (isAppointmentCompleted.value) {
@@ -313,6 +315,74 @@ class SummaryAppointmentController extends GetxController {
         colorText: Colors.black87,
         margin: const EdgeInsets.all(10),
       );
+    }
+  }
+
+  Future<void> getUserSymptoms() async {
+    print("Getting all symptoms for current user");
+    try {
+      // Clear previous symptoms list
+      symptoms.clear();
+
+      if (_currentUserId == null || _currentUserId!.isEmpty) {
+        await getUserName(); // Make sure we have the current user ID
+        if (_currentUserId == null || _currentUserId!.isEmpty) {
+          print('No current user ID available');
+          return;
+        }
+      }
+
+      // Get all appointments for the current user
+      final appointmentsResponse = await supabase
+          .from('appointments')
+          .select('id, symptoms')
+          .eq('user_id', _currentUserId as Object)
+          .order('created_at', ascending: false);
+
+      print('User appointments response: $appointmentsResponse');
+
+      if (appointmentsResponse == null ||
+          !(appointmentsResponse is List) ||
+          appointmentsResponse.isEmpty) {
+        print('No appointments found for user: $_currentUserId');
+        return;
+      }
+
+      // Collect all symptom IDs from all appointments
+      Set<String> allSymptomIds = {};
+      for (var appointment in appointmentsResponse) {
+        final symptomsString = appointment['symptoms'] as String?;
+        if (symptomsString != null && symptomsString.isNotEmpty) {
+          allSymptomIds.addAll(symptomsString.split(','));
+        }
+      }
+
+      if (allSymptomIds.isEmpty) {
+        print('No symptoms found in any appointments');
+        return;
+      }
+
+      print('All symptom IDs across appointments: $allSymptomIds');
+
+      // Fetch all unique symptoms
+      final symptomsResponse = await supabase
+          .from('symptoms')
+          .select()
+          .inFilter('id', allSymptomIds.toList());
+
+      print('All symptoms response: $symptomsResponse');
+
+      if (symptomsResponse != null && symptomsResponse is List) {
+        symptoms.assignAll(
+            symptomsResponse.map((json) => Symptom.fromJson(json)).toList());
+        print(
+            'Successfully loaded ${symptoms.length} unique symptoms for user');
+      } else {
+        print('Failed to retrieve symptoms details');
+      }
+    } catch (e) {
+      print('Error getting user symptoms: $e');
+      // errorMessage.value = 'Failed to load user symptoms: $e';
     }
   }
 }

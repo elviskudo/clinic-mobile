@@ -1,3 +1,5 @@
+import 'package:clinic_ai/app/modules/(doctor)/detail-diagnose/controllers/detail_diagnose_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/summaryAppointment/controllers/summary_appointment_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/personal_data/controllers/personal_data_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/personal_data/views/personal_data_view.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,10 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     final personalDatCtrl = Get.put(PersonalDataController());
-    final profileCtrl = Get.put(ProfileController());
+    final summaryCtrl = Get.put(SummaryAppointmentController());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      summaryCtrl.getUserSymptoms();
+    });
     return Scaffold(
       backgroundColor: Color(0xffF7FBF2),
       appBar: AppBar(
@@ -23,6 +28,10 @@ class ProfileView extends GetView<ProfileController> {
                 color: Color(0xff181D18),
                 fontSize: 18,
                 fontWeight: FontWeight.w600)),
+        leading: IconButton(
+          onPressed: () => Get.offAllNamed(Routes.HOME),
+          icon: Image.asset('assets/icons/back.png'),
+        ),
         backgroundColor: Color(0xffF7FBF2),
         elevation: 0,
         centerTitle: true,
@@ -66,7 +75,10 @@ class ProfileView extends GetView<ProfileController> {
         }
 
         return RefreshIndicator(
-          onRefresh: controller.refreshProfile,
+          onRefresh: () async {
+            await controller.refreshProfile();
+            await summaryCtrl.getUserSymptoms();
+          },
           color: Color(0xFF35693E),
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
@@ -212,6 +224,7 @@ class ProfileView extends GetView<ProfileController> {
                           ],
                         ),
                         SizedBox(height: 24),
+                        // Symptoms section - LIMITED TO 3
                         Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
@@ -219,18 +232,99 @@ class ProfileView extends GetView<ProfileController> {
                             color: Color(0xFFE8F3FF),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Diagnosis (Alergi, Riwayat Trauma ...)',
-                                style: TextStyle(
-                                  color: Color(0xFF2C5C71),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Diagnosis:",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF39656D),
+                                    ),
+                                  ),
+                                  // Obx(() => summaryCtrl.symptoms.length > 3
+                                  //     ? InkWell(
+                                  //         onTap: () => _showSymptomsDialog(
+                                  //             context, summaryCtrl),
+                                  //         child: Text(
+                                  //           "Lihat semua",
+                                  //           style: GoogleFonts.inter(
+                                  //             fontSize: 12,
+                                  //             color: Color(0xFF35693E),
+                                  //             decoration:
+                                  //                 TextDecoration.underline,
+                                  //           ),
+                                  //         ),
+                                  //       )
+                                  //     : SizedBox()),
+                                ],
                               ),
-                              Image.asset('assets/icons/correct.png'),
+                              Gap(8),
+                              Obx(() {
+                                if (summaryCtrl.symptoms.isEmpty) {
+                                  return Text(
+                                    "Belum ada gejala yang dilaporkan",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.black54,
+                                    ),
+                                  );
+                                } else {
+                                  // Only take the first 3 symptoms
+                                  final displayedSymptoms =
+                                      summaryCtrl.symptoms.length > 3
+                                          ? summaryCtrl.symptoms.sublist(0, 3)
+                                          : summaryCtrl.symptoms;
+
+                                  return Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            for (int i = 0;
+                                                i < displayedSymptoms.length;
+                                                i++) ...[
+                                              TextSpan(
+                                                text: displayedSymptoms[i]
+                                                        .enName ??
+                                                    "Unknown Symptom",
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 12,
+                                                  color: Color(0xFF516351),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              if (i !=
+                                                  displayedSymptoms.length -
+                                                      1) // Tambahkan koma kecuali di akhir
+                                                TextSpan(
+                                                  text: ", ",
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 12,
+                                                    color: Color(0xFF516351),
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                              }),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Image.asset('assets/icons/correct.png'),
+                              ),
                             ],
                           ),
                         ),
@@ -259,17 +353,21 @@ class ProfileView extends GetView<ProfileController> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Obx(
-                                  () => Text(
-                                    'Data Personal (${personalDatCtrl.nameController.value.text}, ${personalDatCtrl.cardNumberController.value.text})',
-                                    style: TextStyle(
-                                        color: Color(0xFF39656D),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
+                                Obx(() {
+                                  if (personalDatCtrl.isLoading.value) {
+                                    return SizedBox();
+                                  } else {
+                                    return Text(
+                                      'Data Personal (${personalDatCtrl.nameController.value.text}, ${personalDatCtrl.cardNumberController.value.text})',
+                                      style: TextStyle(
+                                          color: Color(0xFF39656D),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    );
+                                  }
+                                }),
                                 Gap(5),
                                 Icon(Icons.arrow_forward_ios,
                                     size: 12, color: Color(0xFF39656D)),
@@ -291,12 +389,15 @@ class ProfileView extends GetView<ProfileController> {
                         )),
                   ),
                   Divider(),
+
                   ListTile(
                     leading: Icon(Icons.history),
                     title: Text('Riwayat'),
                     subtitle: Text("Doctor's appointments and purchases"),
                     trailing: Icon(Icons.chevron_right),
-                    onTap: () {},
+                    onTap: () {
+                      Get.offAllNamed(Routes.MEDICAL_HISTORY);
+                    },
                   ),
                   Divider(),
                   ListTile(
