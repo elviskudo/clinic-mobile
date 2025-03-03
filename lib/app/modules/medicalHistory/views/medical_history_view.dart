@@ -16,10 +16,10 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(),
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back, color: Colors.black),
+        //   onPressed: () => Get.back(),
+        // ),
         title: Text(
           'Medical Record',
           style: GoogleFonts.poppins(
