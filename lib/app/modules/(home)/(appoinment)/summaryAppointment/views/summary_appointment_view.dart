@@ -83,10 +83,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
   Widget _buildAppBar(BuildContext context) {
     return Row(
       children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back_ios, size: 20),
-         onPressed: () => Get.offAllNamed(Routes.HOME),
-        ),
+       
         Text(
           'Appointment',
           style: GoogleFonts.inter(
