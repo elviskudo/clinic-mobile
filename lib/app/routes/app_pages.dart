@@ -58,8 +58,8 @@ import '../modules/(home)/medicalHistory/bindings/medical_history_binding.dart';
 import '../modules/(home)/medicalHistory/views/medical_history_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
-import '../modules/redeemMedicine/bindings/redeem_medicine_binding.dart';
-import '../modules/redeemMedicine/views/redeem_medicine_view.dart';
+import '../modules/(home)/redeemMedicine/bindings/redeem_medicine_binding.dart';
+import '../modules/(home)/redeemMedicine/views/redeem_medicine_view.dart';
 
 part 'app_routes.dart';
 
