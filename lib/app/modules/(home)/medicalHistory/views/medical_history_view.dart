@@ -16,10 +16,6 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back, color: Colors.black),
-        //   onPressed: () => Get.back(),
-        // ),
         title: Text(
           'Medical Record',
           style: GoogleFonts.poppins(
@@ -31,16 +27,30 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
         centerTitle: false,
       ),
       body: Obx(
-        () => controller.isLoading.value
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemCount: controller.medicalRecords.length,
-                itemBuilder: (context, index) {
-                  final record = controller.medicalRecords[index];
-                  return _buildMedicalRecordCard(record);
-                },
+        () {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (controller.medicalRecords.isEmpty) {
+            return Center(
+              child: Text(
+                'No medical records found.',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
               ),
+            );
+          } else {
+            return ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: controller.medicalRecords.length,
+              itemBuilder: (context, index) {
+                final record = controller.medicalRecords[index];
+                return _buildMedicalRecordCard(record);
+              },
+            );
+          }
+        },
       ),
     );
   }
@@ -70,7 +80,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
             Row(
               children: [
                 Obx(() => CircleAvatar(
-                      radius: 20, // Ukuran ikon diperkecil
+                      radius: 20,
                       backgroundImage: NetworkImage(
                           controller.doctorProfilePictureUrl.value.isNotEmpty
                               ? controller.doctorProfilePictureUrl.value
@@ -108,7 +118,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.more_vert, size: 20), // Ikon more di ujung kanan
+                  icon: const Icon(Icons.more_vert, size: 20),
                   onPressed: () {
                     // Tambahkan aksi yang diinginkan di sini
                   },
@@ -126,7 +136,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                       formattedDate,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        fontWeight: FontWeight.w500, // Teks lebih bold
+                        fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
                     ),
@@ -134,7 +144,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                       scheduleTime?.scheduleTime ?? 'Unknown Time',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        fontWeight: FontWeight.w500, // Teks lebih bold
+                        fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
                     ),
@@ -152,7 +162,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                     style: GoogleFonts.poppins(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: Colors.green, // Sesuaikan warna sesuai kebutuhan
+                      color: Colors.green,
                     ),
                   ),
                 ),
