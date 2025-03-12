@@ -37,6 +37,7 @@ abstract class Routes {
   static const ABOUT_APP = _Paths.ABOUT_APP;
   static const DRUG_ADMIN = _Paths.DRUG_ADMIN;
   static const MEDICAL_HISTORY = _Paths.MEDICAL_HISTORY;
+  static const APPOINTMENT_RESULT = _Paths.APPOINTMENT_RESULT;
   static const REDEEM_MEDICINE = _Paths.REDEEM_MEDICINE;
 }
 
@@ -76,5 +77,6 @@ abstract class _Paths {
   static const ABOUT_APP = '/about-app';
   static const DRUG_ADMIN = '/drug-admin';
   static const MEDICAL_HISTORY = '/medical-history';
+  static const APPOINTMENT_RESULT = '/appointment-result';
   static const REDEEM_MEDICINE = '/redeem-medicine';
 }

@@ -62,6 +62,12 @@ import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
 import '../modules/(home)/redeemMedicine/bindings/redeem_medicine_binding.dart';
 import '../modules/(home)/redeemMedicine/views/redeem_medicine_view.dart';
+import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
+import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
+import '../modules/(doctor)/appointment-result/bindings/appointment_result_binding.dart';
+import '../modules/(doctor)/appointment-result/views/appointment_result_view.dart';
+import '../modules/notification-user/bindings/notification_user_binding.dart';
+import '../modules/notification-user/views/notification_user_view.dart';
 
 part 'app_routes.dart';
 
@@ -221,6 +227,11 @@ class AppPages {
       name: _Paths.MEDICAL_HISTORY,
       page: () => const MedicalHistoryView(),
       binding: MedicalHistoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.APPOINTMENT_RESULT,
+      page: () => const AppointmentResultView(),
+      binding: AppointmentResultBinding(),
     ),
     GetPage(
       name: _Paths.REDEEM_MEDICINE,
