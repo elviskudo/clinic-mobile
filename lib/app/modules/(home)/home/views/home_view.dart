@@ -42,7 +42,7 @@ class HomeView extends GetView<HomeController> {
     });
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7FBF2),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
 
       // Gunakan Obx untuk memantau currentIndex
@@ -568,7 +568,7 @@ class HomeView extends GetView<HomeController> {
         margin: const EdgeInsets.only(bottom: 16, top: 8),
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: const Color(0xFFD4E8D1),
+          color: Theme.of(Get.context!).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
@@ -597,8 +597,8 @@ class HomeView extends GetView<HomeController> {
       child: Obx(() => Icon(
             icon,
             color: controller.currentIndex.value == index
-                ? const Color(0xFF35693E)
-                : Colors.grey,
+                ? Theme.of(Get.context!).colorScheme.primary
+                : Theme.of(Get.context!).colorScheme.outline,
             size: 24,
           )),
     );

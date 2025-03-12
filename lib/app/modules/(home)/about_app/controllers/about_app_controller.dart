@@ -135,6 +135,4 @@ class AboutAppController extends GetxController {
       isLoading.value = false;
     }
   }
-
-// ... existing code ...
 }

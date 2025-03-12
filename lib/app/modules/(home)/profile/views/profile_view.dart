@@ -20,19 +20,19 @@ class ProfileView extends GetView<ProfileController> {
       summaryCtrl.getUserSymptoms();
     });
     return Scaffold(
-      backgroundColor: Color(0xffF7FBF2),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('Clinic',
             style: GoogleFonts.inter(
-                color: Color(0xff181D18),
+                color: Theme.of(context).textTheme.titleLarge?.color,
                 fontSize: 18,
                 fontWeight: FontWeight.w600)),
         leading: IconButton(
           onPressed: () => Get.offAllNamed(Routes.HOME),
           icon: Image.asset('assets/icons/back.png'),
         ),
-        backgroundColor: Color(0xffF7FBF2),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
       ),
@@ -58,7 +58,7 @@ class ProfileView extends GetView<ProfileController> {
                 ElevatedButton(
                   onPressed: controller.refreshProfile,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF35693E),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -66,7 +66,8 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   child: Text(
                     'Refresh',
-                    style: GoogleFonts.poppins(color: Colors.white),
+                    style: GoogleFonts.poppins(
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ],
@@ -79,7 +80,7 @@ class ProfileView extends GetView<ProfileController> {
             await controller.refreshProfile();
             await summaryCtrl.getUserSymptoms();
           },
-          color: Color(0xFF35693E),
+          color: Theme.of(context).colorScheme.primary,
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             child: Padding(
@@ -97,10 +98,15 @@ class ProfileView extends GetView<ProfileController> {
                                   ''
                               ? NetworkImage(controller.profileImageUrl.value)
                               : null,
-                          backgroundColor: Colors.lightGreen[100],
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.2),
                           child: controller.profileImageUrl.value == ''
                               ? Icon(Icons.person_outline,
-                                  color: Colors.black, size: 30)
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                  size: 30)
                               : null,
                         );
                       }),
@@ -114,14 +120,20 @@ class ProfileView extends GetView<ProfileController> {
                                   style: GoogleFonts.poppins(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xff181D18),
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.color,
                                   ),
                                 )),
                             Obx(() => Text(
                                   controller.userEmail.value,
                                   style: GoogleFonts.inter(
                                     fontSize: 16,
-                                    color: Color(0xff181D18),
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   ),
                                 )),
                             InkWell(
@@ -140,9 +152,10 @@ class ProfileView extends GetView<ProfileController> {
                               child: Text(
                                 'View your account settings',
                                 style: TextStyle(
-                                  color: Color(0xff35693E),
+                                  color: Theme.of(context).colorScheme.primary,
                                   decoration: TextDecoration.underline,
-                                  decorationColor: Color(0xff35693E),
+                                  decorationColor:
+                                      Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             )
@@ -153,10 +166,13 @@ class ProfileView extends GetView<ProfileController> {
                           ? Container(
                               padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Color(0xffD4E8D1),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: Color(0xFF516351),
+                                  color: Theme.of(context).colorScheme.primary,
                                   width: 2,
                                 ),
                               ),
@@ -164,7 +180,7 @@ class ProfileView extends GetView<ProfileController> {
                                 controller.roleUser.value,
                                 style: GoogleFonts.inter(
                                   fontSize: 12,
-                                  color: Color(0xff516351),
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             )
@@ -176,10 +192,10 @@ class ProfileView extends GetView<ProfileController> {
                   Container(
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Color(0xffF7FBF2),
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Color(0xFFC1C9BE),
+                        color: Theme.of(context).dividerColor,
                         width: 1,
                       ),
                     ),
@@ -198,7 +214,10 @@ class ProfileView extends GetView<ProfileController> {
                                   style: GoogleFonts.inter(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF39656D),
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   ),
                                 ),
                                 Gap(4),
@@ -207,7 +226,8 @@ class ProfileView extends GetView<ProfileController> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w400,
-                                    color: Color(0xFF39656D),
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ],
@@ -229,7 +249,10 @@ class ProfileView extends GetView<ProfileController> {
                           padding: EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
                           decoration: BoxDecoration(
-                            color: Color(0xFFE8F3FF),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Column(
@@ -244,24 +267,10 @@ class ProfileView extends GetView<ProfileController> {
                                     style: GoogleFonts.inter(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
-                                      color: Color(0xFF39656D),
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
-                                  // Obx(() => summaryCtrl.symptoms.length > 3
-                                  //     ? InkWell(
-                                  //         onTap: () => _showSymptomsDialog(
-                                  //             context, summaryCtrl),
-                                  //         child: Text(
-                                  //           "Lihat semua",
-                                  //           style: GoogleFonts.inter(
-                                  //             fontSize: 12,
-                                  //             color: Color(0xFF35693E),
-                                  //             decoration:
-                                  //                 TextDecoration.underline,
-                                  //           ),
-                                  //         ),
-                                  //       )
-                                  //     : SizedBox()),
                                 ],
                               ),
                               Gap(8),
@@ -298,7 +307,9 @@ class ProfileView extends GetView<ProfileController> {
                                                     "Unknown Symptom",
                                                 style: GoogleFonts.inter(
                                                   fontSize: 12,
-                                                  color: Color(0xFF516351),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface,
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
@@ -309,7 +320,9 @@ class ProfileView extends GetView<ProfileController> {
                                                   text: ", ",
                                                   style: GoogleFonts.inter(
                                                     fontSize: 12,
-                                                    color: Color(0xFF516351),
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurface,
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
@@ -346,9 +359,10 @@ class ProfileView extends GetView<ProfileController> {
                             padding: EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 12),
                             decoration: BoxDecoration(
-                              color: Color(0xffF7FBF2),
+                              color: Theme.of(context).colorScheme.surface,
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Color(0xffC1C9BE)),
+                              border: Border.all(
+                                  color: Theme.of(context).dividerColor),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -360,7 +374,9 @@ class ProfileView extends GetView<ProfileController> {
                                     return Text(
                                       'Data Personal (${personalDatCtrl.nameController.value.text}, ${personalDatCtrl.cardNumberController.value.text})',
                                       style: TextStyle(
-                                          color: Color(0xFF39656D),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700),
                                       overflow: TextOverflow.ellipsis,
@@ -370,7 +386,9 @@ class ProfileView extends GetView<ProfileController> {
                                 }),
                                 Gap(5),
                                 Icon(Icons.arrow_forward_ios,
-                                    size: 12, color: Color(0xFF39656D)),
+                                    size: 12,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
                               ],
                             ),
                           ),
@@ -399,7 +417,9 @@ class ProfileView extends GetView<ProfileController> {
                       Get.offAllNamed(Routes.MEDICAL_HISTORY);
                     },
                   ),
-                  Divider(),
+                  Divider(
+                    color: Theme.of(context).dividerTheme.color,
+                  ),
                   ListTile(
                     leading: Icon(Icons.language),
                     title: Text('Language'),

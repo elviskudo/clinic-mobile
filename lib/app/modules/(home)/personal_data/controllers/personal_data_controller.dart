@@ -363,7 +363,7 @@ class PersonalDataController extends GetxController {
         btnOkText: 'OK',
         btnOkColor: Colors.green,
         width: MediaQuery.of(context).size.width,
-        dialogBackgroundColor: Colors.white,
+        dialogBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
         dialogBorderRadius: BorderRadius.vertical(top: Radius.circular(10)),
         alignment: Alignment.bottomCenter, // Membuat dialog berada di bawah
       ).show();

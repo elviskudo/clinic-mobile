@@ -37,6 +37,7 @@ abstract class Routes {
   static const ABOUT_APP = _Paths.ABOUT_APP;
   static const DRUG_ADMIN = _Paths.DRUG_ADMIN;
   static const MEDICAL_HISTORY = _Paths.MEDICAL_HISTORY;
+  static const THEME = _Paths.THEME;
 }
 
 abstract class _Paths {
@@ -75,4 +76,5 @@ abstract class _Paths {
   static const ABOUT_APP = '/about-app';
   static const DRUG_ADMIN = '/drug-admin';
   static const MEDICAL_HISTORY = '/medical-history';
+  static const THEME = '/theme';
 }

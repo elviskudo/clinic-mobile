@@ -1,4 +1,5 @@
 import 'package:clinic_ai/app/modules/(admin)/upload/controllers/upload_controller.dart';
+import 'package:clinic_ai/app/modules/Theme/controllers/theme_controller.dart';
 import 'package:clinic_ai/models/user_model.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,7 @@ class ProfileController extends GetxController {
   final user = Users().obs;
   final isLoading = true.obs;
   final errorMessage = RxString('');
-  final isDarkMode = false.obs;
+  // final isDarkMode = false.obs;
   RxString roleUser = ''.obs;
   RxString userName = ''.obs;
   RxString userEmail = ''.obs;
@@ -20,7 +21,8 @@ class ProfileController extends GetxController {
   SharedPreferences? _prefs;
   final UploadController uploadController = Get.put(UploadController());
   RxString profileImageUrl = ''.obs;
-
+  final themeController = Get.find<ThemeController>();
+  RxBool get isDarkMode => RxBool(themeController.isDarkMode);
   @override
   void onInit() {
     super.onInit();
@@ -140,7 +142,7 @@ class ProfileController extends GetxController {
   }
 
   void toggleDarkMode(bool value) {
-    isDarkMode.value = value;
+    themeController.toggleTheme();
   }
 
   Future<void> loadProfileImage() async {

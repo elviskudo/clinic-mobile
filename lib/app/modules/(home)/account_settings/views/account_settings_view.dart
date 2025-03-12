@@ -44,12 +44,15 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
     }
 
     return Scaffold(
-      backgroundColor: Color(0xffF7FBF2),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Color(0xffF7FBF2),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: Text(
           'Account Settings',
-          style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
+          style: GoogleFonts.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).textTheme.titleLarge?.color),
         ),
         leading: IconButton(
           onPressed: () => Get.offAllNamed(Routes.PROFILE),
@@ -119,7 +122,7 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
                     child: Text(
                       'Change Profile Photo',
                       style: GoogleFonts.inter(
-                        color: Color(0xff35693E),
+                        color: Theme.of(context).colorScheme.primary,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),

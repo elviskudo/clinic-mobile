@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:clinic_ai/app/modules/Theme/controllers/theme_controller.dart';
 import 'package:clinic_ai/app/translations/app_translations.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
       // If you need to pass transaction data
       final payload =
           receivedAction.payload; // Get any additional data if needed
-      Get .toNamed(Routes.QR_SCANNER_SCREEN);
+      Get.toNamed(Routes.QR_SCANNER_SCREEN);
       break;
     default:
       Get.toNamed(Routes.QR_SCANNER_SCREEN); // Default route
@@ -82,6 +83,7 @@ void main() async {
     Get.put(BarcodeAppointmentController());
     Get.put(SymptomAppointmentController());
     Get.put(CaptureAppointmentController());
+    Get.put(ThemeController());
 
     runApp(
       GetMaterialApp(
@@ -92,6 +94,11 @@ void main() async {
         translations: AppTranslations(),
         locale: const Locale('en'),
         fallbackLocale: const Locale('en'),
+        // theme: lightTheme,
+        // darkTheme: darkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeController.to.themeMode,
       ),
     );
   } catch (e) {

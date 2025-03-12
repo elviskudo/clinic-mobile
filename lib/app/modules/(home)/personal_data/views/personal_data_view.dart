@@ -15,9 +15,9 @@ class PersonalDataView extends GetView<PersonalDataController> {
     final profileCtrl = Get.put(ProfileController());
 
     return Scaffold(
-      backgroundColor: Color(0xffF7FBF2),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Color(0xffF7FBF2),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: Text(
           'Personal Data',
           style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
@@ -60,7 +60,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
                         ),
                       ],
                     ),
-                    _buildCitySearchField(),
+                    _buildCitySearchField(context),
                     _buildTextField('Postal code', 'Enter your postal code ...',
                         controller.postalCodeController),
                     _buildResponsibleForCostsSection(),
@@ -207,7 +207,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
         ));
   }
 
-  Widget _buildCitySearchField() {
+  Widget _buildCitySearchField(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -252,7 +252,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
                     decoration: BoxDecoration(
                       border: Border.all(color: Color(0xff727970)),
                       borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                     ),
                     child: controller.isLoadingCities.value
                         ? Center(
