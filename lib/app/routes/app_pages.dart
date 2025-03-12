@@ -48,12 +48,18 @@ import '../modules/(home)/home/bindings/home_binding.dart';
 import '../modules/(home)/home/views/home_view.dart';
 import '../modules/(home)/medicalHistory/bindings/medical_history_binding.dart';
 import '../modules/(home)/medicalHistory/views/medical_history_view.dart';
+import '../modules/(home)/medicineRecord/bindings/medicine_record_binding.dart';
+import '../modules/(home)/medicineRecord/views/medicine_record_view.dart';
 import '../modules/(home)/onboarding_page/bindings/onboarding_page_binding.dart';
 import '../modules/(home)/onboarding_page/views/onboarding_page_view.dart';
 import '../modules/(home)/personal_data/bindings/personal_data_binding.dart';
 import '../modules/(home)/personal_data/views/personal_data_view.dart';
 import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
+import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
+import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
+import '../modules/notification-user/bindings/notification_user_binding.dart';
+import '../modules/notification-user/views/notification_user_view.dart';
 import '../modules/(home)/redeemMedicine/bindings/redeem_medicine_binding.dart';
 import '../modules/(home)/redeemMedicine/views/redeem_medicine_view.dart';
 import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
@@ -199,9 +205,9 @@ class AppPages {
       binding: HelpCenterBinding(),
     ),
     GetPage(
-      name: _Paths.REDEEM_MEDICINE,
-      page: () => const RedeemMedicineView(),
-      binding: RedeemMedicineBinding(),
+      name: _Paths.MEDICINE_RECORD,
+      page: () => const MedicineRecordView(),
+      binding: MedicineRecordBinding(),
     ),
     GetPage(
       name: _Paths.ABOUT_APP,
@@ -226,6 +232,11 @@ class AppPages {
       name: _Paths.APPOINTMENT_RESULT,
       page: () => const AppointmentResultView(),
       binding: AppointmentResultBinding(),
+    ),
+    GetPage(
+      name: _Paths.REDEEM_MEDICINE,
+      page: () => const RedeemMedicineView(),
+      binding: RedeemMedicineBinding(),
     ),
   ];
 }
