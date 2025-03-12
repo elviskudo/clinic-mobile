@@ -2,8 +2,6 @@ import 'package:clinic_ai/app/modules/(home)/redeemMedicine/controllers/redeem_m
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
-
 class RedeemMedicineView extends GetView<RedeemMedicineController> {
   const RedeemMedicineView({Key? key}) : super(key: key);
 
@@ -63,9 +61,10 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.grey.shade300, width: 1),
                 ),
-                child: const Text(
-                  'Lorem ipsum dolor sit amet consectetur. Gravida sit semper faucibus accumsan consequat et volutpat urna. Adipiscing eget aenean vitae rhoncus. Felis nullam tempor orci at purus lorem id quis at. Quam viverra lobortis gravida in in nulla nibh quis sit.',
+                child: Obx(() => Text(
+                  controller.aiResponse.value,
                   style: TextStyle(fontSize: 14),
+                ),
                 ),
               ),
             ),

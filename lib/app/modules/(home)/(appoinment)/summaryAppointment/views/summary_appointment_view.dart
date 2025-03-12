@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../controllers/summary_appointment_controller.dart';
 
@@ -14,25 +15,25 @@ class SummaryAppointmentView extends StatefulWidget {
 }
 
 class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
-  final SummaryAppointmentController controller =
-      Get.put(SummaryAppointmentController());
+  final SummaryAppointmentController controller = Get.put(SummaryAppointmentController());
   String? appointmentId;
 
   @override
   void initState() {
     super.initState();
-    appointmentId = Get.arguments as String?; // Dapatkan ID dari arguments
+    appointmentId = Get.arguments as String?; // Get ID from arguments
     if (appointmentId != null) {
-      controller.fetchAppointmentAndDoctor(
-          appointmentId!); // Panggil fetch dengan ID yang benar
+      controller.fetchAppointmentAndDoctor(appointmentId!); // Call fetch with the correct ID
     } else {
-      controller.errorMessage.value =
-          'Appointment ID tidak tersedia.'; // Atur pesan error
+      controller.errorMessage.value = 'Appointment ID tidak tersedia.'; // Set error message
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7FBF2),
       body: SafeArea(
@@ -40,38 +41,40 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           } else if (controller.errorMessage.value.isNotEmpty) {
-            return Center(
-                child: Text('Error: ${controller.errorMessage.value}'));
-          } else if (controller.appointment.value == null ||
-              controller.doctor.value == null) {
+            return Center(child: Text('Error: ${controller.errorMessage.value}'));
+          } else if (controller.appointment.value == null || controller.doctor.value == null) {
             return const Center(child: Text('Data tidak ditemukan.'));
           } else {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    _buildAppBar(context),
-                    const SizedBox(height: 24),
-                    _buildDoctorInfo(),
-                    const SizedBox(height: 16),
-                    _buildAppointmentDetails(),
-                    const SizedBox(height: 24),
-                    _buildPatientCode(context),
-                    const SizedBox(height: 24),
-                    _buildPatientInfo(),
-                    const SizedBox(height: 24),
-                    _buildSymptoms(),
-                    const SizedBox(height: 24),
-                    _buildSymptomDescriptions(),
-                    const SizedBox(height: 40),
-                    _buildResultButton(context),
-                    const SizedBox(height: 20),
-                  ],
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        _buildAppBar(context),
+                        const SizedBox(height: 24),
+                        _buildDoctorInfo(screenWidth, screenHeight),
+                        const SizedBox(height: 16),
+                        _buildAppointmentDetails(),
+                        const SizedBox(height: 24),
+                        _buildQRCodeSection(), // New QR Code section
+                        const SizedBox(height: 24),
+                        _buildPatientInfo(),
+                        const SizedBox(height: 24),
+                        _buildSymptoms(),
+                        const SizedBox(height: 24),
+                        _buildSymptomDescriptions(),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                _buildResultButton(context), // Button outside SingleChildScrollView
+                const SizedBox(height: 20),
+              ],
             );
           }
         }),
@@ -93,60 +96,65 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     );
   }
 
-  Widget _buildDoctorInfo() {
+  Widget _buildDoctorInfo(double screenWidth, double screenHeight) {
     try {
-      // Pastikan data dokter dan profil tersedia
       if (controller.doctor.value == null) {
         return const Center(
           child: Text('Data dokter tidak tersedia.'),
         );
       }
 
-      // Ambil data yang dibutuhkan
       final doctorName = controller.doctor.value!.name ?? 'Unknown';
       final doctorDegree = controller.doctor.value!.degree ?? 'Unknown';
       final doctorSpecialize = controller.doctor.value!.specialize ?? 'Unknown';
 
-      return Center(
-          child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Obx(
-              () => controller.doctorProfilePictureUrl.value.isNotEmpty
-                  ? Image.network(
-                      controller.doctorProfilePictureUrl.value,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                          Icons.error), // Handle error jika gambar gagal dimuat
-                    )
-                  : Image.network(
-                      "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Doctor Profile Picture - without QR code here
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+                child: Obx(() => controller.doctorProfilePictureUrl.value.isNotEmpty
+                    ? Image.network(
+                        controller.doctorProfilePictureUrl.value,
+                        width: screenWidth * 0.35,
+                        height: screenWidth * 0.35,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+                      )
+                    : Image.network(
+                        "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
+                        width: screenWidth * 0.35,
+                        height: screenWidth * 0.35,
+                        fit: BoxFit.cover,
+                      ),
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "$doctorDegree $doctorName, $doctorSpecialize",
-            style: GoogleFonts.inter(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+
+            // Doctor Information
+            const SizedBox(height: 16),
+            Text(
+              "$doctorDegree $doctorName, $doctorSpecialize",
+              style: GoogleFonts.inter(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-          Text(
-            controller.poly.value?.name.toString() ?? 'Unknown Poly',
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              color: const Color(0xFF6B7280),
+            Text(
+              controller.poly.value?.name.toString() ?? 'Unknown Poly',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: const Color(0xFF6B7280),
+              ),
             ),
-          ),
-        ],
-      ));
+          ],
+        ),
+      );
     } catch (e) {
       return Center(child: Text('Error in _buildDoctorInfo: ${e.toString()}'));
     }
@@ -155,8 +163,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
   Widget _buildAppointmentDetails() {
     try {
       final formattedDate = controller.scheduleDate.value != null
-          ? DateFormat('dd/MM/yyyy')
-              .format(controller.scheduleDate.value!.scheduleDate)
+          ? DateFormat('dd/MM/yyyy').format(controller.scheduleDate.value!.scheduleDate)
           : 'Tanggal Tidak Tersedia';
       final time =
           controller.scheduleTime.value?.scheduleTime ?? 'Waktu Tidak Tersedia';
@@ -172,9 +179,104 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
         ),
       );
     } catch (e) {
-      return Center(
-          child: Text('Error in _buildAppointmentDetails: ${e.toString()}'));
+      return Center(child: Text('Error in _buildAppointmentDetails: ${e.toString()}'));
     }
+  }
+
+  // New QR Code section
+  Widget _buildQRCodeSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Appointment QR Code',
+          style: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // QR Code
+                Obx(() => QrImageView(
+                      data: controller.appointment.value?.qrCode ?? 'No QR Code',
+                      version: QrVersions.auto,
+                      size: MediaQuery.of(context).size.width * 0.7,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.all(10),
+                    )),
+                const SizedBox(height: 16),
+                // Patient Code
+                Text(
+                  'Patient Code',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  controller.appointment.value?.qrCode ?? 'Not Available',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Divider
+                Divider(color: Colors.grey[300]),
+                const SizedBox(height: 8),
+                // Image Captured button
+                GestureDetector(
+                  onTap: () => _showImageDialog(context),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4E8D1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.green.shade300),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.image, size: 18, color: Colors.green[700]),
+                        const SizedBox(width: 8),
+                        Text(
+                          'View Captured Image',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: Colors.green[700],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   // Improved Alert Dialog for Appointment Details
@@ -359,7 +461,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     );
   }
 
-// Improved Alert Dialog for Captured Image
+  // Improved Alert Dialog for Captured Image
   void _showImageDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -586,97 +688,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     );
   }
 
-// Update the onTap handlers in your _buildPatientCode method to use these new dialogs
-  Widget _buildPatientCode(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 350;
-    final maxTextWidth = screenWidth * 0.4;
-    final fontSize = isSmallScreen ? 13.0 : 15.0;
-    final paddingVertical = isSmallScreen ? 8.0 : 16.0;
-    final paddingHorizontal = isSmallScreen ? 12.0 : 26.0;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        InkWell(
-          onTap: () => _showAppointmentDetailsDialog(context),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxTextWidth),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: paddingHorizontal, vertical: paddingVertical),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.grey.shade300, width: 1),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Text(
-                '${controller.appointment.value?.qrCode ?? "Tidak Ada"}-${controller.userName.value}',
-                style: GoogleFonts.inter(
-                  fontSize: fontSize,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w400,
-                ),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        InkWell(
-          onTap: () => _showImageDialog(context),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: paddingHorizontal, vertical: paddingVertical),
-            decoration: BoxDecoration(
-              color: const Color(0xFFD4E8D1),
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(
-                color: Colors.green.shade300,
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.green.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Image Captured',
-                  style: GoogleFonts.inter(
-                    fontSize: fontSize - 1,
-                    color: Colors.green[700],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.check,
-                  color: Colors.green[700],
-                  size: fontSize + 1,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPatientInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -690,7 +701,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
         ),
         const SizedBox(height: 8),
         Text(
-          '${controller.userName.value}', // Ubah ke data dari appointment
+          controller.userName.value,
           style: GoogleFonts.inter(
             fontSize: 14,
             color: Colors.black87,
@@ -717,7 +728,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: controller.symptoms
                 .map((symptom) => Text(
-                      "${symptom.enName}, ", // Ganti enName dengan kolom yang ingin ditampilkan
+                      "${symptom.enName}, ",
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         color: Colors.black87,
@@ -751,7 +762,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
         const SizedBox(height: 8),
         Text(
           controller.appointment.value?.symptomDescription ??
-              'Tidak ada deskripsi', // Ubah ke data dari appointment
+              'Tidak ada deskripsi',
           style: GoogleFonts.inter(
             fontSize: 14,
             color: Colors.black87,
@@ -821,9 +832,9 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           return GestureDetector(
             onTap: () {
               if (isCompleted) {
-                Get.toNamed(Routes.REDEEM_MEDICINE);
+                Get.toNamed(Routes.REDEEM_MEDICINE, arguments: appointmentId); // Send appointmentId
               } else {
-                controller.handleResultButtonPressed(); // Lakukan tindakan lain jika belum selesai
+                controller.handleResultButtonPressed(); // Do other action if not completed
               }
             },
             child: Container(
@@ -865,7 +876,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
       ),
       child: Center(
         child: Text(
-          controller.buttonText.value, // Gunakan buttonText.value
+          controller.buttonText.value,
           style: GoogleFonts.inter(
             fontSize: 16,
             color: Colors.grey[600],
