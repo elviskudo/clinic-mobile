@@ -6,6 +6,8 @@ import '../modules/(admin)/clinic/bindings/clinic_binding.dart';
 import '../modules/(admin)/clinic/views/clinic_view.dart';
 import '../modules/(admin)/doctor/bindings/doctor_binding.dart';
 import '../modules/(admin)/doctor/views/doctor_view.dart';
+import '../modules/(admin)/drug_admin/bindings/drug_admin_binding.dart';
+import '../modules/(admin)/drug_admin/views/drug_admin_view.dart';
 import '../modules/(admin)/list_user/bindings/list_user_binding.dart';
 import '../modules/(admin)/list_user/views/list_user_view.dart';
 import '../modules/(admin)/poly/bindings/poly_binding.dart';
@@ -16,6 +18,8 @@ import '../modules/(auth)/verification/bindings/verification_binding.dart';
 import '../modules/(auth)/verification/views/verification_view.dart';
 import '../modules/(auth)/verificationSuccess/bindings/verification_success_binding.dart';
 import '../modules/(auth)/verificationSuccess/views/verification_success_view.dart';
+import '../modules/(doctor)/detail-diagnose/bindings/detail_diagnose_binding.dart';
+import '../modules/(doctor)/detail-diagnose/views/detail_diagnose_view.dart';
 import '../modules/(doctor)/home_doctor/bindings/home_doctor_binding.dart';
 import '../modules/(doctor)/home_doctor/views/home_doctor_view.dart';
 import '../modules/(doctor)/list_patients/bindings/list_patients_binding.dart';
@@ -34,12 +38,18 @@ import '../modules/(home)/(appoinment)/summaryAppointment/bindings/summary_appoi
 import '../modules/(home)/(appoinment)/summaryAppointment/views/summary_appointment_view.dart';
 import '../modules/(home)/(appoinment)/symptomAppointment/bindings/symptom_appointment_binding.dart';
 import '../modules/(home)/(appoinment)/symptomAppointment/views/symptom_appointment_view.dart';
+import '../modules/(home)/about_app/bindings/about_app_binding.dart';
+import '../modules/(home)/about_app/views/about_app_view.dart';
 import '../modules/(home)/account_settings/bindings/account_settings_binding.dart';
 import '../modules/(home)/account_settings/views/account_settings_view.dart';
 import '../modules/(home)/help_center/bindings/help_center_binding.dart';
 import '../modules/(home)/help_center/views/help_center_view.dart';
 import '../modules/(home)/home/bindings/home_binding.dart';
 import '../modules/(home)/home/views/home_view.dart';
+import '../modules/(home)/medicalHistory/bindings/medical_history_binding.dart';
+import '../modules/(home)/medicalHistory/views/medical_history_view.dart';
+import '../modules/(home)/medicineRecord/bindings/medicine_record_binding.dart';
+import '../modules/(home)/medicineRecord/views/medicine_record_view.dart';
 import '../modules/(home)/onboarding_page/bindings/onboarding_page_binding.dart';
 import '../modules/(home)/onboarding_page/views/onboarding_page_view.dart';
 import '../modules/(home)/personal_data/bindings/personal_data_binding.dart';
@@ -48,14 +58,6 @@ import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
 import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
-import '../modules/(home)/about_app/bindings/about_app_binding.dart';
-import '../modules/(home)/about_app/views/about_app_view.dart';
-import '../modules/(doctor)/detail-diagnose/bindings/detail_diagnose_binding.dart';
-import '../modules/(doctor)/detail-diagnose/views/detail_diagnose_view.dart';
-import '../modules/(admin)/drug_admin/bindings/drug_admin_binding.dart';
-import '../modules/(admin)/drug_admin/views/drug_admin_view.dart';
-import '../modules/(home)/medicalHistory/bindings/medical_history_binding.dart';
-import '../modules/(home)/medicalHistory/views/medical_history_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
 import '../modules/(home)/redeemMedicine/bindings/redeem_medicine_binding.dart';
@@ -197,9 +199,9 @@ class AppPages {
       binding: HelpCenterBinding(),
     ),
     GetPage(
-      name: _Paths.REDEEM_MEDICINE,
-      page: () => const RedeemMedicineView(),
-      binding: RedeemMedicineBinding(),
+      name: _Paths.MEDICINE_RECORD,
+      page: () => const MedicineRecordView(),
+      binding: MedicineRecordBinding(),
     ),
     GetPage(
       name: _Paths.ABOUT_APP,
@@ -219,6 +221,11 @@ class AppPages {
       name: _Paths.MEDICAL_HISTORY,
       page: () => const MedicalHistoryView(),
       binding: MedicalHistoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.REDEEM_MEDICINE,
+      page: () => const RedeemMedicineView(),
+      binding: RedeemMedicineBinding(),
     ),
   ];
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../controllers/summary_appointment_controller.dart';
 
@@ -83,7 +82,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
   Widget _buildAppBar(BuildContext context) {
     return Row(
       children: [
-       
         Text(
           'Appointment',
           style: GoogleFonts.inter(
@@ -817,11 +815,17 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
 
           // Update button color based on completion status
           Color buttonColor = isCompleted
-              ? Color(0xFF35693E) // Green if completed
+              ? const Color(0xFF35693E) // Green if completed
               : Colors.grey.shade200; // Grey if not
 
           return GestureDetector(
-            onTap: () => controller.handleResultButtonPressed(),
+            onTap: () {
+              if (isCompleted) {
+                Get.toNamed(Routes.REDEEM_MEDICINE);
+              } else {
+                controller.handleResultButtonPressed(); // Lakukan tindakan lain jika belum selesai
+              }
+            },
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16),
