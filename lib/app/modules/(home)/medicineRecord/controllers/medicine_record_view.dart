@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class RedeemMedicineController extends GetxController {
+class MedicineRecordController extends GetxController {
   //TODO: Implement RedeemMedicineController
 
   final count = 0.obs;

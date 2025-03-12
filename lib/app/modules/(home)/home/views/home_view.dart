@@ -1,8 +1,8 @@
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/medicalHistory/controllers/medical_history_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/medicalHistory/views/medical_history_view.dart';
 import 'package:clinic_ai/app/modules/(home)/profile/controllers/profile_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/profile/views/profile_view.dart';
-import 'package:clinic_ai/app/modules/redeemMedicine/views/redeem_medicine_view.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +58,7 @@ class HomeView extends GetView<HomeController> {
         },
         children: [
           _buildHomePage(context),
-          // const MedicalHistoryView(),
+           MedicalHistoryView(),
           const ProfileView(),
         ],
       ),
@@ -90,7 +90,7 @@ class HomeView extends GetView<HomeController> {
                         title: 'Redeem Medicine',
                         seeAll: true,
                         child: _buildMedicineCards(),
-                        ontap: () => Get.toNamed(Routes.REDEEM_MEDICINE)),
+                        ontap: () => Get.toNamed(Routes.MEDICINE_RECORD)),
                     const SizedBox(height: 80),
                   ],
                 ),

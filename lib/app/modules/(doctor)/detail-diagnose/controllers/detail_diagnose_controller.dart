@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:clinic_ai/models/drug_model.dart';
 import 'package:clinic_ai/models/fee_model.dart';
@@ -363,6 +364,14 @@ medical attention. Ensure that the analysis is accurate, medically sound, and of
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
+
+      Get.offNamed(
+      Routes.APPOINTMENT_RESULT,
+      arguments: {
+        'appointment': appointment.value,
+        'totalAmount': calculateGrandTotal(),
+      },
+    );
 
       // Navigate back to previous screen
       Get.back();

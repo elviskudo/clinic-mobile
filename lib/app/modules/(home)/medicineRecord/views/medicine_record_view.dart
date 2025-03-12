@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../controllers/redeem_medicine_controller.dart';
+import '../controllers/medicine_record_view.dart';
 
-class RedeemMedicineView extends GetView<RedeemMedicineController> {
-  const RedeemMedicineView({Key? key}) : super(key: key);
+class MedicineRecordView extends GetView<MedicineRecordController> {
+  const MedicineRecordView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
