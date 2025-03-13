@@ -3,31 +3,26 @@ import 'package:clinic_ai/models/bank_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:clinic_ai/models/drug_model.dart';
+import 'package:clinic_ai/models/appointment_drug_model.dart';
+import 'package:clinic_ai/models/appointment_fee_model.dart';
+import 'package:clinic_ai/models/fee_model.dart';
 
 class RedeemMedicineController extends GetxController {
-  // Sample data for medicines
-  var medicines = [
-    {
-      'name': 'Paramex',
-      'category': 'Drug Category',
-      'detail': '500gr',
-      'price': '96.000',
-      'image': 'https://via.placeholder.com/50',
-    },
-    {
-      'name': 'Oskadon',
-      'category': 'Drug Category',
-      'detail': '25 Strip',
-      'price': '96.000',
-      'image': 'https://via.placeholder.com/50',
-    },
-  ].obs;
+  // RxList untuk menampung data obat dari appointment
+  RxList<Drug> medicines = RxList<Drug>([]);
+
+  // RxList untuk menampung data fees dari appointment
+  RxList<Fee> fees = <Fee>[].obs;
+
+  // Loading state
+  RxBool isLoading = false.obs;
 
   // Payment details
-  var productSubtotal = '192.000'.obs;
-  var consultationFee = '150.000'.obs;
+  var productSubtotal = '0'.obs;
+  var consultationFee = '0'.obs;
   var handlingFee = '30.000'.obs;
-  var total = '372.000'.obs;
+  var total = '0'.obs;
 
   // Supabase client
   final supabase = Supabase.instance.client;
@@ -41,21 +36,22 @@ class RedeemMedicineController extends GetxController {
   // RxString untuk menyimpan id bank yang dipilih
   RxString selectedBankId = ''.obs;
 
-  //RxString untuk menampilkan ai response
+  // RxString untuk menampilkan ai response
   final aiResponse = ''.obs;
   Rxn<Appointment> appointment = Rxn<Appointment>();
 
   @override
   void onInit() {
-    fetchBanks(); // Ambil data bank saat controller diinisialisasi
+    fetchBanks();
     final appointmentId = Get.arguments as String? ?? '';
     if (appointmentId.isNotEmpty) {
       fetchAppointment(appointmentId);
+      fetchAppointmentDrugs(appointmentId);
+      fetchAppointmentFees(appointmentId);
     }
     super.onInit();
   }
 
-  // Method untuk mengambil data bank dari Supabase
   Future<void> fetchBanks() async {
     try {
       final response = await supabase.from('banks').select('*');
@@ -64,55 +60,166 @@ class RedeemMedicineController extends GetxController {
       }
     } catch (e) {
       debugPrint('Error fetching banks: $e');
-      // Handle error (misalnya, menampilkan snackbar)
     }
   }
 
-  // Method untuk mengambil data apppointment dari supabase dan menampilkan response
   Future<void> fetchAppointment(String appointmentId) async {
     try {
-      print('fetchAppointment dijalankan dengan appointmentId: $appointmentId');
-      print('YNWA: $appointmentId');
       final response = await supabase
           .from('appointments')
-          .select('ai_response')
+          .select('ai_response') // Hanya ambil ai_response
           .eq('id', appointmentId)
           .single();
-      print('Response dari Supabase: $response');
 
       if (response != null) {
-        // Pastikan respons memiliki kunci 'ai_response'
-        if (response.containsKey('ai_response')) {
-          print("Response ada key 'ai_response'");
-          final aiResponseValue = response['ai_response'];
-
-          // Periksa apakah nilai ai_responseValue null atau bukan String
-          if (aiResponseValue != null && aiResponseValue is String) {
-            aiResponse.value = aiResponseValue;
-          } else {
-            print('Nilai ai_response null atau bukan String: $aiResponseValue');
-            aiResponse.value = 'Belum ada response';
-          }
-        } else {
-          print('Response tidak memiliki kunci ai_response');
-          aiResponse.value = 'Ai Response Kosong (tidak ada kunci ai_response)';
-        }
+        final aiResponseValue = response['ai_response'] as String?;
+        aiResponse.value = aiResponseValue ?? 'Belum ada response';
       } else {
-        print('Tidak ada response dari Supabase');
         aiResponse.value = 'Tidak ada response dari Supabase';
       }
     } catch (e) {
-      print('Error fetching Ai Response: $e');
       aiResponse.value = 'Gagal mengambil response. Error: ${e.toString()}';
-      // Handle error (misalnya, menampilkan snackbar)
     }
   }
-  
 
-  // Method untuk menyimpan id dan nama bank yang dipilih
+  Future<void> fetchAppointmentDrugs(String appointmentId) async {
+    isLoading.value = true;
+    try {
+      final appointmentDrugsResponse = await supabase
+          .from('appointment_drugs')
+          .select('*')
+          .eq('appointment_id', appointmentId);
+
+      if (appointmentDrugsResponse != null) {
+        final List<AppointmentDrug> appointmentDrugs = (appointmentDrugsResponse as List)
+            .map((e) => AppointmentDrug.fromJson(e))
+            .toList();
+
+        List<Drug> fetchedDrugs = [];
+        for (var appointmentDrug in appointmentDrugs) {
+          try {
+            final drugResponse = await supabase
+                .from('drugs')
+                .select('*')
+                .eq('id', appointmentDrug.drugId)
+                .single();
+
+            if (drugResponse != null) {
+              fetchedDrugs.add(Drug.fromJson(drugResponse));
+            } else {
+              fetchedDrugs.add(
+                Drug(
+                  id: '0',
+                  name: 'Obat Tidak Ditemukan',
+                  description: 'Deskripsi tidak tersedia',
+                  companyName: 'Tidak ada',
+                  stock: 0,
+                  buyPrice: 0,
+                  sellPrice: 0,
+                  dosis: 'Tidak ada',
+                  kind: 'Tidak ada',
+                  isHalal: false,
+                  createdAt: DateTime.now().toString(),
+                  updatedAt: DateTime.now(),
+                ),
+              );
+            }
+          } catch (drugError) {
+            print('Error fetching drug with ID ${appointmentDrug.drugId}: $drugError');
+          }
+        }
+
+        medicines.value = fetchedDrugs;
+        calculateTotalPrice();
+      } else {
+        medicines.value = [];
+        productSubtotal.value = '0';
+        total.value = consultationFee.value;
+      }
+    } catch (error) {
+      medicines.value = [];
+      productSubtotal.value = '0';
+      total.value = consultationFee.value;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchAppointmentFees(String appointmentId) async {
+    isLoading.value = true;
+    try {
+      final appointmentFeesResponse = await supabase
+          .from('appointment_fees')
+          .select('*')
+          .eq('appointment_id', appointmentId);
+
+      if (appointmentFeesResponse != null) {
+        final List<AppointmentFee> appointmentFees = (appointmentFeesResponse as List)
+            .map((e) => AppointmentFee.fromJson(e))
+            .toList();
+
+        List<Fee> fetchedFees = [];
+        for (var appointmentFee in appointmentFees) {
+          try {
+            final feeResponse = await supabase
+                .from('fees')
+                .select('*')
+                .eq('id', appointmentFee.feeId)
+                .single();
+
+            if (feeResponse != null) {
+              fetchedFees.add(Fee.fromJson(feeResponse));
+            } else {
+              print('Fee dengan ID ${appointmentFee.feeId} tidak ditemukan');
+              fetchedFees.add(
+                Fee(
+                  id: '0',
+                  procedure: 'Biaya Tidak Ditemukan',
+                  price: 0,
+                  status: false,
+                ),
+              );
+            }
+          } catch (feeError) {
+            print('Error fetching fee with ID ${appointmentFee.feeId}: $feeError');
+          }
+        }
+
+        fees.value = fetchedFees;
+        calculateTotalPrice();
+      } else {
+        fees.value = [];
+        print('Tidak ada data biaya untuk appointment ini.');
+      }
+    } catch (error) {
+      print('Terjadi kesalahan saat mengambil data biaya: $error');
+      fees.value = [];
+    } finally {
+      isLoading.value = false;
+      calculateTotalPrice();
+    }
+  }
+
+  void calculateTotalPrice() {
+    double subtotal = 0;
+    for (var medicine in medicines) {
+      subtotal += medicine.sellPrice;
+    }
+    productSubtotal.value = subtotal.toStringAsFixed(0);
+
+    // Hitung total biaya dari fees
+    double feeTotal = 0;
+    for (var fee in fees) {
+      feeTotal += fee.price;
+    }
+
+    double totalValue = subtotal + feeTotal;
+    total.value = totalValue.toStringAsFixed(0);
+  }
+
   void selectBank(String bankId, String bankName) {
     selectedBankName.value = "Bank $bankName";
     selectedBankId.value = bankId;
-    update(); // Panggil update() untuk memperbarui tampilan
+    update();
   }
 }
