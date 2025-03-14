@@ -40,6 +40,7 @@ abstract class Routes {
   static const THEME = _Paths.THEME;
   static const APPOINTMENT_RESULT = _Paths.APPOINTMENT_RESULT;
   static const REDEEM_MEDICINE = _Paths.REDEEM_MEDICINE;
+  static const INVOICE = _Paths.INVOICE;
 }
 
 abstract class _Paths {
@@ -81,4 +82,5 @@ abstract class _Paths {
   static const THEME = '/theme';
   static const APPOINTMENT_RESULT = '/appointment-result';
   static const REDEEM_MEDICINE = '/redeem-medicine';
+  static const INVOICE = '/invoice';
 }

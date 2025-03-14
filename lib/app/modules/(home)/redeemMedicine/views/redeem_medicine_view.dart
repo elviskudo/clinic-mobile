@@ -1,9 +1,12 @@
 import 'package:clinic_ai/app/modules/(home)/redeemMedicine/controllers/redeem_medicine_controller.dart';
 import 'package:clinic_ai/models/drug_model.dart';
 import 'package:clinic_ai/models/fee_model.dart';
+import 'package:clinic_ai/models/transaction_model.dart'; //import transaction
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class RedeemMedicineView extends GetView<RedeemMedicineController> {
   const RedeemMedicineView({Key? key}) : super(key: key);
@@ -102,7 +105,7 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                             children: [
                               Text(
                                 '\u{1F4B3}',
-                                style: const TextStyle(
+                               style: const TextStyle(
                                   fontSize: 20,
                                   color: Colors.black54,
                                   fontWeight: FontWeight.w500,
@@ -195,9 +198,10 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                       ),
                       elevation: 0,
                     ),
-                    onPressed: controller.selectedBankId.value.isNotEmpty ? () {
+                    onPressed: controller.selectedBankId.value.isNotEmpty ? () async {
                       // Action when Pay button is pressed
                       // Lakukan pembayaran di sini
+                      await controller.createTransaction();
                     } : null, // Disable tombol jika bank belum dipilih
                     child: const Text(
                       'Pay',
@@ -228,14 +232,14 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFD4E8D1),
+        color: const Color(0xffD4E8D1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 20,
-            backgroundColor: Colors.grey.shade300,
+            backgroundColor: Colors.grey.shade500,
             child: ClipOval(
               child: Image.network(
                 'https://via.placeholder.com/50',

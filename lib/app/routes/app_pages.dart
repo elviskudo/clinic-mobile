@@ -18,6 +18,8 @@ import '../modules/(auth)/verification/bindings/verification_binding.dart';
 import '../modules/(auth)/verification/views/verification_view.dart';
 import '../modules/(auth)/verificationSuccess/bindings/verification_success_binding.dart';
 import '../modules/(auth)/verificationSuccess/views/verification_success_view.dart';
+import '../modules/(doctor)/appointment-result/bindings/appointment_result_binding.dart';
+import '../modules/(doctor)/appointment-result/views/appointment_result_view.dart';
 import '../modules/(doctor)/detail-diagnose/bindings/detail_diagnose_binding.dart';
 import '../modules/(doctor)/detail-diagnose/views/detail_diagnose_view.dart';
 import '../modules/(doctor)/home_doctor/bindings/home_doctor_binding.dart';
@@ -56,19 +58,19 @@ import '../modules/(home)/personal_data/bindings/personal_data_binding.dart';
 import '../modules/(home)/personal_data/views/personal_data_view.dart';
 import '../modules/(home)/profile/bindings/profile_binding.dart';
 import '../modules/(home)/profile/views/profile_view.dart';
-import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
-import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
-import '../modules/Theme/bindings/theme_binding.dart';
-import '../modules/Theme/views/theme_view.dart';
-import '../modules/notification-user/bindings/notification_user_binding.dart';
-import '../modules/notification-user/views/notification_user_view.dart';
 import '../modules/(home)/redeemMedicine/bindings/redeem_medicine_binding.dart';
 import '../modules/(home)/redeemMedicine/views/redeem_medicine_view.dart';
 import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
+import '../modules/(home)/splash_screen/bindings/splash_screen_binding.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
-import '../modules/(doctor)/appointment-result/bindings/appointment_result_binding.dart';
-import '../modules/(doctor)/appointment-result/views/appointment_result_view.dart';
+import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
+import '../modules/Theme/bindings/theme_binding.dart';
+import '../modules/Theme/views/theme_view.dart';
+import '../modules/invoice/bindings/invoice_binding.dart';
+import '../modules/invoice/views/invoice_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
+import '../modules/notification-user/bindings/notification_user_binding.dart';
+import '../modules/notification-user/views/notification_user_view.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
 
 part 'app_routes.dart';
@@ -244,6 +246,11 @@ class AppPages {
       name: _Paths.REDEEM_MEDICINE,
       page: () => const RedeemMedicineView(),
       binding: RedeemMedicineBinding(),
+    ),
+    GetPage(
+      name: _Paths.INVOICE,
+      page: () =>  InvoiceView(),
+      binding: InvoiceBinding(),
     ),
   ];
 }
