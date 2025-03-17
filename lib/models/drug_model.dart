@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final drug = drugFromJson(jsonString);
-
 import 'dart:convert';
 
 Drug drugFromJson(String str) => Drug.fromJson(json.decode(str));
@@ -37,33 +33,36 @@ class Drug {
     required this.updatedAt,
   });
 
-  factory Drug.fromJson(Map<String, dynamic> json) => Drug(
-        id: json["id"],
-        name: json["name"],
-        description: json["description"],
-        companyName: json["company_name"],
-        stock: json["stock"],
-        buyPrice: json["buy_price"],
-        sellPrice: json["sell_price"],
-        dosis: json["dosis"],
-        kind: json["kind"],
-        isHalal: json["is_halal"],
-        createdAt: json["created_at"],
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
+  factory Drug.fromJson(Map<String, dynamic> json) {
+    print('Drug.fromJson: $json'); // Tambahkan ini
+    return Drug(
+      id: json["id"],
+      name: json["name"],
+      description: json["description"],
+      companyName: json["company_name"],
+      stock: json["stock"],
+      buyPrice: json["buy_price"],
+      sellPrice: json["sell_price"],
+      dosis: json["dosis"],
+      kind: json["kind"],
+      isHalal: json["is_halal"],
+      createdAt: json["created_at"],
+      updatedAt: DateTime.parse(json["updated_at"]),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "description": description,
-        "company_name": companyName,
-        "stock": stock,
-        "buy_price": buyPrice,
-        "sell_price": sellPrice,
-        "dosis": dosis,
-        "kind": kind,
-        "is_halal": isHalal,
-        "created_at": createdAt,
-        "updated_at": updatedAt.toIso8601String(),
-      };
+    "id": id,
+    "name": name,
+    "description": description,
+    "company_name": companyName,
+    "stock": stock,
+    "buy_price": buyPrice,
+    "sell_price": sellPrice,
+    "dosis": dosis,
+    "kind": kind,
+    "is_halal": isHalal,
+    "created_at": createdAt,
+    "updated_at": updatedAt.toIso8601String(),
+  };
 }

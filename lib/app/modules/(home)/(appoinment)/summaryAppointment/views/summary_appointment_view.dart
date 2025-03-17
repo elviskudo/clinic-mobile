@@ -188,14 +188,14 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Appointment QR Code',
-          style: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 16),
+        // Text(
+        //   'Appointment QR Code',
+        //   style: GoogleFonts.inter(
+        //     fontSize: 16,
+        //     fontWeight: FontWeight.w500,
+        //   ),
+        // ),
+        // const SizedBox(height: 16),
         Center(
           child: Container(
             width: MediaQuery.of(context).size.width,
@@ -224,22 +224,22 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                     )),
                 const SizedBox(height: 16),
                 // Patient Code
-                Text(
-                  'Patient Code',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  controller.appointment.value?.qrCode ?? 'Not Available',
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                // Text(
+                //   'Patient Code',
+                //   style: GoogleFonts.inter(
+                //     fontSize: 14,
+                //     fontWeight: FontWeight.w500,
+                //     color: Colors.grey[700],
+                //   ),
+                // ),
+                // const SizedBox(height: 8),
+                // Text(
+                //   controller.appointment.value?.qrCode ?? 'Not Available',
+                //   style: GoogleFonts.inter(
+                //     fontSize: 16,
+                //     fontWeight: FontWeight.w600,
+                //   ),
+                // ),
                 const SizedBox(height: 8),
                 // Divider
                 Divider(color: Colors.grey[300]),
@@ -648,36 +648,36 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Add download functionality here if needed
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Image saved to gallery'),
-                              backgroundColor: Color(0xFF4CAF50),
-                            ),
-                          );
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4CAF50),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          "Save",
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: ElevatedButton(
+                    //     onPressed: () {
+                    //       // Add download functionality here if needed
+                    //       ScaffoldMessenger.of(context).showSnackBar(
+                    //         const SnackBar(
+                    //           content: Text('Image saved to gallery'),
+                    //           backgroundColor: Color(0xFF4CAF50),
+                    //         ),
+                    //       );
+                    //       Navigator.of(context).pop();
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: const Color(0xFF4CAF50),
+                    //       foregroundColor: Colors.white,
+                    //       padding: const EdgeInsets.symmetric(vertical: 12),
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12),
+                    //       ),
+                    //       elevation: 0,
+                    //     ),
+                    //     child: Text(
+                    //       "Save",
+                    //       style: GoogleFonts.inter(
+                    //         fontSize: 16,
+                    //         fontWeight: FontWeight.w500,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ],
