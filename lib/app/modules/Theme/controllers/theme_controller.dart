@@ -47,10 +47,10 @@ class ThemeController extends GetxController {
 
 // Kelas untuk tema aplikasi
 class AppTheme {
-  // Light Theme
+  // Light Theme - Warna primary hijau
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
-    primaryColor: Color(0xFF35693E),
+    primaryColor: Color(0xFF35693E), // Warna hijau untuk Light Mode
     scaffoldBackgroundColor: Color(0xFFF7FBF2),
     appBarTheme: AppBarTheme(
       backgroundColor: Color(0xFFF7FBF2),
@@ -63,7 +63,7 @@ class AppTheme {
       ),
     ),
     colorScheme: ColorScheme.light(
-      primary: Color(0xFF35693E),
+      primary: Color(0xFF35693E), // Warna hijau untuk Light Mode
       secondary: Color(0xFF39656D),
       surface: Colors.white,
       background: Color(0xFFF7FBF2),
@@ -84,6 +84,46 @@ class AppTheme {
     iconTheme: IconThemeData(
       color: Color(0xFF181D18),
     ),
+    // Tema untuk input dalam Light Mode
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Color(0xFFCCDFD0), width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Color(0xFFCCDFD0), width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Color(0xFF35693E), width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.red.shade900, width: 1),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.red.shade900, width: 2),
+      ),
+      hintStyle: TextStyle(
+        color: Color(0xFF95A591),
+        fontSize: 14,
+      ),
+      labelStyle: TextStyle(
+        color: Color(0xFF35693E),
+        fontSize: 14,
+      ),
+      errorStyle: TextStyle(
+        color: Colors.red.shade900,
+        fontSize: 12,
+      ),
+      prefixIconColor: Color(0xFF35693E),
+      suffixIconColor: Color(0xFF35693E),
+    ),
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: Color(0xFF181D18)),
       bodyMedium: TextStyle(color: Color(0xFF181D18)),
@@ -97,11 +137,11 @@ class AppTheme {
     ),
   );
 
-  // Dark Theme
+  // Dark Theme - Warna primary biru
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    primaryColor: Color(0xFF4B9460),
-    scaffoldBackgroundColor: Color(0xFF2c313c),
+    primaryColor: Color(0xFFcce8c0),
+    scaffoldBackgroundColor: Color(0xFF23272e),
     appBarTheme: AppBarTheme(
       backgroundColor: Color(0xFF2c313c),
       elevation: 0,
@@ -113,7 +153,7 @@ class AppTheme {
       ),
     ),
     colorScheme: ColorScheme.dark(
-      primary: Color(0xFF4B9460),
+      primary: Color(0xFFcce8c0), // Warna biru untuk Dark Mode
       secondary: Color(0xFF64B0BC),
       surface: Color(0xFF2c313c),
       background: Color(0xFF2c313c),
@@ -133,6 +173,46 @@ class AppTheme {
     ),
     iconTheme: IconThemeData(
       color: Colors.white,
+    ),
+    // Tema untuk input dalam Dark Mode
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Color(0xFF1b1b1b),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Color(0xFF3D4450), width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Color(0xFF3D4450), width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Color(0xFF1565C0), width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.red.shade200, width: 1),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.red.shade200, width: 2),
+      ),
+      hintStyle: TextStyle(
+        color: Color(0xFFcce8c0),
+        fontSize: 14,
+      ),
+      labelStyle: TextStyle(
+        color: Color(0xFFcce8c0),
+        fontSize: 14,
+      ),
+      errorStyle: TextStyle(
+        color: Colors.red.shade200,
+        fontSize: 12,
+      ),
+      prefixIconColor: Color(0xFF64B5F6),
+      suffixIconColor: Color(0xFF64B5F6),
     ),
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: Colors.white),

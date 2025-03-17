@@ -58,7 +58,7 @@ class HomeView extends GetView<HomeController> {
         },
         children: [
           _buildHomePage(context),
-           MedicalHistoryView(),
+          MedicalHistoryView(),
           const ProfileView(),
         ],
       ),
@@ -115,7 +115,6 @@ class HomeView extends GetView<HomeController> {
                 width: 50,
                 height: 50,
                 child: InkWell(
-                  // onTap: () => controller.updateIndex(2), // Navigate to profile
                   child: Image.asset('assets/images/logo_clinic.png'),
                 ),
               ),
@@ -125,8 +124,8 @@ class HomeView extends GetView<HomeController> {
                     Icons.circle_notifications,
                     size: 32,
                     color: controller.isLoggedIn.value
-                        ? const Color(0xFF35693E)
-                        : Colors.grey,
+                        ? Theme.of(Get.context!).colorScheme.primary
+                        : Theme.of(Get.context!).colorScheme.outline,
                   ),
                   onPressed: () => controller.logout(),
                 ),
@@ -141,21 +140,21 @@ class HomeView extends GetView<HomeController> {
               children: [
                 Obx(() {
                   if (profileCtrl.isLoading.value) {
-                    return SizedBox(); // Tampilkan loading jika data belum siap
+                    return SizedBox();
                   }
                   return Text(
                     'Greetings on Clinic, ${profileCtrl.user.value.name}',
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xff181D18),
+                      color: Theme.of(Get.context!).colorScheme.onBackground,
                     ),
                   );
                 }),
                 Text(
                   'How are you?',
                   style: GoogleFonts.poppins(
-                    color: Colors.grey[600],
+                    color: Theme.of(Get.context!).colorScheme.outline,
                     fontSize: 14,
                   ),
                 ),
@@ -245,7 +244,9 @@ class HomeView extends GetView<HomeController> {
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isAlternate ? const Color(0xFFD4E8D1) : const Color(0xFFB7F1BA),
+        color: isAlternate
+            ? Theme.of(Get.context!).colorScheme.secondaryContainer
+            : Theme.of(Get.context!).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(20),
       ),
       child: LayoutBuilder(
@@ -406,7 +407,9 @@ class HomeView extends GetView<HomeController> {
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isAlternate ? const Color(0xFFD4E8D1) : const Color(0xFFB7F1BA),
+        color: isAlternate
+            ? Theme.of(Get.context!).colorScheme.secondaryContainer
+            : Theme.of(Get.context!).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -528,7 +531,7 @@ class HomeView extends GetView<HomeController> {
           //       },
           onPressed: () => Get.toNamed(Routes.APPOINTMENT),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF35693E),
+            backgroundColor: Theme.of(Get.context!).colorScheme.primary,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -597,7 +600,7 @@ class HomeView extends GetView<HomeController> {
       child: Obx(() => Icon(
             icon,
             color: controller.currentIndex.value == index
-                ? Theme.of(Get.context!).colorScheme.primary
+                ? Theme.of(Get.context!).iconTheme.color
                 : Theme.of(Get.context!).colorScheme.outline,
             size: 24,
           )),

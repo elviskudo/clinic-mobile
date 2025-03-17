@@ -92,13 +92,25 @@ class PersonalDataView extends GetView<PersonalDataController> {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.inter(color: Colors.grey[400]),
+            filled: true,
+            fillColor: Theme.of(Get.context!).inputDecorationTheme.fillColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Color(0xff727970), width: 1),
+              borderSide: BorderSide(
+                  color: Theme.of(Get.context!)
+                      .inputDecorationTheme
+                      .border!
+                      .borderSide
+                      .color),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Color(0xff727970), width: 1),
+              borderSide: BorderSide(
+                  color: Theme.of(Get.context!)
+                      .inputDecorationTheme
+                      .enabledBorder!
+                      .borderSide
+                      .color),
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
@@ -124,13 +136,25 @@ class PersonalDataView extends GetView<PersonalDataController> {
           controller: dateController,
           decoration: InputDecoration(
             suffixIcon: Icon(Icons.calendar_today, size: 20),
+            filled: true,
+            fillColor: Theme.of(Get.context!).inputDecorationTheme.fillColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Color(0xff727970)),
+              borderSide: BorderSide(
+                  color: Theme.of(Get.context!)
+                      .inputDecorationTheme
+                      .border!
+                      .borderSide
+                      .color),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Color(0xff727970)),
+              borderSide: BorderSide(
+                  color: Theme.of(Get.context!)
+                      .inputDecorationTheme
+                      .enabledBorder!
+                      .borderSide
+                      .color),
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
