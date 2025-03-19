@@ -1,5 +1,7 @@
+import 'package:clinic_ai/app/modules/Theme/controllers/theme_controller.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AboutAppController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -10,6 +12,7 @@ class AboutAppController extends GetxController {
   void onInit() {
     super.onInit();
     getAboutContent();
+    // Menggunakan ThemeMode dari GetX
   }
 
 // ... existing code ...
@@ -23,31 +26,56 @@ class AboutAppController extends GetxController {
           .order('id', ascending: true)
           .single();
 
+      // Mengambil status isDarkMode dari SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final isDark = prefs.getBool('isDarkMode') ??
+          Get.isDarkMode; // fallback ke Get.isDarkMode jika belum ada nilai
+
       aboutContent.value = '''
         <!DOCTYPE html>
         <html>
           <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
+              :root {
+                --bg-color: ${isDark ? '#303030' : '#f8f9fa'};
+                --text-color: ${isDark ? '#ffffff' : '#2c3e50'};
+                --heading-color: ${isDark ? '#ffffff' : '#2c3e50'};
+                --subheading-color: ${isDark ? '#64b5f6' : '#2980b9'};
+                --card-bg: ${isDark ? '#424242' : 'white'};
+                --border-color: ${isDark ? '#64b5f6' : '#3498db'};
+              }
+
+              @media (prefers-color-scheme: dark) {
+                :root {
+                  --bg-color: #1a1a1a;
+                  --text-color: #e0e0e0;
+                  --heading-color: #ffffff;
+                  --subheading-color: #64b5f6;
+                  --card-bg: #2d2d2d;
+                  --border-color: #64b5f6;
+                }
+              }
+
               body {
                 font-family: 'Segoe UI', Arial, sans-serif;
                 padding: 20px;
                 line-height: 1.6;
-                color: #2c3e50;
-                background-color: #f8f9fa;
+                color: var(--text-color);
+                background-color: var(--bg-color);
                 max-width: 800px;
                 margin: 0 auto;
               }
               h2 {
-                color: #2c3e50;
+                color: var(--heading-color);
                 text-align: center;
                 margin: 24px 0;
                 font-size: 28px;
-                border-bottom: 2px solid #3498db;
+                border-bottom: 2px solid var(--border-color);
                 padding-bottom: 10px;
               }
               h3 {
-                color: #2980b9;
+                color: var(--subheading-color);
                 margin: 20px 0;
                 font-size: 22px;
               }
@@ -64,14 +92,14 @@ class AboutAppController extends GetxController {
                 line-height: 1.5;
               }
               a {
-                color: #3498db;
+                color: var(--subheading-color);
                 text-decoration: none;
               }
               a:hover {
                 text-decoration: underline;
               }
               .feature-list li {
-                background-color: white;
+                background-color: var(--card-bg);
                 padding: 12px 15px;
                 margin: 8px 0;
                 border-radius: 8px;
@@ -82,14 +110,14 @@ class AboutAppController extends GetxController {
                 transform: translateX(5px);
               }
               .team-member {
-                background-color: white;
+                background-color: var(--card-bg);
                 padding: 15px;
                 margin: 10px 0;
                 border-radius: 8px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
               }
               .contact-info {
-                background-color: white;
+                background-color: var(--card-bg);
                 padding: 20px;
                 border-radius: 8px;
                 margin: 20px 0;

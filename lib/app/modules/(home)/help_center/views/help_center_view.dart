@@ -44,10 +44,11 @@ class _HelpCenterViewState extends State<HelpCenterView> {
               fontSize: fontSize,
               fontWeight: segment["highlighted"] ? FontWeight.bold : fontWeight,
               color: segment["highlighted"]
-                  ? const Color(0xff2D5A27)
-                  : (color ?? const Color(0xff727970)),
-              backgroundColor:
-                  segment["highlighted"] ? const Color(0xFFE8F5E9) : null,
+                  ? Theme.of(context).colorScheme.primary
+                  : (color ?? Theme.of(context).colorScheme.onSurfaceVariant),
+              backgroundColor: segment["highlighted"]
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : null,
             ),
           );
         }).toList(),
@@ -58,12 +59,16 @@ class _HelpCenterViewState extends State<HelpCenterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF7FBF2),
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xffF7FBF2),
+        backgroundColor: Theme.of(context).colorScheme.background,
         title: Text(
           'Help Center',
-          style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
+          style: GoogleFonts.inter(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
         ),
         leading: IconButton(
           onPressed: () => Get.offAllNamed(Routes.PROFILE),
@@ -90,7 +95,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       style: GoogleFonts.inter(
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xff181D18)),
+                          color: Theme.of(context).colorScheme.onBackground),
                     ),
                     Gap(8),
                     Obx(() => Text(
@@ -99,7 +104,8 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                               : controller.helpCenterSummary.value,
                           style: GoogleFonts.inter(
                             fontSize: 15,
-                            color: Color(0xff727970),
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         )),
                   ],
@@ -110,14 +116,15 @@ class _HelpCenterViewState extends State<HelpCenterView> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: TextField(
                   controller: searchController,
                   decoration: InputDecoration(
                     hintText: 'Search FAQ',
-                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    hintStyle: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                     border: InputBorder.none,
                     suffixIcon: Obx(() => controller.searchQuery.isEmpty
                         ? Icon(Icons.search, color: Colors.grey[400])
@@ -138,6 +145,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
               const SizedBox(height: 8),
@@ -161,12 +169,12 @@ class _HelpCenterViewState extends State<HelpCenterView> {
 
                       return Container(
                         decoration: BoxDecoration(
-                          color: Color(0xffF7FBF2),
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: containsQuery
-                                ? Color(0xff2D5A27)
-                                : Color(0xff727970),
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.outline,
                             width: containsQuery ? 2.0 : 1.0,
                           ),
                         ),
@@ -180,10 +188,13 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                                 ),
                                 title: buildHighlightedText(item.title, 16,
                                     fontWeight: FontWeight.w500,
-                                    color: const Color(0xff181D18)),
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color),
                                 trailing: Icon(
                                   item.isExpanded ? Icons.remove : Icons.add,
-                                  color: const Color(0xff2D5A27),
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                                 onExpansionChanged: (expanded) {
                                   // Toggle expansion through controller
@@ -215,7 +226,7 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                     Text(
                       'Still stuck? Help is a mail away',
                       style: GoogleFonts.inter(
-                        color: Colors.black,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -226,16 +237,17 @@ class _HelpCenterViewState extends State<HelpCenterView> {
                       child: ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff2D5A27),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Send a message',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                             fontSize: 16,
                           ),
                         ),

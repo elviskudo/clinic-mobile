@@ -12,14 +12,14 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7FBF2),
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Medical Record',
           style: GoogleFonts.poppins(
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onBackground,
             fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
@@ -46,7 +46,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
               itemCount: controller.medicalRecords.length,
               itemBuilder: (context, index) {
                 final record = controller.medicalRecords[index];
-                return _buildMedicalRecordCard(record);
+                return _buildMedicalRecordCard(record, context);
               },
             );
           }
@@ -55,7 +55,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
     );
   }
 
-  Widget _buildMedicalRecordCard(Appointment record) {
+  Widget _buildMedicalRecordCard(Appointment record, BuildContext context) {
     final doctor = controller.existingDoctor.value;
     final poly = controller.existingPoly.value;
     final scheduleDate = controller.existingScheduleDate.value;
@@ -69,7 +69,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12.0),
       decoration: BoxDecoration(
-        color: const Color(0xFFB7F1BA),
+        color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Padding(
@@ -81,10 +81,10 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
               children: [
                 Obx(() => CircleAvatar(
                       radius: 20,
-                      backgroundImage: NetworkImage(
-                          controller.doctorProfilePictureUrl.value.isNotEmpty
-                              ? controller.doctorProfilePictureUrl.value
-                              : 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'),
+                      backgroundImage: NetworkImage(controller
+                              .doctorProfilePictureUrl.value.isNotEmpty
+                          ? controller.doctorProfilePictureUrl.value
+                          : 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'),
                     )),
                 const SizedBox(width: 12.0),
                 Expanded(
@@ -96,6 +96,8 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                       ),
                       const SizedBox(height: 4.0),
@@ -103,7 +105,10 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                         clinic?.name ?? 'Unknown Clinic',
                         style: GoogleFonts.poppins(
                           fontSize: 12,
-                          color: Colors.black87,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimaryContainer
+                              .withOpacity(0.8),
                         ),
                       ),
                       const SizedBox(height: 4.0),
@@ -111,7 +116,10 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                         poly?.name ?? 'Unknown Poly',
                         style: GoogleFonts.poppins(
                           fontSize: 12,
-                          color: Colors.black87,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimaryContainer
+                              .withOpacity(0.8),
                         ),
                       ),
                     ],
@@ -137,7 +145,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
                     ),
                     Text(
@@ -145,24 +153,24 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
                     ),
                   ],
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(6.0),
+                    color: const Color(0xFFE3F2FD),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     controller.getStatusText(record.status ?? 0),
                     style: GoogleFonts.poppins(
-                      fontSize: 10,
+                      fontSize: 11,
+                      color: Colors.blue[700],
                       fontWeight: FontWeight.w500,
-                      color: Colors.green,
                     ),
                   ),
                 ),

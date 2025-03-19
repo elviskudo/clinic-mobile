@@ -245,8 +245,8 @@ class HomeView extends GetView<HomeController> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: isAlternate
-            ? Theme.of(Get.context!).colorScheme.secondaryContainer
-            : Theme.of(Get.context!).colorScheme.primaryContainer,
+            ? Theme.of(Get.context!).colorScheme.primaryContainer
+            : Theme.of(Get.context!).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(20),
       ),
       child: LayoutBuilder(
