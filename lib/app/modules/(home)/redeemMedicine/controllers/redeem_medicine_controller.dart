@@ -53,7 +53,7 @@ class RedeemMedicineController extends GetxController {
   @override
   void onInit() {
     fetchBanks();
-    final appointmentId = Get.arguments as String? ?? '';
+    final appointmentId = Get.arguments ;
     if (appointmentId.isNotEmpty) {
       fetchAppointment(appointmentId);
       fetchAppointmentDrugs(appointmentId);
@@ -298,7 +298,8 @@ class RedeemMedicineController extends GetxController {
     
     if (response != null) {
       // Navigate with the raw response data instead of using the model
-      Get.offAllNamed(Routes.INVOICE, arguments: response);
+       final transaksiSuksess = Transaction.fromJson(response);
+      Get.offAllNamed(Routes.INVOICE, arguments: transaksiSuksess);
     }
   } catch (e) {
     print('Error creating transaction: $e');
