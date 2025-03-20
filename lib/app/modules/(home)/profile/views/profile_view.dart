@@ -25,12 +25,17 @@ class ProfileView extends GetView<ProfileController> {
         automaticallyImplyLeading: false,
         title: Text('Clinic',
             style: GoogleFonts.inter(
-                color: Theme.of(context).textTheme.titleLarge?.color,
+                color: Theme.of(context).textTheme.titleMedium?.color,
                 fontSize: 18,
                 fontWeight: FontWeight.w600)),
         leading: IconButton(
           onPressed: () => Get.offAllNamed(Routes.HOME),
-          icon: Image.asset('assets/icons/back.png'),
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
         ),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
@@ -122,7 +127,7 @@ class ProfileView extends GetView<ProfileController> {
                                     fontWeight: FontWeight.bold,
                                     color: Theme.of(context)
                                         .textTheme
-                                        .titleLarge
+                                        .bodyLarge
                                         ?.color,
                                   ),
                                 )),

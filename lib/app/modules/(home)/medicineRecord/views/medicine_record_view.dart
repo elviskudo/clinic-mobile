@@ -9,19 +9,20 @@ class MedicineRecordView extends GetView<MedicineRecordController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(Icons.arrow_back_ios,
+              color: Theme.of(context).colorScheme.onBackground),
           onPressed: () {
             Get.back();
           },
         ),
-        title: const Text(
+        title: Text(
           'Reedem Medicine',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
         ),
         centerTitle: true,
       ),
@@ -32,7 +33,7 @@ class MedicineRecordView extends GetView<MedicineRecordController> {
               padding: const EdgeInsets.all(16.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.lightGreen.withOpacity(0.5),
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 padding: const EdgeInsets.all(16.0),
@@ -50,7 +51,11 @@ class MedicineRecordView extends GetView<MedicineRecordController> {
                         Text(
                           "14 Juni 2024",
                           style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal),
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer),
                         ),
                       ],
                     ),
@@ -66,7 +71,11 @@ class MedicineRecordView extends GetView<MedicineRecordController> {
                         Text(
                           "Rp202.000",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer),
                         ),
                       ],
                     ),

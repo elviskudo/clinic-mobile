@@ -107,12 +107,13 @@ class AppointmentView extends GetView<AppointmentController> {
           }
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF7FBF2),
+            backgroundColor: Theme.of(context).colorScheme.background,
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.onBackground),
                 onPressed: () {
                   appointmentController.resetAppointmentCreated();
                   scheduleController.resetForm();
@@ -120,17 +121,18 @@ class AppointmentView extends GetView<AppointmentController> {
                   Get.back();
                 },
               ),
-              title: const Text(
+              title: Text(
                 'Appointment',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground),
               ),
               bottom: TabBar(
                 tabs: [
-                  const Tab(
+                  Tab(
                     child: Text(
                       'Schedule',
                       style: TextStyle(
-                        color: Color(0xFF35693E),
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
@@ -139,37 +141,42 @@ class AppointmentView extends GetView<AppointmentController> {
                           'QRCode',
                           style: TextStyle(
                             color: barcodeController.isAccessible.value
-                                ? const Color(0xFF35693E)
-                                : Colors.grey,
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                           ),
                         )),
                   ),
                   Tab(
                     child: Obx(() => Text(
-                          // Perbarui warna tab "Symptom"
                           'Symptom',
                           style: TextStyle(
                             color: barcodeController.isSymptomsUpdated.value
-                                ? const Color(0xFF35693E)
-                                : Colors.grey,
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                           ),
                         )),
                   ),
                   Tab(
                     child: Obx(() => Text(
-                          // Perbarui warna tab "Capture"
                           'Capture',
                           style: TextStyle(
                             color: barcodeController.isSymptomsUpdated.value
-                                ? const Color(0xFF35693E)
-                                : Colors.grey,
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                           ),
                         )),
                   ),
                 ],
-                labelColor: const Color(0xFF35693E),
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: const Color(0xFF35693E),
+                labelColor: Theme.of(context).colorScheme.primary,
+                unselectedLabelColor:
+                    Theme.of(context).colorScheme.onSurfaceVariant,
+                indicatorColor: Theme.of(context).colorScheme.primary,
                 onTap: (index) {
                   validateAndChangeTab(index);
                 },

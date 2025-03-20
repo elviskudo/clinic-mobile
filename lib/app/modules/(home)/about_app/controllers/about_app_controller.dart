@@ -26,10 +26,10 @@ class AboutAppController extends GetxController {
           .order('id', ascending: true)
           .single();
 
-      // Mengambil status isDarkMode dari SharedPreferences
+      
       final prefs = await SharedPreferences.getInstance();
       final isDark = prefs.getBool('isDarkMode') ??
-          Get.isDarkMode; // fallback ke Get.isDarkMode jika belum ada nilai
+          Get.isDarkMode; 
 
       aboutContent.value = '''
         <!DOCTYPE html>

@@ -47,7 +47,7 @@ class HomeView extends GetView<HomeController> {
 
       // Gunakan Obx untuk memantau currentIndex
       floatingActionButton: Obx(() => controller.currentIndex.value == 0
-          ? _buildAppointmentButton()
+          ? _buildAppointmentButton(context)
           : Container()), // FAB hanya muncul di index 0 (Home), kalau tidak, tampilkan Container kosong
 
       bottomNavigationBar: _buildBottomBar(pageController),
@@ -185,9 +185,9 @@ class HomeView extends GetView<HomeController> {
               Text(
                 title,
                 style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(Get.context!).textTheme.bodyLarge?.color),
               ),
               if (seeAll)
                 GestureDetector(
@@ -195,7 +195,9 @@ class HomeView extends GetView<HomeController> {
                   child: Text(
                     'See All',
                     style: GoogleFonts.poppins(
-                        color: const Color(0xff35693E),
+                        color: Theme.of(Get.context!)
+                            .colorScheme
+                            .secondaryContainer,
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
                         decoration: TextDecoration.underline),
@@ -304,22 +306,25 @@ class HomeView extends GetView<HomeController> {
                                   ? '${doctor?.degree ?? ''} ${doctor?.name ?? ''}, ${doctor?.specialize ?? ''}'
                                   : 'Unknown Doctor',
                               style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: Theme.of(Get.context!)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.color),
                             ),
                             Text(
                               clinic?.name ?? 'Unknown Clinic',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: Colors.black87,
+                                color: Colors.grey[600],
                               ),
                             ),
                             Text(
                               poly?.name ?? 'Unknown Poly',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: Colors.black87,
+                                color: Colors.grey[600],
                               ),
                             ),
                           ],
@@ -438,9 +443,10 @@ class HomeView extends GetView<HomeController> {
                   Text(
                     name,
                     style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color:
+                            Theme.of(Get.context!).textTheme.titleLarge?.color),
                   ),
                   Text(
                     'Drug Category',
@@ -487,7 +493,7 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildAppointmentButton() {
+  Widget _buildAppointmentButton(BuildContext context) {
     //final Rx<bool> hasActiveAppointment = false.obs; // Tidak diperlukan lagi
     final Rx<bool> isLoading = true.obs;
 
@@ -550,12 +556,13 @@ class HomeView extends GetView<HomeController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.calendar_today_rounded, color: Colors.white),
+              Icon(Icons.calendar_today_rounded,
+                  color: Theme.of(context).textTheme.bodyMedium?.color),
               const SizedBox(width: 8),
               Text(
                 'Add Appointment',
                 style: GoogleFonts.poppins(
-                  color: Colors.white,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -600,8 +607,8 @@ class HomeView extends GetView<HomeController> {
       child: Obx(() => Icon(
             icon,
             color: controller.currentIndex.value == index
-                ? Theme.of(Get.context!).iconTheme.color
-                : Theme.of(Get.context!).colorScheme.outline,
+                ? Theme.of(Get.context!).textTheme.bodyMedium?.color
+                : Theme.of(Get.context!).textTheme.bodyMedium?.color,
             size: 24,
           )),
     );

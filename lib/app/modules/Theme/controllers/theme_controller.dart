@@ -128,7 +128,7 @@ class AppTheme {
     ),
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: Color(0xFF181D18)),
-      bodyMedium: TextStyle(color: Color(0xFF181D18)),
+      bodyMedium: TextStyle(color: Colors.white),
       displayLarge: TextStyle(color: Color(0xFF181D18)),
       displayMedium: TextStyle(color: Color(0xFF181D18)),
       displaySmall: TextStyle(color: Color(0xFF181D18)),
@@ -220,13 +220,13 @@ class AppTheme {
     ),
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: Colors.white),
-      bodyMedium: TextStyle(color: Colors.white),
+      bodyMedium: TextStyle(color: Colors.black),
       displayLarge: TextStyle(color: Colors.white),
       displayMedium: TextStyle(color: Colors.white),
       displaySmall: TextStyle(color: Colors.white),
       headlineMedium: TextStyle(color: Colors.white),
       headlineSmall: TextStyle(color: Colors.white),
-      titleLarge: TextStyle(color: Colors.white),
+      titleLarge: TextStyle(color: Colors.black),
       titleMedium: TextStyle(color: Colors.white),
     ),
   );
