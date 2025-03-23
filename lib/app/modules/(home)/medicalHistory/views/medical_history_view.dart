@@ -96,8 +96,10 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          color: Theme.of(Get.context!)
+                              .textTheme
+                              .titleLarge
+                              ?.color,
                         ),
                       ),
                       const SizedBox(height: 4.0),
@@ -105,10 +107,10 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                         clinic?.name ?? 'Unknown Clinic',
                         style: GoogleFonts.poppins(
                           fontSize: 12,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimaryContainer
-                              .withOpacity(0.8),
+                          color: Theme.of(Get.context!)
+                              .textTheme
+                              .titleLarge
+                              ?.color,
                         ),
                       ),
                       const SizedBox(height: 4.0),
@@ -116,10 +118,10 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                         poly?.name ?? 'Unknown Poly',
                         style: GoogleFonts.poppins(
                           fontSize: 12,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimaryContainer
-                              .withOpacity(0.8),
+                          color: Theme.of(Get.context!)
+                              .textTheme
+                              .titleLarge
+                              ?.color,
                         ),
                       ),
                     ],
@@ -145,7 +147,8 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        color:
+                            Theme.of(Get.context!).textTheme.titleLarge?.color,
                       ),
                     ),
                     Text(
@@ -153,7 +156,8 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        color:
+                            Theme.of(Get.context!).textTheme.titleLarge?.color,
                       ),
                     ),
                   ],

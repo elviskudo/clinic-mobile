@@ -82,9 +82,9 @@ class PersonalDataView extends GetView<PersonalDataController> {
         Text(
           label,
           style: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-          ),
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+              color: Theme.of(Get.context!).textTheme.titleMedium?.color),
         ),
         SizedBox(height: 8),
         TextField(
@@ -127,15 +127,19 @@ class PersonalDataView extends GetView<PersonalDataController> {
         Text(
           label,
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(Get.context!).textTheme.titleMedium?.color),
         ),
         SizedBox(height: 8),
         TextField(
           controller: dateController,
           decoration: InputDecoration(
-            suffixIcon: Icon(Icons.calendar_today, size: 20),
+            suffixIcon: Icon(
+              Icons.calendar_today,
+              size: 20,
+              color: Theme.of(Get.context!).textTheme.bodyLarge?.color,
+            ),
             filled: true,
             fillColor: Theme.of(Get.context!).inputDecorationTheme.fillColor,
             border: OutlineInputBorder(
@@ -201,9 +205,9 @@ class PersonalDataView extends GetView<PersonalDataController> {
             Text(
               'Gender',
               style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(Get.context!).textTheme.titleMedium?.color),
             ),
             SizedBox(height: 8),
             Container(
@@ -238,9 +242,9 @@ class PersonalDataView extends GetView<PersonalDataController> {
         Text(
           'City',
           style: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-          ),
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+              color: Theme.of(Get.context!).textTheme.titleMedium?.color),
         ),
         SizedBox(height: 8),
         Obx(() => Column(
@@ -339,9 +343,9 @@ class PersonalDataView extends GetView<PersonalDataController> {
             Text(
               'Responsible for Costs',
               style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(Get.context!).textTheme.titleMedium?.color),
             ),
             SizedBox(height: 8),
             Container(
@@ -380,9 +384,9 @@ class PersonalDataView extends GetView<PersonalDataController> {
             Text(
               'Blood Type',
               style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(Get.context!).textTheme.titleMedium?.color),
             ),
             SizedBox(height: 8),
             Container(
@@ -419,7 +423,8 @@ class PersonalDataView extends GetView<PersonalDataController> {
                   await controller.saveOrUpdateProfile(context);
                 },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xff35693E),
+            backgroundColor:
+                Theme.of(Get.context!).colorScheme.primaryContainer,
             foregroundColor: Colors.green,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 150),
             shape: RoundedRectangleBorder(
@@ -428,13 +433,14 @@ class PersonalDataView extends GetView<PersonalDataController> {
             ),
           ),
           child: controller.isLoading.value
-              ? CircularProgressIndicator(color: Colors.white)
+              ? CircularProgressIndicator(
+                  color: Theme.of(Get.context!).textTheme.bodyMedium?.color)
               : Text(
                   'Update',
                   style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: Theme.of(Get.context!).textTheme.bodyMedium?.color,
                   ),
                 ),
         ));

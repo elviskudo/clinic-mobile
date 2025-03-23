@@ -52,11 +52,16 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
           style: GoogleFonts.inter(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.titleLarge?.color),
+              color: Theme.of(context).textTheme.titleMedium?.color),
         ),
         leading: IconButton(
           onPressed: () => Get.offAllNamed(Routes.PROFILE),
-          icon: Image.asset('assets/icons/back.png'),
+          icon: Image.asset(
+            'assets/icons/back.png',
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
         ),
       ),
       body: Padding(
@@ -217,7 +222,9 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
         'assets/icons/next.png',
         width: 24,
         height: 24,
-        color: Colors.black54,
+        color: Theme.of(Get.context!).brightness == Brightness.dark
+            ? Colors.white
+            : Colors.black,
       ),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(vertical: 8),
