@@ -1,13 +1,11 @@
-import 'package:clinic_ai/app/modules/invoice/controllers/invoice_controller.dart';
+import 'dart:io';
+
+import 'package:clinic_ai/app/modules/(home)/invoice/controllers/invoice_controller.dart';
 import 'package:clinic_ai/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:clinic_ai/models/fee_model.dart';
-import 'package:clinic_ai/models/bank_model.dart';
 import 'package:image_picker/image_picker.dart';
-// Import library Supabase
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class InvoiceView extends StatefulWidget {
   const InvoiceView({Key? key}) : super(key: key);
@@ -19,6 +17,7 @@ class InvoiceView extends StatefulWidget {
 class _InvoiceViewState extends State<InvoiceView> {
   final invoiceController = Get.find<InvoiceController>();
   Transaction? transaksi;
+
   @override
   void initState() {
     super.initState();
@@ -62,11 +61,16 @@ class _InvoiceViewState extends State<InvoiceView> {
   // Fungsi untuk mengambil gambar dari sumber yang dipilih
   Future<void> _pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: source);
-    if (image != null) {
-      // Panggil fungsi upload dari invoiceController
-      invoiceController.uploadFileToCloudinary(image, transaksi!.id!);
+    final XFile? pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      invoiceController.pickImage(pickedFile, transaksi!.id!); // Pindahkan ke controller
     }
+  }
+
+  // Fungsi untuk membatalkan gambar yang dipilih
+  void _cancelImage() {
+    invoiceController.cancelImage(transaksi!.id!); // Pindahkan ke controller
   }
 
   @override
@@ -77,7 +81,6 @@ class _InvoiceViewState extends State<InvoiceView> {
       decimalDigits: 0,
     );
     final DateFormat dateFormatter = DateFormat('dd MMMM yyyy');
-    final DateFormat timeFormatter = DateFormat('HH:mm');
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7FBF2),
@@ -109,46 +112,130 @@ class _InvoiceViewState extends State<InvoiceView> {
               style: const TextStyle(color: Colors.red),
             ),
           );
-        } else if (invoiceController.appointment.value != null) {
-          final appointment = invoiceController.appointment.value!;
+        } else {
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-               
+
+                const SizedBox(height: 20.0),
+
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 16.0),
+                  width: double.infinity,
+                  height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.red[100],
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: const Color(0xFF35693E), width: 1),
                   ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.error_outline, color: Colors.red, size: 24),
-                      const SizedBox(width: 12.0),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Belum',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
-                              ),
-                            ),
-                            Text(
-                              'Menunggu pembayaran',
-                              style: TextStyle(color: Colors.red[800]),
-                            ),
-                          ],
-                        ),
+                  child: TextButton(
+                    onPressed: !invoiceController.isUploadComplete.value
+                        ? () {
+                            _showImageSourceDialog();
+                          }
+                        : null,
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFF35693E),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
                       ),
-                    ],
+                    ),
+                    child: const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        "Upload Bukti Transfer",
+                        style: TextStyle(color: Color(0xFF35693E), fontSize: 16),
+                      ),
+                    ),
                   ),
                 ),
+
+                Obx(() =>
+                  invoiceController.selectedImage.value != null
+                      ? Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 150,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                border: Border.all(color: Colors.grey.shade300),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Image.file(
+                                  invoiceController.selectedImage.value!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: _cancelImage,
+                              child: const Text("Batalkan Upload"),
+                            )
+                          ],
+                        ),
+                      )
+                      : SizedBox.shrink()
+                ),
+
+                const SizedBox(height: 20.0),
+
+                Obx(() => Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        color: invoiceController.isUploadComplete.value
+                            ? Colors.green[100]
+                            : Colors.red[100],
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            invoiceController.isUploadComplete.value
+                                ? Icons.check_circle
+                                : Icons.error_outline,
+                            color: invoiceController.isUploadComplete.value
+                                ? Colors.green
+                                : Colors.red,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12.0),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  invoiceController.isUploadComplete.value
+                                      ? 'Bukti transfer sudah di unggah!'
+                                      : 'Belum',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: invoiceController.isUploadComplete.value
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                                ),
+                                Text(
+                                  invoiceController.isUploadComplete.value
+                                      ? 'Menunggu persetujuan admin'
+                                      : 'Menunggu pembayaran',
+                                  style: TextStyle(
+                                    color: invoiceController.isUploadComplete.value
+                                        ? Colors.green[800]
+                                        : Colors.red[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+
                 const SizedBox(height: 20.0),
 
                 // Kode Transaksi
@@ -165,11 +252,11 @@ class _InvoiceViewState extends State<InvoiceView> {
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 4.0),
-                Text(
+                Obx(() => Text(
                     invoiceController.bank.value != null
                         ? '${invoiceController.bank.value?.accountNumber} - ${invoiceController.bank.value?.name}'
                         : 'N/A',
-                    style: const TextStyle(fontSize: 14)),
+                    style: const TextStyle(fontSize: 14))),
                 const SizedBox(height: 16.0),
 
                 // Tanggal Transaksi
@@ -179,8 +266,8 @@ class _InvoiceViewState extends State<InvoiceView> {
                 const SizedBox(height: 4.0),
                 Text(
                     transaksi?.createdAt != null
-                        ? dateFormatter
-                            .format(transaksi!.createdAt!.toLocal())
+                        ? dateFormatter.format(
+                            transaksi!.createdAt!.toLocal())
                         : 'N/A',
                     style: const TextStyle(fontSize: 14)),
                 const SizedBox(height: 16.0),
@@ -190,67 +277,18 @@ class _InvoiceViewState extends State<InvoiceView> {
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 4.0),
-                Text(
-                  invoiceController.scheduleDate.value != null &&
-                          invoiceController.scheduleTime.value != null
-                      ? dateFormatter.format(invoiceController
+                Obx(() => Text(
+                      invoiceController.scheduleDate.value != null &&
+                              invoiceController.scheduleTime.value != null
+                          ? dateFormatter.format(invoiceController
                               .scheduleDate.value!.scheduleDate
                               .toLocal()) +
-                          ', ' +
-                          invoiceController.scheduleTime.value!.scheduleTime
-                      : 'N/A',
-                  style: const TextStyle(fontSize: 14)),
-                const SizedBox(height: 20.0),
-                Obx(() {
-                  return Container(
-                    width: double.infinity,
-                    height: 48,
-                    // margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      border:
-                          Border.all(color: const Color(0xFF35693E), width: 1),
-                    ),
-                    child: TextButton(
-                      onPressed: invoiceController.isUploadComplete.value ||
-                              invoiceController.isLoading.value
-                          ? null
-                          :  () {
-                              // Panggil fungsi untuk menyimpan catatan dokter
-                              _showImageSourceDialog();
-                            },
-                      style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFF35693E),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          invoiceController.isLoading.value
-                              ? Container(
-                                  width: 24,
-                                  height: 24,
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: const CircularProgressIndicator(
-                                    color: Color(0xFF35693E),
-                                    strokeWidth: 3,
-                                  ))
-                              : const Icon(Icons.file_upload_outlined,
-                                  color: Color(0xFF35693E)),
-                           SizedBox(width: 8),
-                          Text(
-                              invoiceController.isUploadComplete.value
-                                  ? 'Menunggu Persetujuan'
-                                  : 'Upload Bukti Transfer',
-                              style: TextStyle(
-                                  color: Color(0xFF35693E), fontSize: 16)),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
+                              ', ' +
+                              invoiceController
+                                  .scheduleTime.value!.scheduleTime
+                          : 'N/A',
+                      style: const TextStyle(fontSize: 14),
+                    )),
                 const SizedBox(height: 20.0),
 
                 // Symptoms
@@ -272,8 +310,11 @@ class _InvoiceViewState extends State<InvoiceView> {
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 4.0),
-                Text(appointment.symptomDescription ?? 'N/A',
-                    style: const TextStyle(fontSize: 14)),
+                Obx(() => Text(
+                      invoiceController.appointment.value?.symptomDescription ??
+                          'N/A',
+                      style: const TextStyle(fontSize: 14),
+                    )),
                 const SizedBox(height: 20.0),
 
                 // AI Response
@@ -289,11 +330,12 @@ class _InvoiceViewState extends State<InvoiceView> {
                     borderRadius: BorderRadius.circular(8.0),
                     border: Border.all(color: Colors.grey.shade300),
                   ),
-                  child: Text(
-                    appointment.aiResponse ?? 'Belum ada response',
-                    style: const TextStyle(fontSize: 14),
-                    textAlign: TextAlign.start, // Tambahkan ini
-                  ),
+                  child: Obx(() => Text(
+                        invoiceController.appointment.value?.aiResponse ??
+                            'Belum ada response',
+                        style: const TextStyle(fontSize: 14),
+                        textAlign: TextAlign.start,
+                      )),
                 ),
                 const SizedBox(height: 16.0),
 
@@ -305,17 +347,18 @@ class _InvoiceViewState extends State<InvoiceView> {
                 Obx(() => Column(
                       children:
                           invoiceController.medicines.map((medicine) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(medicine.name,
-                                style: const TextStyle(fontSize: 14)),
-                            Text(
-                              currencyFormatter.format(medicine.sellPrice),
-                              style: const TextStyle(fontSize: 14)),
-                            ],
-                        );
-                      }).toList(),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(medicine.name,
+                            style: const TextStyle(fontSize: 14)),
+                        Text(
+                          currencyFormatter.format(medicine.sellPrice),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    );
+                  }).toList(),
                     )),
                 const SizedBox(height: 16.0),
 
@@ -326,17 +369,18 @@ class _InvoiceViewState extends State<InvoiceView> {
                 const SizedBox(height: 8.0),
                 Obx(() => Column(
                       children: invoiceController.fees.map((fee) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(fee.procedure,
-                                style: const TextStyle(fontSize: 14)),
-                            Text(
-                              currencyFormatter.format(fee.price),
-                              style: const TextStyle(fontSize: 14)),
-                          ],
-                        );
-                      }).toList(),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(fee.procedure,
+                            style: const TextStyle(fontSize: 14)),
+                        Text(
+                          currencyFormatter.format(fee.price),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    );
+                  }).toList(),
                     )),
                 const SizedBox(height: 16.0),
 
@@ -348,62 +392,16 @@ class _InvoiceViewState extends State<InvoiceView> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 14)),
                     Obx(() => Text(
-                        currencyFormatter.format(
-                            double.parse(invoiceController.total.value)),
+                        currencyFormatter.format(double.parse(
+                            invoiceController.total.value)),
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 14))),
                   ],
                 ),
 
                 const SizedBox(height: 24.0),
-                // Submit Button
-                // Container(
-                //   width: double.infinity,
-                //   height: 48,
-                //   // margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(24),
-                //     color: const Color(0xFF35693E),
-                //   ),
-                //   child: TextButton(
-                //     onPressed:invoiceController.isLoading.value ? null :  () {
-                //       // Panggil fungsi untuk menyimpan catatan dokter
-                //      print("data id transc $transaksi?.id");
-                //      invoiceController.setLoading(true);
-                //       invoiceController.saveFileInfo(transaksi!.id!);
-                //      Future.delayed(const Duration(seconds: 3), () {
-                //       invoiceController.setLoading(false);
-                //      });
-                      
-                //       print("submit ya");
-                //     },
-                //     style: TextButton.styleFrom(
-                //       foregroundColor: Colors.white,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(24),
-                //       ),
-                //     ),
-                //     child:  invoiceController.isLoading.value ? const SizedBox(
-                //                     width: 24,
-                //                     height: 24,
-                //                     // padding: EdgeInsets.all(2.0),
-                //                     child: CircularProgressIndicator(
-                //                       color: Colors.white,
-                //                       strokeWidth: 3,
-                //                     ))
-                //                   :const Text(
-                //       'Submit',
-                //       style: TextStyle(fontSize: 16),
-                //     ),
-                //   ),
-                // ),
-                const SizedBox(height: 24.0),
               ],
             ),
-          );
-        } else {
-          return const Center(
-            child: Text('Data tidak ditemukan'),
           );
         }
       }),
@@ -414,27 +412,31 @@ class _InvoiceViewState extends State<InvoiceView> {
         ),
         child: Row(
           children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.share, color: Color(0xFF35693E)),
-                label: const Text('Share',
-                    style: TextStyle(
-                        color: Color(0xFF35693E),
-                        fontWeight: FontWeight.w500)),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFF35693E)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
+           Expanded(
+  child: OutlinedButton.icon(
+    onPressed: () {
+      invoiceController.downloadInvoicePDF(transaksi!.appointmentId!, share: true); // Aktifkan berbagi
+    },
+    icon: const Icon(Icons.share, color: Color(0xFF35693E)),
+    label: const Text('Share',
+        style: TextStyle(
+            color: Color(0xFF35693E),
+            fontWeight: FontWeight.w500)),
+    style: OutlinedButton.styleFrom(
+      side: const BorderSide(color: Color(0xFF35693E)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+    ),
+  ),
+),
             const SizedBox(width: 12),
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed:  () {
+                      invoiceController.downloadInvoicePDF(transaksi!.appointmentId!);
+                    },
                 icon: const Icon(Icons.file_download_outlined,
                     color: Color(0xFF35693E)),
                 label: const Text('Download',
@@ -455,5 +457,4 @@ class _InvoiceViewState extends State<InvoiceView> {
       ),
     );
   }
-    
 }

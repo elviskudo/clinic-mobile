@@ -48,12 +48,16 @@ import '../modules/(home)/help_center/bindings/help_center_binding.dart';
 import '../modules/(home)/help_center/views/help_center_view.dart';
 import '../modules/(home)/home/bindings/home_binding.dart';
 import '../modules/(home)/home/views/home_view.dart';
+import '../modules/(home)/invoice/bindings/invoice_binding.dart';
+import '../modules/(home)/invoice/views/invoice_view.dart';
 import '../modules/(home)/medicalHistory/bindings/medical_history_binding.dart';
 import '../modules/(home)/medicalHistory/views/medical_history_view.dart';
 import '../modules/(home)/medicineRecord/bindings/medicine_record_binding.dart';
 import '../modules/(home)/medicineRecord/views/medicine_record_view.dart';
 import '../modules/(home)/onboarding_page/bindings/onboarding_page_binding.dart';
 import '../modules/(home)/onboarding_page/views/onboarding_page_view.dart';
+import '../modules/(home)/paymentSuccess/bindings/payment_success_binding.dart';
+import '../modules/(home)/paymentSuccess/views/payment_success_view.dart';
 import '../modules/(home)/personal_data/bindings/personal_data_binding.dart';
 import '../modules/(home)/personal_data/views/personal_data_view.dart';
 import '../modules/(home)/profile/bindings/profile_binding.dart';
@@ -66,12 +70,12 @@ import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
 import '../modules/Theme/bindings/theme_binding.dart';
 import '../modules/Theme/views/theme_view.dart';
-import '../modules/invoice/bindings/invoice_binding.dart';
-import '../modules/invoice/views/invoice_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
+import '../modules/(home)/paymentDenied/bindings/payment_denied_binding.dart';
+import '../modules/(home)/paymentDenied/views/payment_denied_view.dart';
 
 part 'app_routes.dart';
 
@@ -249,8 +253,18 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.INVOICE,
-      page: () =>  InvoiceView(),
+      page: () => InvoiceView(),
       binding: InvoiceBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT_SUCCESS,
+      page: () => const PaymentSuccessView(),
+      binding: PaymentSuccessBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT_DENIED,
+      page: () => const PaymentDeniedView(),
+      binding: PaymentDeniedBinding(),
     ),
   ];
 }

@@ -41,6 +41,8 @@ abstract class Routes {
   static const APPOINTMENT_RESULT = _Paths.APPOINTMENT_RESULT;
   static const REDEEM_MEDICINE = _Paths.REDEEM_MEDICINE;
   static const INVOICE = _Paths.INVOICE;
+  static const PAYMENT_SUCCESS = _Paths.PAYMENT_SUCCESS;
+  static const PAYMENT_DENIED = _Paths.PAYMENT_DENIED;
 }
 
 abstract class _Paths {
@@ -83,4 +85,6 @@ abstract class _Paths {
   static const APPOINTMENT_RESULT = '/appointment-result';
   static const REDEEM_MEDICINE = '/redeem-medicine';
   static const INVOICE = '/invoice';
+  static const PAYMENT_SUCCESS = '/payment-success';
+  static const PAYMENT_DENIED = '/payment-denied';
 }
