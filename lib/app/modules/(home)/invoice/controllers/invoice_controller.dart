@@ -939,4 +939,11 @@ class InvoiceController extends GetxController {
       }
     }
   }
+    void clearDataTambahan() {
+    clinic.value = null;
+    poly.value = null;
+    doctor.value = null;
+    patientName.value = '';
+    print('Additional data cleared!');
+  }
 }

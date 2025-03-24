@@ -2,6 +2,7 @@
   import 'package:clinic_ai/app/routes/app_pages.dart';
   import 'package:clinic_ai/models/appointment_model.dart';
   import 'package:clinic_ai/models/user_model.dart';
+import 'package:flutter/material.dart';
   import 'package:get/get.dart';
   import 'package:google_sign_in/google_sign_in.dart';
   import 'package:shared_preferences/shared_preferences.dart';
@@ -320,5 +321,28 @@
   // Method to update the current index
   void updateIndex(int index) {
     currentIndex.value = index;
+  }
+  void navigateToAppointmentDetail1(Appointment appointment) {
+    switch (appointment.status) {
+      case 1:
+        Get.toNamed(Routes.APPOINTMENT, parameters: {'appointmentId': appointment.id}); // Kirim semua data yang diperlukan ke halaman appointment
+        break;
+      case 2:
+      case 4:
+      case 5:
+        Get.toNamed(Routes.SUMMARY_APPOINTMENT, arguments: appointment.id);
+        break;
+      case 6:
+        Get.toNamed(Routes.REDEEM_MEDICINE, arguments: appointment.id); // Replace with your redeem medicine route
+        break;
+      case 7:
+      case 3:
+        // Tampilkan pesan kesalahan atau lakukan sesuatu yang lain
+        Get.snackbar('Info', 'This appointment is disabled.', backgroundColor: Colors.red);
+        break;
+      default:
+        Get.snackbar('Info', 'Invalid appointment status.');
+        break;
+    }
   }
   }

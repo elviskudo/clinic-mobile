@@ -183,4 +183,15 @@ class SymptomAppointmentController extends GetxController {
       isLoading(false);
     }
   }
+    void reset() {
+    selectedSymptomIds.clear();
+    isSymptomSelected.value = {
+      for (var symptom in symptoms) symptom.id: false
+    };
+    symptomDescription.value = '';
+    isDescriptionValid.value = false;
+    selectedSymptomIds.refresh();
+    isSymptomSelected.refresh();
+    print("SymptomAppointmentController data reset!");
+  }
 }

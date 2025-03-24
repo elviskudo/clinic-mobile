@@ -241,147 +241,152 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildMedicalRecordCard(
       {required Appointment record, required bool isAlternate}) {
-    return Container(
-      width: MediaQuery.of(Get.context!).size.width * 0.75,
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: isAlternate
-            ? Theme.of(Get.context!).colorScheme.primaryContainer
-            : Theme.of(Get.context!).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Obx(() {
-            final doctor = controller.existingDoctor.value;
-            final poly = controller.existingPoly.value;
-            final scheduleDate = controller.existingScheduleDate.value;
-            final scheduleTime = controller.existingScheduleTime.value;
-            final clinic = controller.existingClinic.value;
-            String formattedDate = scheduleDate?.scheduleDate != null
-                ? DateFormat('dd MMM yyyy').format(
-                    DateTime.parse(scheduleDate!.scheduleDate!.toString()))
-                : 'Unknown Date';
+    return InkWell(
+      onTap: () => controller.navigateToAppointmentDetail1(record),
+      child: Container(
+        width: MediaQuery.of(Get.context!).size.width * 0.75,
+        margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isAlternate
+              ? Theme.of(Get.context!).colorScheme.primaryContainer
+              : Theme.of(Get.context!).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Obx(() {
+              final doctor = controller.existingDoctor.value;
+              final poly = controller.existingPoly.value;
+              final scheduleDate = controller.existingScheduleDate.value;
+              final scheduleTime = controller.existingScheduleTime.value;
+              final clinic = controller.existingClinic.value;
+              String formattedDate = scheduleDate?.scheduleDate != null
+                  ? DateFormat('dd MMM yyyy').format(
+                      DateTime.parse(scheduleDate!.scheduleDate!.toString()))
+                  : 'Unknown Date';
 
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: ClipOval(
-                          child: Obx(() => Image.network(
-                                controller.doctorProfilePictureUrl.value
-                                        .isNotEmpty
-                                    ? controller.doctorProfilePictureUrl.value
-                                    : 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                                fit: BoxFit.cover,
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace? stackTrace) {
-                                  print('Error loading image: $exception');
-                                  return const Icon(Icons.error_outline);
-                                },
-                              )),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${doctor?.degree ?? ''} ${doctor?.name ?? ''}, ${doctor?.specialize ?? ''}'
-                                      .trim()
-                                      .isNotEmpty
-                                  ? '${doctor?.degree ?? ''} ${doctor?.name ?? ''}, ${doctor?.specialize ?? ''}'
-                                  : 'Unknown Doctor',
-                              style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: Theme.of(Get.context!)
-                                      .textTheme
-                                      .titleLarge
-                                      ?.color),
-                            ),
-                            Text(
-                              clinic?.name ?? 'Unknown Clinic',
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Text(
-                              poly?.name ?? 'Unknown Poly',
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(Icons.more_horiz, color: Colors.grey[800], size: 20),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              formattedDate,
-                              style: GoogleFonts.poppins(
-                                color: Colors.grey[700],
-                                fontSize: 12,
-                              ),
-                            ),
-                            Text(
-                              scheduleTime?.scheduleTime ?? 'Unknown Time',
-                              style: GoogleFonts.poppins(
-                                color: Colors.grey[700],
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
+                          width: 44,
+                          height: 44,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE3F2FD),
-                            borderRadius: BorderRadius.circular(8),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
                           ),
-                          child: Text(
-                            controller.getStatusText(record.status ?? 0),
-                            style: GoogleFonts.poppins(
-                              fontSize: 11,
-                              color: Colors.blue[700],
-                              fontWeight: FontWeight.w500,
-                            ),
+                          child: ClipOval(
+                            child: Obx(() => Image.network(
+                                  controller.doctorProfilePictureUrl.value
+                                          .isNotEmpty
+                                      ? controller.doctorProfilePictureUrl.value
+                                      : 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (BuildContext context,
+                                      Object exception,
+                                      StackTrace? stackTrace) {
+                                    print('Error loading image: $exception');
+                                    return const Icon(Icons.error_outline);
+                                  },
+                                )),
                           ),
                         ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${doctor?.degree ?? ''} ${doctor?.name ?? ''}, ${doctor?.specialize ?? ''}'
+                                        .trim()
+                                        .isNotEmpty
+                                    ? '${doctor?.degree ?? ''} ${doctor?.name ?? ''}, ${doctor?.specialize ?? ''}'
+                                    : 'Unknown Doctor',
+                                style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: Theme.of(Get.context!)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.color),
+                              ),
+                              Text(
+                                clinic?.name ?? 'Unknown Clinic',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              Text(
+                                poly?.name ?? 'Unknown Poly',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(Icons.more_horiz,
+                            color: Colors.grey[800], size: 20),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            );
-          });
-        },
+                    const SizedBox(height: 12),
+                    IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                formattedDate,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.grey[700],
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                scheduleTime?.scheduleTime ?? 'Unknown Time',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.grey[700],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE3F2FD),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              controller.getStatusText(record.status ?? 0),
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                color: Colors.blue[700],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            });
+          },
+        ),
       ),
     );
   }

@@ -112,28 +112,56 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
             Expanded(
               child: GestureDetector(
                 onTap: _showImageSourceDialog,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  // Gunakan Obx untuk memantau selectedImage dari controller
-                  child: Obx(() {
-                    return captureController.selectedImage.value != null
-                        ? ClipRRect(
-                      borderRadius: BorderRadius.circular(12.0),
-                      child: Image.file(
-                        captureController.selectedImage.value!,
-                        fit: BoxFit.cover,
+                child: LayoutBuilder( // Use LayoutBuilder
+                  builder: (context, constraints) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(12.0),
                       ),
-                    )
-                        : Center(
-                      child: Text(
-                        'Tap to Upload Image',
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
+                      // Gunakan Obx untuk memantau selectedImage dari controller
+                      child: Obx(() {
+                        return captureController.selectedImage.value != null
+                            ? Stack( // Gunakan Stack untuk menumpuk widget
+                          alignment: Alignment.topRight, // Posisi tombol cancel
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12.0),
+                              child: Image.file(
+                                captureController.selectedImage.value!,
+                                width: constraints.maxWidth, // Atur lebar
+                                height: constraints.maxHeight, // Atur tinggi
+                                fit: BoxFit.fill, // Set fit ke BoxFit.fill
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell( // Gunakan InkWell untuk efek ripple
+                                onTap: () {
+                                  // Reset gambar yang dipilih
+                                  captureController.updateSelectedImage(null);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.7),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.close, color: Colors.white, size: 20,),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                            : Center(
+                          child: Text(
+                            'Tap to Upload Image',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        );
+                      }),
                     );
-                  }),
+                  },
                 ),
               ),
             ),

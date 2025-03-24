@@ -3,6 +3,7 @@ import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/con
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/captureAppointment/controllers/capture_appointment_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/scheduleAppointment/controllers/schedule_appointment_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/symptomAppointment/controllers/symptom_appointment_controller.dart';
+import 'package:clinic_ai/app/modules/(home)/invoice/controllers/invoice_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,13 +19,15 @@ class PaymentSuccessView extends GetView<PaymentSuccessController> {
     // Ambil data dari Get.arguments
     final Map<String, dynamic> args = Get.arguments as Map<String, dynamic>;
     final String qrCodeData = args['qr_code'] ?? 'Data QR Code Kosong';
-    final String patientName = args['patient_name'] ?? 'Nama Pasien Tidak Tersedia';
-   final scheduleController = Get.put(ScheduleAppointmentController());
+    final String patientName =
+        args['patient_name'] ?? 'Nama Pasien Tidak Tersedia';
+    final scheduleController = Get.put(ScheduleAppointmentController());
     final appointmentController = Get.find<AppointmentController>();
     Get.put(BarcodeAppointmentController());
     final barcodeController = Get.find<BarcodeAppointmentController>();
     final captureController = Get.find<CaptureAppointmentController>();
     final symptompController = Get.find<SymptomAppointmentController>();
+
     return Scaffold(
       backgroundColor: const Color(0xFF2E7D41),
       body: SafeArea(
@@ -114,11 +117,17 @@ class PaymentSuccessView extends GetView<PaymentSuccessController> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                        appointmentController.resetAppointmentCreated();
-                    scheduleController.resetForm();
-                  barcodeController.reset();
-                  // symptompController.symptomDescription
-                        Get.offAllNamed(Routes.HOME);
+                      appointmentController.resetAppointmentCreated();
+                      scheduleController.resetForm();
+                      barcodeController.reset();
+                      captureController.reset();
+                      symptompController.reset();
+                      Get.find<InvoiceController>()
+                          .clearDataTambahan(); // Tambahkan ini
+                      Get.find<InvoiceController>().isUploadComplete.value =
+                          false;
+                      Get.find<InvoiceController>().clearUploadState();
+                      Get.offAllNamed(Routes.HOME);
                     },
                     child: const Text(
                       "Home",
@@ -157,7 +166,8 @@ class AnimatedCheckmark extends StatefulWidget {
   State<AnimatedCheckmark> createState() => _AnimatedCheckmarkState();
 }
 
-class _AnimatedCheckmarkState extends State<AnimatedCheckmark> with SingleTickerProviderStateMixin {
+class _AnimatedCheckmarkState extends State<AnimatedCheckmark>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _moveAnimation;
@@ -239,7 +249,8 @@ class FadeInItem extends StatefulWidget {
   State<FadeInItem> createState() => _FadeInItemState();
 }
 
-class _FadeInItemState extends State<FadeInItem> with SingleTickerProviderStateMixin {
+class _FadeInItemState extends State<FadeInItem>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 

@@ -20,6 +20,10 @@ class CaptureAppointmentController extends GetxController {
   // Function untuk update gambar
   void updateSelectedImage(File? image) {
     selectedImage.value = image;
+    // Reset URL gambar jika gambar baru dipilih
+    if (image != null) {
+      imageUrl.value = '';
+    }
   }
 
   // Function to upload file to Cloudinary
@@ -58,6 +62,38 @@ class CaptureAppointmentController extends GetxController {
     }
   }
 
+  // Function to delete file from Cloudinary
+  Future<void> cancelImage(String appointmentId) async {
+      try {
+        isLoading.value = true;
+
+        // Find the file info in Supabase based on module_class and module_id
+        final response = await supabase
+            .from('files')
+            .select()
+            .eq('module_class', 'appointments')
+            .eq('module_id', appointmentId)
+            .single();
+
+        if (response != null) {
+           final fileId = response['id'];
+
+          // Delete the file info from Supabase
+          await supabase.from('files').delete().eq('id', fileId);
+           print("fileId: $fileId");
+        } else {
+          print('File information not found in Supabase.');
+        }
+        selectedImage.value = null; // Hapus gambar yang dipilih
+        imageUrl.value = '';       // Reset imageUrl
+        fileType.value = '';       // Reset fileType
+      } catch (e) {
+        print('Error deleting file info: $e');
+        Get.snackbar('Error', 'Failed to delete file information: $e');
+      } finally {
+        isLoading.value = false;
+      }
+    }
   // Function to save file info to Supabase
   Future<void> saveFileInfo(String appointmentId) async {
     try {
@@ -86,5 +122,12 @@ class CaptureAppointmentController extends GetxController {
     fileType.value = '';
     selectedImage.value = null; // Clear gambar saat controller ditutup
     super.onClose();
+  }
+
+  void reset() {
+    imageUrl.value = '';
+    fileType.value = '';
+    selectedImage.value = null;
+    print("CaptureAppointmentController data reset!");
   }
 }
