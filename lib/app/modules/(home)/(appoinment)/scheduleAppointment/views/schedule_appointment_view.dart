@@ -299,126 +299,140 @@ class _ScheduleAppointmentViewState extends State<ScheduleAppointmentView> {
     );
   }
 
-Widget _buildDateField() {
-  return Obx(() {
-    bool isEnabled = controller.selectedDoctor.value != null &&
-        !controller.isFormReadOnly.value;
+  Widget _buildDateField() {
+    return Obx(() {
+      bool isEnabled = controller.selectedDoctor.value != null &&
+          !controller.isFormReadOnly.value;
 
-    if (controller.isLoadingScheduleDates.value) {
-      return _buildLoadingIndicator();
-    }
+      if (controller.isLoadingScheduleDates.value) {
+        return _buildLoadingIndicator();
+      }
 
-    List<DateTime> availableDates = controller.scheduleDates
-        .map((scheduleDate) => scheduleDate.scheduleDate)
-        .toList();
+      List<DateTime> availableDates = controller.scheduleDates
+          .map((scheduleDate) => scheduleDate.scheduleDate)
+          .toList();
 
-    // Filter tanggal yang sudah lewat
-    List<DateTime> validAvailableDates = availableDates.where((date) => !date.isBefore(DateTime.now().toLocal())).toList();
+      // Filter tanggal yang sudah lewat
+      List<DateTime> validAvailableDates = availableDates
+          .where((date) => !date.isBefore(DateTime.now().toLocal()))
+          .toList();
 
-    // Tampilkan pesan peringatan jika tidak ada tanggal tersedia (atau semua tanggal sudah lewat) DAN dokter sudah dipilih
-    if (validAvailableDates.isEmpty && controller.selectedDoctor.value != null) {
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.red[50],
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.red[200]!),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.red[700], size: 20),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                'Tidak ada jadwal yang tersedia untuk dokter ini. Silakan pilih dokter lain atau hubungi klinik.',
-                style: TextStyle(color: Colors.red[700], fontSize: 13),
+      // Tampilkan pesan peringatan jika tidak ada tanggal tersedia (atau semua tanggal sudah lewat) DAN dokter sudah dipilih
+      if (validAvailableDates.isEmpty &&
+          controller.selectedDoctor.value != null) {
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.red[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.red[200]!),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.warning_amber_rounded,
+                  color: Colors.red[700], size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Tidak ada jadwal yang tersedia untuk dokter ini. Silakan pilih dokter lain atau hubungi klinik.',
+                  style: TextStyle(color: Colors.red[700], fontSize: 13),
+                ),
               ),
+            ],
+          ),
+        );
+      }
+
+      DateTime? initialDate; // Jadikan nullable
+
+      // Cari tanggal pertama yang tersedia yang tidak sebelum hari ini
+      DateTime now = DateTime.now();
+      for (DateTime date in validAvailableDates) {
+        // Gunakan validAvailableDates
+        if (!date.isBefore(DateTime(now.year, now.month, now.day))) {
+          initialDate = date;
+          break;
+        }
+      }
+
+      // Jika tidak ada tanggal yang memenuhi syarat, gunakan tanggal pertama dari availableDates (jika ada)
+      if (initialDate == null && validAvailableDates.isNotEmpty) {
+        // Gunakan validAvailableDates
+        initialDate = validAvailableDates.first;
+      }
+
+      return InkWell(
+        onTap: isEnabled && validAvailableDates.isNotEmpty
+            ? () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: Get.context!,
+                  initialDate: initialDate ?? DateTime.now(),
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime(DateTime.now().year + 1),
+                  selectableDayPredicate: (DateTime val) {
+                    return validAvailableDates.any((date) =>
+                        date.year == val.year &&
+                        date.month == val.month &&
+                        date.day == val.day);
+                  },
+                  builder: (BuildContext context, Widget? child) {
+                    return Theme(
+                      data: ThemeData.light().copyWith(
+                        colorScheme: Theme.of(context).colorScheme,
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+
+                if (pickedDate != null) {
+                  controller.setSelectedDate(pickedDate);
+                }
+              }
+            : null,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).inputDecorationTheme.fillColor,
+            border: Border.all(
+              color: isEnabled
+                  ? Theme.of(context)
+                      .inputDecorationTheme
+                      .enabledBorder!
+                      .borderSide
+                      .color
+                  : Theme.of(context).disabledColor,
             ),
-          ],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                controller.selectedDate.value != null
+                    ? DateFormat('dd/MM/yyyy')
+                        .format(controller.selectedDate.value!)
+                    : 'Select Date',
+                style: TextStyle(
+                  color: isEnabled
+                      ? (controller.selectedDate.value != null
+                          ? Theme.of(context).textTheme.bodyLarge?.color
+                          : Theme.of(context).hintColor)
+                      : Theme.of(context).disabledColor,
+                ),
+              ),
+              Icon(
+                Icons.calendar_today,
+                color: isEnabled
+                    ? Theme.of(context).iconTheme.color
+                    : Theme.of(context).disabledColor,
+              ),
+            ],
+          ),
         ),
       );
-    }
-
-    DateTime? initialDate; // Jadikan nullable
-
-    // Cari tanggal pertama yang tersedia yang tidak sebelum hari ini
-    DateTime now = DateTime.now();
-    for (DateTime date in validAvailableDates) { // Gunakan validAvailableDates
-      if (!date.isBefore(DateTime(now.year, now.month, now.day))) {
-        initialDate = date;
-        break;
-      }
-    }
-
-    // Jika tidak ada tanggal yang memenuhi syarat, gunakan tanggal pertama dari availableDates (jika ada)
-    if (initialDate == null && validAvailableDates.isNotEmpty) { // Gunakan validAvailableDates
-      initialDate = validAvailableDates.first;
-    }
-
-    return InkWell(
-      onTap: isEnabled && validAvailableDates.isNotEmpty // Periksa apakah ada tanggal yang valid
-          ? () async {
-              DateTime? pickedDate = await showDatePicker(
-                context: Get.context!,
-                initialDate: initialDate ?? DateTime.now(),
-                firstDate: DateTime.now(),
-                lastDate: DateTime(DateTime.now().year + 1),
-                selectableDayPredicate: (DateTime val) {
-                  return validAvailableDates.any((date) => // Gunakan validAvailableDates
-                      date.year == val.year &&
-                      date.month == val.month &&
-                      date.day == val.day);
-                },
-                builder: (BuildContext context, Widget? child) {
-                  return Theme(
-                    data: ThemeData.light().copyWith(
-                      colorScheme: ColorScheme.fromSwatch(
-                        primarySwatch: Colors.green,
-                      ),
-                    ),
-                    child: child!,
-                  );
-                },
-              );
-
-              if (pickedDate != null) {
-                controller.setSelectedDate(pickedDate);
-              }
-            }
-          : null,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xffF7FBF2),
-          border: Border.all(color: const Color(0xff727970)),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              controller.selectedDate.value != null
-                  ? DateFormat('dd/MM/yyyy')
-                      .format(controller.selectedDate.value!)
-                  : 'Select Date',
-              style: TextStyle(
-                color: isEnabled
-                    ? (controller.selectedDate.value != null
-                        ? Colors.black
-                        : const Color(0xff727970))
-                    : Colors.grey.shade400,
-              ),
-            ),
-            Icon(Icons.calendar_today,
-                color: isEnabled
-                    ? const Color(0xff727970)
-                    : Colors.grey.shade400),
-          ],
-        ),
-      ),
-    );
-  });
-}
+    });
+  }
 
   Widget _buildLoadingIndicator() {
     return const Padding(
@@ -469,20 +483,24 @@ class _CustomDropdownState extends State<CustomDropdown> {
       children: [
         Text(
           widget.label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(Get.context!).textTheme.titleMedium?.color),
         ),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             color: (widget.isEnabled && !widget.isReadOnly)
-                ? const Color(0xffF7FBF2)
+                ? Theme.of(Get.context!).inputDecorationTheme.fillColor
                 : Colors.grey[200],
             border: Border.all(
                 color: (widget.isEnabled && !widget.isReadOnly)
-                    ? const Color(0xff727970)
+                    ? Theme.of(Get.context!)
+                        .inputDecorationTheme
+                        .enabledBorder!
+                        .borderSide
+                        .color
                     : Colors.grey),
             borderRadius: BorderRadius.circular(8),
           ),
@@ -491,7 +509,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
               widget.selectedValue,
               style: TextStyle(
                 color: (widget.isEnabled && !widget.isReadOnly)
-                    ? const Color(0xff727970)
+                    ? Theme.of(Get.context!).textTheme.bodyLarge?.color
                     : Colors.grey,
               ),
             ),

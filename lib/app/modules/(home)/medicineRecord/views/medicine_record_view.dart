@@ -43,39 +43,43 @@ class MedicineRecordView extends GetView<MedicineRecordController> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           "Kode QR-Antrian",
                           style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal),
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color),
                         ),
                         Text(
                           "14 Juni 2024",
                           style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.normal,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer),
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           "4 Drug",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color),
                         ),
                         Text(
                           "Rp202.000",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer),
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color),
                         ),
                       ],
                     ),

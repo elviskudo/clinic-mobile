@@ -18,9 +18,9 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7FBF2),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7FBF2),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
@@ -67,12 +67,14 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey.shade300, width: 1),
+                            border: Border.all(
+                                color: Colors.grey.shade300, width: 1),
                           ),
-                          child: Obx(() => Text(
-                            controller.aiResponse.value,
-                            style: TextStyle(fontSize: 14),
-                          ),
+                          child: Obx(
+                            () => Text(
+                              controller.aiResponse.value,
+                              style: TextStyle(fontSize: 14),
+                            ),
                           ),
                         ),
                       ),
@@ -91,21 +93,22 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                         ),
                       ),
                       Obx(() => Column(
-                        children: controller.medicines
-                            .map((medicine) => _buildMedicineCard(medicine))
-                            .toList(),
-                      )),
+                            children: controller.medicines
+                                .map((medicine) => _buildMedicineCard(medicine))
+                                .toList(),
+                          )),
                       GestureDetector(
                         onTap: () {
                           _showBankBottomSheet(context, controller);
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           child: Row(
                             children: [
                               Text(
                                 '\u{1F4B3}',
-                               style: const TextStyle(
+                                style: const TextStyle(
                                   fontSize: 20,
                                   color: Colors.black54,
                                   fontWeight: FontWeight.w500,
@@ -115,18 +118,15 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                               const Text(
                                 'Payment Method',
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500
-                                ),
+                                    fontSize: 16, fontWeight: FontWeight.w500),
                               ),
                               const Spacer(),
                               Obx(() => Text(
-                                controller.selectedBankName.value,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500
-                                ),
-                              )),
+                                    controller.selectedBankName.value,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                  )),
                               Icon(
                                 Icons.arrow_forward_ios,
                                 size: 14,
@@ -155,13 +155,19 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                             ),
                             const SizedBox(height: 12),
                             Obx(() => Column(
-                              children: [
-                                // Tampilkan daftar fees
-                                ...controller.fees.map((fee) => _buildPaymentRow(fee.procedure, fee.price.toString())).toList(),
-                                const SizedBox(height: 4),
-                                _buildPaymentRow('Total', controller.total.value, isTotal: true),
-                              ],
-                            )),
+                                  children: [
+                                    // Tampilkan daftar fees
+                                    ...controller.fees
+                                        .map((fee) => _buildPaymentRow(
+                                            fee.procedure,
+                                            fee.price.toString()))
+                                        .toList(),
+                                    const SizedBox(height: 4),
+                                    _buildPaymentRow(
+                                        'Total', controller.total.value,
+                                        isTotal: true),
+                                  ],
+                                )),
                           ],
                         ),
                       ),
@@ -185,24 +191,27 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFF7FBF2), // Warna latar belakang yang sama dengan Scaffold
+                  color: Color(
+                      0xFFF7FBF2), // Warna latar belakang yang sama dengan Scaffold
                 ),
                 child: SizedBox(
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF35693E),
+                      backgroundColor: Theme.of(context).primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
                       elevation: 0,
                     ),
-                    onPressed: controller.selectedBankId.value.isNotEmpty ? () async {
-                      // Action when Pay button is pressed
-                      // Lakukan pembayaran di sini
-                      await controller.createTransaction();
-                    } : null, // Disable tombol jika bank belum dipilih
+                    onPressed: controller.selectedBankId.value.isNotEmpty
+                        ? () async {
+                            // Action when Pay button is pressed
+                            // Lakukan pembayaran di sini
+                            await controller.createTransaction();
+                          }
+                        : null, // Disable tombol jika bank belum dipilih
                     child: const Text(
                       'Pay',
                       style: TextStyle(
@@ -232,7 +241,7 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xffD4E8D1),
+        color: Theme.of(Get.context!).primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -318,7 +327,9 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
             style: TextStyle(
               fontSize: isTotal ? 16 : 14,
               fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-              color: isTotal ? const Color(0xFF2E7D32) : Colors.black87,
+              color: isTotal
+                  ? Theme.of(Get.context!).primaryColor
+                  : Colors.black87,
             ),
           ),
         ],
@@ -326,7 +337,8 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
     );
   }
 
-  void _showBankBottomSheet(BuildContext context, RedeemMedicineController controller) {
+  void _showBankBottomSheet(
+      BuildContext context, RedeemMedicineController controller) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -352,30 +364,32 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                   return Center(child: CircularProgressIndicator());
                 } else {
                   return ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: controller.banks.length,
-                    itemBuilder: (context, index) {
-                      final bank = controller.banks[index];
-                      return Obx(() => ListTile(
-                        title: Text(bank.name ?? 'Unknown Bank'),
-                        subtitle: Text('Account Number: ${bank.accountNumber ?? 'N/A'}'),
-                        trailing: Radio<String>(
-                          value: bank.id ?? '',
-                          groupValue: controller.selectedBankId.value,
-                          onChanged: (String? value) {
-                            controller.selectBank(value ?? '', bank.name ?? '');
-                            Get.back();
-                          },
-                          activeColor: Colors.green,
-                        ),
-                        onTap: (){
-                           controller.selectBank(bank.id ?? '', bank.name ?? '');
-                            Get.back();
-                        },
-                      ));
-                    }
-                  );
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: controller.banks.length,
+                      itemBuilder: (context, index) {
+                        final bank = controller.banks[index];
+                        return Obx(() => ListTile(
+                              title: Text(bank.name ?? 'Unknown Bank'),
+                              subtitle: Text(
+                                  'Account Number: ${bank.accountNumber ?? 'N/A'}'),
+                              trailing: Radio<String>(
+                                value: bank.id ?? '',
+                                groupValue: controller.selectedBankId.value,
+                                onChanged: (String? value) {
+                                  controller.selectBank(
+                                      value ?? '', bank.name ?? '');
+                                  Get.back();
+                                },
+                                activeColor: Colors.green,
+                              ),
+                              onTap: () {
+                                controller.selectBank(
+                                    bank.id ?? '', bank.name ?? '');
+                                Get.back();
+                              },
+                            ));
+                      });
                 }
               }),
             ],

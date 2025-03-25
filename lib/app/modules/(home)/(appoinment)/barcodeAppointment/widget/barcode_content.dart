@@ -102,7 +102,7 @@ class BarcodeContent extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
-                    color: const Color(0xff35693E),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),

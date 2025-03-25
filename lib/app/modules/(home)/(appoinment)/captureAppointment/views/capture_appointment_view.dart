@@ -16,7 +16,8 @@ class CaptureAppointmentView extends StatefulWidget {
 
 class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
   //File? _selectedImage;
-  final CaptureAppointmentController captureController = Get.find<CaptureAppointmentController>();
+  final CaptureAppointmentController captureController =
+      Get.find<CaptureAppointmentController>();
 
   Future<void> _pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
@@ -58,10 +59,11 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
   @override
   Widget build(BuildContext context) {
     final barcodeController = Get.find<BarcodeAppointmentController>();
-    final symptomController = Get.find<SymptomAppointmentController>(); // Get Symptom Controller
+    final symptomController =
+        Get.find<SymptomAppointmentController>(); // Get Symptom Controller
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7FBF2),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -71,7 +73,7 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
             Container(
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: const Color(0xFFD1F0EA),
+                color: Theme.of(context).colorScheme.secondaryContainer,
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Column(
@@ -79,29 +81,33 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.info_outline, color: Color(0xFF35693E)),
+                      Icon(Icons.info_outline,
+                          color: Theme.of(context).colorScheme.primary),
                       const SizedBox(width: 8.0),
-                      const Text(
+                      Text(
                         'Take image of your face, teeth or eyes!',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF35693E)),
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                       const Spacer(),
                     ],
                   ),
                   const SizedBox(height: 8.0),
-                  const Text(
+                  Text(
                     '• Take pictures using HD resolution',
-                    style: TextStyle(color: Color(0xFF35693E)),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
                   ),
-                  const Text(
+                  Text(
                     '• Make sure to point the camera at the problem area',
-                    style: TextStyle(color: Color(0xFF35693E)),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
                   ),
-                  const Text(
+                  Text(
                     '• The captured image must be clear and not blurry.',
-                    style: TextStyle(color: Color(0xFF35693E)),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
                   ),
                 ],
               ),
@@ -112,7 +118,8 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
             Expanded(
               child: GestureDetector(
                 onTap: _showImageSourceDialog,
-                child: LayoutBuilder( // Use LayoutBuilder
+                child: LayoutBuilder(
+                  // Use LayoutBuilder
                   builder: (context, constraints) {
                     return Container(
                       decoration: BoxDecoration(
@@ -122,43 +129,53 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
                       // Gunakan Obx untuk memantau selectedImage dari controller
                       child: Obx(() {
                         return captureController.selectedImage.value != null
-                            ? Stack( // Gunakan Stack untuk menumpuk widget
-                          alignment: Alignment.topRight, // Posisi tombol cancel
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12.0),
-                              child: Image.file(
-                                captureController.selectedImage.value!,
-                                width: constraints.maxWidth, // Atur lebar
-                                height: constraints.maxHeight, // Atur tinggi
-                                fit: BoxFit.fill, // Set fit ke BoxFit.fill
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell( // Gunakan InkWell untuk efek ripple
-                                onTap: () {
-                                  // Reset gambar yang dipilih
-                                  captureController.updateSelectedImage(null);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.withOpacity(0.7),
-                                    shape: BoxShape.circle,
+                            ? Stack(
+                                // Gunakan Stack untuk menumpuk widget
+                                alignment:
+                                    Alignment.topRight, // Posisi tombol cancel
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Image.file(
+                                      captureController.selectedImage.value!,
+                                      width: constraints.maxWidth, // Atur lebar
+                                      height:
+                                          constraints.maxHeight, // Atur tinggi
+                                      fit:
+                                          BoxFit.fill, // Set fit ke BoxFit.fill
+                                    ),
                                   ),
-                                  child: const Icon(Icons.close, color: Colors.white, size: 20,),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: InkWell(
+                                      // Gunakan InkWell untuk efek ripple
+                                      onTap: () {
+                                        // Reset gambar yang dipilih
+                                        captureController
+                                            .updateSelectedImage(null);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.withOpacity(0.7),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
                             : Center(
-                          child: Text(
-                            'Tap to Upload Image',
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                        );
+                                child: Text(
+                                  'Tap to Upload Image',
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                              );
                       }),
                     );
                   },
@@ -169,47 +186,57 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
 
             // Next Button
             Obx(() => SizedBox(
-              height: 50,
-              child: ElevatedButton(
-                onPressed: captureController.selectedImage.value != null
-                    ? () async {
-                  // Pastikan appointment tersedia
-                  if (barcodeController.currentAppointment.value == null ||
-                      barcodeController.currentAppointment.value!.id == null) {
-                    Get.snackbar('Error', 'Appointment not found. Please scan barcode first.');
-                    return;
-                  }
-                  // Panggil fungsi upload dari controller
-                  await captureController.uploadFileToCloudinary(
-                      XFile(captureController.selectedImage.value!.path),
-                      barcodeController.currentAppointment.value!.id!);
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: captureController.selectedImage.value != null
+                        ? () async {
+                            // Pastikan appointment tersedia
+                            if (barcodeController.currentAppointment.value ==
+                                    null ||
+                                barcodeController
+                                        .currentAppointment.value!.id ==
+                                    null) {
+                              Get.snackbar('Error',
+                                  'Appointment not found. Please scan barcode first.');
+                              return;
+                            }
+                            // Panggil fungsi upload dari controller
+                            await captureController.uploadFileToCloudinary(
+                                XFile(captureController
+                                    .selectedImage.value!.path),
+                                barcodeController
+                                    .currentAppointment.value!.id!);
 
-                  // Navigasi ke SummaryAppointmentView setelah upload selesai
-                  Get.toNamed(
-                    Routes.SUMMARY_APPOINTMENT, // Sesuaikan dengan rute yang benar
-                    arguments: barcodeController.currentAppointment.value!.id!, // Kirimkan ID sebagai argumen
-                  );
-                }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: const Color(0xFF35693E),
-                  disabledBackgroundColor: Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                            // Navigasi ke SummaryAppointmentView setelah upload selesai
+                            Get.toNamed(
+                              Routes
+                                  .SUMMARY_APPOINTMENT, // Sesuaikan dengan rute yang benar
+                              arguments: barcodeController.currentAppointment
+                                  .value!.id!, // Kirimkan ID sebagai argumen
+                            );
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      disabledBackgroundColor:
+                          Theme.of(context).colorScheme.surfaceVariant,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: captureController.isLoading.value
+                        ? CircularProgressIndicator(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            strokeWidth: 4,
+                          )
+                        : const Text(
+                            'Next',
+                            style: TextStyle(fontSize: 16.0),
+                          ),
                   ),
-                ),
-                child: captureController.isLoading.value
-                    ? const CircularProgressIndicator(
-                    backgroundColor: Colors.white,
-                    strokeWidth: 4,
-                  ) // Tampilkan loading indicator
-                    : const Text(
-                  'Next',
-                  style: TextStyle(fontSize: 16.0),
-                ),
-              ),
-            )),
+                )),
           ],
         ),
       ),
