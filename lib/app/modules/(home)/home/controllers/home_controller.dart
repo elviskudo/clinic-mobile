@@ -337,7 +337,6 @@ import 'package:flutter/material.dart';
         break;
       case 7:
       case 3:
-        // Tampilkan pesan kesalahan atau lakukan sesuatu yang lain
         Get.snackbar('Info', 'This appointment is disabled.', backgroundColor: Colors.red);
         break;
       default:

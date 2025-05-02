@@ -123,7 +123,7 @@ class PaymentSuccessView extends GetView<PaymentSuccessController> {
                       captureController.reset();
                       symptompController.reset();
                       Get.find<InvoiceController>()
-                          .clearDataTambahan(); // Tambahkan ini
+                          .clearDataTambahan(); 
                       Get.find<InvoiceController>().isUploadComplete.value =
                           false;
                       Get.find<InvoiceController>().clearUploadState();
