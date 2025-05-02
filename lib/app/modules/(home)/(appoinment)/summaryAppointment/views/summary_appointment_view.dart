@@ -15,7 +15,8 @@ class SummaryAppointmentView extends StatefulWidget {
 }
 
 class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
-  final SummaryAppointmentController controller = Get.put(SummaryAppointmentController());
+  final SummaryAppointmentController controller =
+      Get.put(SummaryAppointmentController());
   String? appointmentId;
 
   @override
@@ -23,9 +24,11 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     super.initState();
     appointmentId = Get.arguments as String?; // Get ID from arguments
     if (appointmentId != null) {
-      controller.fetchAppointmentAndDoctor(appointmentId!); // Call fetch with the correct ID
+      controller.fetchAppointmentAndDoctor(
+          appointmentId!); // Call fetch with the correct ID
     } else {
-      controller.errorMessage.value = 'Appointment ID tidak tersedia.'; // Set error message
+      controller.errorMessage.value =
+          'Appointment ID tidak tersedia.'; // Set error message
     }
   }
 
@@ -35,14 +38,16 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7FBF2),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           } else if (controller.errorMessage.value.isNotEmpty) {
-            return Center(child: Text('Error: ${controller.errorMessage.value}'));
-          } else if (controller.appointment.value == null || controller.doctor.value == null) {
+            return Center(
+                child: Text('Error: ${controller.errorMessage.value}'));
+          } else if (controller.appointment.value == null ||
+              controller.doctor.value == null) {
             return const Center(child: Text('Data tidak ditemukan.'));
           } else {
             return Column(
@@ -72,7 +77,8 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                     ),
                   ),
                 ),
-                _buildResultButton(context), // Button outside SingleChildScrollView
+                _buildResultButton(
+                    context), // Button outside SingleChildScrollView
                 const SizedBox(height: 20),
               ],
             );
@@ -90,6 +96,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.w500,
+            color: Theme.of(context).textTheme.titleMedium?.color,
           ),
         ),
       ],
@@ -117,20 +124,22 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
             Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
-                child: Obx(() => controller.doctorProfilePictureUrl.value.isNotEmpty
-                    ? Image.network(
-                        controller.doctorProfilePictureUrl.value,
-                        width: screenWidth * 0.35,
-                        height: screenWidth * 0.35,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
-                      )
-                    : Image.network(
-                        "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
-                        width: screenWidth * 0.35,
-                        height: screenWidth * 0.35,
-                        fit: BoxFit.cover,
-                      ),
+                child: Obx(
+                  () => controller.doctorProfilePictureUrl.value.isNotEmpty
+                      ? Image.network(
+                          controller.doctorProfilePictureUrl.value,
+                          width: screenWidth * 0.35,
+                          height: screenWidth * 0.35,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.error),
+                        )
+                      : Image.network(
+                          "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
+                          width: screenWidth * 0.35,
+                          height: screenWidth * 0.35,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
             ),
@@ -142,6 +151,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
               style: GoogleFonts.inter(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
               textAlign: TextAlign.center,
             ),
@@ -149,7 +159,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
               controller.poly.value?.name.toString() ?? 'Unknown Poly',
               style: GoogleFonts.inter(
                 fontSize: 14,
-                color: const Color(0xFF6B7280),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ],
@@ -163,7 +173,8 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
   Widget _buildAppointmentDetails() {
     try {
       final formattedDate = controller.scheduleDate.value != null
-          ? DateFormat('dd/MM/yyyy').format(controller.scheduleDate.value!.scheduleDate)
+          ? DateFormat('dd/MM/yyyy')
+              .format(controller.scheduleDate.value!.scheduleDate)
           : 'Tanggal Tidak Tersedia';
       final time =
           controller.scheduleTime.value?.scheduleTime ?? 'Waktu Tidak Tersedia';
@@ -173,13 +184,14 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           '$time | $formattedDate',
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontWeight: FontWeight.w400,
           ),
         ),
       );
     } catch (e) {
-      return Center(child: Text('Error in _buildAppointmentDetails: ${e.toString()}'));
+      return Center(
+          child: Text('Error in _buildAppointmentDetails: ${e.toString()}'));
     }
   }
 
@@ -201,11 +213,11 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Theme.of(context).shadowColor.withOpacity(0.2),
                   spreadRadius: 2,
                   blurRadius: 5,
                   offset: const Offset(0, 3),
@@ -216,10 +228,12 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
               children: [
                 // QR Code
                 Obx(() => QrImageView(
-                      data: controller.appointment.value?.qrCode ?? 'No QR Code',
+                      data:
+                          controller.appointment.value?.qrCode ?? 'No QR Code',
                       version: QrVersions.auto,
                       size: MediaQuery.of(context).size.width * 0.7,
-                      foregroundColor: Colors.black,
+                      foregroundColor:
+                          Theme.of(context).textTheme.bodyLarge?.color,
                       padding: const EdgeInsets.all(10),
                     )),
                 const SizedBox(height: 16),
@@ -248,22 +262,27 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                 GestureDetector(
                   onTap: () => _showImageDialog(context),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFD4E8D1),
+                      color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.green.shade300),
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.image, size: 18, color: Colors.green[700]),
+                        Icon(Icons.image,
+                            size: 18,
+                            color: Theme.of(context).colorScheme.primary),
                         const SizedBox(width: 8),
                         Text(
                           'View Captured Image',
                           style: GoogleFonts.inter(
                             fontSize: 14,
-                            color: Colors.green[700],
+                            color:
+                                Theme.of(context).textTheme.bodyMedium?.color,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -697,6 +716,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           style: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w500,
+            color: Theme.of(context).textTheme.titleMedium?.color,
           ),
         ),
         const SizedBox(height: 8),
@@ -704,7 +724,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           controller.userName.value,
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
       ],
@@ -720,6 +740,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           style: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w500,
+            color: Theme.of(context).textTheme.titleMedium?.color,
           ),
         ),
         const SizedBox(height: 8),
@@ -731,7 +752,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                       "${symptom.enName}, ",
                       style: GoogleFonts.inter(
                         fontSize: 14,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ))
                 .toList(),
@@ -741,7 +762,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
             'Tidak ada gejala',
             style: GoogleFonts.inter(
               fontSize: 14,
-              color: Colors.black87,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
       ],
@@ -757,6 +778,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           style: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w500,
+            color: Theme.of(context).textTheme.titleMedium?.color,
           ),
         ),
         const SizedBox(height: 8),
@@ -765,7 +787,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
               'Tidak ada deskripsi',
           style: GoogleFonts.inter(
             fontSize: 14,
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
       ],
@@ -826,15 +848,17 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
 
           // Update button color based on completion status
           Color buttonColor = isCompleted
-              ? const Color(0xFF35693E) // Green if completed
-              : Colors.grey.shade200; // Grey if not
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surfaceVariant;
 
           return GestureDetector(
             onTap: () {
               if (isCompleted) {
-                Get.toNamed(Routes.REDEEM_MEDICINE, arguments: appointmentId); // Send appointmentId
+                Get.toNamed(Routes.REDEEM_MEDICINE,
+                    arguments: appointmentId); // Send appointmentId
               } else {
-                controller.handleResultButtonPressed(); // Do other action if not completed
+                controller
+                    .handleResultButtonPressed(); // Do other action if not completed
               }
             },
             child: Container(
@@ -850,7 +874,9 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                   isCompleted ? 'Next' : 'Waiting for the result ...',
                   style: GoogleFonts.inter(
                     fontSize: 16,
-                    color: isCompleted ? Colors.white : Colors.grey[600],
+                    color: isCompleted
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

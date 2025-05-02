@@ -6,9 +6,10 @@ import 'package:get/get.dart';
 import '../controllers/symptom_appointment_controller.dart';
 
 class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
-  final VoidCallback onTabChange;  // Tambahkan callback
+  final VoidCallback onTabChange; // Tambahkan callback
 
-  const SymptomAppointmentView({Key? key, required this.onTabChange}) : super(key: key); // Inisialisasi callback
+  const SymptomAppointmentView({Key? key, required this.onTabChange})
+      : super(key: key); // Inisialisasi callback
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
     // Pindahkan pemanggilan loadExistingSymptoms() ke onInit controller
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7FBF2),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
           return SingleChildScrollView(
@@ -31,6 +32,8 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
                     style: TextStyle(
                       fontSize: viewportConstraints.maxWidth * 0.04,
                       fontWeight: FontWeight.w600,
+                      color:
+                          Theme.of(Get.context!).textTheme.titleMedium?.color,
                     ),
                   ),
                   SizedBox(height: viewportConstraints.maxHeight * 0.02),
@@ -75,14 +78,17 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
                                   controller.isDescriptionValid.value
                               ? () {
                                   controller.updateAppointment().then((_) {
-                                    onTabChange();  // Panggil callback setelah update berhasil
+                                    onTabChange(); // Panggil callback setelah update berhasil
                                   });
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: const Color(0xFF35693E),
-                            disabledBackgroundColor: Colors.grey,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            disabledBackgroundColor:
+                                Theme.of(context).colorScheme.surfaceVariant,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -117,11 +123,12 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
           controller.toggleSymptom(symptomId);
         },
         style: OutlinedButton.styleFrom(
-          foregroundColor: const Color(0xFF35693E),
-          backgroundColor:
-              outlined ? Colors.transparent : const Color(0xFF35693E),
+          foregroundColor: Theme.of(Get.context!).colorScheme.primary,
+          backgroundColor: outlined
+              ? Colors.transparent
+              : Theme.of(Get.context!).colorScheme.primary,
           side: outlined
-              ? const BorderSide(color: Color(0xFF35693E))
+              ? BorderSide(color: Theme.of(Get.context!).colorScheme.primary)
               : BorderSide.none,
           padding: EdgeInsets.symmetric(
               horizontal: constraints.maxWidth * 0.04,
@@ -133,7 +140,9 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
         child: Text(
           symptom.enName,
           style: TextStyle(
-            color: outlined ? const Color(0xFF35693E) : Colors.white,
+            color: outlined
+                ? Theme.of(Get.context!).colorScheme.primary
+                : Theme.of(Get.context!).colorScheme.onPrimary,
             fontSize: constraints.maxWidth * 0.03,
           ),
         ),

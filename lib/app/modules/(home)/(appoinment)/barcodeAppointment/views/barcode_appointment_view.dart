@@ -250,7 +250,7 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: StreamBuilder<List<Appointment>>(
         stream: controller.getAppointmentsStream(),
         builder: (context, snapshot) {

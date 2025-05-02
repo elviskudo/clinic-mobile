@@ -35,15 +35,19 @@ class AppointmentView extends GetView<AppointmentController> {
 
           // Sinkronisasi TabBar dan PageView
           tabController.addListener(() {
-            if (!tabController.indexIsChanging) {
-              pageController.jumpToPage(tabController.index);
+            if (!tabController.indexIsChanging && tabController.index >= 0) {
+              if (pageController.hasClients) {
+                pageController.jumpToPage(tabController.index);
+              }
             }
           });
 
           pageController.addListener(() {
-            if (!pageController.position.haveDimensions) return;
-            if (tabController.index != pageController.page?.round()) {
-              tabController.animateTo(pageController.page!.round());
+            if (pageController.hasClients &&
+                pageController.position.haveDimensions) {
+              if (tabController.index != pageController.page?.round()) {
+                tabController.animateTo(pageController.page!.round());
+              }
             }
           });
 
@@ -107,13 +111,17 @@ class AppointmentView extends GetView<AppointmentController> {
           }
 
           return Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
               elevation: 0,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back,
-                    color: Theme.of(context).colorScheme.onBackground),
+                icon: Image.asset(
+                  'assets/icons/back.png',
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                ),
                 onPressed: () {
                   appointmentController.resetAppointmentCreated();
                   scheduleController.resetForm();
@@ -124,7 +132,7 @@ class AppointmentView extends GetView<AppointmentController> {
               title: Text(
                 'Appointment',
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground),
+                    color: Theme.of(context).textTheme.titleMedium?.color),
               ),
               bottom: TabBar(
                 tabs: [
@@ -132,7 +140,7 @@ class AppointmentView extends GetView<AppointmentController> {
                     child: Text(
                       'Schedule',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).textTheme.titleMedium?.color,
                       ),
                     ),
                   ),
@@ -141,10 +149,8 @@ class AppointmentView extends GetView<AppointmentController> {
                           'QRCode',
                           style: TextStyle(
                             color: barcodeController.isAccessible.value
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
+                                ? Theme.of(context).textTheme.titleMedium?.color
+                                : Theme.of(context).colorScheme.secondary,
                           ),
                         )),
                   ),
@@ -153,10 +159,8 @@ class AppointmentView extends GetView<AppointmentController> {
                           'Symptom',
                           style: TextStyle(
                             color: barcodeController.isSymptomsUpdated.value
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
+                                ? Theme.of(context).textTheme.titleMedium?.color
+                                : Theme.of(context).colorScheme.secondary,
                           ),
                         )),
                   ),
@@ -165,17 +169,14 @@ class AppointmentView extends GetView<AppointmentController> {
                           'Capture',
                           style: TextStyle(
                             color: barcodeController.isSymptomsUpdated.value
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
+                                ? Theme.of(context).textTheme.titleMedium?.color
+                                : Theme.of(context).colorScheme.secondary,
                           ),
                         )),
                   ),
                 ],
                 labelColor: Theme.of(context).colorScheme.primary,
-                unselectedLabelColor:
-                    Theme.of(context).colorScheme.onSurfaceVariant,
+                unselectedLabelColor: Theme.of(context).colorScheme.secondary,
                 indicatorColor: Theme.of(context).colorScheme.primary,
                 onTap: (index) {
                   validateAndChangeTab(index);
