@@ -1,136 +1,160 @@
-// login_controller.dart
+import 'dart:convert';
 import 'package:clinic_ai/app/routes/app_pages.dart';
-import 'package:clinic_ai/helper/PasswordHasher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
 
 class LoginController extends GetxController {
-  final isPasswordHidden = true.obs;
-  final isConfirmPasswordHidden = true.obs;
-  final agreeToTerms = false.obs;
   final isLoading = false.obs;
-  final supabase = Supabase.instance.client;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final isPasswordVisible = false.obs;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    serverClientId:
+        '997166988553-dqvtq3utmlsur1rsfhj33v7mmk0u55lc.apps.googleusercontent.com',
+  );
+
+  Future<void> signInWithEmail() async {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      Get.snackbar('Error', 'Email dan password harus diisi Cuk!',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      // Bersihkan email & password dari spasi, newline, dan tab
+      final email = emailController.text.replaceAll(RegExp(r'\s+'), '');
+      final password = passwordController.text.replaceAll(RegExp(r'\s+'), '');
+
+      print('DEBUG: Mencoba login ke BE...');
+      print('Payload Clean: {"email": "$email", "password": "$password"}');
+
+      final response = await http.post(
+        Uri.parse('https://be-clinic-rx7y.vercel.app/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      print('Status Login Email: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final backendData = responseData['data'];
+
+        if (backendData != null) {
+          final prefs = await SharedPreferences.getInstance();
+
+          // Simpan data login
+          String token = (backendData['access_token'] ?? '').toString();
+          final userData = backendData['user'] ?? {};
+
+          await prefs.setString('accessToken', token);
+          await prefs.setString('userId', (userData['id'] ?? '').toString());
+          await prefs.setString(
+              'name', (userData['name'] ?? 'User').toString());
+          await prefs.setBool('isLoggedIn', true);
+
+          print("LOGIN EMAIL SUKSES: ${userData['name']}");
+          Get.offAllNamed(Routes.HOME);
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw errorData['message'] ??
+            'Gagal login (Error ${response.statusCode})';
+      }
+    } catch (e) {
+      print('Login Email Error: $e');
+      Get.snackbar('Login Failed', e.toString(),
+          backgroundColor: Colors.red, colorText: Colors.white);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   Future<void> signInWithGoogle() async {
     try {
       isLoading.value = true;
 
-      // Trigger Google Sign In
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      // 1. Trigger Google Sign In
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        throw '';
+        isLoading.value = false;
+        return;
       }
 
-      // Get Google Sign In authentication
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      // Check if user already exists in Supabase
-      final existingUser = await supabase
-          .from('users')
-          .select()
-          .eq('email', googleUser.email)
-          .maybeSingle();
-
-      String userId;
-
-      if (existingUser == null) {
-        // Create new user if doesn't exist
-        final newUser = {
-          'id': Uuid().v4(),
-          'email': googleUser.email,
-          'name': googleUser.displayName ?? 'Google User',
-          'access_token': '',
-          'password': '12345678', // Empty password for Google users
-          'phone_number': '+62', // Default phone number as requested
-        };
-
-        final response =
-            await supabase.from('users').insert(newUser).select().single();
-
-        userId = response['id'];
-
-        // Create user role (assuming member role)
-        await supabase.from('user_roles').insert({
-          'user_id': userId,
-          'role_id': '0d809fc2-9fee-427e-a10c-04a177dec6b7', // Member role ID
-        });
-      } else {
-        userId = existingUser['id'];
-      }
-
-      // Get user role
-      final userRoleResponse = await supabase
-          .from('user_roles')
-          .select('roles:role_id(name), users:user_id(*)')
-          .eq('user_id', userId)
-          .single();
-
-      final roleUsers = userRoleResponse['roles']['name'];
-      final idUser = userRoleResponse['users']['id'];
-      final userName = userRoleResponse['users']['name'];
-      final userPhone = userRoleResponse['users']['phone_number'];
-
-      // final roleUsers = roles['name'] ?? 'member';
-      final defaultProfileImage =
-          'https://res.cloudinary.com/dcthljxbl/image/upload/v1738161418/bycisnwjaqzyxddx7ome.webp';
-      final fileData = {
-        'module_class': 'users',
-        'module_id': userId,
-        'file_name': googleUser.photoUrl ?? defaultProfileImage,
-        'file_type': 'webp',
-        'created_at': DateTime.now().toIso8601String(),
-        'updated_at': DateTime.now().toIso8601String(),
-      };
-
-      // await supabase.from('files').insert(fileData);
-      print('roleUsers: $roleUsers');
-      print('idusers: $idUser');
-
-      // Save user data to SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userRole', roleUsers);
-      await prefs.setBool('isLoggedIn', true);
-      await prefs.setString('email', googleUser.email);
-      await prefs.setString('userId', idUser);
-      await prefs.setString('name', userName);
-      await prefs.setString('phone', userPhone);
-      await prefs.setString(
-          'userProfileImage', googleUser.photoUrl ?? defaultProfileImage);
-      Get.snackbar(
-        'Sukses',
-        'Berhasil login dengan Google',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        margin: EdgeInsets.all(20),
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 2),
-        snackStyle: SnackStyle.FLOATING,
-        forwardAnimationCurve: Curves.easeOut,
-        reverseAnimationCurve: Curves.easeIn,
+      // 2. Kredensial Firebase
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
-      // Navigate based on role
-      if (roleUsers == 'admin') {
-        Get.offAllNamed(Routes.ADMIN_PANEL);
-      } else if (roleUsers == 'member') {
-        Get.offAllNamed(Routes.HOME);
-      } else if (roleUsers == 'doctor') {
-        Get.offAllNamed(Routes.HOME_DOCTOR);
+      // 3. Login Firebase & Ambil ID Token Terbaru (Force Refresh agar tidak kadaluarsa)
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      final String? idToken = await userCredential.user?.getIdToken(true);
+
+      if (idToken == null) throw 'Gagal mendapatkan ID Token dari Firebase';
+
+      // 4. Kirim ID Token ke Backend NestJS (Production/Vercel)
+      final response = await http.post(
+        Uri.parse('https://be-clinic-rx7y.vercel.app/auth/google'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'idToken': idToken}),
+      );
+
+      print('Status Backend: ${response.statusCode}');
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        print(
+            "DEBUG RESPONSE: $responseData"); // LIHAT INI DI TERMINAL LOKAT LU!
+
+        final backendData = responseData['data'];
+        if (backendData != null) {
+          final userData = backendData['user'] ?? {};
+          final prefs = await SharedPreferences.getInstance();
+
+          // Gunakan null-aware operator yang lebih longgar
+          String token = (backendData['access_token'] ?? '').toString();
+          String uid = (userData['id'] ?? '').toString();
+          String name = (userData['name'] ?? 'User').toString();
+
+          print("TOKEN NYAMPE: $token");
+          print("UID NYAMPE: $uid");
+
+          await prefs.setString('accessToken', token);
+          await prefs.setString('userId', uid);
+          await prefs.setString('name', name);
+          await prefs.setBool('isLoggedIn', true);
+
+          Get.offAllNamed(Routes.HOME);
+        } else {
+          throw 'Objek data di respon kosong Cuk!';
+        }
       }
     } catch (e) {
-      print('eror: $e');
-      // Get.snackbar(
-      //   'Error',
-      //   'Terjadi kesalahan: $e',
-      //   backgroundColor: Colors.red,
-      //   colorText: Colors.white,
-      // );
+      print('Login Error: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal login: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } finally {
       isLoading.value = false;
     }

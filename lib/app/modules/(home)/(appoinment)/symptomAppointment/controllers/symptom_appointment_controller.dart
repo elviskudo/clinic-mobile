@@ -1,48 +1,100 @@
+import 'dart:convert';
 import 'package:clinic_ai/models/symptom_model.dart';
 import 'package:get/get.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/controllers/barcode_appointment_controller.dart';
 
 class SymptomAppointmentController extends GetxController {
+  // URL Backend lu di Vercel
+  final String baseUrl = 'https://be-clinic-rx7y.vercel.app';
+
   RxList<Symptom> symptoms = <Symptom>[].obs;
   RxList<String> selectedSymptomIds = <String>[].obs;
   RxMap<String, bool> isSymptomSelected = <String, bool>{}.obs;
 
-  final supabase = Supabase.instance.client;
   RxBool isLoading = false.obs;
-
-  RxString symptomDescription = ''.obs; // Deskripsi gejala
-  RxBool isDescriptionValid = false.obs; // Validasi deskripsi
+  RxString symptomDescription = ''.obs;
+  RxBool isDescriptionValid = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    loadExistingSymptoms();
+    // 1. Fetch data master gejala dari BE
     fetchSymptoms();
 
-    // Listener untuk deskripsi gejala
+    // Listener untuk validasi tombol next
     symptomDescription.listen((value) {
-      isDescriptionValid.value = value.isNotEmpty; // Deskripsi harus tidak kosong
+      isDescriptionValid.value = value.isNotEmpty;
     });
   }
 
+  // --- HELPER: AMBIL HEADER AUTH ---
+  Future<Map<String, String>> getHeaders() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('accessToken') ?? '';
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+  }
+
+  // --- API 1: FETCH SYMPTOMS (GET) ---
+  Future<void> fetchSymptoms() async {
+    isLoading(true);
+    try {
+      final barcodeController = Get.find<BarcodeAppointmentController>();
+      final appointment = barcodeController.currentAppointment.value;
+
+      if (appointment == null) {
+        print("DEBUG: Appointment null, fetch dibatalkan.");
+        symptoms.clear();
+        return;
+      }
+
+      final headers = await getHeaders();
+      final url = '$baseUrl/masters/symptoms/${appointment.polyId}';
+
+      print("DEBUG: Fetching Symptoms...");
+      print("URL: $url");
+
+      final response = await http.get(Uri.parse(url), headers: headers);
+
+      print("STATUS CODE: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        final List<dynamic> data = jsonResponse['data'] ?? jsonResponse;
+
+        print("DATA RECEIVED: ${data.length} symptoms found.");
+        symptoms.assignAll(data.map((e) => Symptom.fromJson(e)).toList());
+
+        isSymptomSelected.value = {
+          for (var symptom in symptoms) symptom.id: false
+        };
+
+        loadExistingSymptoms();
+      } else {
+        print("ERROR BODY: ${response.body}");
+      }
+    } catch (error) {
+      print("CATCH ERROR (Fetch): $error");
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  // --- LOGIC: MAP DATA LAMA DARI APPOINTMENT ---
   void loadExistingSymptoms() {
     try {
       final barcodeController = Get.find<BarcodeAppointmentController>();
       final appointment = barcodeController.currentAppointment.value;
 
       if (appointment != null && appointment.symptoms != null) {
-        // Split the stored symptoms string back into a list
         final existingSymptoms = appointment.symptoms!.split(',');
 
-        // Reset all selections first
-        isSymptomSelected.value = {
-          for (var symptom in symptoms) symptom.id: false
-        };
         selectedSymptomIds.clear();
-
-        // Set the existing selections
         for (var symptomId in existingSymptoms) {
           if (symptomId.isNotEmpty) {
             isSymptomSelected[symptomId] = true;
@@ -50,7 +102,6 @@ class SymptomAppointmentController extends GetxController {
           }
         }
 
-        // Load existing description if any
         if (appointment.symptomDescription != null) {
           symptomDescription.value = appointment.symptomDescription!;
         }
@@ -63,36 +114,61 @@ class SymptomAppointmentController extends GetxController {
     }
   }
 
-  Future<void> fetchSymptoms() async {
+  // --- API 2: UPDATE APPOINTMENT SYMPTOMS (PATCH) ---
+  Future<void> updateAppointment() async {
+    if (selectedSymptomIds.isEmpty || symptomDescription.value.isEmpty) {
+      Get.snackbar('Error', 'Pilih minimal satu gejala dan isi deskripsi.',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
     isLoading(true);
     try {
       final barcodeController = Get.find<BarcodeAppointmentController>();
       final appointment = barcodeController.currentAppointment.value;
 
       if (appointment == null) {
-        print("Tidak ada appointment yang tersedia.");
-        symptoms.value = [];
+        print("DEBUG: Update gagal, appointment null.");
         return;
       }
 
-      final polyId = appointment.polyId;
+      final headers = await getHeaders();
+      final url = '$baseUrl/appointments/${appointment.id}/symptoms';
+      final symptomString = selectedSymptomIds.join(',');
+      final body = json.encode({
+        'symptoms': symptomString,
+        'symptom_description': symptomDescription.value,
+      });
 
-      final response =
-          await supabase.from('symptoms').select('*').eq('poly_id', polyId);
+      print("DEBUG: Updating Appointment Symptoms...");
+      print("PATCH URL: $url");
+      print("PAYLOAD: $body");
 
-      print("Response dari Supabase: ${response}");
+      final response = await http.patch(
+        Uri.parse(url),
+        headers: headers,
+        body: body,
+      );
 
-      if (response != null && response is List) {
-        symptoms.value = response.map((e) => Symptom.fromJson(e)).toList();
-        isSymptomSelected.value = {
-          for (var symptom in symptoms) symptom.id: false
-        };
-        print("Jumlah gejala yang ditemukan: ${symptoms.length}");
+      print("PATCH STATUS: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        print("SUCCESS: Data updated on server.");
+        barcodeController.currentAppointment.value = appointment.copyWith(
+          symptoms: symptomString,
+          symptomDescription: symptomDescription.value,
+          status: 1,
+        );
+        barcodeController.isSymptomsUpdated.value = true;
+        Get.snackbar('Berhasil', 'Gejala berhasil diperbarui!',
+            backgroundColor: Colors.green, colorText: Colors.white);
       } else {
-        print("Error fetching symptoms: ${response}");
+        print("PATCH FAILED: ${response.body}");
+        throw 'Gagal update: ${response.body}';
       }
     } catch (error) {
-      print("Error fetching symptoms: $error");
+      print("CATCH ERROR (Update): $error");
+      Get.snackbar('Error', 'Gagal memperbarui janji temu: $error');
     } finally {
       isLoading(false);
     }
@@ -110,88 +186,16 @@ class SymptomAppointmentController extends GetxController {
     selectedSymptomIds.refresh();
   }
 
-  // Fungsi untuk memperbarui deskripsi gejala
   void updateSymptomDescription(String value) {
     symptomDescription.value = value;
   }
 
-  // Fungsi untuk memperbarui data appointment di Supabase
-  Future<void> updateAppointment() async {
-    // Validasi: Pastikan gejala dipilih DAN deskripsi tidak kosong
-    if (selectedSymptomIds.isEmpty || symptomDescription.value.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please select at least one symptom and provide a symptom description.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return; // Stop jika validasi gagal
-    }
-
-    isLoading(true);
-    try {
-      final barcodeController = Get.find<BarcodeAppointmentController>();
-      final appointment = barcodeController.currentAppointment.value;
-
-      if (appointment == null) {
-        Get.snackbar(
-          'Error',
-          'Appointment not found.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-        return;
-      }
-
-      final symptomString =
-          selectedSymptomIds.join(','); // Gabungkan ID dengan koma
-      final description = symptomDescription.value;
-
-      await supabase.from('appointments').update({
-        'symptoms': symptomString,
-        'symptom_description': description,
-      }).eq('id', appointment.id);
-
-      // Perbarui state di BarcodeAppointmentController
-      barcodeController.currentAppointment.value = appointment.copyWith(
-        symptoms: symptomString,
-        symptomDescription: description,
-        status: 1,
-      );
-
-      // Tandai bahwa gejala sudah diupdate
-      barcodeController.isSymptomsUpdated.value = true;
-      Get.snackbar(
-        'Success',
-        'Appointment updated successfully!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-    } catch (error) {
-      print('---------------------->>>>>>${error}');
-      Get.snackbar(
-        'Error',
-        'Failed to update appointment: $error',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } finally {
-      isLoading(false);
-    }
-  }
-    void reset() {
+  void reset() {
     selectedSymptomIds.clear();
-    isSymptomSelected.value = {
-      for (var symptom in symptoms) symptom.id: false
-    };
+    isSymptomSelected.value = {for (var symptom in symptoms) symptom.id: false};
     symptomDescription.value = '';
     isDescriptionValid.value = false;
     selectedSymptomIds.refresh();
     isSymptomSelected.refresh();
-    print("SymptomAppointmentController data reset!");
   }
 }

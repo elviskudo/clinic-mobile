@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
@@ -27,12 +29,12 @@ class SummaryAppointmentController extends GetxController {
   RxList<Symptom> symptoms = <Symptom>[].obs;
   Rxn<Profile> profile = Rxn<Profile>();
   RxString doctorProfilePictureUrl = ''.obs;
-  
+
   RxBool isAppointmentCompleted = false.obs;
   RxString buttonText = 'Waiting for the result ...'.obs;
   StreamSubscription? _appointmentStreamSubscription;
   String? _currentUserId;
-    RxBool isShowingAllSymptoms = false.obs;
+  RxBool isShowingAllSymptoms = false.obs;
 
   @override
   void onInit() {
@@ -45,6 +47,56 @@ class SummaryAppointmentController extends GetxController {
   void onClose() {
     _appointmentStreamSubscription?.cancel();
     super.onClose();
+  }
+
+  // Di dalam SummaryAppointmentController.dart
+
+  Future<void> fetchSummaryData(String appointmentId) async {
+    isLoading.value = true;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('accessToken');
+
+      final response = await http.get(
+        Uri.parse(
+            'https://be-clinic-rx7y.vercel.app/appointments/$appointmentId/summary'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body)['data'];
+
+        // Map data ke model-model lu
+        appointment.value = Appointment.fromJson(data);
+        doctor.value = Doctor.fromJson(data['doctor']);
+        poly.value = Poly.fromJson(data['poly']);
+        scheduleDate.value = ScheduleDate.fromJson(data['schedule_date']);
+        scheduleTime.value = ScheduleTime.fromJson(data['schedule_time']);
+
+        // Ambil URL gambar dokter dari relasi nested
+        if (data['doctor']['user']['files'].isNotEmpty) {
+          doctorProfilePictureUrl.value =
+              data['doctor']['user']['files'][0]['file_name'];
+        }
+
+        // Ambil gambar yang di-capture tadi
+        if (data['files'].isNotEmpty) {
+          imageUrl.value = data['files'][0]['file_name'];
+        }
+
+        // Gejala sudah di-join di BE
+        final List<dynamic> symptomList = data['symptomDetails'];
+        symptoms
+            .assignAll(symptomList.map((e) => Symptom.fromJson(e)).toList());
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> getUserName() async {

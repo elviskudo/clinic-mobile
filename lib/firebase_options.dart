@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -50,21 +47,31 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBC5ibtD1apvQ5X8COjZXYscUvFqF07eAQ',
-    appId: '1:752059788700:android:5035a39adf6776c4e16c59',
-    messagingSenderId: '752059788700',
-    projectId: 'clinic-ai-66a1a',
-    storageBucket: 'clinic-ai-66a1a.firebasestorage.app',
+    apiKey: 'AIzaSyDUUmywHoHhyUQzcL053Obb6aPnu49l9b0',
+    appId: '1:997166988553:android:3aeff8d521b43d13dc27d8',
+    messagingSenderId: '997166988553',
+    projectId: 'quiet-container-457603-q3',
+    storageBucket: 'quiet-container-457603-q3.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyB2OIVbHSHsd7DWKkB0m2cLYUgD_yLylBE',
-    appId: '1:752059788700:ios:9159979e11eacf9ce16c59',
-    messagingSenderId: '752059788700',
-    projectId: 'clinic-ai-66a1a',
-    storageBucket: 'clinic-ai-66a1a.firebasestorage.app',
-    androidClientId: '752059788700-ibipifql3mpp6gupie9t6u1n1vqqhuh2.apps.googleusercontent.com',
-    iosClientId: '752059788700-boblbl1fpedgr0ombsc33h52q6d6le2t.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDbygEdJVzsEsGS3YpIWuvGqounD7Op0Fc',
+    appId: '1:997166988553:ios:b3ebc2fffe88cdb8dc27d8',
+    messagingSenderId: '997166988553',
+    projectId: 'quiet-container-457603-q3',
+    storageBucket: 'quiet-container-457603-q3.firebasestorage.app',
+    iosClientId: '997166988553-g5jcpnuf5a010u9gghnd7ftbereq5u51.apps.googleusercontent.com',
     iosBundleId: 'clinic-ai.com.clinicAi',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDM3eJpB53413VS4SEQyBRZUt7QV0tRSBE',
+    appId: '1:997166988553:web:1f4fd6a8825bccecdc27d8',
+    messagingSenderId: '997166988553',
+    projectId: 'quiet-container-457603-q3',
+    authDomain: 'quiet-container-457603-q3.firebaseapp.com',
+    storageBucket: 'quiet-container-457603-q3.firebasestorage.app',
+    measurementId: 'G-5B6SBKCYWS',
+  );
+
 }

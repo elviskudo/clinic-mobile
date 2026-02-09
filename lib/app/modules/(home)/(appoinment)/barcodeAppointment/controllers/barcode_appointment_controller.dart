@@ -1,3 +1,4 @@
+import 'package:clinic_ai/app/modules/(home)/(appoinment)/symptomAppointment/controllers/symptom_appointment_controller.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,10 +21,21 @@ class BarcodeAppointmentController extends GetxController {
     getUserName();
   }
 
+  // void setAppointmentData(Appointment appointment) {
+  //   currentAppointment.value = appointment;
+  //   // Periksa apakah gejala sudah diisi saat data appointment di-set
+  //   isSymptomsUpdated.value = appointment.symptoms != null && appointment.symptoms!.isNotEmpty;
+  // }
+
   void setAppointmentData(Appointment appointment) {
     currentAppointment.value = appointment;
-    // Periksa apakah gejala sudah diisi saat data appointment di-set
     isSymptomsUpdated.value = appointment.symptoms != null && appointment.symptoms!.isNotEmpty;
+    
+    // Inisialisasi controller gejala di sini aja sekali pas data masuk
+    if (!Get.isRegistered<SymptomAppointmentController>()) {
+      Get.put(SymptomAppointmentController());
+    }
+    
   }
 
   Stream<List<Appointment>> getAppointmentsStream() {

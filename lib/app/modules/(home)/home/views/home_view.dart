@@ -392,23 +392,47 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildMedicineCards() {
-    return SizedBox(
-      height: 110,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: 5,
-        itemBuilder: (context, index) => _buildMedicineCard(
-          name: index % 2 == 0 ? 'Paramex' : 'Oskadon',
-          amount: index % 2 == 0 ? '500gr' : '255trip',
-          isAlternate: index % 2 == 1,
-        ),
-      ),
+    return Obx(
+      () {
+        if (controller.isLoadingDrugs.value) {
+          return const SizedBox(
+            height: 110,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (controller.drugs.isEmpty) {
+          return const SizedBox(
+            height: 110,
+            child: Center(child: Text('No medicine available')),
+          );
+        }
+        return SizedBox(
+          height: 110,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: controller.drugs.length,
+            itemBuilder: (context, index) {
+              final drug = controller.drugs[index];
+              return _buildMedicineCard(
+                name: drug['name'] ?? 'Unknown',
+                // Gunakan 'kind' atau 'company_name' sebagai kategori
+                category: drug['kind'] ?? 'General',
+                // Format harga atau stok jika diperlukan
+                amount: "Stock: ${drug['stock'] ?? 0}",
+                isAlternate: index % 2 == 1,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
   Widget _buildMedicineCard({
     required String name,
+    required String category, // Tambahkan kategori
     required String amount,
     required bool isAlternate,
   }) {
@@ -428,67 +452,63 @@ class HomeView extends GetView<HomeController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Icon obat atau Gambar Default
               Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: ClipOval(
-                  child: Image.network(
-                    'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                width: 44,
+                height: 44,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white),
+                child: const Icon(Icons.medication, color: Colors.blue),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                        color:
-                            Theme.of(Get.context!).textTheme.titleLarge?.color),
-                  ),
-                  Text(
-                    'Drug Category',
-                    style: GoogleFonts.poppins(
-                      color: Colors.grey[600],
-                      fontSize: 12,
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          color: Theme.of(Get.context!)
+                              .textTheme
+                              .titleLarge
+                              ?.color),
                     ),
-                  ),
-                ],
+                    Text(
+                      category,
+                      style: GoogleFonts.poppins(
+                          color: Colors.grey[600], fontSize: 11),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const Spacer(),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 amount,
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  color: Colors.grey[800],
-                ),
+                style:
+                    GoogleFonts.poppins(fontSize: 11, color: Colors.grey[800]),
               ),
+              // Indikator status (misal ketersediaan)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE3F2FD),
-                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  'Completed',
+                  'Available',
                   style: GoogleFonts.poppins(
-                    fontSize: 10,
-                    color: Colors.blue[700],
-                    fontWeight: FontWeight.w500,
-                  ),
+                      fontSize: 9,
+                      color: Colors.blue[700],
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],

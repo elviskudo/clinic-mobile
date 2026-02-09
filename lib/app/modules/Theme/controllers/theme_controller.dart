@@ -71,7 +71,7 @@ class AppTheme {
       primaryContainer: Color(0xFFB7F1BA), // Warna container primary
       secondaryContainer: Color(0xFFD4E8D1),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: Colors.white,
       elevation: 1,
       shape: RoundedRectangleBorder(
@@ -163,7 +163,7 @@ class AppTheme {
       primaryContainer: Color(0xFFcce8c0), // Warna container primary
       secondaryContainer: Color(0xFF64B0BC),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: Color(0xFF1b1b1b),
       elevation: 1,
       shape: RoundedRectangleBorder(
