@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:clinic_ai/app/routes/app_pages.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +26,7 @@ class MedicalHistoryController extends GetxController {
   final existingScheduleTime = Rxn<ScheduleTime>();
   final existingClinic = Rxn<Clinic>();
   RxString doctorProfilePictureUrl = ''.obs;
+  RxBool isLoadingMedicalRecords = false.obs;
 
   @override
   void onInit() {
@@ -29,34 +35,88 @@ class MedicalHistoryController extends GetxController {
   }
 
   Future<void> fetchMedicalRecords() async {
-    isLoading.value = true;
+    isLoadingMedicalRecords.value = true;
     try {
       final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.getString('userId');
+      final String? token = prefs.getString('accessToken');
 
-      if (userId != null) {
-        final response = await supabase
-            .from('appointments')
-            .select('*')
-            .eq('user_id', userId)
-            .order('created_at', ascending: false);
+      if (token == null) {
+        print('Error: Token tidak ditemukan');
+        return;
+      }
 
-        if (response != null && response is List) {
-          medicalRecords.assignAll(
-              response.map((data) => Appointment.fromJson(data)).toList());
+      // Pastikan URL ini sesuai controller NestJS Anda.
+      // Jika error 404, ganti jadi: .../appointments/my-appointments
+      final String url = 'https://be-clinic-rx7y.vercel.app/appointments';
 
-          // Fetch related data for each appointment
-          for (final record in medicalRecords) {
-            await fetchRelatedData(record);
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print('Status Code: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+
+        // Handle format interceptor { data: [...] }
+        final List<dynamic> rawData = responseData['data'] ?? [];
+
+        final List<Appointment> safeList = [];
+
+        // LOOPING AMAN (ANTI CRASH)
+        for (var item in rawData) {
+          try {
+            safeList.add(Appointment.fromJson(item));
+          } catch (e) {
+            // Jika ada data busuk, kita skip dan log error-nya saja, jangan bikin app mati
+            print("⚠️ Skip data error ID ${item['id']}: $e");
           }
-        } else {
-          print('Failed to fetch medical records: ${response}');
         }
+
+        medicalRecords.assignAll(safeList);
+        print('✅ Berhasil fetch ${medicalRecords.length} medical records');
+      } else {
+        print('❌ Gagal fetch: ${response.body}');
       }
     } catch (e) {
-      print('Error fetching medical records: $e');
+      print('❌ Error fetching medical records global: $e');
     } finally {
-      isLoading.value = false;
+      isLoadingMedicalRecords.value = false;
+    }
+  }
+
+  void navigateToDetail(Appointment appointment) {
+    print('Navigating for Appointment ID: ${appointment.id} with status: ${appointment.status}');
+
+    switch (appointment.status) {
+      case 1: // Waiting
+      case 2: // Approved
+      case 4: // Diagnose
+      case 5: // Unpaid
+      case 7: // Completed
+        Get.toNamed(Routes.SUMMARY_APPOINTMENT, arguments: appointment.id);
+        break;
+
+      case 6: // Waiting for Drugs
+        Get.toNamed(Routes.REDEEM_MEDICINE, arguments: appointment.id);
+        break;
+
+      case 3: // Rejected
+        Get.snackbar(
+          'Info',
+          'This appointment was rejected: ${appointment.rejectedNote ?? ""}',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        break;
+
+      default:
+        Get.toNamed(Routes.APPOINTMENT, parameters: {'appointmentId': appointment.id});
+        break;
     }
   }
 
@@ -73,7 +133,8 @@ class MedicalHistoryController extends GetxController {
         existingDoctor.value = Doctor.fromJson(doctorResponse);
         await fetchDoctorProfilePicture(existingDoctor.value!.id!);
       } else {
-        existingDoctor.value = null; // Ensure existingDoctor is null if doctor not found
+        existingDoctor.value =
+            null; // Ensure existingDoctor is null if doctor not found
         doctorProfilePictureUrl.value = ''; // Reset profile picture URL
       }
 

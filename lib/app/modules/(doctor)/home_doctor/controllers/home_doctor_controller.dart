@@ -1,6 +1,8 @@
 import 'package:clinic_ai/models/appointment_model.dart';
+import 'package:clinic_ai/models/scheduleTime_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -17,78 +19,175 @@ class HomeDoctorController extends GetxController {
   RxInt pendingAppointments = 0.obs;
   RxInt activePatients = 0.obs;
   RxInt waitingPatients = 0.obs;
+  RxString doctorId = ''.obs;
+  final baseUrl = "https://be-clinic-rx7y.vercel.app";
 
   @override
   void onInit() {
     super.onInit();
-    getCurrentUser();
+    // getCurrentUser();
+    initialDataLoad();
   }
 
-  Future<void> getCurrentUser() async {
+  Future<void> initialDataLoad() async {
     final prefs = await SharedPreferences.getInstance();
     currentUserId.value = prefs.getString('userId') ?? '';
     currentUserName.value = prefs.getString('name') ?? '';
+
+    await fetchDoctorId(); // Cari ID Dokter dulu!
   }
 
+  Future<void> fetchDoctorId() async {
+    try {
+      print("Fetching Doctor ID from API for User: ${currentUserId.value}");
+
+      // Tembak API NestJS
+      final response = await GetConnect().get(
+        '$baseUrl/doctors/profile/${currentUserId.value}',
+      );
+
+      print("Status API: ${response.statusCode}");
+      print("Body API: ${response.body}"); // Debugging: Liat isi aslinya
+
+      if (response.status.isOk) {
+        final body = response.body;
+
+        // Cek bertingkat biar aman dari null
+        if (body != null &&
+            body['data'] != null &&
+            body['data']['id'] != null) {
+          // SOLUSI UTAMA: Pake .toString() biar gak error tipe data
+          doctorId.value = body['data']['id'].toString();
+
+          print("✅ Doctor ID Found (API): ${doctorId.value}");
+        } else {
+          print("⚠️ Data dokter kosong atau struktur JSON salah.");
+        }
+      } else {
+        print("❌ Gagal fetch API. Status: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("❌ Error fetching doctor ID from API: $e");
+    }
+  }
+
+  // Future<void> getCurrentUser() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   currentUserId.value = prefs.getString('userId') ?? '';
+  //   currentUserName.value = prefs.getString('name') ?? '';
+  // }
+
   Stream<List<Appointment>> getAppointmentsStream() async* {
+    if (doctorId.value.isEmpty) {
+      await fetchDoctorId();
+    }
+
+    if (doctorId.value.isEmpty) {
+      yield [];
+      return;
+    }
+
     yield* supabase
         .from('appointments')
         .stream(primaryKey: ['id'])
-        .eq('doctor_id', currentUserId.value)
+        .eq('doctor_id', doctorId.value)
         .order('created_at')
         .map((events) => events.map((item) async {
               Appointment appointment = Appointment.fromJson(item);
 
               try {
+                // 1. Fetch User (Nama Pasien)
                 final userData = await supabase
                     .from('users')
                     .select('name')
                     .eq('id', appointment.userId)
-                    .single();
+                    .maybeSingle();
 
+                // 2. Fetch Poly (Nama Poli)
                 final polyData = await supabase
                     .from('polies')
                     .select('name')
                     .eq('id', appointment.polyId)
-                    .single();
+                    .maybeSingle();
 
+                // 3. Fetch Schedule Time (Jam) - INI YANG KETINGGALAN KEMARIN
+                final timeData = await supabase
+                    .from('schedule_times') // Nama tabel di database
+                    .select()
+                    .eq('id', appointment.timeId)
+                    .maybeSingle();
+
+                // Update data appointment dengan hasil fetch
                 appointment = appointment.copyWith(
-                  user_name: userData['name'],
-                  poly_name: polyData['name'],
+                  user_name: userData != null ? userData['name'] : 'Unknown',
+                  poly_name: polyData != null ? polyData['name'] : '-',
                 );
-              } catch (e) {
-                print('Error fetching related data: $e');
-              }
 
+                // Masukkan object time secara manual karena copyWith mungkin belum support object nested
+                if (timeData != null) {
+                  appointment.time = ScheduleTime.fromJson(timeData);
+                }
+              } catch (e) {
+                print("Error fetching details: $e");
+              }
               return appointment;
             }).toList())
         .asyncMap((appointments) => Future.wait(appointments))
         .map((appointments) {
-          // Update all appointments
+          // --- LOGIKA FILTER HARI INI & STATISTIK ---
+
           allAppointments.value = appointments;
 
-          // Update today's appointments
+          // Reset Hitungan
+          int waiting = 0;
+          int approved = 0;
+          int diagnose = 0;
+          int unpaid = 0;
+          int drugs = 0;
+          int completed = 0;
+
           final now = DateTime.now();
-          final today = DateTime(now.year, now.month, now.day);
-          todayAppointments.value = appointments
-              .where((app) =>
-                  DateTime(app.createdAt.year, app.createdAt.month,
-                      app.createdAt.day) ==
-                  today)
-              .toList();
+          final todayString = DateFormat('yyyy-MM-dd').format(now);
 
-          // Update stats
-          activePatients.value = appointments
-              .where((app) =>
-                  DateTime(app.createdAt.year, app.createdAt.month,
-                          app.createdAt.day) ==
-                      today &&
-                  AppointmentStatus.isActiveStatus(app.status))
-              .length;
+          List<Appointment> todayList = [];
 
-          waitingPatients.value = appointments
-              .where((app) => app.status == AppointmentStatus.waiting)
-              .length;
+          for (var app in appointments) {
+            // Hitung Statistik
+            switch (app.status) {
+              case 1:
+                waiting++;
+                break;
+              case 2:
+                approved++;
+                break;
+              case 4:
+                diagnose++;
+                break;
+              case 5:
+                unpaid++;
+                break;
+              case 6:
+                drugs++;
+                break;
+              case 7:
+                completed++;
+                break;
+            }
+
+            // Filter Hari Ini (Cek CreatedAt atau ScheduleDate)
+            // Kita pakai createdAt dulu yang paling aman untuk test
+            final appDateStr = DateFormat('yyyy-MM-dd').format(app.createdAt);
+
+            if (appDateStr == todayString) {
+              todayList.add(app);
+            }
+          }
+
+          todayAppointments.value = todayList;
+
+          // Update ke variabel reactive agar UI berubah
+          waitingPatients.value = waiting;
+          // (Anda bisa update variabel stats lain di sini jika perlu ditampilkan)
 
           return appointments;
         });

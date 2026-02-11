@@ -5,6 +5,7 @@ import 'package:clinic_ai/components/skeletonLoading.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart'; // Pastikan import ini ada
 import '../controllers/home_doctor_controller.dart';
 
 class HomeDoctorView extends GetView<HomeDoctorController> {
@@ -13,7 +14,8 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor:
+          bgColor, // Pastikan warna background hijau muda/putih gading
       body: SafeArea(
         child: Obx(() => _buildBody()),
       ),
@@ -22,14 +24,13 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
   }
 
   Widget _buildBody() {
-    // Use IndexedStack to keep all pages alive and just show the selected one
     return IndexedStack(
       index: controller.selectedIndex.value,
       children: [
         _buildHomePage(),
-        const ListPatientsView(), // Schedule view
-        const ListPatientsView(), // Patients view
-        const ListPatientsView(), // Profile view - replace with actual profile view
+        const ListPatientsView(),
+        const ListPatientsView(), // Ganti dengan ProfileView jika sudah ada
+        const ListPatientsView(),
       ],
     );
   }
@@ -41,15 +42,16 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
         final bool isLoading =
             snapshot.connectionState == ConnectionState.waiting;
 
+        // Note: Error handling di stream kadang bikin kedip, jadi bisa di-skip visualnya
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          debugPrint('Stream Error: ${snapshot.error}');
         }
 
         return Column(
           children: [
             _buildHeader(isLoading),
             _buildStats(isLoading),
-            _buildAppointmentsList(isLoading, snapshot.data),
+            _buildAppointmentsList(isLoading),
           ],
         );
       },
@@ -67,7 +69,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
             children: [
               Text(
                 'Welcome back,',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   color: Colors.grey[600],
                   fontSize: 16,
                 ),
@@ -76,29 +78,35 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
               isLoading
                   ? ShimmerEffect(
                       child: SkeletonLoading(
-                        width: 150,
-                        height: 30,
-                        borderRadius: 4,
-                      ),
+                          width: 150, height: 30, borderRadius: 4),
                     )
                   : Obx(
                       () => Text(
                         'Dr. ${controller.currentUserName.value}',
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: GoogleFonts.poppins(
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
                       ),
                     )
             ],
           ),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: const Icon(Icons.notifications_outlined),
+            child:
+                const Icon(Icons.notifications_outlined, color: Colors.black87),
           ),
         ],
       ),
@@ -107,46 +115,11 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
 
   Widget _buildStats(bool isLoading) {
     if (isLoading) {
-      return Container(
+      return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            Row(
-              children: List.generate(
-                3,
-                (index) => Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(right: index < 2 ? 15 : 0),
-                    child: ShimmerEffect(
-                      child: SkeletonLoading(
-                        width: double.infinity,
-                        height: 100,
-                        borderRadius: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            Row(
-              children: List.generate(
-                3,
-                (index) => Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(right: index < 2 ? 15 : 0),
-                    child: ShimmerEffect(
-                      child: SkeletonLoading(
-                        width: double.infinity,
-                        height: 100,
-                        borderRadius: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+        child: ShimmerEffect(
+          child: SkeletonLoading(
+              width: double.infinity, height: 220, borderRadius: 16),
         ),
       );
     }
@@ -163,8 +136,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
                       controller
                           .getStatusCount(AppointmentStatus.waiting)
                           .toString(),
-                      AppointmentStatus.getStatusColor(
-                          AppointmentStatus.waiting),
+                      Colors.orange,
                       Icons.hourglass_empty,
                     ),
                   ),
@@ -175,8 +147,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
                       controller
                           .getStatusCount(AppointmentStatus.approved)
                           .toString(),
-                      AppointmentStatus.getStatusColor(
-                          AppointmentStatus.approved),
+                      Colors.blue,
                       Icons.check_circle_outline,
                     ),
                   ),
@@ -187,8 +158,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
                       controller
                           .getStatusCount(AppointmentStatus.diagnose)
                           .toString(),
-                      AppointmentStatus.getStatusColor(
-                          AppointmentStatus.diagnose),
+                      Colors.purple,
                       Icons.medical_services_outlined,
                     ),
                   ),
@@ -203,8 +173,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
                       controller
                           .getStatusCount(AppointmentStatus.unpaid)
                           .toString(),
-                      AppointmentStatus.getStatusColor(
-                          AppointmentStatus.unpaid),
+                      Colors.amber,
                       Icons.payment_outlined,
                     ),
                   ),
@@ -215,8 +184,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
                       controller
                           .getStatusCount(AppointmentStatus.waitingForDrugs)
                           .toString(),
-                      AppointmentStatus.getStatusColor(
-                          AppointmentStatus.waitingForDrugs),
+                      Colors.teal,
                       Icons.medication_outlined,
                     ),
                   ),
@@ -227,8 +195,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
                       controller
                           .getStatusCount(AppointmentStatus.completed)
                           .toString(),
-                      AppointmentStatus.getStatusColor(
-                          AppointmentStatus.completed),
+                      Colors.green,
                       Icons.task_alt_outlined,
                     ),
                   ),
@@ -242,16 +209,15 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
   Widget _buildStatCard(
       String title, String value, Color color, IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.white.withOpacity(0.5),
-            spreadRadius: -2,
-            blurRadius: 5,
-            offset: const Offset(-2, -2),
+            color: Colors.grey.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -259,32 +225,27 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 22,
-            ),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
             value,
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               color: Colors.black87,
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 6),
           Text(
             title,
-            style: TextStyle(
-              color: Colors.black54,
-              fontSize: 12,
+            style: GoogleFonts.poppins(
+              color: Colors.grey[600],
+              fontSize: 11,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -294,35 +255,57 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
     );
   }
 
-  Widget _buildAppointmentsList(
-      bool isLoading, List<Appointment>? appointments) {
+  Widget _buildAppointmentsList(bool isLoading) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(20),
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        decoration: const BoxDecoration(
+          color: Colors.transparent,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Today\'s Appointments',
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             Expanded(
               child: isLoading
                   ? _buildAppointmentsSkeletonList()
-                  : Obx(() => controller.todayAppointments.isEmpty
-                      ? const Center(child: Text('No appointments today'))
-                      : ListView.builder(
-                          itemCount: controller.todayAppointments.length,
-                          itemBuilder: (context, index) {
-                            final appointment =
-                                controller.todayAppointments[index];
-                            return _buildAppointmentCard(appointment);
-                          },
-                        )),
+                  : Obx(() {
+                      if (controller.todayAppointments.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.calendar_today_outlined,
+                                  size: 48, color: Colors.grey[300]),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No appointments today',
+                                style: GoogleFonts.poppins(
+                                    color: Colors.grey[500]),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return ListView.builder(
+                        itemCount: controller.todayAppointments.length,
+                        padding: const EdgeInsets.only(bottom: 20),
+                        itemBuilder: (context, index) {
+                          final appointment =
+                              controller.todayAppointments[index];
+                          return _buildAppointmentCard(appointment);
+                        },
+                      );
+                    }),
             ),
           ],
         ),
@@ -332,147 +315,201 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
 
   Widget _buildAppointmentsSkeletonList() {
     return ListView.builder(
-      itemCount: 5,
+      itemCount: 3,
       itemBuilder: (context, index) {
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
           child: ShimmerEffect(
             child: SkeletonLoading(
-              width: double.infinity,
-              height: 80,
-              borderRadius: 12,
-            ),
+                width: double.infinity, height: 80, borderRadius: 12),
           ),
         );
       },
     );
   }
 
+  // --- KARTU APPOINTMENT VERSI BARU & LEBIH RAPI ---
   Widget _buildAppointmentCard(Appointment appointment) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 4,
-            height: 50,
-            decoration: BoxDecoration(
-              color: appointment.status == 0 ? Colors.orange : Colors.green,
-              borderRadius: BorderRadius.circular(4),
+    // Ambil jam dari object 'time' jika ada, fallback ke string kosong
+    String timeDisplay = appointment.time?.scheduleTime ?? '-';
+
+    // Ambil nama pasien
+    String patientName = appointment.user_name ?? 'Unknown Patient';
+    String initial =
+        patientName.isNotEmpty ? patientName[0].toUpperCase() : '?';
+
+    return InkWell(
+      onTap: () => _showActionDialog(appointment),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.08),
+              spreadRadius: 2,
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  appointment.user_name ?? 'Unknown Patient',
-                  style: const TextStyle(
+          ],
+        ),
+        child: Row(
+          children: [
+            // Avatar / Icon Pasien
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  initial,
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    color: Theme.of(Get.context!).primaryColor,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  appointment.poly_name ?? 'Unknown Poly',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
+              ),
+            ),
+            const SizedBox(width: 16),
+
+            // Detail Pasien (Tengah)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    patientName,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.layers_outlined,
+                          size: 14, color: Colors.grey[500]),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          appointment.poly_name ?? 'General',
+                          style: GoogleFonts.poppins(
+                            color: Colors.grey[600],
+                            fontSize: 13,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Jam & Status (Kanan)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppointmentStatus.getStatusColor(appointment.status)
+                        .withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    AppointmentStatus.getStatusText(appointment.status),
+                    style: GoogleFonts.poppins(
+                      color:
+                          AppointmentStatus.getStatusColor(appointment.status),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.access_time_rounded,
+                        size: 14, color: Colors.grey[400]),
+                    const SizedBox(width: 4),
+                    Text(
+                      timeDisplay,
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                appointment.createdAt.toString().substring(11, 16),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: appointment.status == 0
-                      ? Colors.orange.withOpacity(0.1)
-                      : Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _getStatusText(appointment.status),
-                  style: TextStyle(
-                    color: _getStatusColor(appointment.status),
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  String _getStatusText(int status) {
-    switch (status) {
-      case 1:
-        return 'Waiting';
-      case 2:
-        return 'Approved';
-      case 3:
-        return 'Rejected';
-      case 4:
-        return 'Diagnose';
-      case 5:
-        return 'Unpaid';
-      case 6:
-        return 'Waiting For Drugs';
-      case 7:
-        return 'Completed';
-      default:
-        return 'Unknown';
-    }
-  }
-
-  Color _getStatusColor(int status) {
-    switch (status) {
-      case 1:
-        return Colors.orange;
-      case 2:
-        return Colors.blue;
-      case 3:
-        return Colors.red;
-      case 4:
-        return Colors.purple;
-      case 5:
-        return Colors.redAccent;
-      case 6:
-        return Colors.amber;
-      case 7:
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
+  void _showActionDialog(Appointment app) {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Action for ${app.user_name}',
+              style: GoogleFonts.poppins(
+                  fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading:
+                  const Icon(Icons.check_circle_outline, color: Colors.blue),
+              title: Text('Approve Appointment', style: GoogleFonts.poppins()),
+              onTap: () {
+                controller.updateAppointmentStatus(app.id, 2);
+                Get.back();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.cancel_outlined, color: Colors.red),
+              title: Text('Reject Appointment', style: GoogleFonts.poppins()),
+              onTap: () {
+                controller.updateAppointmentStatus(app.id, 3);
+                Get.back();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.medical_services_outlined,
+                  color: Colors.purple),
+              title: Text('Start Diagnose', style: GoogleFonts.poppins()),
+              onTap: () {
+                controller.updateAppointmentStatus(app.id, 4);
+                Get.back();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildBottomNav() {
@@ -480,21 +517,21 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16, top: 8),
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFFD4E8D1),
+          color: const Color(0xFFD4E8D1), // Sesuaikan dengan warna tema
           borderRadius: BorderRadius.circular(24),
         ),
         child: Obx(() => Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildBottomBarItem(Icons.home_outlined,
-                    controller.selectedIndex.value == 0, 0),
-                _buildBottomBarItem(Icons.calendar_today_outlined,
+                _buildBottomBarItem(
+                    Icons.home_rounded, controller.selectedIndex.value == 0, 0),
+                _buildBottomBarItem(Icons.calendar_today_rounded,
                     controller.selectedIndex.value == 1, 1),
-                _buildBottomBarItem(Icons.people_outline,
+                _buildBottomBarItem(Icons.people_alt_rounded,
                     controller.selectedIndex.value == 2, 2),
-                _buildBottomBarItem(Icons.person_outline,
+                _buildBottomBarItem(Icons.person_rounded,
                     controller.selectedIndex.value == 3, 3),
               ],
             )),
@@ -504,30 +541,27 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
 
   Widget _buildBottomBarItem(IconData icon, bool isSelected, int index) {
     return GestureDetector(
-      onTap: () {
-        controller.selectedIndex.value = index;
-      },
+      onTap: () => controller.selectedIndex.value = index,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.green[700] : Colors.grey[700],
+              color: isSelected ? Colors.green[800] : Colors.grey[600],
               size: 24,
             ),
             if (isSelected) ...[
-              const SizedBox(height: 4),
+              const SizedBox(width: 8),
               Container(
                 width: 4,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.green[700],
+                  color: Colors.green[800],
                   shape: BoxShape.circle,
                 ),
               ),

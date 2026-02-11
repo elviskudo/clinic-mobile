@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:clinic_ai/app/modules/(doctor)/home_doctor/controllers/home_doctor_controller.dart';
 import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +11,10 @@ class ListPatientsController extends GetxController {
   var selectedFilter = 'All'.obs;
   RxString currentUserId = ''.obs;
   final RxInt selectedIndex = 1.obs;
+
+  // TAMBAHAN PENTING: Variabel Doctor ID & Base URL
+  RxString doctorId = ''.obs;
+  final baseUrl = "https://be-clinic-rx7y.vercel.app";
 
   // Date filter
   final selectedDate = Rx<DateTime?>(null);
@@ -35,61 +37,115 @@ class ListPatientsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getCurrentUser();
+    initialDataLoad(); // Panggil fungsi load data
   }
 
-  Future<void> getCurrentUser() async {
+  Future<void> initialDataLoad() async {
     final prefs = await SharedPreferences.getInstance();
     currentUserId.value = prefs.getString('userId') ?? '';
+    await fetchDoctorId(); // Cari ID Dokter dulu sebelum stream jalan!
+  }
+
+  // --- FUNGSI CARI DOKTER ID (COPAS DARI HOME) ---
+  Future<void> fetchDoctorId() async {
+    try {
+      print(
+          "Fetching Doctor ID in ListPatients for User: ${currentUserId.value}");
+
+      final response = await GetConnect().get(
+        '$baseUrl/doctors/profile/${currentUserId.value}',
+      );
+
+      if (response.status.isOk) {
+        final body = response.body;
+        // Sesuai log terakhir lu, datanya ada di body['data']['id']
+        if (body != null &&
+            body['data'] != null &&
+            body['data']['id'] != null) {
+          doctorId.value = body['data']['id'].toString();
+          print("✅ Doctor ID Found (ListPatients): ${doctorId.value}");
+        } else {
+          print("⚠️ Data dokter kosong.");
+        }
+      } else {
+        print("❌ Gagal fetch API.");
+      }
+    } catch (e) {
+      print("❌ Error: $e");
+    }
   }
 
   Stream<List<Appointment>> getAppointmentsStream() async* {
-    final prefs = await SharedPreferences.getInstance();
-    currentUserId.value = prefs.getString('userId') ?? '';
-    print('current user id: ${currentUserId.value}');
+    // 1. Cek Doctor ID
+    if (doctorId.value.isEmpty) {
+      await fetchDoctorId();
+    }
+
+    if (doctorId.value.isEmpty) {
+      yield [];
+      return;
+    }
+
+    print('🚀 Streaming appointments for Doctor ID: ${doctorId.value}');
+
     yield* supabase
         .from('appointments')
         .stream(primaryKey: ['id'])
-        .eq('doctor_id', currentUserId.value)
+        .eq('doctor_id', doctorId.value) // ✅ KEMBALIKAN FILTER INI
         .order('updated_at')
-        .map((events) => events.map((item) async {
-              // Create appointment object
-              Appointment appointment = Appointment.fromJson(item);
+        .asyncMap((List<Map<String, dynamic>> data) async {
+          if (data.isEmpty) return <Appointment>[];
 
-              try {
-                // Fetch user data
-                final userData = await supabase
-                    .from('users')
-                    .select('name')
-                    .eq('id', appointment.userId)
-                    .single();
+          // --- TEKNIK BATCH FETCHING (ANTI-CRASH) ---
+          // Daripada nembak 60x, kita kumpulkan ID-nya dulu
 
-                // Fetch poly data
-                final polyData = await supabase
-                    .from('polies')
-                    .select('name')
-                    .eq('id', appointment.polyId)
-                    .single();
+          // 1. Ambil semua User ID & Poly ID unik dari data appointment
+          final userIds = data.map((e) => e['user_id']).toSet().toList();
+          final polyIds = data.map((e) => e['poly_id']).toSet().toList();
 
-                // Update appointment with user and poly names
-                appointment = appointment.copyWith(
-                  user_name: userData['name'],
-                  poly_name: polyData['name'],
-                );
-              } catch (e) {
-                print('Error fetching related data: $e');
-                // If there's an error, keep original appointment data
-              }
+          // 2. Ambil Data User SEKALIGUS (Cuma 1 Request)
+          final usersResponse = await supabase
+              .from('users')
+              .select('id, name')
+              .inFilter('id', userIds); // Ambil user yang ID-nya ada di list
 
-              return appointment;
-            }).toList())
-        .asyncMap((appointments) => Future.wait(appointments));
+          // 3. Ambil Data Poly SEKALIGUS (Cuma 1 Request)
+          final poliesResponse = await supabase
+              .from('polies')
+              .select('id, name')
+              .inFilter('id', polyIds);
+
+          // 4. Buat Kamus (Map) agar pencarian cepat
+          // Contoh: {'id_user_1': 'Budi', 'id_user_2': 'Siti'}
+          final userMap = {
+            for (var item in usersResponse) item['id']: item['name']
+          };
+
+          final polyMap = {
+            for (var item in poliesResponse) item['id']: item['name']
+          };
+
+          // 5. Gabungkan Data (Tanpa Request Internet lagi)
+          return data.map((item) {
+            final appointment = Appointment.fromJson(item);
+
+            // Cari nama di kamus yang sudah kita download tadi
+            final userName = userMap[appointment.userId] ?? 'Unknown';
+            final polyName = polyMap[appointment.polyId] ?? '-';
+
+            return appointment.copyWith(
+              user_name: userName,
+              poly_name: polyName,
+            );
+          }).toList();
+        });
   }
+
+  // ... (Sisa fungsi filter, setDate, setStatus, updateStatus SAMA PERSIS kayak kode lu) ...
 
   void setDateFilter(DateTime? date) {
     selectedDate.value = date;
     isDateFilterActive.value = date != null;
-
     if (isDateFilterActive.value) {
       selectedFilter.value = 'Date';
     } else if (isStatusFilterActive.value) {
@@ -108,8 +164,6 @@ class ListPatientsController extends GetxController {
       selectedStatus.value = status;
       selectedFilter.value = 'Status';
     }
-
-    // If no filters are active, set to 'All'
     if (!isDateFilterActive.value && !isStatusFilterActive.value) {
       selectedFilter.value = 'All';
     }
@@ -127,28 +181,23 @@ class ListPatientsController extends GetxController {
       List<Appointment> appointments, String filter) {
     List<Appointment> filteredList = List.from(appointments);
 
-    // Apply date filter if active
     if (isDateFilterActive.value && selectedDate.value != null) {
       filteredList = filteredList.where((appointment) {
         if (appointment.updatedAt == null) return false;
-
         final appointmentDate = DateTime(
           appointment.updatedAt!.year,
           appointment.updatedAt!.month,
           appointment.updatedAt!.day,
         );
-
         final filterDate = DateTime(
           selectedDate.value!.year,
           selectedDate.value!.month,
           selectedDate.value!.day,
         );
-
         return appointmentDate.isAtSameMomentAs(filterDate);
       }).toList();
     }
 
-    // Apply status filter if active
     if (isStatusFilterActive.value && selectedStatus.value != 'All') {
       final statusValue =
           AppointmentStatus.getStatusValue(selectedStatus.value);
@@ -158,32 +207,21 @@ class ListPatientsController extends GetxController {
             .toList();
       }
     }
-
     return filteredList;
   }
 
   Future<void> updateAppointmentStatus(String appointmentId, int status) async {
+    // Logic update status lu udah bener, pake API atau Supabase bebas
+    // Karena ini simple update field, Supabase direct kayak kode lu aman.
     try {
       await supabase
           .from('appointments')
           .update({'status': status}).eq('id', appointmentId);
-
-      Get.snackbar(
-        'Success',
-        'Appointment status updated',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Success', 'Status updated',
+          backgroundColor: Colors.green, colorText: Colors.white);
     } catch (error) {
-      print('Error updating appointment status: $error');
-      Get.snackbar(
-        'Error',
-        'Failed to update appointment status',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Error', 'Failed update',
+          backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
 }

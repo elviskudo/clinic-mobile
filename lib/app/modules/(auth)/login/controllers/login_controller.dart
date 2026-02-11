@@ -19,6 +19,7 @@ class LoginController extends GetxController {
         '997166988553-dqvtq3utmlsur1rsfhj33v7mmk0u55lc.apps.googleusercontent.com',
   );
 
+  // --- FUNGSI LOGIN EMAIL ---
   Future<void> signInWithEmail() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       Get.snackbar('Error', 'Email dan password harus diisi Cuk!',
@@ -29,12 +30,11 @@ class LoginController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Bersihkan email & password dari spasi, newline, dan tab
+      // Bersihkan input
       final email = emailController.text.replaceAll(RegExp(r'\s+'), '');
       final password = passwordController.text.replaceAll(RegExp(r'\s+'), '');
 
-      print('DEBUG: Mencoba login ke BE...');
-      print('Payload Clean: {"email": "$email", "password": "$password"}');
+      print('DEBUG: Login Email ke BE...');
 
       final response = await http.post(
         Uri.parse('https://be-clinic-rx7y.vercel.app/auth/login'),
@@ -45,28 +45,19 @@ class LoginController extends GetxController {
         }),
       );
 
-      print('Status Login Email: ${response.statusCode}');
-      print('Response Body: ${response.body}');
+      print('Status Login: ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        final backendData = responseData['data'];
+
+        // Sesuaikan dengan struktur JSON backend lu (biasanya 'data' atau 'result')
+        // Kalau pake interceptor NestJS biasanya kebungkus di 'data'
+        final backendData = responseData['data'] ?? responseData['result'];
 
         if (backendData != null) {
-          final prefs = await SharedPreferences.getInstance();
-
-          // Simpan data login
-          String token = (backendData['access_token'] ?? '').toString();
-          final userData = backendData['user'] ?? {};
-
-          await prefs.setString('accessToken', token);
-          await prefs.setString('userId', (userData['id'] ?? '').toString());
-          await prefs.setString(
-              'name', (userData['name'] ?? 'User').toString());
-          await prefs.setBool('isLoggedIn', true);
-
-          print("LOGIN EMAIL SUKSES: ${userData['name']}");
-          Get.offAllNamed(Routes.HOME);
+          await _handlePostLogin(backendData); // Panggil fungsi handler pintar
+        } else {
+          throw 'Data backend kosong Cuk!';
         }
       } else {
         final errorData = json.decode(response.body);
@@ -82,34 +73,35 @@ class LoginController extends GetxController {
     }
   }
 
+  // --- FUNGSI LOGIN GOOGLE ---
   Future<void> signInWithGoogle() async {
     try {
       isLoading.value = true;
 
-      // 1. Trigger Google Sign In
+      // 1. Google Sign In
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         isLoading.value = false;
-        return;
+        return; // User batal login
       }
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      // 2. Kredensial Firebase
+      // 2. Firebase Auth
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // 3. Login Firebase & Ambil ID Token Terbaru (Force Refresh agar tidak kadaluarsa)
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       final String? idToken = await userCredential.user?.getIdToken(true);
 
-      if (idToken == null) throw 'Gagal mendapatkan ID Token dari Firebase';
+      if (idToken == null) throw 'Gagal dapet ID Token Firebase';
 
-      // 4. Kirim ID Token ke Backend NestJS (Production/Vercel)
+      // 3. Kirim ke Backend NestJS
+      print("DEBUG: Kirim Token Google ke BE...");
       final response = await http.post(
         Uri.parse('https://be-clinic-rx7y.vercel.app/auth/google'),
         headers: {'Content-Type': 'application/json'},
@@ -120,43 +112,62 @@ class LoginController extends GetxController {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        print(
-            "DEBUG RESPONSE: $responseData"); // LIHAT INI DI TERMINAL LOKAT LU!
 
-        final backendData = responseData['data'];
+        // Cek struktur JSON (data/result)
+        final backendData = responseData['data'] ?? responseData['result'];
+
         if (backendData != null) {
-          final userData = backendData['user'] ?? {};
-          final prefs = await SharedPreferences.getInstance();
-
-          // Gunakan null-aware operator yang lebih longgar
-          String token = (backendData['access_token'] ?? '').toString();
-          String uid = (userData['id'] ?? '').toString();
-          String name = (userData['name'] ?? 'User').toString();
-
-          print("TOKEN NYAMPE: $token");
-          print("UID NYAMPE: $uid");
-
-          await prefs.setString('accessToken', token);
-          await prefs.setString('userId', uid);
-          await prefs.setString('name', name);
-          await prefs.setBool('isLoggedIn', true);
-
-          Get.offAllNamed(Routes.HOME);
+          await _handlePostLogin(backendData); // Panggil fungsi handler pintar
         } else {
           throw 'Objek data di respon kosong Cuk!';
         }
+      } else {
+        throw 'Backend nolak: ${response.body}';
       }
     } catch (e) {
-      print('Login Error: $e');
+      print('Login Google Error: $e');
       Get.snackbar(
         'Error',
-        'Gagal login: $e',
+        'Gagal login Google: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  // --- LOGIC NAVIGASI PINTAR (UTAMA) ---
+  Future<void> _handlePostLogin(Map<String, dynamic> backendData) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Ambil User Data
+    final userData = backendData['user'] ?? {};
+    final String accessToken = (backendData['access_token'] ?? '').toString();
+
+    // 1. AMBIL ROLE DARI RESPONSE BACKEND (Kunci Utama!)
+    // Pastikan backend lu ngirim field 'role' di dalam objek user
+    String role = (userData['role'] ?? 'member').toString().toLowerCase();
+
+    print("✅ LOGIN SUKSES!");
+    print("👤 Nama: ${userData['name']}");
+    print("🔑 Role Deteksi: $role");
+
+    // 2. Simpan ke SharedPreferences
+    await prefs.setString('accessToken', accessToken);
+    await prefs.setString('userId', (userData['id'] ?? '').toString());
+    await prefs.setString('name', (userData['name'] ?? 'User').toString());
+    await prefs.setString('userRole', role); // Simpan role buat sesi
+    await prefs.setBool('isLoggedIn', true);
+
+    // 3. NAVIGASI BERDASARKAN ROLE
+    if (role == 'doctor') {
+      print("🚀 Arahkan ke Dashboard Dokter");
+      Get.offAllNamed(Routes.HOME_DOCTOR);
+    } else {
+      print("🏠 Arahkan ke Home Pasien");
+      Get.offAllNamed(Routes.HOME);
     }
   }
 }

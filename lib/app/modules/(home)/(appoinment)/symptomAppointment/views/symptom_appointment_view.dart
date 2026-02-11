@@ -60,8 +60,11 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
                     child: TextFormField(
                       decoration: const InputDecoration(
                         hintText: 'Describe your symptom here ...',
+                        alignLabelWithHint: true,
                         border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.all(12),
                       ),
+                      minLines: 8,
                       maxLines: null,
                       initialValue: controller.symptomDescription.value,
                       onChanged: (value) {

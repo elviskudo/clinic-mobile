@@ -79,6 +79,8 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                 ),
                 _buildResultButton(
                     context), // Button outside SingleChildScrollView
+                const SizedBox(height: 12),
+                _buildBackToHomeButton(context), // Tambahin tombol baru di sini
                 const SizedBox(height: 20),
               ],
             );
@@ -704,6 +706,34 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildBackToHomeButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: SizedBox(
+        width: double.infinity,
+        height: 55, // Samakan tingginya dengan tombol result
+        child: OutlinedButton(
+          onPressed: () => Get.offAllNamed(
+              Routes.HOME), // offAllNamed biar gak bisa back lagi ke summary
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: Theme.of(context).colorScheme.primary),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+          ),
+          child: Text(
+            'Back to Home',
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
     );
   }
 

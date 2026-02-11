@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -89,162 +90,222 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
 
   Future<void> _generatePDF(BuildContext context) async {
     final controller = Get.find<BarcodeAppointmentController>();
+    final appointment = controller.currentAppointment.value;
+
+    if (appointment == null) {
+      Get.snackbar('Error', 'Data appointment tidak ditemukan');
+      return;
+    }
 
     try {
-      // Check storage permission first
+      // 1. Cek Permission
       final hasPermission = await _requestStoragePermission(context);
-      if (!hasPermission) {
-        return;
+      if (!hasPermission) return;
+
+      if (context.mounted) _showLoadingDialog(context);
+
+      // 2. Persiapkan Data
+      // Ambil data dari nested object appointment (menggunakan fallback ke string kosong jika null)
+      final doctorName = appointment.doctor?.name ?? '-';
+      final clinicName = appointment.clinic?.name ?? '-';
+      final polyName = appointment.poly?.name ?? '-';
+
+      // Format Tanggal yang Cantik
+      String dateString = '-';
+      if (appointment.date?.scheduleDate != null) {
+        dateString = DateFormat('EEEE, d MMMM yyyy')
+            .format(appointment.date!.scheduleDate!);
+      } else if (appointment.updatedAt != null) {
+        // Fallback ke updated_at jika scheduleDate kosong
+        dateString =
+            DateFormat('EEEE, d MMMM yyyy').format(appointment.updatedAt);
       }
 
-      // Show loading indicator
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return const AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 10),
-                  Text("Generating PDF..."),
-                ],
-              ),
-            );
-          },
-        );
-      }
+      final timeString = appointment.time?.scheduleTime ?? '-';
+      final patientName = controller.userName.value;
+      final qrCode = appointment.qrCode;
 
+      // 3. Buat Dokumen PDF
       final pdf = pw.Document();
 
-      // Define colors
-      final baseColor = PdfColor.fromHex('35693E');
-      final lightColor = PdfColor.fromHex('70B67C');
-      final textColor = PdfColors.white;
-
-      // PDF Metadata
       pdf.addPage(
         pw.Page(
-          pageFormat: PdfPageFormat.a4, // Ensure A4 format
+          pageFormat: PdfPageFormat.a4,
           build: (pw.Context context) {
-            return pw.Center(
-              // Center content on the page
-              child: pw.Container(
-                width: PdfPageFormat.a4.width * 0.8, // 80% of page width
-                decoration: pw.BoxDecoration(
-                  borderRadius:
-                      const pw.BorderRadius.all(pw.Radius.circular(10)),
-                  gradient: pw.LinearGradient(
-                    begin: pw.Alignment.topLeft,
-                    end: pw.Alignment.bottomRight,
-                    colors: [lightColor, baseColor],
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // Header
+                pw.Header(
+                  level: 0,
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('TIKET JANJI TEMU',
+                          style: pw.TextStyle(
+                              fontSize: 24,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.green800)),
+                      pw.Text('Clinic AI',
+                          style: pw.TextStyle(
+                              fontSize: 18,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.grey600)),
+                    ],
                   ),
                 ),
-                child: pw.Padding(
-                  padding: const pw.EdgeInsets.all(24),
-                  child: pw.Column(
-                    mainAxisAlignment: pw
-                        .MainAxisAlignment.center, // Center content vertically
-                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                pw.SizedBox(height: 20),
+
+                // Kotak Utama Tiket
+                pw.Container(
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.grey400),
+                    borderRadius:
+                        const pw.BorderRadius.all(pw.Radius.circular(10)),
+                  ),
+                  padding: const pw.EdgeInsets.all(20),
+                  child: pw.Row(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text(
-                        '${controller.currentAppointment.value?.qrCode ?? ''} - ${controller.userName.value}',
-                        style: pw.TextStyle(
-                          color: textColor,
-                          fontSize: 22,
-                          fontWeight: pw.FontWeight.bold,
+                      // Sisi Kiri: Informasi Teks
+                      pw.Expanded(
+                        flex: 2,
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            _buildPdfRow('Nama Pasien', patientName,
+                                isBold: true),
+                            pw.Divider(color: PdfColors.grey300),
+                            _buildPdfRow('Klinik', clinicName),
+                            pw.SizedBox(height: 8),
+                            _buildPdfRow('Poli', polyName),
+                            pw.SizedBox(height: 8),
+                            _buildPdfRow('Dokter', doctorName),
+                            pw.Divider(color: PdfColors.grey300),
+                            _buildPdfRow('Tanggal', dateString),
+                            pw.SizedBox(height: 8),
+                            _buildPdfRow('Jam', timeString),
+                          ],
                         ),
                       ),
-                      pw.SizedBox(height: 12),
-                      pw.Text(
-                        'Save this barcode and show it to the clinic staff',
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(
-                          color: textColor,
-                          fontSize: 16,
-                        ),
-                      ),
-                      pw.SizedBox(height: 36),
-                      pw.Container(
-                        decoration: pw.BoxDecoration(
-                          color: PdfColors.white,
-                          borderRadius:
-                              const pw.BorderRadius.all(pw.Radius.circular(8)),
-                        ),
-                        padding: const pw.EdgeInsets.all(16),
-                        child: pw.BarcodeWidget(
-                          data: controller.currentAppointment.value!.qrCode,
-                          barcode: pw.Barcode.qrCode(),
-                          width: 250, // Adjust QR code size
-                          height: 250,
+                      pw.SizedBox(width: 20),
+
+                      // Sisi Kanan: QR Code
+                      pw.Expanded(
+                        flex: 1,
+                        child: pw.Column(
+                          mainAxisAlignment: pw.MainAxisAlignment.center,
+                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                          children: [
+                            pw.Container(
+                              height: 120,
+                              width: 120,
+                              child: pw.BarcodeWidget(
+                                data: qrCode,
+                                barcode: pw.Barcode.qrCode(),
+                              ),
+                            ),
+                            pw.SizedBox(height: 8),
+                            pw.Text(qrCode,
+                                style: const pw.TextStyle(
+                                    fontSize: 10, color: PdfColors.grey600)),
+                            pw.SizedBox(height: 4),
+                            pw.Text('Tunjukkan di Admin',
+                                style: const pw.TextStyle(
+                                    fontSize: 10, color: PdfColors.green800)),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
+
+                pw.SizedBox(height: 20),
+                // Footer Notes
+                pw.Text(
+                  '* Harap datang 15 menit sebelum jadwal konsultasi.',
+                  style: pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.grey600,
+                      fontStyle: pw.FontStyle.italic),
+                ),
+                pw.Text(
+                  '* Tunjukkan QR Code ini kepada staf administrasi klinik untuk check-in.',
+                  style: pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.grey600,
+                      fontStyle: pw.FontStyle.italic),
+                ),
+              ],
             );
           },
         ),
       );
 
-      // Generate unique filename with timestamp
+      // 4. Simpan File
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final fileName = 'appointment_qr_$timestamp.pdf';
+      final fileName = 'Tiket_ClinicAI_$timestamp.pdf';
 
-      // Get temporary directory and save PDF there first
-      final tempDir = await getTemporaryDirectory();
-      final tempFile = File('${tempDir.path}/$fileName');
-      await tempFile.writeAsBytes(await pdf.save());
-
-      // Close loading indicator
-      if (context.mounted) {
-        Navigator.of(context).pop();
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = Directory('/storage/emulated/0/Download');
+        if (!await directory.exists()) {
+          directory = await getExternalStorageDirectory();
+        }
+      } else {
+        directory = await getApplicationDocumentsDirectory();
       }
 
-      // Let user pick the save location
-      String? saveDir = await FilePicker.platform.getDirectoryPath();
-      if (saveDir == null) {
-        // User cancelled directory selection
-        return;
-      }
+      final String filePath = '${directory!.path}/$fileName';
+      final file = File(filePath);
+      await file.writeAsBytes(await pdf.save());
 
-      // Copy file to selected directory
-      final savedFile = File('$saveDir/$fileName');
-      await tempFile.copy(savedFile.path);
+      if (context.mounted) Navigator.of(context).pop(); // Tutup Loading
 
-      // Delete temporary file
-      await tempFile.delete();
-
-      // Show success message
-      if (context.mounted) {
-        print("ini -----------> ${savedFile.path}");
-        print("ini -----------> ${savedFile.path.codeUnits}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('PDF saved to: ${savedFile.path}'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
+      Get.snackbar(
+        'Berhasil',
+        'Tiket disimpan di folder Download:\n$fileName',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 5),
+      );
     } catch (e) {
-      // Close loading indicator if open
       if (context.mounted && Navigator.canPop(context)) {
         Navigator.of(context).pop();
       }
-
-      // Show error message
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      print("PDF Error: $e");
+      Get.snackbar('Error', 'Gagal membuat PDF: $e',
+          backgroundColor: Colors.red, colorText: Colors.white);
     }
+  }
+
+  // Helper Widget untuk Baris di dalam PDF agar rapi
+  pw.Widget _buildPdfRow(String label, String value, {bool isBold = false}) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(label,
+            style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600)),
+        pw.Text(
+          value,
+          style: pw.TextStyle(
+            fontSize: 14,
+            fontWeight: isBold ? pw.FontWeight.bold : pw.FontWeight.normal,
+            color: PdfColors.black,
+          ),
+        ),
+      ],
+    );
+  }
+
+// Fungsi pembantu untuk Loading
+  void _showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
   }
 
   @override

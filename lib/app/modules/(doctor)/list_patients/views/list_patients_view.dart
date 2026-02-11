@@ -54,45 +54,74 @@ class ListPatientsView extends GetView<ListPatientsController> {
             return const SizedBox.shrink();
           }),
           Expanded(
-            child: StreamBuilder<List<Appointment>>(
-              stream: controller.getAppointmentsStream(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text('Error: ${snapshot.error}'),
-                  );
-                }
-
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text('No appointments found'),
-                  );
-                }
-
-                final filteredAppointments = controller.filterAppointments(
-                    snapshot.data!, controller.selectedFilter.value);
-
-                if (filteredAppointments.isEmpty) {
-                  return const Center(
-                    child: Text('No appointments match your filters'),
-                  );
-                }
-
-                return ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: filteredAppointments.length,
-                  itemBuilder: (context, index) {
-                    return _buildAppointmentCard(
-                      filteredAppointments[index],
-                    );
-                  },
+            child: Obx(() {
+              // 1. CEK DULU: Jika Doctor ID masih kosong, tampilkan Loading
+              if (controller.doctorId.value.isEmpty) {
+                return const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 10),
+                      Text("Mengambil profil dokter..."),
+                    ],
+                  ),
                 );
-              },
-            ),
+              }
+
+              // 2. Jika Doctor ID sudah ada, baru jalankan StreamBuilder
+              return StreamBuilder<List<Appointment>>(
+                // PENTING: Gunakan key unik agar StreamBuilder di-reset jika filter berubah
+                key: ValueKey(controller.selectedFilter.value),
+                stream: controller.getAppointmentsStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+
+                  // Cek null dan empty
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.calendar_today,
+                              size: 64, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Belum ada pasien untuk Dokter ID: ${controller.doctorId.value}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final filteredAppointments = controller.filterAppointments(
+                      snapshot.data!, controller.selectedFilter.value);
+
+                  if (filteredAppointments.isEmpty) {
+                    return const Center(
+                        child: Text(
+                            'Tidak ada janji temu yang cocok dengan filter.'));
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: filteredAppointments.length,
+                    itemBuilder: (context, index) {
+                      return _buildAppointmentCard(filteredAppointments[
+                          index]); // Pastikan fungsi ini ada di class View Anda
+                    },
+                  );
+                },
+              );
+            }),
           ),
         ],
       ),
