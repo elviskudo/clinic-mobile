@@ -193,6 +193,8 @@ class HomeDoctorController extends GetxController {
         });
   }
 
+  
+
   Future<void> updateAppointmentStatus(String appointmentId, int status) async {
     try {
       await supabase
