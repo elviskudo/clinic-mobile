@@ -1,23 +1,24 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:clinic_ai/app/routes/app_pages.dart';
-import 'package:clinic_ai/helper/PasswordHasher.dart';
 import 'package:clinic_ai/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
-import 'package:dio/dio.dart' as dio;
+import 'package:http/http.dart' as http; // Ganti Supabase dengan HTTP
+import 'package:dio/dio.dart' as dio; // Khusus Cloudinary
 
 class ListUserController extends GetxController {
-  final supabase = Supabase.instance.client;
+  // URL Backend Vercel
+  final String baseUrl = "https://be-clinic-rx7y.vercel.app";
+
   final RxList<Users> usersList = <Users>[].obs;
   RxBool isLoading = false.obs;
-  RxString roleUser = ''.obs;
   RxString currentUserId = ''.obs;
+
   final formKey = GlobalKey<FormState>();
   final namaController = TextEditingController();
   final emailController = TextEditingController();
@@ -27,459 +28,348 @@ class ListUserController extends GetxController {
 
   final Rx<XFile?> selectedImage = Rx<XFile?>(null);
   final Rx<Users?> currentUser = Rx<Users?>(null);
+
+  // Config Cloudinary
   final cloudName = 'dcthljxbl';
   final uploadPreset = 'dompet-mal';
 
   @override
   void onInit() {
     super.onInit();
-    getCurrentUser().then((_) => loadCurrentUserData());
+    getCurrentUser().then((_) {
+      fetchUsers();
+      loadCurrentUserData();
+    });
   }
 
-  Future<void> logout() async {
+  // Helper Parsing
+  List<dynamic> _parseListResponse(dynamic decodedBody) {
+    if (decodedBody is List) return decodedBody;
+    if (decodedBody is Map<String, dynamic>) {
+      if (decodedBody['data'] is List) return decodedBody['data'];
+      if (decodedBody['result'] is List) return decodedBody['result'];
+    }
+    return [];
+  }
+
+  String formatPhoneNumber(String phone) {
+    String cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
+    if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
+    if (!cleanPhone.startsWith('62')) cleanPhone = '62$cleanPhone';
+    return '+$cleanPhone';
+  }
+
+  // --- 1. FETCH USERS (API) ---
+  Future<List<Users>> fetchUsers() async {
     try {
-      isLoading.value = true;
+      final url = Uri.parse('$baseUrl/users');
+      final response = await http.get(url);
 
-      await GoogleSignIn().signOut();
+      if (response.statusCode == 200) {
+        final dynamic decodedBody = json.decode(response.body);
+        final List<dynamic> data = _parseListResponse(decodedBody);
 
-      // Clear SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      // await prefs.clear(); // Clears all data
-      // Or clear specific keys if you prefer:
-      await prefs.setBool('isLoggedIn', false);
-      await prefs.remove('email');
-      await prefs.remove('name');
-      await prefs.remove('phone');
-      await prefs.remove('userId');
-      // await prefs.remove('accessToken');
+        final List<Users> loadedUsers = data.map((jsonItem) {
+          // Sanitasi null values agar tidak crash
+          if (jsonItem is Map<String, dynamic>) {
+            jsonItem['role'] ??= 'member';
+            jsonItem['phone_number'] ??= '';
+            jsonItem['access_token'] ??= '';
+          }
+          return Users.fromJson(jsonItem);
+        }).toList();
 
-      Get.snackbar(
-        'Sukses',
-        'Berhasil logout',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: Duration(seconds: 2),
-        snackPosition: SnackPosition.BOTTOM,
-      );
-
-      // Navigate to login page
-      Get.offAllNamed(Routes.LOGIN);
+        usersList.value = loadedUsers;
+        return loadedUsers;
+      } else {
+        print("Error Fetch Users: ${response.body}");
+        return [];
+      }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal logout: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } finally {
-      isLoading.value = false;
+      Get.snackbar('Error', 'Failed to fetch users: $e');
+      return [];
     }
   }
 
-  Future<void> getCurrentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    currentUserId.value = prefs.getString('userId') ?? '';
+  // --- 2. FETCH ROLES (API) ---
+  Future<List<Map<String, String>>> fetchRoles() async {
+    try {
+      final url = Uri.parse('$baseUrl/roles');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final dynamic decodedBody = json.decode(response.body);
+        final List<dynamic> data = _parseListResponse(decodedBody);
+
+        return data
+            .map<Map<String, String>>((role) => {
+                  'id': role['id'].toString(),
+                  'name': role['name'].toString(),
+                })
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching roles: $e');
+      return [];
+    }
   }
 
+  // --- 3. CREATE USER (API) ---
   Future<void> createUser() async {
     if (!formKey.currentState!.validate()) return;
+    if (selectedRoleId.value.isEmpty) {
+      Get.snackbar('Error', 'Please select a role',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
 
     isLoading.value = true;
 
     try {
       final formattedPhoneNumber = formatPhoneNumber(phoneController.text);
 
-      // Use selected role ID instead of fetching default role
-      if (selectedRoleId.value.isEmpty) {
-        throw 'Please select a role';
-      }
-
-      // Insert data ke table users
-      final hashedPassword =
-          await PasswordHasher.hashPassword(passwordController.text);
-      String userId = Uuid().v4();
+      // Payload sesuai DTO Backend
       final userData = {
-        'id': userId,
         'name': namaController.text,
         'email': emailController.text.toLowerCase(),
-        'password': hashedPassword,
+        'password': passwordController
+            .text, // Kirim password MENTAH, Backend yang hash!
         'phone_number': formattedPhoneNumber,
-        'access_token': '',
-        'created_at': DateTime.now().toIso8601String(),
-        'updated_at': DateTime.now().toIso8601String(),
-      };
-
-      await supabase.from('users').insert(userData);
-
-      // Insert ke table user_roles dengan selected role
-      final userRoleData = {
-        'user_id': userId,
         'role_id': selectedRoleId.value,
-        'created_at': DateTime.now().toIso8601String(),
-        'updated_at': DateTime.now().toIso8601String(),
       };
 
-      await supabase.from('user_roles').insert(userRoleData);
-
-      Get.snackbar(
-        'Sukses',
-        'User berhasil dibuat',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      final url = Uri.parse('$baseUrl/users');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(userData),
       );
 
-      // Clear form
-      namaController.clear();
-      emailController.clear();
-      passwordController.clear();
-      phoneController.clear();
-      selectedRoleId.value = ''; // Reset selected role
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        Get.snackbar('Sukses', 'User berhasil dibuat',
+            backgroundColor: Colors.green, colorText: Colors.white);
 
-      // Refresh user list
-      await fetchUsers();
+        // Reset Form
+        namaController.clear();
+        emailController.clear();
+        passwordController.clear();
+        phoneController.clear();
+        selectedRoleId.value = '';
 
-      Get.back(); // Tutup dialog form
-    } catch (error) {
-      print('Error creating user: $error');
-      String errorMessage = 'Terjadi kesalahan saat membuat user';
-
-      if (error is PostgrestException) {
-        if (error.code == '23505') {
-          errorMessage = 'Email sudah terdaftar';
-        }
+        await fetchUsers();
+        Get.back();
+      } else {
+        String msg = 'Gagal membuat user';
+        try {
+          final body = json.decode(response.body);
+          msg = body['message'] ?? msg;
+        } catch (_) {}
+        Get.snackbar('Error', msg,
+            backgroundColor: Colors.red, colorText: Colors.white);
       }
-
-      Get.snackbar(
-        'Error',
-        errorMessage,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+    } catch (e) {
+      Get.snackbar('Error', 'Terjadi kesalahan: $e',
+          backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Tambahkan helper method untuk format nomor telepon
-  String formatPhoneNumber(String phone) {
-    String cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
-    if (cleanPhone.startsWith('0')) {
-      cleanPhone = cleanPhone.substring(1);
-    }
-    if (!cleanPhone.startsWith('62')) {
-      cleanPhone = '62$cleanPhone';
-    }
-    return '+$cleanPhone';
-  }
-
-  Future<bool> isAdmin() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final role = prefs.getString('userRole');
-
-      if (role != 'admin') {
-        // Navigate back to previous page or login
-        Get.offAllNamed(Routes.LOGIN);
-        return false;
-      }
-
-      return role == 'admin';
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to verify admin role: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      Get.offAllNamed(Routes.LOGIN);
-      return false;
-    }
-  }
-
-  Future<void> deleteUser(String userId) async {
-    try {
-      isLoading.value = true;
-
-      await supabase.from('user_roles').delete().eq('user_id', userId);
-      // Hapus pengguna dari tabel `users`
-      await supabase.from('users').delete().eq('id', userId);
-
-      await fetchUsers();
-
-      // Hapus entri dari tabel `user_roles`
-
-      Get.snackbar(
-        'Success',
-        'User successfully deleted',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
-      // Perbarui daftar pengguna
-      update();
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to delete user: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
+  // --- 4. UPDATE USER (API) ---
   Future<void> updateUser(
       String userId, Map<String, dynamic> updatedData) async {
     try {
       isLoading.value = true;
-      await supabase.from('users').update(updatedData).eq('id', userId);
+      final url = Uri.parse('$baseUrl/users/$userId');
 
-      // Fetch updated users list
-      await fetchUsers();
-
-      Get.snackbar(
-        'Success',
-        'User successfully updated',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      final response = await http.patch(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(updatedData),
       );
+
+      if (response.statusCode == 200) {
+        await fetchUsers();
+        Get.snackbar('Success', 'User successfully updated',
+            backgroundColor: Colors.green, colorText: Colors.white);
+      } else {
+        Get.snackbar('Error', 'Failed to update: ${response.statusCode}');
+      }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to update user: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Error', 'Update failed: $e',
+          backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<void> updateProfileWithImage({
-    required String name,
-    required String phone,
-  }) async {
+  // --- 5. DELETE USER (API) ---
+  Future<void> deleteUser(String userId) async {
     try {
       isLoading.value = true;
+      final url = Uri.parse('$baseUrl/users/$userId');
 
-      // 1. First update user data
-      final formattedPhoneNumber = formatPhoneNumber(phone);
-      final updatedData = {
-        'name': name,
-        'phone_number': formattedPhoneNumber,
-        'updated_at': DateTime.now().toIso8601String(),
-      };
+      final response = await http.delete(url);
 
-      await supabase
-          .from('users')
-          .update(updatedData)
-          .eq('id', currentUserId.value);
+      if (response.statusCode == 200) {
+        await fetchUsers();
+        Get.snackbar('Success', 'User deleted',
+            backgroundColor: Colors.green, colorText: Colors.white);
+      } else {
+        Get.snackbar('Error', 'Failed delete: ${response.body}');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Delete failed: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
-      // 2. Handle image upload if selected
+  // --- 6. UPDATE PROFILE WITH IMAGE (API) ---
+  Future<void> updateProfileWithImage(
+      {required String name, required String phone}) async {
+    try {
+      isLoading.value = true;
+      String formattedPhone = formatPhoneNumber(phone);
+      String? uploadedImageUrl;
+
+      // A. Upload ke Cloudinary
       if (selectedImage.value != null) {
         final bytes = await File(selectedImage.value!.path).readAsBytes();
         final fileName = selectedImage.value!.path.split('/').last;
-
         final formData = dio.FormData.fromMap({
-          'file': dio.MultipartFile.fromBytes(
-            bytes,
-            filename: fileName,
-          ),
+          'file': dio.MultipartFile.fromBytes(bytes, filename: fileName),
           'upload_preset': uploadPreset,
         });
 
-        final response = await dio.Dio().post(
+        final uploadRes = await dio.Dio().post(
           'https://api.cloudinary.com/v1_1/$cloudName/image/upload',
           data: formData,
         );
 
-        if (response.statusCode == 200) {
-          // Get the URL from Cloudinary response
-          String imageUrl = response.data['secure_url'];
-
-          // Update or create file record
-          final fileData = {
-            'module_class': 'users',
-            'module_id': currentUserId.value,
-            'file_name': imageUrl,
-            'file_type': 'image',
-            'updated_at': DateTime.now().toIso8601String(),
-          };
-
-          // Check if file exists
-          final existingFile = await supabase
-              .from('files')
-              .select()
-              .eq('module_class', 'users')
-              .eq('module_id', currentUserId.value)
-              .maybeSingle();
-
-          if (existingFile != null) {
-            // Update existing file
-            await supabase
-                .from('files')
-                .update(fileData)
-                .eq('id', existingFile['id']);
-          } else {
-            // Insert new file
-            fileData['created_at'] = DateTime.now().toIso8601String();
-            await supabase.from('files').insert(fileData);
-          }
+        if (uploadRes.statusCode == 200) {
+          uploadedImageUrl = uploadRes.data['secure_url'];
         }
       }
 
-      // 3. Refresh data
-      await fetchUsers();
-      await loadCurrentUserData();
+      // B. Update Data ke Backend
+      final updatePayload = {
+        'name': name,
+        'phone_number': formattedPhone,
+        if (uploadedImageUrl != null) 'image_url': uploadedImageUrl,
+      };
 
-      Get.snackbar(
-        'Success',
-        'Profile updated successfully',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      final url = Uri.parse('$baseUrl/users/${currentUserId.value}');
+      final response = await http.patch(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(updatePayload),
       );
+
+      if (response.statusCode == 200) {
+        await fetchUsers();
+        await loadCurrentUserData();
+        Get.snackbar('Success', 'Profile updated',
+            backgroundColor: Colors.green, colorText: Colors.white);
+      } else {
+        print('Backend Error: ${response.body}');
+        Get.snackbar('Error', 'Failed to update profile backend');
+      }
     } catch (e) {
-      print('Error updating profile: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to update profile: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      print('Error update profile: $e');
+      Get.snackbar('Error', '$e', backgroundColor: Colors.red);
     } finally {
       isLoading.value = false;
       selectedImage.value = null;
     }
   }
 
-// Add this method to load current user data
-  Future<void> loadCurrentUserData() async {
-    try {
-      final users = await fetchUsers();
-      final currentUser = users.firstWhere(
-        (user) => user.id == currentUserId.value,
-        orElse: () => throw Exception('User not found'),
-      );
-
-      namaController.text = currentUser.name;
-      emailController.text = currentUser.email;
-      phoneController.text = currentUser.phoneNumber.replaceFirst('+62', '');
-
-      this.currentUser.value = currentUser;
-    } catch (e) {
-      print('Error loading user data: $e');
-    }
-  }
-
+  // --- 7. UPDATE USER ROLE (API) ---
   Future<void> updateUserRole(String userId, String roleId) async {
     try {
       isLoading.value = true;
+      // Gunakan endpoint update user biasa, kirim role_id
+      final url = Uri.parse('$baseUrl/users/$userId');
 
-      // Perbarui role_id di tabel `user_roles`
-      await supabase
-          .from('user_roles')
-          .update({'role_id': roleId}).eq('user_id', userId);
-
-      // Fetch updated users list after role update
-      await fetchUsers();
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to update user role: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      final response = await http.patch(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'role_id': roleId}),
       );
+
+      if (response.statusCode == 200) {
+        await fetchUsers();
+      } else {
+        print("Gagal update role: ${response.body}");
+        Get.snackbar('Error', 'Failed to update role');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed update role: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<List<Users>> fetchUsers() async {
+  // --- UTILS ---
+  Future<void> getCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    currentUserId.value = prefs.getString('userId') ?? '';
+  }
+
+  Future<void> loadCurrentUserData() async {
     try {
-      final response = await supabase.from('users').select('*');
-      final data = response as List<dynamic>;
+      if (usersList.isEmpty) await fetchUsers();
 
-      List<Users> users = [];
+      final user = usersList.firstWhere(
+        (u) => u.id == currentUserId.value,
+        orElse: () => Users(
+            id: '',
+            name: '',
+            email: '',
+            role: '',
+            phoneNumber: '',
+            accessToken: '',
+            createdAt: DateTime.now()),
+      );
 
-      for (final user in data) {
-        final userRole = await supabase
-            .from('user_roles')
-            .select()
-            .eq('user_id', user['id'])
-            .single();
-
-        final roles = await supabase
-            .from('roles')
-            .select()
-            .eq('id', userRole['role_id'])
-            .single();
-
-        final roleName = roles['name'] ?? 'member';
-
-        // Fetch user image from files
-        String? imageUrl;
-        final fileResponse = await supabase
-            .from('files')
-            .select('file_name')
-            .eq('module_class', 'users')
-            .eq('module_id', user['id'])
-            .maybeSingle();
-
-        if (fileResponse != null) {
-          imageUrl = fileResponse['file_name'];
-        }
-
-        users.add(Users(
-          id: user['id'] as String,
-          name: user['name'] as String,
-          email: user['email'] as String,
-          role: roleName,
-          phoneNumber: user['phone_number'] as String,
-          accessToken: user['access_token'] as String,
-          imageUrl: imageUrl, // Added image URL
-          createdAt: DateTime.parse(user['created_at'] as String),
-          updatedAt: DateTime.parse(user['updated_at'] as String),
-        ));
+      if (user.id.isNotEmpty) {
+        namaController.text = user.name;
+        emailController.text = user.email;
+        phoneController.text = user.phoneNumber.replaceFirst('+62', '');
+        currentUser.value = user;
       }
-
-      // Update the reactive list
-      usersList.value = users;
-      return users;
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to fetch users: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return [];
+      print("Load current user error: $e");
     }
   }
 
-  Future<List<Map<String, String>>> fetchRoles() async {
+  Future<bool> isAdmin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final role = prefs.getString('userRole');
+    if (role != 'admin') {
+      Get.offAllNamed(Routes.LOGIN);
+      return false;
+    }
+    return true;
+  }
+
+  // --- UI HELPER: LOGOUT ---
+  Future<void> logout() async {
+    isLoading.value = true;
     try {
-      // Ambil semua role dari tabel `roles`
-      final response = await supabase.from('roles').select('*');
-
-      // Mapping hasil data ke List<Map<String, String>>
-      return (response as List<dynamic>)
-          .map((role) => {
-                'id': role['id'] as String,
-                'name': role['name'] as String,
-              })
-          .toList();
+      await GoogleSignIn().signOut();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear(); // Hapus semua sesi
+      Get.offAllNamed(Routes.LOGIN);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to fetch roles: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return [];
+      Get.snackbar('Error', 'Logout failed: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 
+  // --- UI HELPER: DIALOGS ---
   Future<bool> showConfirmationDialog(BuildContext context) async {
     return await showDialog<bool>(
           context: context,
@@ -489,13 +379,11 @@ class ListUserController extends GetxController {
               content: Text('Are you sure you want to delete this user?'),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text('Cancel'),
-                ),
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text('Cancel')),
                 TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text('Delete'),
-                ),
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text('Delete')),
               ],
             );
           },
@@ -506,13 +394,19 @@ class ListUserController extends GetxController {
   void showEditDialog(BuildContext context, Users user) async {
     final nameController = TextEditingController(text: user.name);
     final emailController = TextEditingController(text: user.email);
-    String selectedRoleId = ''; // Role yang dipilih
-    List<Map<String, String>> roles = []; // Daftar role
+    String selectedRoleId = '';
 
-    // Ambil daftar role dari controller
-    roles = await fetchRoles();
-    selectedRoleId =
-        roles.firstWhere((role) => role['name'] == user.role)['id'] ?? '';
+    // Fetch roles untuk dropdown
+    List<Map<String, String>> roles = await fetchRoles();
+
+    try {
+      // Match nama role user dengan ID role dari database
+      final foundRole =
+          roles.firstWhere((r) => r['name'] == user.role, orElse: () => {});
+      if (foundRole.isNotEmpty) selectedRoleId = foundRole['id']!;
+    } catch (e) {
+      print("Role match error: $e");
+    }
 
     showDialog(
       context: context,
@@ -526,56 +420,50 @@ class ListUserController extends GetxController {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
-                      controller: nameController,
-                      decoration: InputDecoration(labelText: 'Name'),
-                    ),
+                        controller: nameController,
+                        decoration: InputDecoration(labelText: 'Name')),
                     TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
-                    ),
-                    DropdownButtonFormField<String>(
-                      value: selectedRoleId,
-                      items: roles
-                          .map((role) => DropdownMenuItem(
-                                value: role['id'],
-                                child: Text(role['name']!),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedRoleId = value!;
-                        });
-                      },
-                      decoration: InputDecoration(labelText: 'Role'),
-                    ),
+                        controller: emailController,
+                        decoration: InputDecoration(labelText: 'Email')),
+                    if (roles.isNotEmpty)
+                      DropdownButtonFormField<String>(
+                        value:
+                            selectedRoleId.isNotEmpty ? selectedRoleId : null,
+                        items: roles
+                            .map((role) => DropdownMenuItem(
+                                value: role['id'], child: Text(role['name']!)))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedRoleId = value!;
+                          });
+                        },
+                        decoration: InputDecoration(labelText: 'Role'),
+                      ),
                   ],
                 ),
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('Cancel'),
-                ),
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('Cancel')),
                 TextButton(
                   onPressed: () async {
                     final updatedData = {
                       'name': nameController.text,
-                      'email': emailController.text,
+                      'email': emailController.text
                     };
 
-                    // Perbarui data pengguna
+                    // 1. Update info user
                     await updateUser(user.id, updatedData);
 
-                    // Perbarui role pengguna jika ada perubahan
-                    if (selectedRoleId.isNotEmpty &&
-                        selectedRoleId !=
-                            roles.firstWhere(
-                                (role) => role['name'] == user.role)['id']) {
+                    // 2. Update role jika dipilih
+                    if (selectedRoleId.isNotEmpty) {
                       await updateUserRole(user.id, selectedRoleId);
                     }
-// Fetch the updated list one final time to ensure everything is in sync
+
                     await fetchUsers();
-                    // Navigator.pop(context); // Tutup dialog
+                    Navigator.pop(context);
                   },
                   child: Text('Save'),
                 ),
@@ -585,11 +473,6 @@ class ListUserController extends GetxController {
         );
       },
     );
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
   }
 
   @override

@@ -18,6 +18,8 @@ import '../modules/(auth)/verification/bindings/verification_binding.dart';
 import '../modules/(auth)/verification/views/verification_view.dart';
 import '../modules/(auth)/verificationSuccess/bindings/verification_success_binding.dart';
 import '../modules/(auth)/verificationSuccess/views/verification_success_view.dart';
+import '../modules/(doctor)/analyze_doctor/bindings/analyze_doctor_binding.dart';
+import '../modules/(doctor)/analyze_doctor/views/analyze_doctor_view.dart';
 import '../modules/(doctor)/appointment-result/bindings/appointment_result_binding.dart';
 import '../modules/(doctor)/appointment-result/views/appointment_result_view.dart';
 import '../modules/(doctor)/detail-diagnose/bindings/detail_diagnose_binding.dart';
@@ -26,6 +28,10 @@ import '../modules/(doctor)/home_doctor/bindings/home_doctor_binding.dart';
 import '../modules/(doctor)/home_doctor/views/home_doctor_view.dart';
 import '../modules/(doctor)/list_patients/bindings/list_patients_binding.dart';
 import '../modules/(doctor)/list_patients/views/list_patients_view.dart';
+import '../modules/(doctor)/patiens_history/bindings/patiens_history_binding.dart';
+import '../modules/(doctor)/patiens_history/views/patiens_history_view.dart';
+import '../modules/(doctor)/profile_doctor/bindings/profile_doctor_binding.dart';
+import '../modules/(doctor)/profile_doctor/views/profile_doctor_view.dart';
 import '../modules/(doctor)/qr_scanner_screen/bindings/qr_scanner_screen_binding.dart';
 import '../modules/(doctor)/qr_scanner_screen/views/qr_scanner_screen_view.dart';
 import '../modules/(home)/(appoinment)/appointment/bindings/appointment_binding.dart';
@@ -56,6 +62,8 @@ import '../modules/(home)/medicineRecord/bindings/medicine_record_binding.dart';
 import '../modules/(home)/medicineRecord/views/medicine_record_view.dart';
 import '../modules/(home)/onboarding_page/bindings/onboarding_page_binding.dart';
 import '../modules/(home)/onboarding_page/views/onboarding_page_view.dart';
+import '../modules/(home)/paymentDenied/bindings/payment_denied_binding.dart';
+import '../modules/(home)/paymentDenied/views/payment_denied_view.dart';
 import '../modules/(home)/paymentSuccess/bindings/payment_success_binding.dart';
 import '../modules/(home)/paymentSuccess/views/payment_success_view.dart';
 import '../modules/(home)/personal_data/bindings/personal_data_binding.dart';
@@ -70,12 +78,12 @@ import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
 import '../modules/(home)/splash_screen/views/splash_screen_view.dart';
 import '../modules/Theme/bindings/theme_binding.dart';
 import '../modules/Theme/views/theme_view.dart';
+import '../modules/grab_medicine/bindings/grab_medicine_binding.dart';
+import '../modules/grab_medicine/views/grab_medicine_view.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/bindings/notification_user_binding.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
 import '../modules/notification-user/views/notification_user_view.dart';
-import '../modules/(home)/paymentDenied/bindings/payment_denied_binding.dart';
-import '../modules/(home)/paymentDenied/views/payment_denied_view.dart';
 
 part 'app_routes.dart';
 
@@ -265,6 +273,26 @@ class AppPages {
       name: _Paths.PAYMENT_DENIED,
       page: () => const PaymentDeniedView(),
       binding: PaymentDeniedBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE_DOCTOR,
+      page: () => const ProfileDoctorView(),
+      binding: ProfileDoctorBinding(),
+    ),
+    GetPage(
+      name: _Paths.PATIENS_HISTORY,
+      page: () => const PatiensHistoryView(),
+      binding: PatiensHistoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.ANALYZE_DOCTOR,
+      page: () => const AnalyzeDoctorView(),
+      binding: AnalyzeDoctorBinding(),
+    ),
+    GetPage(
+      name: _Paths.GRAB_MEDICINE,
+      page: () => const GrabMedicineView(),
+      binding: GrabMedicineBinding(),
     ),
   ];
 }

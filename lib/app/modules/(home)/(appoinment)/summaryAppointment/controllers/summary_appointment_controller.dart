@@ -132,7 +132,7 @@ class SummaryAppointmentController extends GetxController {
 
             print('Real-time appointment status update: $status');
 
-            if (status == 5) {
+            if (status == 6) {
               isAppointmentCompleted.value = true;
               buttonText.value = 'Next';
             } else {
@@ -222,7 +222,7 @@ class SummaryAppointmentController extends GetxController {
 
       // Check initial status
       final status = appointmentResponse['status'] as int?;
-      if (status == 5) {
+      if (status == 6) {
         isAppointmentCompleted.value = true;
         buttonText.value = 'Next';
       } else {
@@ -358,7 +358,7 @@ class SummaryAppointmentController extends GetxController {
       // Navigate to results page or perform next action
       Get.toNamed('/appointment-result', arguments: appointment.value?.id);
     } else {
-      // Show a message that results are not ready yet
+      // Show a message that results are not ready yet 
       Get.snackbar(
         'Info',
         'Please wait for the doctor to complete your consultation',

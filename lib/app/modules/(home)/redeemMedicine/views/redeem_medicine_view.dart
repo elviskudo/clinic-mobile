@@ -1,15 +1,27 @@
-import 'package:clinic_ai/app/modules/(home)/redeemMedicine/controllers/redeem_medicine_controller.dart';
-import 'package:clinic_ai/models/drug_model.dart';
-import 'package:clinic_ai/models/fee_model.dart';
-import 'package:clinic_ai/models/transaction_model.dart'; //import transaction
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
+
+import '../controllers/redeem_medicine_controller.dart';
 
 class RedeemMedicineView extends GetView<RedeemMedicineController> {
-  const RedeemMedicineView({Key? key}) : super(key: key);
+  const RedeemMedicineView({super.key});
+
+  // ANTI ERROR STRING -> INT
+  String formatRupiah(dynamic amount) {
+    if (amount == null) return "Rp0";
+    int value = 0;
+    if (amount is int) {
+      value = amount;
+    } else if (amount is String) {
+      value = int.tryParse(amount.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+    } else if (amount is double) {
+      value = amount.toInt();
+    }
+    return NumberFormat.currency(locale: 'id', symbol: 'Rp', decimalDigits: 0)
+        .format(value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,297 +30,314 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: const Color(0xFFF9FBF6),
       appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: const Color(0xFFF9FBF6),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
-          onPressed: () {
-            Get.back();
-          },
+          onPressed: () => Get.back(),
         ),
-        title: const Text(
-          'Reedem Medicine',
-          style: TextStyle(
+        title: Text(
+          'Redeem Medicine',
+          style: GoogleFonts.inter(
             color: Colors.black,
             fontSize: 18,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          return Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                        child: Text(
-                          'AI Response',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+          return const Center(
+              child: CircularProgressIndicator(color: Color(0xff35693E)));
+        }
+
+        return Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ==========================================
+                    // 1. AI RESPONSE BOX
+                    // ==========================================
+                    Text(
+                      'AI Response',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors
+                            .grey.shade200, // Warna abu-abu seperti desain
+                        borderRadius: BorderRadius.circular(8),
+                        border:
+                            Border.all(color: Colors.grey.shade400, width: 1),
+                      ),
+                      child: Text(
+                        controller.aiResponse.value,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: Colors.black87,
+                          height: 1.5,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                        child: Container(
-                          width: double.infinity,
+                    ),
+                    const SizedBox(height: 24),
+                    Divider(height: 1, color: Colors.grey.shade300),
+                    const SizedBox(height: 24),
+
+                    // ==========================================
+                    // 2. MEDICINE LIST
+                    // ==========================================
+                    Text(
+                      'Medicine',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    if (controller.medicines.isEmpty)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text("Tidak ada obat yang diresepkan.",
+                              style: GoogleFonts.inter(color: Colors.grey)),
+                        ),
+                      )
+                    else
+                      ...controller.medicines.map((drug) {
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                                color: Colors.grey.shade300, width: 1),
+                            color:
+                                const Color(0xFFD6EAD7), // Warna hijau pastel
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          child: Obx(
-                            () => Text(
-                              controller.aiResponse.value,
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 4,
-                        color: Colors.grey.shade200,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                        child: Text(
-                          'Medicine',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Obx(() => Column(
-                            children: controller.medicines
-                                .map((medicine) => _buildMedicineCard(medicine))
-                                .toList(),
-                          )),
-                      GestureDetector(
-                        onTap: () {
-                          _showBankBottomSheet(context, controller);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
                           child: Row(
                             children: [
-                              Text(
-                                '\u{1F4B3}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              CircleAvatar(
+                                radius: 24,
+                                backgroundColor: Colors.white,
+                                child: const Icon(Icons.medication,
+                                    color: Color(0xff35693E)),
                               ),
                               const SizedBox(width: 12),
-                              const Text(
-                                'Payment Method',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500),
-                              ),
-                              const Spacer(),
-                              Obx(() => Text(
-                                    controller.selectedBankName.value,
-                                    style: const TextStyle(
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      drug['name'],
+                                      style: GoogleFonts.inter(
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w500),
-                                  )),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                size: 14,
-                                color: Colors.black54,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    Text(
+                                      drug['kind'],
+                                      style: GoogleFonts.inter(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
+                                    Text(
+                                      drug['dosis'],
+                                      style: GoogleFonts.inter(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Harga Total Obat per Item (Harga x QTY)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    formatRupiah(drug['price'] * drug['qty']),
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xff35693E),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Qty: ${drug['qty']}",
+                                    style: GoogleFonts.inter(
+                                        fontSize: 12, color: Colors.black54),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                      Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: Colors.grey.shade200,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Payment Details',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
+                        );
+                      }).toList(),
+
+                    const SizedBox(height: 12),
+                    Divider(height: 1, color: Colors.grey.shade300),
+                    const SizedBox(height: 16),
+
+                    // ==========================================
+                    // 3. PAYMENT METHOD
+                    // ==========================================
+                    GestureDetector(
+                      onTap: () => _showBankBottomSheet(context, controller),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.payment, color: Colors.black54),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Payment Method',
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
-                            const SizedBox(height: 12),
-                            Obx(() => Column(
-                                  children: [
-                                    // Tampilkan daftar fees
-                                    ...controller.fees
-                                        .map((fee) => _buildPaymentRow(
-                                            fee.procedure,
-                                            fee.price.toString()))
-                                        .toList(),
-                                    const SizedBox(height: 4),
-                                    _buildPaymentRow(
-                                        'Total', controller.total.value,
-                                        isTotal: true),
-                                  ],
-                                )),
-                          ],
-                        ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            controller.selectedBankName.value,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_forward_ios,
+                              size: 14, color: Colors.black54),
+                        ],
                       ),
-                      const SizedBox(height: 80), // Ruang untuk tombol Pay
-                      Center(
-                        child: Container(
-                          width: 40,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(2),
+                    ),
+                    const SizedBox(height: 16),
+                    Divider(height: 1, color: Colors.grey.shade300),
+                    const SizedBox(height: 24),
+
+                    // ==========================================
+                    // 4. PAYMENT DETAILS
+                    // ==========================================
+                    Text(
+                      'Payment Details',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildPaymentRow(
+                        'Product Subtotal', controller.productSubtotal.value),
+                    _buildPaymentRow(
+                        'Consultation Fee', controller.consultationFee.value),
+                    _buildPaymentRow(
+                        'Handling Fee', controller.handlingFee.value),
+
+                    // Render Extra Fees dari Dokter jika ada
+                    if (controller.extraFees.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text("Additional Fee:",
+                          style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[700])),
+                      const SizedBox(height: 4),
+                      ...controller.extraFees
+                          .map((fee) =>
+                              _buildPaymentRow(fee['name'], fee['price']))
+                          .toList(),
+                    ],
+
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                    ],
+                        Text(
+                          formatRupiah(controller.totalAmount.value),
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xff35693E),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            ),
+
+            // ==========================================
+            // 5. PAY BUTTON
+            // ==========================================
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    offset: const Offset(0, -4),
+                    blurRadius: 10,
+                  )
+                ],
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff35693E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: controller.selectedBankId.value.isNotEmpty
+                      ? () => controller.createTransaction()
+                      : null,
+                  // onPressed: () => controller.createTransaction(),
+                  child: Text(
+                    'Next',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-              // Tombol Pay
-              Container(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                decoration: const BoxDecoration(
-                  color: Color(
-                      0xFFF7FBF2), // Warna latar belakang yang sama dengan Scaffold
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      elevation: 0,
-                    ),
-                    onPressed: controller.selectedBankId.value.isNotEmpty
-                        ? () async {
-                            // Action when Pay button is pressed
-                            // Lakukan pembayaran di sini
-                            await controller.createTransaction();
-                          }
-                        : null, // Disable tombol jika bank belum dipilih
-                    child: const Text(
-                      'Pay',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }
+            ),
+          ],
+        );
       }),
     );
   }
 
-  Widget _buildMedicineCard(Drug medicine) {
-    final NumberFormat currencyFormatter = NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: 'Rp',
-      decimalDigits: 0,
-    );
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(Get.context!).primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.grey.shade500,
-            child: ClipOval(
-              child: Image.network(
-                'https://via.placeholder.com/50',
-                width: 40,
-                height: 40,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.medical_services, size: 20),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  medicine.name,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Text(
-                  medicine.kind,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
-                  ),
-                ),
-                Text(
-                  medicine.description,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            currencyFormatter.format(medicine.sellPrice),
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPaymentRow(String label, String value, {bool isTotal = false}) {
-    final NumberFormat currencyFormatter = NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: 'Rp',
-      decimalDigits: 0,
-    );
-
+  // Row untuk rincian harga
+  Widget _buildPaymentRow(String label, dynamic value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -316,20 +345,16 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontSize: isTotal ? 16 : 14,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-              color: Colors.black87,
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: Colors.grey[600],
             ),
           ),
           Text(
-            currencyFormatter.format(double.parse(value)),
-            style: TextStyle(
-              fontSize: isTotal ? 16 : 14,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-              color: isTotal
-                  ? Theme.of(Get.context!).primaryColor
-                  : Colors.black87,
+            formatRupiah(value),
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: Colors.grey[600],
             ),
           ),
         ],
@@ -337,12 +362,13 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
     );
   }
 
+  // Pop up Bottom Sheet Bank
   void _showBankBottomSheet(
       BuildContext context, RedeemMedicineController controller) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext bc) {
@@ -353,43 +379,50 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
             children: [
               Text(
                 'Select Payment Method',
-                style: TextStyle(
+                style: GoogleFonts.inter(
                   fontSize: 18,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Obx(() {
                 if (controller.banks.isEmpty) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child:
+                          CircularProgressIndicator(color: Color(0xff35693E)));
                 } else {
                   return ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: controller.banks.length,
-                      itemBuilder: (context, index) {
-                        final bank = controller.banks[index];
-                        return Obx(() => ListTile(
-                              title: Text(bank.name ?? 'Unknown Bank'),
-                              subtitle: Text(
-                                  'Account Number: ${bank.accountNumber ?? 'N/A'}'),
-                              trailing: Radio<String>(
-                                value: bank.id ?? '',
-                                groupValue: controller.selectedBankId.value,
-                                onChanged: (String? value) {
-                                  controller.selectBank(
-                                      value ?? '', bank.name ?? '');
-                                  Get.back();
-                                },
-                                activeColor: Colors.green,
-                              ),
-                              onTap: () {
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: controller.banks.length,
+                    itemBuilder: (context, index) {
+                      final bank = controller.banks[index];
+                      return Obx(() => ListTile(
+                            title: Text(bank.name ?? 'Unknown Bank',
+                                style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.w500)),
+                            subtitle: Text(
+                                'Account Number: ${bank.accountNumber ?? 'N/A'}',
+                                style: GoogleFonts.inter(fontSize: 12)),
+                            trailing: Radio<String>(
+                              value: bank.id ?? '',
+                              groupValue: controller.selectedBankId.value,
+                              onChanged: (String? value) {
                                 controller.selectBank(
-                                    bank.id ?? '', bank.name ?? '');
+                                    value ?? '', bank.name ?? '');
                                 Get.back();
                               },
-                            ));
-                      });
+                              activeColor: const Color(0xff35693E),
+                            ),
+                            onTap: () {
+                              controller.selectBank(
+                                  bank.id ?? '', bank.name ?? '');
+                              Get.back();
+                            },
+                          ));
+                    },
+                  );
                 }
               }),
             ],

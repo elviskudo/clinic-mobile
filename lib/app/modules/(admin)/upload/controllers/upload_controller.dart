@@ -1,6 +1,4 @@
-// File: app/controllers/upload_controller.dart
-import 'dart:io';
-
+import 'dart:convert';
 import 'package:clinic_ai/app/modules/(admin)/list_user/controllers/list_user_controller.dart';
 import 'package:clinic_ai/components/UploadDialog.dart';
 import 'package:clinic_ai/models/file_model.dart';
@@ -8,14 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart' as dio;
-import 'package:supabase_flutter/supabase_flutter.dart'; // Menambahkan prefix 'dio'
+import 'package:http/http.dart' as http;
 
-// Modifikasi UploadController
 class UploadController extends GetxController {
-  final SupabaseClient supabase = Supabase.instance.client;
+  final String baseUrl = "https://be-clinic-rx7y.vercel.app";
+
   final isLoading = false.obs;
   final selectedModuleClass = ''.obs;
-  final selectedModuleId = ''.obs;
   final existingFileId = ''.obs;
   final imageUrl = ''.obs;
   final selectedImage = Rxn<XFile>();
@@ -24,14 +21,24 @@ class UploadController extends GetxController {
   final isDeleteMode = false.obs;
   final selectedFilesForDeletion = <String>{}.obs;
 
-  final cloudName = 'dcthljxbl';
-  final uploadPreset = 'dompet-mal';
+  final cloudName = 'dulun20eo';
+  final uploadPreset = 'clinic_app';
+
   final RxList<FileModel> fileList = <FileModel>[].obs;
+
   final RxList<String> moduleClasses = <String>[
+    'all',
     'users',
     'appointments',
-    'all'
-  ].obs; // Contoh data module class
+    'transactions',
+    'companies',
+    'clinics',
+    'doctors',
+    'drugs',
+    'charities',
+    'banks'
+  ].obs;
+
   final RxList<FileModel> filteredFileList = <FileModel>[].obs;
 
   @override
@@ -45,14 +52,12 @@ class UploadController extends GetxController {
     isDeleteMode.value = false;
   }
 
-  // Method to toggle delete mode
   void toggleDeleteMode() {
     isDeleteMode.value = !isDeleteMode.value;
     isEditMode.value = false;
     selectedFilesForDeletion.clear();
   }
 
-  // Method to select/deselect file for deletion
   void toggleFileSelection(String fileId) {
     if (selectedFilesForDeletion.contains(fileId)) {
       selectedFilesForDeletion.remove(fileId);
@@ -62,44 +67,37 @@ class UploadController extends GetxController {
   }
 
   Future<void> deleteSelectedFiles() async {
+    if (selectedFilesForDeletion.isEmpty) return;
     try {
-      if (selectedFilesForDeletion.isEmpty) return;
-
-      // Delete files one by one
+      isLoading.value = true;
       for (var fileId in selectedFilesForDeletion) {
-        await supabase.from('files').delete().eq('id', fileId);
+        final url = Uri.parse('$baseUrl/files/$fileId');
+        await http.delete(url);
       }
-
-      // Refresh file list
       await fetchFiles();
-
-      // Reset delete mode
       toggleDeleteMode();
-
       Get.snackbar('Success', 'Selected files deleted successfully');
     } catch (e) {
       Get.snackbar('Error', 'Failed to delete files: $e');
-      print('Failed to delete files: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  // Method to edit file (will reuse existing upload logic)
   Future<void> editFile(FileModel file) async {
     existingFileId.value = file.id ?? '';
     imageUrl.value = file.fileName ?? '';
     fileType.value = file.fileType;
     selectedModuleClass.value = file.moduleClass;
-    selectedModuleId.value = file.moduleId;
 
-    // Show upload dialog to replace file
-    Get.dialog(UploadDialogImage());
+    Get.put(ListUserController());
+    Get.dialog(UploadDialog());
   }
 
   void filterFiles() {
     if (selectedModuleClass.value.isEmpty ||
         selectedModuleClass.value == 'all') {
-      filteredFileList.value =
-          fileList; // Show all files when no filter is selected
+      filteredFileList.value = fileList;
     } else {
       filteredFileList.value = fileList
           .where((file) => file.moduleClass == selectedModuleClass.value)
@@ -108,135 +106,65 @@ class UploadController extends GetxController {
   }
 
   void showUploadDialog(BuildContext context) {
-    // Ensure all controllers are initialized before showing dialog
+    resetForm();
     Get.put(ListUserController());
-    Get.put(UploadController());
-
-    // Then show the dialog
     Get.dialog(UploadDialog());
-  }
-
-  Future<String?> pickAndUploadImage({required String moduleClass}) async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      isLoading.value = true;
-      try {
-        // Upload ke server menggunakan Supabase
-        final uploadResult = await supabase.storage.from(moduleClass).upload(
-              'images/${DateTime.now().toIso8601String()}-${image.name}',
-              File(image.path),
-            );
-        // if (uploadResult.error == null) {
-        //   final publicUrl = supabase.storage
-        //       .from(moduleClass)
-        //       .getPublicUrl(uploadResult.path);
-        //   return publicUrl;
-        // } else {
-        //   Get.snackbar('Error', 'Gagal mengupload gambar');
-        // }
-      } catch (e) {
-        Get.snackbar('Error', 'Terjadi kesalahan: $e');
-      } finally {
-        isLoading.value = false;
-      }
-    }
-    return null;
   }
 
   Future<List<FileModel>> fetchFiles() async {
     try {
-      final response = await supabase.from('files').select('*');
-      ;
-      final data = response as List<dynamic>;
+      final response = await http.get(Uri.parse('$baseUrl/files'));
 
-      List<FileModel> files = [];
+      if (response.statusCode == 200) {
+        final dynamic decodedBody = json.decode(response.body);
+        List<dynamic> data = [];
 
-      // Create a set of existing module IDs for quick lookup
-      final existingFileModuleIds =
-          data.map((file) => file['module_id'] as String).toSet();
+        if (decodedBody is List) {
+          data = decodedBody;
+        } else if (decodedBody is Map<String, dynamic>) {
+          if (decodedBody['data'] is List)
+            data = decodedBody['data'];
+          else if (decodedBody['result'] is List) data = decodedBody['result'];
+        }
 
-      for (final file in data) {
-        final moduleClass = file['module_class'] as String;
-        final moduleId = file['module_id'] as String;
-        String? moduleName;
+        final List<FileModel> files = data.map((jsonItem) {
+          return FileModel(
+            id: jsonItem['id'],
+            moduleClass: jsonItem['module_class'] ?? 'unknown',
+            moduleId: jsonItem['module_id'],
+            fileName: jsonItem['file_name'],
+            fileType: jsonItem['file_type'],
+            moduleName: (jsonItem['module_name'] != null &&
+                    jsonItem['module_name'] != 'Unknown')
+                ? jsonItem['module_name']
+                : (jsonItem['module_class'] ?? 'Unknown File'),
+            hasFile: true,
+          );
+        }).toList();
 
-        final userResponse = await supabase
-            .from(moduleClass)
-            .select(moduleClass == 'appointments' ? 'id ' : 'name')
-            .eq('id', moduleId)
-            .single();
-        moduleName =
-            userResponse['${moduleClass == 'appointments' ? 'id' : 'name'}']
-                as String;
+        fileList.value = files;
+        if (selectedModuleClass.value.isEmpty) {
+          selectedModuleClass.value = 'all';
+        }
 
-        // Add data to files list with hasFile flag
-        files.add(FileModel(
-          id: file['id'] as String?,
-          moduleClass: moduleClass,
-          moduleId: moduleId,
-          moduleName: moduleName ?? 'Unknown',
-          fileName: file['file_name'] as String,
-          fileType: file['file_type'] as String,
-          hasFile: existingFileModuleIds.contains(moduleId), // New flag
-          createdAt: file['created_at'] != null
-              ? DateTime.parse(file['created_at'] as String)
-              : null,
-        ));
+        filterFiles();
+        return files;
       }
-      fileList.value = files;
-      filteredFileList.value = files;
-      filterFiles();
-      return files;
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to fetch files: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      print('error: $e');
       return [];
-    }
-  }
-
-  Future<void> checkExistingFile() async {
-    try {
-      final response = await supabase
-          .from('files')
-          .select()
-          .eq('module_class', selectedModuleClass.value)
-          .eq('module_id', selectedModuleId.value)
-          .single(); // Get single record if exists
-
-      if (response != null) {
-        existingFileId.value = response['id'];
-        imageUrl.value = response['file_name'];
-        fileType.value = response['file_type'];
-      } else {
-        existingFileId.value = '';
-        imageUrl.value = '';
-        fileType.value = '';
-      }
     } catch (e) {
-      existingFileId.value = '';
-      print('No existing file found: $e');
+      print('Error fetch files: $e');
+      return [];
     }
   }
 
   Future<void> uploadFileToCloudinary(XFile file) async {
     try {
       isLoading.value = true;
-
       final bytes = await file.readAsBytes();
       fileType.value = file.name.split('.').last;
 
       final formData = dio.FormData.fromMap({
-        'file': dio.MultipartFile.fromBytes(
-          bytes,
-          filename: file.name,
-        ),
+        'file': dio.MultipartFile.fromBytes(bytes, filename: file.name),
         'upload_preset': uploadPreset,
       });
 
@@ -248,8 +176,6 @@ class UploadController extends GetxController {
       if (response.statusCode == 200) {
         imageUrl.value = response.data['secure_url'];
       }
-      fetchFiles();
-      filterFiles();
     } catch (e) {
       print('Upload error: $e');
       Get.snackbar('Error', 'Failed to upload file: $e');
@@ -259,77 +185,62 @@ class UploadController extends GetxController {
   }
 
   Future<void> saveFileInfo() async {
+    if (selectedModuleClass.value.isEmpty) {
+      Get.snackbar('Error', 'Tipe Modul belum dipilih!',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    if (imageUrl.value.isEmpty) {
+      Get.snackbar('Error', 'Gambar belum selesai diupload. Tunggu sebentar.',
+          backgroundColor: Colors.orange, colorText: Colors.white);
+      return;
+    }
+
     try {
       isLoading.value = true;
 
-      if (selectedModuleClass.value == 'users' &&
-          selectedModuleId.value == 'all') {
-        // Fetch all users and upload file for each
-        final userResponse = await supabase.from('users').select('id');
-        final userIds =
-            (userResponse as List).map((user) => user['id'] as String).toList();
+      final listUserController = Get.find<ListUserController>();
+      final idUserLogin = listUserController.currentUserId.value;
 
-        for (final userId in userIds) {
-          final fileData = FileModel(
-            moduleClass: 'users',
-            moduleId: userId,
-            fileName: imageUrl.value,
-            fileType: fileType.value,
-          ).toJson();
+      if (idUserLogin.isEmpty) {
+        Get.snackbar('Error', 'Gagal mendapatkan ID User. Silakan relogin.',
+            backgroundColor: Colors.red, colorText: Colors.white);
+        return;
+      }
 
-          // Check if file exists for this user
-          final existingFile = await supabase
-              .from('files')
-              .select()
-              .eq('module_class', 'users')
-              .eq('module_id', userId)
-              .single();
+      final body = {
+        'fileId': existingFileId.value.isNotEmpty
+            ? existingFileId.value
+            : null, // FIX UTAMA DI SINI
+        'moduleClass': selectedModuleClass.value,
+        'moduleId': idUserLogin,
+        'fileName': imageUrl.value,
+        'fileType': fileType.value,
+        'uploadAllUsers': false,
+      };
 
-          if (existingFile != null) {
-            // Update existing file
-            await supabase
-                .from('files')
-                .update(fileData)
-                .eq('id', existingFile['id']);
-          } else {
-            // Insert new file
-            await supabase.from('files').insert(fileData);
-          }
-        }
+      final url = Uri.parse('$baseUrl/files/save');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(body),
+      );
 
+      if (response.statusCode == 201 || response.statusCode == 200) {
         await resetForm();
-
         await fetchFiles();
-        filterFiles();
-        Get.back();
-        Get.snackbar('Success', 'Files uploaded for all users');
+        if (Get.isDialogOpen ?? false) Get.back();
+
+        Get.snackbar('Success', 'File berhasil disimpan!',
+            backgroundColor: Colors.green, colorText: Colors.white);
       } else {
-        // Existing single file upload logic
-        final fileData = FileModel(
-          moduleClass: selectedModuleClass.value,
-          moduleId: selectedModuleId.value,
-          fileName: imageUrl.value,
-          fileType: fileType.value,
-        ).toJson();
-
-        if (existingFileId.value.isNotEmpty) {
-          // Update existing file
-          await supabase
-              .from('files')
-              .update(fileData)
-              .eq('id', existingFileId.value);
-        } else {
-          // Insert new file
-          await supabase.from('files').insert(fileData);
-        }
-
-        await resetForm();
-        Get.back();
-        Get.snackbar('Success', 'File saved successfully');
+        Get.snackbar('Error', 'Gagal menyimpan file: ${response.statusCode}',
+            backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
-      print('Error saving file info: $e');
-      Get.snackbar('Error', 'Failed to save file information');
+      Get.snackbar('Error', 'Terjadi kesalahan koneksi',
+          backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }
@@ -337,12 +248,9 @@ class UploadController extends GetxController {
 
   Future<void> resetForm() async {
     selectedModuleClass.value = '';
-    selectedModuleId.value = '';
     existingFileId.value = '';
     imageUrl.value = '';
     fileType.value = '';
     selectedImage.value = null;
   }
 }
-
-// Modifikasi UploadDialog

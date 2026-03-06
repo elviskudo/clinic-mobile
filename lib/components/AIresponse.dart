@@ -117,7 +117,7 @@ class _AnimatedAIResponseState extends State<AnimatedAIResponse> {
               ],
             ),
           ),
-      ],
+      ],     
     );
   }
 

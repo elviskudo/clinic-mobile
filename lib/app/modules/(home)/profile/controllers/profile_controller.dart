@@ -4,38 +4,42 @@ import 'package:clinic_ai/models/user_model.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ProfileController extends GetxController {
-  final supabase = Supabase.instance.client;
   final user = Users().obs;
   final isLoading = true.obs;
   final errorMessage = RxString('');
-  // final isDarkMode = false.obs;
+
   RxString roleUser = ''.obs;
   RxString userName = ''.obs;
   RxString userEmail = ''.obs;
   RxString currentUserId = ''.obs;
+  RxString profileImageUrl = ''.obs;
+
   late final TextEditingController namaController;
   late final TextEditingController emailController;
   SharedPreferences? _prefs;
+
   final UploadController uploadController = Get.put(UploadController());
-  RxString profileImageUrl = ''.obs;
   final themeController = Get.find<ThemeController>();
   RxBool get isDarkMode => RxBool(themeController.isDarkMode);
+
+  // Ganti dengan URL backend kamu (Production/Local)
+  final String baseUrl = 'https://be-clinic-rx7y.vercel.app';
+
   @override
   void onInit() {
     super.onInit();
-    // Initialize controllers in onInit
     namaController = TextEditingController();
     emailController = TextEditingController();
+    // Cukup panggil fungsi ini, tidak perlu lagi .then(() => loadProfileImage())
     _loadUserIdFromPrefs();
-    loadUserData().then((_) => loadProfileImage());
   }
 
   @override
   void onClose() {
-    // Properly dispose controllers in onClose
     namaController.dispose();
     emailController.dispose();
     super.onClose();
@@ -48,88 +52,83 @@ class ProfileController extends GetxController {
     if (savedUserId.isNotEmpty) {
       currentUserId.value = savedUserId;
       print('Loaded userId from SharedPreferences: $savedUserId');
+      // Langsung panggil backend
       await loadUserData();
-      await loadProfileImage();
     } else {
       print('Error: userId not found in SharedPreferences.');
+      errorMessage.value = 'Sesi tidak valid, silakan login ulang.';
+      isLoading.value = false;
     }
   }
 
   Future<void> loadUserData() async {
     try {
       isLoading.value = true;
+      errorMessage.value = ''; // Reset error message saat mencoba load ulang
 
-      if (currentUserId.value.isEmpty) {
-        print('Error: userId is empty.');
-        return;
-      }
+      _prefs = await SharedPreferences.getInstance();
+      final token = _prefs?.getString('accessToken') ?? '';
 
-      final response = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', currentUserId.value)
-          .maybeSingle();
+      final response = await http.get(
+        Uri.parse('$baseUrl/profile'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-      if (response != null) {
-        final userRole = await supabase
-            .from('user_roles')
-            .select()
-            .eq('user_id', response['id'])
-            .limit(1)
-            .single();
+      print("STATUS CODE: ${response.statusCode}");
+      print("RESPONSE BODY: ${response.body}");
 
-        final roles = await supabase
-            .from('roles')
-            .select()
-            .eq('id', userRole['role_id'])
-            .single();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final decodedBody = json.decode(response.body);
 
-        final roleName = roles['name'] ?? 'member';
+        // Menyesuaikan dengan response: {"success": true, "data": {...}}
+        final data = decodedBody['data'] ?? decodedBody;
 
-        String? imageUrl;
-        final fileResponse = await supabase
-            .from('files')
-            .select('file_name')
-            .eq('module_class', 'users')
-            .eq('module_id', response['id'])
-            .limit(1)
-            .maybeSingle();
-
-        if (fileResponse != null) {
-          imageUrl = fileResponse['file_name'];
+        if (data == null) {
+          throw Exception("Data pengguna kosong dari server");
         }
 
         user.value = Users(
-          id: response['id'] as String,
-          name: response['name'] as String,
-          email: response['email'] as String,
-          role: roleName,
-          phoneNumber: response['phone_number'] as String,
-          accessToken: response['access_token'] as String,
-          imageUrl: imageUrl,
-          createdAt: DateTime.parse(response['created_at'] as String),
-          updatedAt: DateTime.parse(response['updated_at'] as String),
+          id: data['id']?.toString() ?? '',
+          name: data['name']?.toString() ?? 'Pasien',
+          email: data['email']?.toString() ?? '',
+          role: data['role']?.toString() ?? 'member',
+          phoneNumber: data['phone_number']?.toString() ?? '',
+          accessToken: data['access_token']?.toString() ?? '',
+          imageUrl: (data['imageUrl'] != null &&
+                  data['imageUrl'].toString().isNotEmpty)
+              ? data['imageUrl'].toString()
+              : null,
+          createdAt: data['created_at'] != null
+              ? (DateTime.tryParse(data['created_at'].toString()) ??
+                  DateTime.now())
+              : DateTime.now(),
+          updatedAt: data['updated_at'] != null
+              ? (DateTime.tryParse(data['updated_at'].toString()) ??
+                  DateTime.now())
+              : DateTime.now(),
         );
 
-        // Only update controllers if they haven't been disposed
+        // Jika controller ini keburu dihapus (user pindah page cepat), hentikan eksekusi
         if (!Get.isRegistered<ProfileController>()) return;
 
+        // Update UI Variables
         userName.value = user.value.name;
         userEmail.value = user.value.email;
         roleUser.value = user.value.role;
+        profileImageUrl.value = user.value.imageUrl ?? '';
+
         namaController.text = user.value.name;
         emailController.text = user.value.email;
+      } else {
+        errorMessage.value =
+            'Gagal mengambil data profil (${response.statusCode})';
       }
     } catch (e) {
       print('Error fetching user: $e');
-      // if (Get.isRegistered<ProfileController>()) {
-      //   Get.snackbar(
-      //     'Error',
-      //     'Failed to fetch user: $e',
-      //     backgroundColor: Color(0xFF35693E),
-      //     colorText: Color(0xffffffff),
-      //   );
-      // }
+      errorMessage.value = 'Terjadi kesalahan jaringan atau data tidak valid.';
     } finally {
       isLoading.value = false;
     }
@@ -143,30 +142,5 @@ class ProfileController extends GetxController {
 
   void toggleDarkMode(bool value) {
     themeController.toggleTheme();
-  }
-
-  Future<void> loadProfileImage() async {
-    try {
-      if (currentUserId.value.isEmpty) {
-        print('Error: currentUserId is empty, cannot fetch profile image.');
-        return;
-      }
-      final response = await uploadController.supabase
-          .from('files')
-          .select()
-          .eq('module_class', 'users')
-          .eq('module_id', currentUserId.value)
-          .limit(1)
-          .single();
-
-      if (response != null && Get.isRegistered<ProfileController>()) {
-        profileImageUrl.value = response['file_name'];
-      }
-    } catch (e) {
-      print('Error loading profile image: $e');
-      if (Get.isRegistered<ProfileController>()) {
-        profileImageUrl.value = '';
-      }
-    }
   }
 }

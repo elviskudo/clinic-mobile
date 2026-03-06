@@ -177,27 +177,18 @@ class AdminPanelView extends GetView<AdminPanelController> {
   Widget _buildSidebarContent() {
     return Column(
       children: [
-        const CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.white,
-          child: Icon(Icons.person, size: 40, color: Colors.black87),
-        ),
-        const SizedBox(height: 20),
-        Text(
-          'Admin Panel',
-          style: GoogleFonts.poppins(
-            color: Colors.black87,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        // ... (Header Avatar sama)
         const SizedBox(height: 30),
         _buildMenuItem(0, 'Dashboard', Icons.dashboard),
         _buildMenuItem(1, 'Clinic', Icons.people),
         _buildMenuItem(2, 'Poly', Icons.monochrome_photos),
         _buildMenuItem(3, 'Doctor', Icons.medication),
-        _buildMenuItem(4, 'Schedule Date', Icons.schedule),
-        _buildMenuItem(5, 'Schedule Time', Icons.timer_sharp),
+
+        // GABUNGAN: Ganti nama jadi Doctor Schedules
+        _buildMenuItem(4, 'Doctor Schedules', Icons.calendar_month),
+
+        // _buildMenuItem(5, 'Schedule Time', Icons.timer_sharp), // <-- HAPUS INI
+
         _buildMenuItem(6, 'Upload', Icons.upload_file),
         _buildMenuItem(7, 'Drugs', Icons.medical_information),
       ],
@@ -238,14 +229,12 @@ class AdminPanelView extends GetView<AdminPanelController> {
       case 3:
         return const DoctorView();
       case 4:
-        return const ScheduleDateView();
-      case 5:
-        return const ScheduleTimeView();
+        return const ScheduleDateView(); // View ini sekarang menghandle Date & Time
+      // case 5: return const ScheduleTimeView(); // <-- HAPUS CASE INI
       case 6:
         return const UploadView();
       case 7:
         return const DrugAdminView();
-
       default:
         return ListUserView();
     }

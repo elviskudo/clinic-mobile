@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'package:clinic_ai/models/drug_model.dart';
 import 'package:get/get.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class DrugAdminController extends GetxController {
-  //TODO: Implement DrugAdminController
-  final SupabaseClient supabase = Supabase.instance.client;
+  final String baseUrl = "https://be-clinic-rx7y.vercel.app";
+
   RxList<Drug> drugs = <Drug>[].obs;
   RxBool isLoading = false.obs;
 
@@ -14,61 +15,110 @@ class DrugAdminController extends GetxController {
     getDrugs();
   }
 
+  // Helper Parsing
+  List<dynamic> _parseListResponse(dynamic decodedBody) {
+    if (decodedBody is List) return decodedBody;
+    if (decodedBody is Map<String, dynamic>) {
+      if (decodedBody['data'] is List) return decodedBody['data'];
+      if (decodedBody['result'] is List) return decodedBody['result'];
+    }
+    return [];
+  }
+
+  // --- GET DRUGS ---
   Future<void> getDrugs() async {
     try {
       isLoading.value = true;
-      final response =
-          await supabase.from('drugs').select().order('name', ascending: true);
+      final response = await http.get(Uri.parse('$baseUrl/drugs'));
 
-      drugs.value =
-          response.map((item) => Drug.fromJson(item)).toList().cast<Drug>();
+      if (response.statusCode == 200) {
+        final decodedBody = json.decode(response.body);
+        final List<dynamic> data = _parseListResponse(decodedBody);
+
+        drugs.value = data.map((item) => Drug.fromJson(item)).toList();
+      } else {
+        print("Error Get Drugs: ${response.body}");
+      }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to fetch drugs: $e');
+      print("Exception Get Drugs: $e");
+      Get.snackbar('Error', 'Failed to fetch drugs');
     } finally {
       isLoading.value = false;
     }
   }
 
+  // --- ADD DRUG ---
   Future<void> addDrug(Drug drug) async {
     try {
       isLoading.value = true;
-      await supabase.from('drugs').insert(drug.toJson());
-      await getDrugs(); // Refresh the list
-      Get.snackbar('Success', 'Drug added successfully');
+      final url = Uri.parse('$baseUrl/drugs');
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(drug.toJson()),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        await getDrugs();
+        Get.snackbar('Success', 'Drug added successfully');
+      } else {
+        print("Error Add: ${response.body}");
+        Get.snackbar('Error', 'Failed to add drug: ${response.statusCode}');
+      }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to add drug: $e');
-      print('Error Failed to add drug: $e');
+      print("Exception Add: $e");
+      Get.snackbar('Error', 'Exception: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
+  // --- UPDATE DRUG ---
   Future<void> updateDrug(Drug drug) async {
     try {
       isLoading.value = true;
-      await supabase
-          .from('drugs')
-          .update(drug.toJson())
-          .eq('id', drug.id)
-          .order('name', ascending: false);
-      await getDrugs(); // Refresh the list
-      Get.snackbar('Success', 'Drug updated successfully');
+      final url = Uri.parse('$baseUrl/drugs/${drug.id}');
+
+      final response = await http.patch(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(drug.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        await getDrugs();
+        Get.snackbar('Success', 'Drug updated successfully');
+      } else {
+        print("Error Update: ${response.body}");
+        Get.snackbar('Error', 'Failed to update drug: ${response.statusCode}');
+      }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to update drug: $e');
-      print('error: $e');
+      print("Exception Update: $e");
+      Get.snackbar('Error', 'Exception: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
+  // --- DELETE DRUG ---
   Future<void> deleteDrug(String id) async {
     try {
       isLoading.value = true;
-      await supabase.from('drugs').delete().eq('id', id);
-      await getDrugs(); // Refresh the list
-      Get.snackbar('Success', 'Drug deleted successfully');
+      final url = Uri.parse('$baseUrl/drugs/$id');
+
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        await getDrugs();
+        Get.snackbar('Success', 'Drug deleted successfully');
+      } else {
+        print("Error Delete: ${response.body}");
+        Get.snackbar('Error', 'Failed to delete drug: ${response.statusCode}');
+      }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to delete drug: $e');
+      print("Exception Delete: $e");
+      Get.snackbar('Error', 'Exception: $e');
     } finally {
       isLoading.value = false;
     }

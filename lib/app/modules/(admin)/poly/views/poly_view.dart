@@ -1,11 +1,9 @@
-// import 'package:clinic_ai/model/clinicsModel.dart';
-
+import 'package:clinic_ai/app/modules/(admin)/poly/controllers/poly_controller.dart'; // Sesuaikan path
 import 'package:clinic_ai/models/clinic_model.dart';
 import 'package:clinic_ai/models/poly_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
-import '../controllers/poly_controller.dart';
 
 class PolyView extends GetView<PolyController> {
   const PolyView({super.key});
@@ -16,11 +14,11 @@ class PolyView extends GetView<PolyController> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showPolyDialog(context),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('Polies'),
+        title: const Text('Polies'),
         centerTitle: true,
       ),
       body: Obx(
@@ -38,6 +36,8 @@ class PolyView extends GetView<PolyController> {
                         Text(poly.description),
                         Text(
                             'Status: ${poly.status == 1 ? 'Active' : 'Inactive'}'),
+                        // Menampilkan nama klinik jika sudah di-join dari backend (Optional)
+                        // Text('Clinic ID: ${poly.clinicId}'),
                       ],
                     ),
                     trailing: Row(
@@ -45,12 +45,12 @@ class PolyView extends GetView<PolyController> {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.edit),
-                          tooltip: 'edit',
+                          tooltip: 'Edit',
                           onPressed: () => _showPolyDialog(context, poly: poly),
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete),
-                          tooltip: 'delete',
+                          tooltip: 'Delete',
                           onPressed: () => _showDeleteConfirmation(poly.id),
                         ),
                       ],
@@ -67,6 +67,13 @@ class PolyView extends GetView<PolyController> {
     final descriptionController =
         TextEditingController(text: poly?.description);
     final statusController = RxInt(poly?.status ?? 1);
+
+    // Set selected clinic
+    if (poly != null) {
+      controller.selectedClinicId.value = poly.clinicId;
+    } else {
+      controller.selectedClinicId.value = '';
+    }
 
     final isFormValid = RxBool(false);
 
@@ -88,34 +95,37 @@ class PolyView extends GetView<PolyController> {
             children: [
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(labelText: 'Poly Name'),
+                decoration: const InputDecoration(labelText: 'Poly Name'),
               ),
               TextField(
                 controller: descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 2,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Obx(
                 () => DropdownButtonFormField<String>(
                   value: controller.selectedClinicId.value.isEmpty
                       ? null
                       : controller.selectedClinicId.value,
-                  onChanged: (value) =>
-                      controller.selectedClinicId.value = value ?? '',
-                  decoration: const InputDecoration(labelText: 'Category'),
+                  onChanged: (value) {
+                    controller.selectedClinicId.value = value ?? '';
+                    validateForm();
+                  },
+                  decoration:
+                      const InputDecoration(labelText: 'Category (Clinic)'),
                   items: controller.clinics
-                      .map((Clinic category) => DropdownMenuItem(
-                            value: category.id,
-                            child: Text(category.name.toString()),
+                      .map((Clinic clinic) => DropdownMenuItem(
+                            value: clinic.id,
+                            child: Text(clinic.name ?? 'No Name'),
                           ))
                       .toList(),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 children: [
-                  Text('Status: '),
+                  const Text('Status: '),
                   Obx(() => Switch(
                         value: statusController.value == 1,
                         onChanged: (value) {
@@ -130,23 +140,26 @@ class PolyView extends GetView<PolyController> {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           Obx(() => TextButton(
                 onPressed: isFormValid.value
                     ? () {
                         if (poly == null) {
+                          // Create
                           final newPoly = Poly(
-                            id: Uuid().v4(),
+                            id: const Uuid().v4(),
                             name: nameController.text.trim(),
                             description: descriptionController.text.trim(),
                             status: statusController.value,
                             clinicId: controller.selectedClinicId.value,
-                            createdAt: '',
-                            updatedAt: '',
+                            createdAt: DateTime.now()
+                                .toIso8601String(), // Optional, BE usually handles this
+                            updatedAt: DateTime.now().toIso8601String(),
                           );
                           Get.find<PolyController>().addPoly(newPoly);
                         } else {
+                          // Update
                           poly.name = nameController.text.trim();
                           poly.description = descriptionController.text.trim();
                           poly.status = statusController.value;
@@ -156,7 +169,7 @@ class PolyView extends GetView<PolyController> {
                         Get.back();
                       }
                     : null,
-                child: Text('Save'),
+                child: const Text('Save'),
               )),
         ],
       ),
@@ -166,20 +179,20 @@ class PolyView extends GetView<PolyController> {
   void _showDeleteConfirmation(String id) {
     Get.dialog(
       AlertDialog(
-        title: Text('Delete Poly'),
-        content: Text('Are you sure you want to delete this poly?'),
+        title: const Text('Delete Poly'),
+        content: const Text('Are you sure you want to delete this poly?'),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
               controller.deletePoly(id);
               Get.back();
             },
-            child: Text('Delete'),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
           ),
         ],
       ),

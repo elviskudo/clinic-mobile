@@ -22,13 +22,11 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
   @override
   void initState() {
     super.initState();
-    appointmentId = Get.arguments as String?; // Get ID from arguments
+    appointmentId = Get.arguments as String?;
     if (appointmentId != null) {
-      controller.fetchAppointmentAndDoctor(
-          appointmentId!); // Call fetch with the correct ID
+      controller.fetchAppointmentAndDoctor(appointmentId!);
     } else {
-      controller.errorMessage.value =
-          'Appointment ID tidak tersedia.'; // Set error message
+      controller.errorMessage.value = 'Appointment ID tidak tersedia.';
     }
   }
 
@@ -65,7 +63,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                         const SizedBox(height: 16),
                         _buildAppointmentDetails(),
                         const SizedBox(height: 24),
-                        _buildQRCodeSection(), // New QR Code section
+                        _buildQRCodeSection(),
                         const SizedBox(height: 24),
                         _buildPatientInfo(),
                         const SizedBox(height: 24),
@@ -77,10 +75,9 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                     ),
                   ),
                 ),
-                _buildResultButton(
-                    context), // Button outside SingleChildScrollView
+                _buildResultButton(context),
                 const SizedBox(height: 12),
-                _buildBackToHomeButton(context), // Tambahin tombol baru di sini
+                _buildBackToHomeButton(context),
                 const SizedBox(height: 20),
               ],
             );
@@ -122,7 +119,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Doctor Profile Picture - without QR code here
             Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
@@ -145,8 +141,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                 ),
               ),
             ),
-
-            // Doctor Information
             const SizedBox(height: 16),
             Text(
               "$doctorDegree $doctorName, $doctorSpecialize",
@@ -197,19 +191,10 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     }
   }
 
-  // New QR Code section
   Widget _buildQRCodeSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Text(
-        //   'Appointment QR Code',
-        //   style: GoogleFonts.inter(
-        //     fontSize: 16,
-        //     fontWeight: FontWeight.w500,
-        //   ),
-        // ),
-        // const SizedBox(height: 16),
         Center(
           child: Container(
             width: MediaQuery.of(context).size.width,
@@ -228,7 +213,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
             ),
             child: Column(
               children: [
-                // QR Code
                 Obx(() => QrImageView(
                       data:
                           controller.appointment.value?.qrCode ?? 'No QR Code',
@@ -239,28 +223,8 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                       padding: const EdgeInsets.all(10),
                     )),
                 const SizedBox(height: 16),
-                // Patient Code
-                // Text(
-                //   'Patient Code',
-                //   style: GoogleFonts.inter(
-                //     fontSize: 14,
-                //     fontWeight: FontWeight.w500,
-                //     color: Colors.grey[700],
-                //   ),
-                // ),
-                // const SizedBox(height: 8),
-                // Text(
-                //   controller.appointment.value?.qrCode ?? 'Not Available',
-                //   style: GoogleFonts.inter(
-                //     fontSize: 16,
-                //     fontWeight: FontWeight.w600,
-                //   ),
-                // ),
-                const SizedBox(height: 8),
-                // Divider
                 Divider(color: Colors.grey[300]),
                 const SizedBox(height: 8),
-                // Image Captured button
                 GestureDetector(
                   onTap: () => _showImageDialog(context),
                   child: Container(
@@ -300,189 +264,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     );
   }
 
-  // Improved Alert Dialog for Appointment Details
-  void _showAppointmentDetailsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 5,
-          backgroundColor: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header with icon
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD4E8D1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.article_rounded,
-                        color: Color(0xFF4CAF50),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        "Appointment Details",
-                        style: GoogleFonts.inter(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close, size: 20),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-                const Divider(height: 24),
-
-                // QR Code section
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF7FBF2),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.qr_code, color: Colors.black54),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Kode QR',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              '${controller.appointment.value?.qrCode ?? "Tidak Ada"}',
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Patient name section
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF7FBF2),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.person, color: Colors.black54),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Nama Pasien',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              controller.userName.value,
-                              style: GoogleFonts.inter(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Close button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4CAF50),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      "Close",
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  // Improved Alert Dialog for Captured Image
   void _showImageDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -510,7 +291,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Header with icon
                 Row(
                   children: [
                     Container(
@@ -542,8 +322,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                   ],
                 ),
                 const Divider(height: 24),
-
-                // Image container with rounded corners
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
@@ -644,8 +422,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Button row
                 Row(
                   children: [
                     Expanded(
@@ -668,37 +444,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    // Expanded(
-                    //   child: ElevatedButton(
-                    //     onPressed: () {
-                    //       // Add download functionality here if needed
-                    //       ScaffoldMessenger.of(context).showSnackBar(
-                    //         const SnackBar(
-                    //           content: Text('Image saved to gallery'),
-                    //           backgroundColor: Color(0xFF4CAF50),
-                    //         ),
-                    //       );
-                    //       Navigator.of(context).pop();
-                    //     },
-                    //     style: ElevatedButton.styleFrom(
-                    //       backgroundColor: const Color(0xFF4CAF50),
-                    //       foregroundColor: Colors.white,
-                    //       padding: const EdgeInsets.symmetric(vertical: 12),
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(12),
-                    //       ),
-                    //       elevation: 0,
-                    //     ),
-                    //     child: Text(
-                    //       "Save",
-                    //       style: GoogleFonts.inter(
-                    //         fontSize: 16,
-                    //         fontWeight: FontWeight.w500,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ],
@@ -714,10 +459,9 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: SizedBox(
         width: double.infinity,
-        height: 55, // Samakan tingginya dengan tombol result
+        height: 55,
         child: OutlinedButton(
-          onPressed: () => Get.offAllNamed(
-              Routes.HOME), // offAllNamed biar gak bisa back lagi ke summary
+          onPressed: () => Get.offAllNamed(Routes.HOME),
           style: OutlinedButton.styleFrom(
             side: BorderSide(color: Theme.of(context).colorScheme.primary),
             shape: RoundedRectangleBorder(
@@ -832,38 +576,32 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           .eq('id', appointmentId ?? '')
           .execute(),
       builder: (context, snapshot) {
-        // Show loading indicator while connection is being established
         if (snapshot.connectionState == ConnectionState.waiting &&
             !snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // Show error if any
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         }
 
-        // Process data when available
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final appointmentData = snapshot.data!.first;
           final status = appointmentData['status'] as int?;
 
-          // Check if status has changed to 5
-          final isCompleted = status == 5;
+          // FIX PENTING: Mengecek apakah status = 7 (Completed) sesuai dengan backend yang baru
+          final isCompleted = status == 6;
 
-          // If status changed to completed and wasn't before, show snackbar
           if (isCompleted && !controller.isAppointmentCompleted.value) {
-            // Update controller value
             controller.isAppointmentCompleted.value = true;
             controller.buttonText.value = 'Next';
 
-            // Show snackbar (delayed to avoid build errors)
             WidgetsBinding.instance.addPostFrameCallback((_) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Your consultation has been completed!'),
+                  content: const Text('Your consultation has been completed!'),
                   backgroundColor: Colors.green,
-                  duration: Duration(seconds: 5),
+                  duration: const Duration(seconds: 5),
                   action: SnackBarAction(
                     label: 'VIEW',
                     textColor: Colors.white,
@@ -876,7 +614,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
             });
           }
 
-          // Update button color based on completion status
           Color buttonColor = isCompleted
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.surfaceVariant;
@@ -884,11 +621,10 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           return GestureDetector(
             onTap: () {
               if (isCompleted) {
-                Get.toNamed(Routes.REDEEM_MEDICINE,
-                    arguments: appointmentId); // Send appointmentId
+                // Asumsi jika sudah completed, user bisa melihat hasil resep obat
+                Get.toNamed(Routes.REDEEM_MEDICINE, arguments: appointmentId);
               } else {
-                controller
-                    .handleResultButtonPressed(); // Do other action if not completed
+                controller.handleResultButtonPressed();
               }
             },
             child: Container(
@@ -915,7 +651,6 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
           );
         }
 
-        // Fallback if no data is available
         return _buildWaitingForResultsButton();
       },
     );

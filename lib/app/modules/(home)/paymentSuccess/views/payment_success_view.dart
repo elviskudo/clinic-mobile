@@ -16,11 +16,19 @@ class PaymentSuccessView extends GetView<PaymentSuccessController> {
 
   @override
   Widget build(BuildContext context) {
+    // ==========================================================
+    // FIX SAKTI: MENGHIDUPKAN CONTROLLER AGAR MATA-MATA BEKERJA!
+    // ==========================================================
+    Get.put(PaymentSuccessController());
+
     // Ambil data dari Get.arguments
     final Map<String, dynamic> args = Get.arguments as Map<String, dynamic>;
     final String qrCodeData = args['qr_code'] ?? 'Data QR Code Kosong';
+    print("📱 Data QR Code yang Diterima: '$qrCodeData'");
     final String patientName =
         args['patient_name'] ?? 'Nama Pasien Tidak Tersedia';
+    print("👤 Nama Pasien yang Diterima: '$patientName'");
+
     final scheduleController = Get.put(ScheduleAppointmentController());
     final appointmentController = Get.find<AppointmentController>();
     Get.put(BarcodeAppointmentController());
@@ -117,16 +125,29 @@ class PaymentSuccessView extends GetView<PaymentSuccessController> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      appointmentController.resetAppointmentCreated();
-                      scheduleController.resetForm();
-                      barcodeController.reset();
-                      captureController.reset();
-                      symptompController.reset();
-                      Get.find<InvoiceController>()
-                          .clearDataTambahan(); 
-                      Get.find<InvoiceController>().isUploadComplete.value =
-                          false;
-                      Get.find<InvoiceController>().clearUploadState();
+                      // Gunakan Get.isRegistered untuk mengecek apakah controller ada di memori
+                      if (Get.isRegistered<AppointmentController>()) {
+                        appointmentController.resetAppointmentCreated();
+                      }
+                      if (Get.isRegistered<ScheduleAppointmentController>()) {
+                        scheduleController.resetForm();
+                      }
+                      if (Get.isRegistered<BarcodeAppointmentController>()) {
+                        barcodeController.reset();
+                      }
+                      if (Get.isRegistered<CaptureAppointmentController>()) {
+                        captureController.reset();
+                      }
+                      if (Get.isRegistered<SymptomAppointmentController>()) {
+                        symptompController.reset();
+                      }
+
+                      // --- INI SOLUSI UTAMA DARI ERRORNYA ---
+                      if (Get.isRegistered<InvoiceController>()) {
+                        final invoiceCtrl = Get.find<InvoiceController>();
+                        invoiceCtrl.clearDataTambahan();
+                      }
+
                       Get.offAllNamed(Routes.HOME);
                     },
                     child: const Text(

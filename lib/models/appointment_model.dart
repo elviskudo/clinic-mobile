@@ -54,26 +54,36 @@ class Appointment {
   });
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
+    // HELPER: Mencegah aplikasi crash (Red Screen) jika terjadi gagal parsing pada relasi (Clinic, Doctor, dll)
+    T? safeParse<T>(dynamic data, T Function(Map<String, dynamic>) parser) {
+      if (data == null) return null;
+      try {
+        return parser(data);
+      } catch (e) {
+        print("⚠️ [SAFE PARSE] Gagal memproses relasi ${T.toString()}: $e");
+        return null;
+      }
+    }
+
     return Appointment(
-      // PENGAMAN: Tambahkan ?? "" pada semua field String
-      id: json["id"] ?? "",
-      userId: json["user_id"] ?? "",
+      // PENGAMAN EKSTRA: Tambahkan ?.toString() agar angka yang terdeteksi tidak membuat crash
+      id: json["id"]?.toString() ?? "",
+      userId: json["user_id"]?.toString() ?? "",
 
-      // Handle Relasi Object (Doctor, Clinic, dll)
-      doctor: json["doctor"] != null ? Doctor.fromJson(json["doctor"]) : null,
-      poly: json["poly"] != null ? Poly.fromJson(json["poly"]) : null,
-      clinic: json["clinic"] != null ? Clinic.fromJson(json["clinic"]) : null,
-      date: json["date"] != null ? ScheduleDate.fromJson(json["date"]) : null,
-      time: json["time"] != null ? ScheduleTime.fromJson(json["time"]) : null,
+      // Gunakan safeParse untuk semua object relasi
+      doctor: safeParse(json["doctor"], Doctor.fromJson),
+      poly: safeParse(json["poly"], Poly.fromJson),
+      clinic: safeParse(json["clinic"], Clinic.fromJson),
+      date: safeParse(json["date"], ScheduleDate.fromJson),
+      time: safeParse(json["time"], ScheduleTime.fromJson),
 
-      clinicId: json["clinic_id"] ?? "",
-      polyId: json["poly_id"] ?? "",
-      doctorId: json["doctor_id"] ?? "",
-      dateId: json["date_id"] ?? "",
-      timeId: json["time_id"] ?? "",
+      clinicId: json["clinic_id"]?.toString() ?? "",
+      polyId: json["poly_id"]?.toString() ?? "",
+      doctorId: json["doctor_id"]?.toString() ?? "",
+      dateId: json["date_id"]?.toString() ?? "",
+      timeId: json["time_id"]?.toString() ?? "",
 
       status: json["status"] ?? 0, // Default 0 jika null
-
       rejectedNote: json["rejected_note"], // Boleh null
 
       // Handle Tanggal agar tidak error format
@@ -84,15 +94,15 @@ class Appointment {
           ? DateTime.tryParse(json["created_at"]) ?? DateTime.now()
           : DateTime.now(),
 
-      qrCode: json["qr_code"] ?? "-", // Default "-" jika null
+      qrCode: json["qr_code"]?.toString() ?? "-", // Default "-" jika null
 
       symptoms: json["symptoms"],
       symptomDescription: json["symptom_description"],
       aiResponse: json["ai_response"],
 
-      // Helper untuk Nama (Ambil dari dalam object relasi)
-      user_name: json["user"] != null ? json["user"]["name"] : null,
-      poly_name: json["poly"] != null ? json["poly"]["name"] : null,
+      // Helper untuk Nama (Ambil dari dalam object relasi dengan null safety)
+      user_name: json["user"]?["name"],
+      poly_name: json["poly"]?["name"],
     );
   }
 

@@ -10,8 +10,8 @@ class Drug {
   String description;
   String companyName;
   int stock;
-  int buyPrice;
-  int sellPrice;
+  double buyPrice;  // Tipe double
+  double sellPrice; // Tipe double
   String dosis;
   String kind;
   bool isHalal;
@@ -34,35 +34,44 @@ class Drug {
   });
 
   factory Drug.fromJson(Map<String, dynamic> json) {
-    print('Drug.fromJson: $json'); // Tambahkan ini
     return Drug(
-      id: json["id"],
-      name: json["name"],
-      description: json["description"],
-      companyName: json["company_name"],
-      stock: json["stock"],
-      buyPrice: json["buy_price"],
-      sellPrice: json["sell_price"],
-      dosis: json["dosis"],
-      kind: json["kind"],
-      isHalal: json["is_halal"],
-      createdAt: json["created_at"],
-      updatedAt: DateTime.parse(json["updated_at"]),
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      companyName: json['company_name'] ?? '',
+      
+      // FIX 1: Stock tetap int
+      stock: int.tryParse(json['stock'].toString()) ?? 0,
+      
+      // FIX 2: Harga harus di-parse sebagai double
+      // Menggunakan num.tryParse()?.toDouble() lebih aman karena bisa handle "2500" (int) maupun "2500.50" (double)
+      buyPrice: double.tryParse(json['buy_price'].toString()) ?? 0.0,
+      sellPrice: double.tryParse(json['sell_price'].toString()) ?? 0.0,
+      
+      dosis: json['dosis'] ?? '',
+      kind: json['kind'] ?? '',
+      isHalal: json['is_halal'] ?? false,
+      createdAt: json['created_at'] ?? '',
+      
+      // FIX 3: Safety check untuk DateTime
+      updatedAt: json['updated_at'] != null 
+          ? DateTime.tryParse(json['updated_at'].toString()) ?? DateTime.now() 
+          : DateTime.now(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-    "company_name": companyName,
-    "stock": stock,
-    "buy_price": buyPrice,
-    "sell_price": sellPrice,
-    "dosis": dosis,
-    "kind": kind,
-    "is_halal": isHalal,
-    "created_at": createdAt,
-    "updated_at": updatedAt.toIso8601String(),
-  };
+        "id": id,
+        "name": name,
+        "description": description,
+        "company_name": companyName,
+        "stock": stock,
+        "buy_price": buyPrice,
+        "sell_price": sellPrice,
+        "dosis": dosis,
+        "kind": kind,
+        "is_halal": isHalal,
+        "created_at": createdAt,
+        "updated_at": updatedAt.toIso8601String(),
+      };
 }

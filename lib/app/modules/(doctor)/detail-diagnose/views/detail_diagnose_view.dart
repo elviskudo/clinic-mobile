@@ -328,7 +328,8 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
                         response: controller.displayedResponse.value,
                         fontSize: controller.responseFontSize.value,
                         lineHeight: 1.5,
-                        animate: !controller.isExpandedResponse.value && controller.aiResponse.isEmpty,
+                        animate: !controller.isExpandedResponse.value &&
+                            controller.aiResponse.isEmpty,
                       ),
                       if (controller.aiResponse.value.length >
                           controller.maxCharactersCollapsed) ...[
@@ -399,8 +400,9 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
                               const SizedBox(height: 8),
                               Text(
                                 controller.formatCurrency(
-                                    controller.selectedDrug.value?.buyPrice ??
-                                        12000),
+                                    (controller.selectedDrug.value?.buyPrice ??
+                                            12000)
+                                        .toInt()),
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.green[700],
@@ -408,8 +410,9 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
                               ),
                               Text(
                                 controller.formatCurrency(
-                                    controller.selectedDrug.value?.sellPrice ??
-                                        6000),
+                                    (controller.selectedDrug.value?.sellPrice ??
+                                            6000)
+                                        .toInt()),
                                 style: const TextStyle(
                                   fontSize: 12,
                                   decoration: TextDecoration.lineThrough,
@@ -570,8 +573,8 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Medicine (${controller.quantity.value}x)'),
-                          Text(controller
-                              .formatCurrency(controller.calculateDrugTotal())),
+                          Text(controller.formatCurrency(
+                              controller.calculateDrugTotal().toInt())),
                         ],
                       ),
                       const Padding(
@@ -590,7 +593,7 @@ class DetailDiagnoseView extends GetView<DetailDiagnoseController> {
                           ),
                           Text(
                             controller.formatCurrency(
-                                controller.calculateGrandTotal()),
+                                controller.calculateGrandTotal().toInt()),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,

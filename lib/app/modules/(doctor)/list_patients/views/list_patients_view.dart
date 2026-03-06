@@ -6,6 +6,7 @@ import 'package:clinic_ai/models/appointment_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -325,7 +326,7 @@ class ListPatientsView extends GetView<ListPatientsController> {
       case AppointmentStatus.unpaid:
         statusColor = Colors.amber;
         break;
-      case AppointmentStatus.waitingForDrugs:
+      case AppointmentStatus.getMedicine:
         statusColor = Colors.teal;
         break;
       case AppointmentStatus.completed:
@@ -344,10 +345,88 @@ class ListPatientsView extends GetView<ListPatientsController> {
 
     return InkWell(
       onTap: () {
-        // Allow scanning only for appointments that are not completed or rejected
+        // HAPUS ROUTE KE QR SCANNER
+        // Get.toNamed(Routes.QR_SCANNER_SCREEN, arguments: appointment);
+
+        if (appointment.status == AppointmentStatus.getMedicine) {
+          Get.toNamed(Routes.QR_SCANNER_SCREEN, arguments: appointment);
+          return; // Pastikan tidak lanjut ke pop-up confirmation
+        }
+
+        // TAMPILKAN POP UP CONFIRMATION
         if (appointment.status != AppointmentStatus.completed &&
             appointment.status != AppointmentStatus.rejected) {
-          Get.toNamed(Routes.QR_SCANNER_SCREEN, arguments: appointment);
+          Get.dialog(
+            Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Do you really want to approve this patient?",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[800]),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Get.back(),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xff35693E)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            child: Text(
+                              "Reject",
+                              style: GoogleFonts.inter(
+                                  color: const Color(0xff35693E),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.back(); // Tutup Pop-up
+
+                              // Opsional: Ubah status di database jadi 'Approved' (2) atau 'Diagnose' (4)
+                              // controller.updateAppointmentStatus(appointment.id, 2);
+
+                              // Arahkan ke halaman Analyze dengan membawa ID Appointment
+                              Get.toNamed(Routes.ANALYZE_DOCTOR,
+                                  arguments: appointment.id);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xff35693E),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            child: Text(
+                              "Yes, Approve",
+                              style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
         }
       },
       child: Container(

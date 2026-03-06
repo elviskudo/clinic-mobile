@@ -54,6 +54,8 @@ class LoginController extends GetxController {
         // Kalau pake interceptor NestJS biasanya kebungkus di 'data'
         final backendData = responseData['data'] ?? responseData['result'];
 
+        print('Data Backend: $backendData');
+
         if (backendData != null) {
           await _handlePostLogin(backendData); // Panggil fungsi handler pintar
         } else {
@@ -156,6 +158,7 @@ class LoginController extends GetxController {
 
     // 2. Simpan ke SharedPreferences
     await prefs.setString('accessToken', accessToken);
+    print('Token disimpan di SharedPreferences: $accessToken');
     await prefs.setString('userId', (userData['id'] ?? '').toString());
     await prefs.setString('name', (userData['name'] ?? 'User').toString());
     await prefs.setString('userRole', role); // Simpan role buat sesi
@@ -165,6 +168,9 @@ class LoginController extends GetxController {
     if (role == 'doctor') {
       print("🚀 Arahkan ke Dashboard Dokter");
       Get.offAllNamed(Routes.HOME_DOCTOR);
+    } else if (role == 'admin') {
+      print("🛠️ Arahkan ke Dashboard Admin");
+      Get.offAllNamed(Routes.ADMIN_PANEL);
     } else {
       print("🏠 Arahkan ke Home Pasien");
       Get.offAllNamed(Routes.HOME);

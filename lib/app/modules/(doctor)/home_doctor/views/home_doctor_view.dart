@@ -1,4 +1,5 @@
 import 'package:clinic_ai/app/modules/(doctor)/list_patients/views/list_patients_view.dart';
+import 'package:clinic_ai/app/modules/(doctor)/profile_doctor/views/profile_doctor_view.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/color/color.dart';
 import 'package:clinic_ai/components/skeletonLoading.dart';
@@ -30,7 +31,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
         _buildHomePage(),
         const ListPatientsView(),
         const ListPatientsView(), // Ganti dengan ProfileView jika sudah ada
-        const ListPatientsView(),
+        const ProfileDoctorView(), // Ganti dengan ProfileView jika sudah ada
       ],
     );
   }
@@ -156,7 +157,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
                     child: _buildStatCard(
                       'Diagnose',
                       controller
-                          .getStatusCount(AppointmentStatus.diagnose)
+                          .getStatusCount(AppointmentStatus.waiting)
                           .toString(),
                       Colors.purple,
                       Icons.medical_services_outlined,
@@ -182,7 +183,7 @@ class HomeDoctorView extends GetView<HomeDoctorController> {
                     child: _buildStatCard(
                       'Drugs',
                       controller
-                          .getStatusCount(AppointmentStatus.waitingForDrugs)
+                          .getStatusCount(AppointmentStatus.waiting)
                           .toString(),
                       Colors.teal,
                       Icons.medication_outlined,

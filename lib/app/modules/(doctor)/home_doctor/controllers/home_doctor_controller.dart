@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:clinic_ai/models/scheduleDate_model.dart';
 
 class HomeDoctorController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -16,7 +17,6 @@ class HomeDoctorController extends GetxController {
   final RxList<Appointment> allAppointments = <Appointment>[].obs;
   final RxList<Appointment> todayAppointments = <Appointment>[].obs;
   RxInt todayPatients = 0.obs;
-  RxInt pendingAppointments = 0.obs;
   RxInt activePatients = 0.obs;
   RxInt waitingPatients = 0.obs;
   RxString doctorId = ''.obs;
@@ -25,7 +25,6 @@ class HomeDoctorController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // getCurrentUser();
     initialDataLoad();
   }
 
@@ -34,31 +33,26 @@ class HomeDoctorController extends GetxController {
     currentUserId.value = prefs.getString('userId') ?? '';
     currentUserName.value = prefs.getString('name') ?? '';
 
-    await fetchDoctorId(); // Cari ID Dokter dulu!
+    await fetchDoctorId();
   }
 
   Future<void> fetchDoctorId() async {
     try {
       print("Fetching Doctor ID from API for User: ${currentUserId.value}");
 
-      // Tembak API NestJS
       final response = await GetConnect().get(
         '$baseUrl/doctors/profile/${currentUserId.value}',
       );
 
       print("Status API: ${response.statusCode}");
-      print("Body API: ${response.body}"); // Debugging: Liat isi aslinya
 
       if (response.status.isOk) {
         final body = response.body;
 
-        // Cek bertingkat biar aman dari null
         if (body != null &&
             body['data'] != null &&
             body['data']['id'] != null) {
-          // SOLUSI UTAMA: Pake .toString() biar gak error tipe data
           doctorId.value = body['data']['id'].toString();
-
           print("✅ Doctor ID Found (API): ${doctorId.value}");
         } else {
           print("⚠️ Data dokter kosong atau struktur JSON salah.");
@@ -71,88 +65,90 @@ class HomeDoctorController extends GetxController {
     }
   }
 
-  // Future<void> getCurrentUser() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   currentUserId.value = prefs.getString('userId') ?? '';
-  //   currentUserName.value = prefs.getString('name') ?? '';
-  // }
-
   Stream<List<Appointment>> getAppointmentsStream() async* {
     if (doctorId.value.isEmpty) {
       await fetchDoctorId();
     }
 
     if (doctorId.value.isEmpty) {
+      print("⚠️ Doctor ID Kosong, Stream berhenti.");
       yield [];
       return;
     }
+
+    print('🚀 START STREAMING... Target Doctor ID: ${doctorId.value}');
 
     yield* supabase
         .from('appointments')
         .stream(primaryKey: ['id'])
         .eq('doctor_id', doctorId.value)
         .order('created_at')
+        .map((events) {
+          return events;
+        })
         .map((events) => events.map((item) async {
               Appointment appointment = Appointment.fromJson(item);
 
               try {
-                // 1. Fetch User (Nama Pasien)
+                // Fetch User
                 final userData = await supabase
                     .from('users')
                     .select('name')
                     .eq('id', appointment.userId)
                     .maybeSingle();
-
-                // 2. Fetch Poly (Nama Poli)
+                // Fetch Poly
                 final polyData = await supabase
                     .from('polies')
                     .select('name')
                     .eq('id', appointment.polyId)
                     .maybeSingle();
-
-                // 3. Fetch Schedule Time (Jam) - INI YANG KETINGGALAN KEMARIN
+                // Fetch Time
                 final timeData = await supabase
-                    .from('schedule_times') // Nama tabel di database
+                    .from('schedule_times')
                     .select()
                     .eq('id', appointment.timeId)
                     .maybeSingle();
+                // Fetch Date
+                final dateData = await supabase
+                    .from('schedule_dates')
+                    .select()
+                    .eq('id', appointment.dateId)
+                    .maybeSingle();
 
-                // Update data appointment dengan hasil fetch
                 appointment = appointment.copyWith(
                   user_name: userData != null ? userData['name'] : 'Unknown',
                   poly_name: polyData != null ? polyData['name'] : '-',
                 );
 
-                // Masukkan object time secara manual karena copyWith mungkin belum support object nested
-                if (timeData != null) {
+                if (timeData != null)
                   appointment.time = ScheduleTime.fromJson(timeData);
-                }
+                if (dateData != null)
+                  appointment.date = ScheduleDate.fromJson(dateData);
               } catch (e) {
-                print("Error fetching details: $e");
+                print("Error details: $e");
               }
               return appointment;
             }).toList())
         .asyncMap((appointments) => Future.wait(appointments))
         .map((appointments) {
-          // --- LOGIKA FILTER HARI INI & STATISTIK ---
-
           allAppointments.value = appointments;
 
-          // Reset Hitungan
-          int waiting = 0;
-          int approved = 0;
-          int diagnose = 0;
-          int unpaid = 0;
-          int drugs = 0;
-          int completed = 0;
+          // ==========================================
+          // FIX: RESET HITUNGAN (HANYA 8 STATUS AKTIF)
+          // ==========================================
+          int waiting = 0; // 1
+          int approved = 0; // 2
+          int diagnose = 0; // 4
+          int unpaid = 0; // 6
+          int getMedicine = 0; // 7
+          int completed = 0; // 8
 
           final now = DateTime.now();
           final todayString = DateFormat('yyyy-MM-dd').format(now);
-
           List<Appointment> todayList = [];
 
           for (var app in appointments) {
-            // Hitung Statistik
+            // Hitung Stats sesuai status baru
             switch (app.status) {
               case 1:
                 waiting++;
@@ -163,31 +159,35 @@ class HomeDoctorController extends GetxController {
               case 4:
                 diagnose++;
                 break;
-              case 5:
+              case 6:
                 unpaid++;
                 break;
-              case 6:
-                drugs++;
-                break;
               case 7:
+                getMedicine++;
+                break;
+              case 8:
                 completed++;
                 break;
             }
 
-            // Filter Hari Ini (Cek CreatedAt atau ScheduleDate)
-            // Kita pakai createdAt dulu yang paling aman untuk test
-            final appDateStr = DateFormat('yyyy-MM-dd').format(app.createdAt);
+            // Filter Tanggal
+            String checkDate = '';
+            if (app.date != null && app.date!.scheduleDate != null) {
+              checkDate = DateFormat('yyyy-MM-dd')
+                  .format(app.date!.scheduleDate!.toLocal());
+            } else {
+              checkDate =
+                  DateFormat('yyyy-MM-dd').format(app.createdAt.toLocal());
+            }
 
-            if (appDateStr == todayString) {
+            if (checkDate == todayString) {
               todayList.add(app);
             }
           }
 
           todayAppointments.value = todayList;
-
-          // Update ke variabel reactive agar UI berubah
           waitingPatients.value = waiting;
-          // (Anda bisa update variabel stats lain di sini jika perlu ditampilkan)
+          activePatients.value = waiting + approved + diagnose;
 
           return appointments;
         });
@@ -225,14 +225,18 @@ class HomeDoctorController extends GetxController {
   }
 }
 
+// ==========================================
+// FIX: CLASS HELPER STATUS SESUAI ATURAN BARU
+// ==========================================
 class AppointmentStatus {
   static const int waiting = 1;
   static const int approved = 2;
   static const int rejected = 3;
-  static const int diagnose = 4;
-  static const int unpaid = 5;
-  static const int waitingForDrugs = 6;
-  static const int completed = 7;
+  static const int diagnose = 4; // atau Summary
+  static const int redeemed = 5;
+  static const int unpaid = 6;
+  static const int getMedicine = 7;
+  static const int completed = 8;
 
   static String getStatusText(int status) {
     switch (status) {
@@ -244,10 +248,12 @@ class AppointmentStatus {
         return 'Rejected';
       case diagnose:
         return 'Diagnose';
+      case redeemed:
+        return 'Redeemed';
       case unpaid:
         return 'Unpaid';
-      case waitingForDrugs:
-        return 'Waiting for Drugs';
+      case getMedicine:
+        return 'Get Medicine';
       case completed:
         return 'Completed';
       default:
@@ -265,10 +271,12 @@ class AppointmentStatus {
         return rejected;
       case 'Diagnose':
         return diagnose;
+      case 'Redeemed':
+        return redeemed;
       case 'Unpaid':
         return unpaid;
-      case 'Waiting for Drugs':
-        return waitingForDrugs;
+      case 'Get Medicine':
+        return getMedicine;
       case 'Completed':
         return completed;
       default:
@@ -286,9 +294,11 @@ class AppointmentStatus {
         return Colors.red;
       case diagnose:
         return Colors.purple;
+      case redeemed:
+        return Colors.indigo;
       case unpaid:
         return Colors.amber;
-      case waitingForDrugs:
+      case getMedicine:
         return Colors.teal;
       case completed:
         return Colors.green;
@@ -298,11 +308,10 @@ class AppointmentStatus {
   }
 
   static bool isActiveStatus(int status) {
-    // Returns true for statuses that count as "active" cases
     return status == waiting ||
         status == approved ||
         status == diagnose ||
         status == unpaid ||
-        status == waitingForDrugs;
+        status == getMedicine;
   }
 }

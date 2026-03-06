@@ -1,229 +1,200 @@
-
+import 'dart:io';
 import 'package:clinic_ai/app/modules/(admin)/list_user/controllers/list_user_controller.dart';
 import 'package:clinic_ai/app/modules/(admin)/upload/controllers/upload_controller.dart';
-import 'package:clinic_ai/models/user_model.dart';
-
-// import 'package:clinic_ai/models/userModel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UploadDialog extends StatelessWidget {
-  final ListUserController listUserController = Get.find();
-  final UploadController uploadController = Get.put(UploadController());
+  final ListUserController listUserController = Get.put(ListUserController());
+  final UploadController uploadController = Get.find<UploadController>();
 
-  UploadDialog({Key? key}) : super(key: key);
+  UploadDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         width: 400,
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Upload File',
-              style: Theme.of(context).textTheme.titleLarge,
+              uploadController.existingFileId.value.isEmpty
+                  ? 'Upload File'
+                  : 'Edit File',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
 
-            // Module Class Dropdown
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Module Type',
-                border: OutlineInputBorder(),
-              ),
-              items: ['categories', 'users', 'companies', 'charities', 'banks']
-                  .map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value.capitalizeFirst!),
-                );
-              }).toList(),
-              onChanged: (value) {
-                uploadController.selectedModuleClass.value = value ?? '';
-                uploadController.selectedModuleId.value = '';
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            // Module ID Dropdown (Categories)
+            // 1. Module Class Dropdown
             Obx(() {
-            
-              if (uploadController.selectedModuleClass.value == 'users') {
-                return Column(
-                  children: [
-                    DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: 'Select Users',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: uploadController.selectedModuleId.value.isEmpty
-                          ? null
-                          : uploadController.selectedModuleId.value,
-                      items: [
-                        const DropdownMenuItem<String>(
-                          value: 'all',
-                          child: Text('All Users'),
-                        ),
-                        ...listUserController.usersList.map((Users data) {
-                          // Check if a file exists for this user
-                          bool hasFile = uploadController.fileList.any((file) =>
-                              file.moduleClass == 'users' &&
-                              file.moduleId == data.id);
-
-                          return DropdownMenuItem<String>(
-                            value: data.id,
-                            child: Text(
-                                '${data.name ?? ''} ${hasFile ? '(Sudah)' : ''}'),
-                          );
-                        }).toList(),
-                      ],
-                      onChanged: (value) {
-                        uploadController.selectedModuleId.value = value ?? '';
-                        if (value != 'all') {
-                          uploadController.checkExistingFile();
-                        }
-                      },
-                    ),
-                  ],
-                );
+              // --- FIX NYA DI SINI ---
+              // Jika value-nya 'all' atau kosong, kita jadikan null agar Dropdown tidak crash
+              String? currentValue = uploadController.selectedModuleClass.value;
+              if (currentValue.isEmpty || currentValue == 'all') {
+                currentValue = null;
               }
-           
 
-              return const SizedBox.shrink();
+              return DropdownButtonFormField<String>(
+                decoration: const InputDecoration(
+                  labelText: 'Module Type',
+                  border: OutlineInputBorder(),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                ),
+                value: currentValue,
+                items: uploadController.moduleClasses
+                    .where((item) => item != 'all')
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value.toUpperCase()),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  uploadController.selectedModuleClass.value = value ?? '';
+                },
+              );
             }),
 
             const SizedBox(height: 20),
 
-            // Image Preview
-            Obx(() => uploadController.imageUrl.isNotEmpty
-                ? Column(
-                    children: [
-                      Image.network(
-                        uploadController.imageUrl.value,
-                        height: 200,
-                        width: 200,
-                        fit: BoxFit.cover,
+            // 2. Image Preview & Status
+            Obx(() {
+              return Column(
+                children: [
+                  Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: uploadController.selectedImage.value != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.file(
+                              File(uploadController.selectedImage.value!.path),
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : (uploadController.imageUrl.value.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.network(
+                                  uploadController.imageUrl.value,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Icon(
+                                      Icons.broken_image,
+                                      size: 50,
+                                      color: Colors.grey),
+                                ),
+                              )
+                            : const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.cloud_upload_outlined,
+                                      size: 40, color: Colors.blue),
+                                  SizedBox(height: 8),
+                                  Text("No Image Selected",
+                                      style: TextStyle(color: Colors.grey)),
+                                ],
+                              )),
+                  ),
+                  if (uploadController.selectedImage.value != null &&
+                      uploadController.imageUrl.value.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(strokeWidth: 2)),
+                          SizedBox(width: 8),
+                          Text("Uploading to cloud...",
+                              style: TextStyle(
+                                  fontSize: 12, color: Colors.orange)),
+                        ],
                       ),
-                      const SizedBox(height: 8),
-                      Text('File type: ${uploadController.fileType.value}'),
-                    ],
-                  )
-                : const SizedBox.shrink()),
+                    )
+                ],
+              );
+            }),
 
             const SizedBox(height: 20),
 
-            // Choose File Button
-            ElevatedButton.icon(
-              icon: const Icon(Icons.image),
-              label: Text('Choose Image'),
-              onPressed: () async {
-                final ImagePicker picker = ImagePicker();
-                final XFile? image = await picker.pickImage(
-                  source: ImageSource.gallery,
-                );
+            // 3. Choose File Button
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.image),
+                label: const Text('Choose Image'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  side: const BorderSide(color: Colors.blue),
+                ),
+                onPressed: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? image = await picker.pickImage(
+                    source: ImageSource.gallery,
+                  );
 
-                if (image != null) {
-                  uploadController.selectedImage.value = image;
-                  await uploadController.uploadFileToCloudinary(image);
-                }
-              },
+                  if (image != null) {
+                    uploadController.selectedImage.value = image;
+                    uploadController.imageUrl.value =
+                        ''; // Reset URL buat trigger loading
+                    await uploadController.uploadFileToCloudinary(image);
+                  }
+                },
+              ),
             ),
 
-            const SizedBox(height: 16),
-
-            // Submit Button
-            Obx(() => uploadController.isLoading.value
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: uploadController.imageUrl.isEmpty ||
-                            uploadController.selectedModuleId.isEmpty
-                        ? null
-                        : () async {
-                            await uploadController.saveFileInfo();
-                            await uploadController.fetchFiles();
-                          },
-                    child: Text('Submit'),
-                  )),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class UploadDialogImage extends StatelessWidget {
-  final UploadController uploadController = Get.find();
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        width: 400,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Edit Image',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
             const SizedBox(height: 20),
 
-            // Image Preview
-            Obx(() => uploadController.imageUrl.isNotEmpty
-                ? Column(
-                    children: [
-                      Image.network(
-                        uploadController.imageUrl.value,
-                        height: 200,
-                        width: 200,
-                        fit: BoxFit.cover,
+            // 4. Submit Button
+            SizedBox(
+              width: double.infinity,
+              child: Obx(() => uploadController.isLoading.value
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      const SizedBox(height: 8),
-                      Text('File type: ${uploadController.fileType.value}'),
-                    ],
-                  )
-                : const SizedBox.shrink()),
-
-            const SizedBox(height: 20),
-
-            // Choose File Button
-            ElevatedButton.icon(
-              icon: const Icon(Icons.image),
-              label: Text('Choose Image'),
-              onPressed: () async {
-                final ImagePicker picker = ImagePicker();
-                final XFile? image = await picker.pickImage(
-                  source: ImageSource.gallery,
-                );
-
-                if (image != null) {
-                  uploadController.selectedImage.value = image;
-                  await uploadController.uploadFileToCloudinary(image);
-                }
-              },
+                      onPressed: () async {
+                        // Validasi sblm save
+                        if (uploadController
+                                .selectedModuleClass.value.isEmpty ||
+                            uploadController.selectedModuleClass.value ==
+                                'all') {
+                          Get.snackbar("Error", "Please select Module Type",
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white);
+                          return;
+                        }
+                        if (uploadController.imageUrl.value.isEmpty) {
+                          Get.snackbar("Error", "Image is not ready yet",
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white);
+                          return;
+                        }
+                        await uploadController.saveFileInfo();
+                      },
+                      child:
+                          const Text('Submit', style: TextStyle(fontSize: 16)),
+                    )),
             ),
-
-            const SizedBox(height: 16),
-
-            // Submit Button
-            Obx(() => uploadController.isLoading.value
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: uploadController.imageUrl.isEmpty
-                        ? null
-                        : () async {
-                            await uploadController.saveFileInfo();
-                            // Optionally, you can add an explicit refresh
-                            await uploadController.fetchFiles();
-                          },
-                    child: Text('Submit'),
-                  )),
           ],
         ),
       ),

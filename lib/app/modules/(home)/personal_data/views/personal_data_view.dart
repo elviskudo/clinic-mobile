@@ -1,6 +1,4 @@
-import 'package:clinic_ai/app/modules/(home)/profile/controllers/profile_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
-import 'package:clinic_ai/components/customdropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,8 +10,6 @@ class PersonalDataView extends GetView<PersonalDataController> {
 
   @override
   Widget build(BuildContext context) {
-    final profileCtrl = Get.put(ProfileController());
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -23,12 +19,19 @@ class PersonalDataView extends GetView<PersonalDataController> {
           style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
-          onPressed: () => Get.toNamed(Routes.PROFILE),
-          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            // FIX: Cek role untuk kembali ke halaman profil yang benar
+            if (controller.currentUserRole.value == 'doctor') {
+              Get.offNamed(Routes.HOME_DOCTOR); // Ganti dengan rute profil dokter jika ada
+            } else {
+              Get.offNamed(Routes.PROFILE);
+            }
+          },
+          icon: const Icon(Icons.arrow_back),
         ),
       ),
       body: Obx(() => controller.isLoading.value
-          ? LoadingSkeleton()
+          ? const LoadingSkeleton()
           : SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Padding(
@@ -44,29 +47,33 @@ class PersonalDataView extends GetView<PersonalDataController> {
                         'Date of birth*', controller.dateOfBirthController),
                     _buildGenderDropdown(),
                     _buildTextField('No. ID card', 'Enter Your ID Number ...',
-                        controller.cardNumberController),
+                        controller.cardNumberController, isNumeric: true),
                     _buildTextField('Address', 'Enter your address ...',
                         controller.addressController),
                     Row(
                       children: [
                         Expanded(
                           child: _buildTextField(
-                              'RT', 'No. RT', controller.rtController),
+                              'RT', 'No. RT', controller.rtController,
+                              isNumeric: true),
                         ),
-                        SizedBox(width: 16),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: _buildTextField(
-                              'RW', 'No. RW', controller.rwController),
+                              'RW', 'No. RW', controller.rwController,
+                              isNumeric: true),
                         ),
                       ],
                     ),
                     _buildCitySearchField(context),
                     _buildTextField('Postal code', 'Enter your postal code ...',
-                        controller.postalCodeController),
+                        controller.postalCodeController,
+                        isNumeric: true),
                     _buildResponsibleForCostsSection(),
                     _buildBloodTypeDropdown(),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 24),
                     _buildUpdateButton(context),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -75,7 +82,8 @@ class PersonalDataView extends GetView<PersonalDataController> {
   }
 
   Widget _buildTextField(
-      String label, String hint, TextEditingController textController) {
+      String label, String hint, TextEditingController textController,
+      {bool isNumeric = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -86,9 +94,10 @@ class PersonalDataView extends GetView<PersonalDataController> {
               fontWeight: FontWeight.w400,
               color: Theme.of(Get.context!).textTheme.titleMedium?.color),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextField(
           controller: textController,
+          keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.inter(color: Colors.grey[400]),
@@ -112,10 +121,11 @@ class PersonalDataView extends GetView<PersonalDataController> {
                       .borderSide
                       .color),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -131,7 +141,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
               fontWeight: FontWeight.w500,
               color: Theme.of(Get.context!).textTheme.titleMedium?.color),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextField(
           controller: dateController,
           decoration: InputDecoration(
@@ -160,21 +170,23 @@ class PersonalDataView extends GetView<PersonalDataController> {
                       .borderSide
                       .color),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           readOnly: true,
           onTap: () async {
+            FocusScope.of(Get.context!).unfocus();
+
             DateTime? pickedDate = await showDatePicker(
               context: Get.context!,
               initialDate: DateTime.now(),
               firstDate: DateTime(1900),
-              lastDate: DateTime(2100),
+              lastDate: DateTime.now(),
               builder: (context, child) {
                 return Theme(
                   data: ThemeData.light().copyWith(
                     primaryColor: Colors.green,
-                    hintColor: Colors.green,
-                    colorScheme: ColorScheme.light(primary: Colors.green),
+                    colorScheme: const ColorScheme.light(primary: Colors.green),
                     textButtonTheme: TextButtonThemeData(
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.green,
@@ -191,7 +203,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
             }
           },
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -209,16 +221,16 @@ class PersonalDataView extends GetView<PersonalDataController> {
                   fontWeight: FontWeight.w500,
                   color: Theme.of(Get.context!).textTheme.titleMedium?.color),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color(0xff727970)),
+                border: Border.all(color: const Color(0xff727970)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: ExpansionTile(
                 title: Text(
-                  controller.selectedGender.value ?? ' Select Gender',
-                  style: TextStyle(color: Color(0xff727970)),
+                  controller.selectedGender.value ?? 'Select Gender',
+                  style: const TextStyle(color: Colors.black),
                 ),
                 children: options
                     .map((option) => ListTile(
@@ -230,7 +242,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
                     .toList(),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
           ],
         ));
   }
@@ -246,7 +258,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
               fontWeight: FontWeight.w400,
               color: Theme.of(Get.context!).textTheme.titleMedium?.color),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Obx(() => Column(
               children: [
                 TextField(
@@ -257,13 +269,13 @@ class PersonalDataView extends GetView<PersonalDataController> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide:
-                          BorderSide(color: Color(0xff727970), width: 1),
+                          const BorderSide(color: Color(0xff727970), width: 1),
                     ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     suffixIcon: controller.citySearchController.text.isNotEmpty
                         ? IconButton(
-                            icon: Icon(Icons.clear),
+                            icon: const Icon(Icons.clear),
                             onPressed: () {
                               controller.citySearchController.clear();
                               controller.cities.clear();
@@ -275,22 +287,22 @@ class PersonalDataView extends GetView<PersonalDataController> {
                 ),
                 if (controller.showCityList.value)
                   Container(
-                    constraints: BoxConstraints(maxHeight: 200),
-                    margin: EdgeInsets.only(top: 4),
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    margin: const EdgeInsets.only(top: 4),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xff727970)),
+                      border: Border.all(color: const Color(0xff727970)),
                       borderRadius: BorderRadius.circular(8),
                       color: Theme.of(context).scaffoldBackgroundColor,
                     ),
                     child: controller.isLoadingCities.value
-                        ? Center(
+                        ? const Center(
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(8.0),
                               child: CircularProgressIndicator(),
                             ),
                           )
                         : controller.cities.isEmpty
-                            ? ListTile(
+                            ? const ListTile(
                                 title: Text('No results found'),
                                 dense: true,
                               )
@@ -300,7 +312,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
                                   return ListTile(
                                     title: Text(
                                       city['village'] ?? '',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.w500),
                                     ),
                                     subtitle: Text(
@@ -309,12 +321,14 @@ class PersonalDataView extends GetView<PersonalDataController> {
                                         city['district'],
                                         city['province']
                                       ]
-                                          .where(
-                                              (e) => e != null && e.isNotEmpty)
+                                          .where((e) =>
+                                              e != null &&
+                                              e.toString().isNotEmpty)
                                           .join(', '),
-                                      style: TextStyle(fontSize: 12),
+                                      style: const TextStyle(fontSize: 12),
                                     ),
                                     onTap: () {
+                                      FocusScope.of(context).unfocus();
                                       controller.selectCity(city);
                                     },
                                     dense: true,
@@ -324,7 +338,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
                   ),
               ],
             )),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -347,17 +361,17 @@ class PersonalDataView extends GetView<PersonalDataController> {
                   fontWeight: FontWeight.w500,
                   color: Theme.of(Get.context!).textTheme.titleMedium?.color),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color(0xff727970)),
+                border: Border.all(color: const Color(0xff727970)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: ExpansionTile(
                 title: Text(
                   controller.selectedResponsibleForCosts.value ??
                       'Select Responsible for Costs',
-                  style: TextStyle(color: Color(0xff727970)),
+                  style: const TextStyle(color: Colors.black),
                 ),
                 children: options
                     .map((option) => ListTile(
@@ -370,7 +384,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
                     .toList(),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
           ],
         ));
   }
@@ -388,16 +402,16 @@ class PersonalDataView extends GetView<PersonalDataController> {
                   fontWeight: FontWeight.w500,
                   color: Theme.of(Get.context!).textTheme.titleMedium?.color),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color(0xff727970)),
+                border: Border.all(color: const Color(0xff727970)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: ExpansionTile(
                 title: Text(
                   controller.selectedBloodGroup.value ?? 'Select Blood Type',
-                  style: TextStyle(color: Color(0xff727970)),
+                  style: const TextStyle(color: Colors.black),
                 ),
                 children: options
                     .map((option) => ListTile(
@@ -409,7 +423,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
                     .toList(),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
           ],
         ));
   }
@@ -419,14 +433,14 @@ class PersonalDataView extends GetView<PersonalDataController> {
           onPressed: controller.isLoading.value
               ? null
               : () async {
-                  // Call the saveOrUpdateProfile function
+                  FocusScope.of(context).unfocus();
                   await controller.saveOrUpdateProfile(context);
                 },
           style: ElevatedButton.styleFrom(
             backgroundColor:
                 Theme.of(Get.context!).colorScheme.primaryContainer,
             foregroundColor: Colors.green,
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 150),
+            minimumSize: const Size(double.infinity, 54),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25),
               side: const BorderSide(color: Color(0xffC1C9BE), width: 1),
@@ -471,89 +485,6 @@ class LoadingSkeleton extends StatelessWidget {
           ),
         );
       }),
-    );
-  }
-}
-
-class CustomDropdown extends StatefulWidget {
-  final String label;
-  final List<String> items;
-  final Function(String) onSelected;
-  final String selectedValue;
-  final bool isEnabled;
-
-  const CustomDropdown({
-    Key? key,
-    required this.label,
-    required this.items,
-    required this.onSelected,
-    required this.selectedValue,
-    this.isEnabled = true,
-  }) : super(key: key);
-
-  @override
-  _CustomDropdownState createState() => _CustomDropdownState();
-}
-
-class _CustomDropdownState extends State<CustomDropdown> {
-  bool _isExpanded = false; // Tambahkan state untuk mengontrol ekspansi
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color:
-                widget.isEnabled ? const Color(0xffF7FBF2) : Colors.grey[200],
-            border: Border.all(
-                color:
-                    widget.isEnabled ? const Color(0xff727970) : Colors.grey),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: ExpansionTile(
-            title: Text(
-              widget.selectedValue,
-              style: TextStyle(
-                color: widget.isEnabled ? const Color(0xff727970) : Colors.grey,
-              ),
-            ),
-            enabled: widget.isEnabled,
-            initiallyExpanded:
-                _isExpanded, // Set ekspansi awal berdasarkan state
-            onExpansionChanged: (expanded) {
-              if (expanded && widget.items.isEmpty) {
-                return;
-              }
-              setState(() {
-                _isExpanded = expanded; // Update state ekspansi
-              });
-            },
-            children: widget.items.map((String item) {
-              return ListTile(
-                title: Text(item),
-                onTap: () {
-                  widget.onSelected(item);
-                  setState(() {
-                    _isExpanded = false; // Tutup dropdown
-                  });
-                  //FocusScope.of(context).unfocus(); // Ini mungkin tidak perlu lagi
-                },
-              );
-            }).toList(),
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
     );
   }
 }

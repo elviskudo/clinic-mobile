@@ -43,6 +43,10 @@ abstract class Routes {
   static const INVOICE = _Paths.INVOICE;
   static const PAYMENT_SUCCESS = _Paths.PAYMENT_SUCCESS;
   static const PAYMENT_DENIED = _Paths.PAYMENT_DENIED;
+  static const PROFILE_DOCTOR = _Paths.PROFILE_DOCTOR;
+  static const PATIENS_HISTORY = _Paths.PATIENS_HISTORY;
+  static const ANALYZE_DOCTOR = _Paths.ANALYZE_DOCTOR;
+  static const GRAB_MEDICINE = _Paths.GRAB_MEDICINE;
 }
 
 abstract class _Paths {
@@ -87,4 +91,8 @@ abstract class _Paths {
   static const INVOICE = '/invoice';
   static const PAYMENT_SUCCESS = '/payment-success';
   static const PAYMENT_DENIED = '/payment-denied';
+  static const PROFILE_DOCTOR = '/profile-doctor';
+  static const PATIENS_HISTORY = '/patiens-history';
+  static const ANALYZE_DOCTOR = '/analyze-doctor';
+  static const GRAB_MEDICINE = '/grab-medicine';
 }

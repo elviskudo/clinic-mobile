@@ -457,9 +457,9 @@ medical attention. Ensure that the analysis is accurate, medically sound, and of
   }
 
   // Calculate total drug price
-  int calculateDrugTotal() {
+  num calculateDrugTotal() {
     if (selectedDrug.value != null) {
-      return (selectedDrug.value!.buyPrice ?? 0) * quantity.value;
+      return (selectedDrug.value!.buyPrice) * quantity.value;
     }
     return 0;
   }
@@ -469,7 +469,7 @@ medical attention. Ensure that the analysis is accurate, medically sound, and of
   }
 
   // Calculate grand total
-  int calculateGrandTotal() {
+  num calculateGrandTotal() {
     return consultationFee.value + handlingFee.value + calculateDrugTotal();
   }
 

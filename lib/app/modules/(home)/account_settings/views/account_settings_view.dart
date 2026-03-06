@@ -1,5 +1,4 @@
 import 'package:clinic_ai/app/modules/(home)/home/controllers/home_controller.dart';
-import 'package:clinic_ai/app/modules/(home)/profile/controllers/profile_controller.dart';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -14,7 +13,6 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
   @override
   Widget build(BuildContext context) {
     final homeCtrl = Get.put(HomeController());
-    final profileCtrl = Get.put(ProfileController());
 
     Future<void> handleImagePicker() async {
       final ImagePicker picker = ImagePicker();
@@ -22,22 +20,16 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
         final XFile? image =
             await picker.pickImage(source: ImageSource.gallery);
         if (image != null) {
-          profileCtrl.uploadController.selectedImage.value = image;
-          profileCtrl.isLoading.value = true; // Set loading to true
-
+          controller.uploadController.selectedImage.value = image;
           await controller.updateProfileImage();
-          await profileCtrl.loadUserData();
-
-          profileCtrl.isLoading.value = false; // Set loading to false
         }
       } catch (e) {
-        profileCtrl.isLoading.value = false; // Set loading to false on error
         Get.snackbar(
           'Error',
           'Failed to pick image: $e',
           backgroundColor: Colors.red,
           colorText: Colors.white,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
           snackPosition: SnackPosition.BOTTOM,
         );
       }
@@ -55,7 +47,15 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
               color: Theme.of(context).textTheme.titleMedium?.color),
         ),
         leading: IconButton(
-          onPressed: () => Get.offAllNamed(Routes.PROFILE),
+          // FIX: Tombol back dinamis berdasarkan role
+          onPressed: () {
+            if (controller.currentUserRole.value == 'doctor') {
+              Get.offNamed(Routes
+                  .HOME_DOCTOR); // Atau HOME_DOCTOR jika belum ada route PROFILE_DOCTOR
+            } else {
+              Get.offNamed(Routes.PROFILE);
+            }
+          },
           icon: Image.asset(
             'assets/icons/back.png',
             color: Theme.of(context).brightness == Brightness.dark
@@ -64,64 +64,72 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
           ),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xffD4E8D1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: const Color(0xFF516351),
-                  width: 2,
-                ),
-              ),
-              child: Text(
-                'Patients',
-                style: GoogleFonts.inter(
-                  color: const Color(0xFF516351),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            Gap(24),
+            // FIX: Badge dinamis (Doctor atau Patients)
+            Obx(() => Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xffD4E8D1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color(0xFF516351),
+                      width: 2,
+                    ),
+                  ),
+                  child: Text(
+                    controller.currentUserRole.value == 'doctor'
+                        ? 'Doctor'
+                        : 'Patients',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF516351),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )),
+            const Gap(24),
             Center(
               child: Column(
                 children: [
-                  Obx(() => Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 70,
-                            backgroundImage: profileCtrl.user.value.imageUrl !=
-                                    ''
-                                ? NetworkImage(profileCtrl.user.value.imageUrl!)
-                                : null,
-                            backgroundColor: Colors.lightGreen[100],
-                            child: profileCtrl.user.value.imageUrl == ''
-                                ? Icon(Icons.person_outline,
-                                    color: Colors.black, size: 70)
-                                : null,
-                          ),
-                          if (profileCtrl.isLoading.value)
-                            Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.black26,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
+                  Obx(() {
+                    // FIX: Mengambil Image URL dari Controller yang aman
+                    final String imageUrl = controller.currentImageUrl.value;
+                    final bool hasImage = imageUrl.trim().isNotEmpty;
+
+                    return Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 70,
+                          backgroundColor: Colors.lightGreen[100],
+                          backgroundImage:
+                              hasImage ? NetworkImage(imageUrl) : null,
+                          child: !hasImage
+                              ? const Icon(Icons.person_outline,
+                                  color: Colors.black, size: 70)
+                              : null,
+                        ),
+                        if (controller.isLoading.value)
+                          Positioned.fill(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.black26,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
-                        ],
-                      )),
-                  Gap(24),
+                          ),
+                      ],
+                    );
+                  }),
+                  const Gap(24),
                   TextButton(
                     onPressed: () => handleImagePicker(),
                     child: Text(
@@ -136,29 +144,27 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
                 ],
               ),
             ),
-            Gap(16),
+            const Gap(16),
             Container(
               height: 1,
-              color: Color(0xFFC1C9BE),
+              color: const Color(0xFFC1C9BE),
             ),
-            Gap(16),
+            const Gap(16),
             _buildMenuItem(
               iconPath: 'assets/icons/personaldata.png',
               title: 'Personal Data',
-              subtitle: 'ID Number, Gender, Diagnosis',
+              subtitle: 'ID Number, Gender, Address',
               onTap: () {
-                Get.offAllNamed(Routes.PERSONAL_DATA);
+                Get.toNamed(Routes.PERSONAL_DATA);
               },
             ),
             _buildMenuItem(
               iconPath: 'assets/icons/personaldata.png',
               title: 'Notifications',
               subtitle: 'Tickets Notification, Queue',
-              onTap: () {
-                // Handle notifications tap
-              },
+              onTap: () {},
             ),
-            Gap(24),
+            const Gap(24),
             ElevatedButton(
               onPressed: () {
                 homeCtrl.logout();
@@ -166,8 +172,7 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.green,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 150),
+                minimumSize: const Size(double.infinity, 54),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                   side: const BorderSide(color: Color(0xffC1C9BE), width: 1),
@@ -178,7 +183,7 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xff35693E),
+                  color: const Color(0xff35693E),
                 ),
               ),
             ),
@@ -200,7 +205,7 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
         height: 24,
         child: Image.asset(
           iconPath,
-          color: Color(0xff35693E),
+          color: const Color(0xff35693E),
         ),
       ),
       title: Text(
@@ -215,7 +220,7 @@ class AccountSettingsView extends GetView<AccountSettingsController> {
         style: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: Color(0xff727970),
+          color: const Color(0xff727970),
         ),
       ),
       trailing: Image.asset(
