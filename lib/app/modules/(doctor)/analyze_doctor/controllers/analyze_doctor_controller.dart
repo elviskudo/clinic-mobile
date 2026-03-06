@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -42,7 +43,10 @@ class AnalyzeDoctorController extends GetxController {
   final handlingFee = 30000;
 
   final String baseUrl = 'https://be-clinic-rx7y.vercel.app';
-  final String geminiApiKey = 'AIzaSyBK68EV-y34S-R4LZ9HS4juDdqvhWk21y4';
+
+  // MENGAMBIL API KEY DARI FILE .env
+  final String geminiApiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
+
   late String appointmentId;
 
   @override
@@ -106,6 +110,13 @@ class AnalyzeDoctorController extends GetxController {
       return;
     }
 
+    // Pengecekan jika API Key kosong atau belum diset
+    if (geminiApiKey.isEmpty) {
+      Get.snackbar("Error", "API Key Gemini tidak ditemukan di file .env",
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
     isGeneratingAI.value = true;
 
     try {
@@ -149,33 +160,26 @@ WARNING/CLARIFICATION: [Mismatch or missing info, if any]
 RECOMMENDED ACTION: [Brief next steps for the doctor]
 ''';
 
-      // 1. Siapkan wadah (parts) untuk dikirim ke Gemini
       List<Map<String, dynamic>> promptParts = [
         {"text": promptText}
       ];
 
-      // 2. Cek apakah ada gambar dari pasien
       String? imageUrl = appointmentData['image_url'];
 
       if (imageUrl != null && imageUrl.isNotEmpty) {
-        // CATATAN: Jika 'imageUrl' dari backend hanya berupa nama file (bukan link http lengkap),
-        // gabungkan dengan link public Supabase kamu di bawah ini:
         if (!imageUrl.startsWith('http')) {
-          // Ganti teks di bawah dengan link bucket Supabase kamu
           String supabaseStorageUrl =
               "https://tcxvtdcvlrqucywsipwi.supabase.co/storage/v1/object/public/appointments/";
           imageUrl = "$supabaseStorageUrl$imageUrl";
         }
 
         try {
-          // Unduh gambar dan ubah jadi Base64
           final imageResponse = await http.get(Uri.parse(imageUrl));
           if (imageResponse.statusCode == 200) {
             String base64Image = base64Encode(imageResponse.bodyBytes);
             String mimeType =
                 imageResponse.headers['content-type'] ?? 'image/jpeg';
 
-            // Tambahkan gambar ke dalam wadah (parts)
             promptParts.add({
               "inlineData": {"mimeType": mimeType, "data": base64Image}
             });
@@ -183,11 +187,9 @@ RECOMMENDED ACTION: [Brief next steps for the doctor]
           }
         } catch (e) {
           print("Gagal mendownload gambar untuk AI: $e");
-          // Kita abaikan error gambar agar AI tetap bisa menjawab dari teks saja
         }
       }
 
-      // 3. Tembak API Gemini dengan gabungan Teks + Gambar
       final url = Uri.parse(
           'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$geminiApiKey');
 
@@ -343,19 +345,14 @@ RECOMMENDED ACTION: [Brief next steps for the doctor]
     return consultationFee + handlingFee + extraFees + totalMedicinePrice;
   }
 
-  // ==============================================================
-  // FUNGSI FINISH UNTUK MENGIRIM OBAT & FEE KE DATABASE (WITH DEBUG)
-  // ==============================================================
   Future<void> finishAnalyze() async {
     try {
-      // Tampilkan loading dialog
       Get.dialog(const Center(child: CircularProgressIndicator()),
           barrierDismissible: false);
 
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('accessToken') ?? '';
 
-      // 1. Format list obat
       List<Map<String, dynamic>> drugsPayload = selectedDrugs.map((drug) {
         return {
           "drug_id": drug['id'],
@@ -364,7 +361,6 @@ RECOMMENDED ACTION: [Brief next steps for the doctor]
         };
       }).toList();
 
-      // 2. Format list fee tambahan
       List<Map<String, dynamic>> feesPayload = selectedFees.map((fee) {
         return {
           "name": fee['name'],
@@ -372,13 +368,6 @@ RECOMMENDED ACTION: [Brief next steps for the doctor]
         };
       }).toList();
 
-      // --- DEBUGGING: CEK DATA SEBELUM DIKIRIM ---
-      print("===== DEBUG: DATA YANG AKAN DIKIRIM =====");
-      print("Drugs Payload: ${json.encode(drugsPayload)}");
-      print("Fees Payload: ${json.encode(feesPayload)}");
-      print("=========================================");
-
-      // 3. Tembak API
       final response = await http.patch(
         Uri.parse('$baseUrl/appointments/$appointmentId'),
         headers: {
@@ -386,20 +375,14 @@ RECOMMENDED ACTION: [Brief next steps for the doctor]
           'Authorization': 'Bearer $token',
         },
         body: json.encode({
-          'status': 7, // 7 = Completed
+          'status': 7,
           'ai_response': aiResponseText.value,
           'drugs': drugsPayload,
-          'fees': feesPayload // MENGIRIM DATA FEE
+          'fees': feesPayload
         }),
       );
 
-      Get.back(); // Tutup loading dialog
-
-      // --- DEBUGGING: CEK RESPONSE DARI BACKEND ---
-      print("===== DEBUG: RESPONSE DARI BACKEND =====");
-      print("Status Code: ${response.statusCode}");
-      print("Response Body: ${response.body}");
-      print("========================================");
+      Get.back();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.snackbar("Sukses",
@@ -408,7 +391,6 @@ RECOMMENDED ACTION: [Brief next steps for the doctor]
             colorText: Colors.white,
             duration: const Duration(seconds: 4));
 
-        // Beri jeda sedikit agar user bisa membaca snackbar sebelum pindah halaman
         await Future.delayed(const Duration(seconds: 2));
         Get.offNamed(Routes.HOME_DOCTOR);
       } else {
@@ -417,7 +399,7 @@ RECOMMENDED ACTION: [Brief next steps for the doctor]
             backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
-      Get.back(); // Tutup loading
+      Get.back();
       Get.snackbar("Error", "Terjadi kesalahan jaringan",
           backgroundColor: Colors.red, colorText: Colors.white);
       print("Error Finish Analyze: $e");

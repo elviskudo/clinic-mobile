@@ -31,9 +31,6 @@ class _MidtransPaymentViewState extends State<MidtransPaymentView> {
   void initState() {
     super.initState();
 
-    // =================================================================
-    // SOLUSI ABSOLUT: KITA SADAP URL DARI WEBVIEW LANGSUNG
-    // =================================================================
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
@@ -41,34 +38,48 @@ class _MidtransPaymentViewState extends State<MidtransPaymentView> {
         NavigationDelegate(
           onPageStarted: (String url) {
             print("🌐 [WEBVIEW URL] Membuka: $url");
-            _checkUrlForSuccess(url);
+            _checkUrlStatus(url);
           },
           onUrlChange: (UrlChange change) {
             final url = change.url ?? '';
-            _checkUrlForSuccess(url);
+            _checkUrlStatus(url);
           },
         ),
       )
       ..loadRequest(Uri.parse(widget.paymentUrl));
 
-    // Timer hanya dijadikan cadangan darurat (Fallback)
+    // Timer hanya dijadikan cadangan darurat (Fallback) untuk mengecek status lunas
     _startBackupPolling();
   }
 
-  // FUNGSI SADAP: Jika ada kata "settlement" atau "capture", langsung tutup!
-  void _checkUrlForSuccess(String url) {
+  // FUNGSI SADAP: Mengecek URL apakah Lunas atau Gagal
+  void _checkUrlStatus(String url) {
+    if (_isRedirecting) return; // Cegah pemanggilan berulang
+
+    // 1. CEK JIKA PEMBAYARAN SUKSES
     if (url.contains('transaction_status=settlement') ||
         url.contains('transaction_status=capture')) {
       print("🎯 [WEBVIEW] URL LUNAS TERDETEKSI! MENGHANCURKAN WEBVIEW...");
       _triggerSuccessRedirect();
     }
+    // 2. CEK JIKA PEMBAYARAN GAGAL ATAU DI-CANCEL
+    // Menangkap berbagai kemungkinan url gagal dari Midtrans
+    else if (url.contains('transaction_status=deny') ||
+            url.contains('transaction_status=cancel') ||
+            url.contains('transaction_status=expire') ||
+            url.contains(
+                'error') || // Biasanya muncul bila terjadi error midtrans
+            url.contains('/v2/error') // URL error spesifik snap midtrans
+        ) {
+      print("⚠️ [WEBVIEW] PEMBAYARAN GAGAL / CANCEL TERDETEKSI!");
+      _triggerFailedRedirect();
+    }
   }
 
-  // FUNGSI EKSEKUTOR (Hanya bisa dipanggil 1x)
+  // FUNGSI EKSEKUTOR JIKA SUKSES
   Future<void> _triggerSuccessRedirect() async {
     if (_isRedirecting) return;
     _isRedirecting = true;
-
     _timer?.cancel();
 
     try {
@@ -82,11 +93,36 @@ class _MidtransPaymentViewState extends State<MidtransPaymentView> {
         });
       }
     } catch (e) {
-      print("Error saat redirect: $e");
+      print("Error saat redirect sukses: $e");
     }
   }
 
-  // TIMER CADANGAN (Diperlambat agar tidak membebani Emulator)
+  // FUNGSI EKSEKUTOR JIKA GAGAL / CANCEL
+  void _triggerFailedRedirect() {
+    if (_isRedirecting) return;
+    _isRedirecting = true;
+    _timer?.cancel();
+
+    print("↩️ [WEBVIEW] KEMBALI KE REDEEM MEDICINE...");
+
+    if (mounted) {
+      // Menutup WebView dan kembali ke halaman Redeem Medicine (atau Invoice)
+      Get.back();
+
+      // Tampilkan Notifikasi Gagal
+      Get.snackbar(
+        "Pembayaran Dibatalkan",
+        "Pembayaran gagal atau dibatalkan. Silakan pilih metode pembayaran lain.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+        duration: const Duration(seconds: 4),
+        icon: Icon(Icons.warning_amber_rounded, color: Colors.red[900]),
+      );
+    }
+  }
+
+  // TIMER CADANGAN (Hanya untuk mengecek apakah tiba-tiba lunas di database)
   void _startBackupPolling() {
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) async {
       if (_isRedirecting) return;
@@ -95,7 +131,6 @@ class _MidtransPaymentViewState extends State<MidtransPaymentView> {
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString('accessToken') ?? '';
 
-        // Hapus timeout yang bikin crash, biarkan http berjalan normal
         final response = await http.get(
           Uri.parse(
               '$baseUrl/appointments/${widget.appointmentId}/medical-report'),
@@ -108,12 +143,13 @@ class _MidtransPaymentViewState extends State<MidtransPaymentView> {
           int status = int.tryParse(rawData['status'].toString()) ?? 0;
 
           if (status == 7) {
+            // 7 = Get Medicine (Artinya pembayaran dianggap sah oleh backend)
             print("🚀 [BACKUP] STATUS 7 DITEMUKAN DARI API!");
             _triggerSuccessRedirect();
           }
         }
       } catch (e) {
-        // Abaikan jika emulator gagal connect internet
+        // Abaikan
       }
     });
   }
@@ -133,8 +169,8 @@ class _MidtransPaymentViewState extends State<MidtransPaymentView> {
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
-            _timer?.cancel();
-            Get.back();
+            // Jika tombol X manual ditekan, kita anggap itu cancel
+            _triggerFailedRedirect();
           },
         ),
       ),
