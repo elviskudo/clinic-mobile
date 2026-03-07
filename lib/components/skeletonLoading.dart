@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-class SkeletonLoading extends StatelessWidget {
+class SkeletonLoading extends StatelessWidget {    
   final double width;
   final double height;
   final double borderRadius;
