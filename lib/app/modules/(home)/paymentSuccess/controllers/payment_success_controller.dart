@@ -51,7 +51,7 @@ class PaymentSuccessController extends GetxController {
             .select('id, status')
             .gte('status', 7); // Tarik yang statusnya 7 atau 8
 
-        if (response != null && response is List) {
+        if (response != null) {
           for (var data in response) {
             String fullId = data['id'].toString().toLowerCase();
 

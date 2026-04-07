@@ -49,7 +49,7 @@ class UploadDialog extends StatelessWidget {
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
-                value: currentValue,
+                initialValue: currentValue,
                 items: uploadController.moduleClasses
                     .where((item) => item != 'all')
                     .map((String value) {

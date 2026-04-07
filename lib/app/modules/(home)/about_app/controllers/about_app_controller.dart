@@ -1,4 +1,3 @@
-import 'package:clinic_ai/app/modules/Theme/controllers/theme_controller.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';

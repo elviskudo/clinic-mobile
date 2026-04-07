@@ -53,7 +53,7 @@ class OnboardingPageView extends GetView<OnboardingPageController> {
               Gap(40),
 
               // Illustration
-              Container(
+              SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Center(
                   child: Image.asset(

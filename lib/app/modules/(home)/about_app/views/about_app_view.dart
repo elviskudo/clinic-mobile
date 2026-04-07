@@ -6,7 +6,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../controllers/about_app_controller.dart';
 
 class AboutAppView extends GetView<AboutAppController> {
-  const AboutAppView({Key? key}) : super(key: key);
+  const AboutAppView({super.key});
 
   @override
   Widget build(BuildContext context) {

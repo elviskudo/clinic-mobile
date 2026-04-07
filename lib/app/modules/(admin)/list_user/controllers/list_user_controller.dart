@@ -427,7 +427,7 @@ class ListUserController extends GetxController {
                         decoration: InputDecoration(labelText: 'Email')),
                     if (roles.isNotEmpty)
                       DropdownButtonFormField<String>(
-                        value:
+                        initialValue:
                             selectedRoleId.isNotEmpty ? selectedRoleId : null,
                         items: roles
                             .map((role) => DropdownMenuItem(

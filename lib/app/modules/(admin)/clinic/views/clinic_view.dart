@@ -52,7 +52,7 @@ class ClinicView extends GetView<ClinicController> {
                             icon: const Icon(Icons.delete),
                             tooltip: 'delete',
                             onPressed: () =>
-                                _showDeleteConfirmation(clinics.id!),
+                                _showDeleteConfirmation(clinics.id),
                           ),
                         ],
                       ),
@@ -191,8 +191,8 @@ class ClinicView extends GetView<ClinicController> {
               controller.deleteClinics(id);
               Get.back();
             },
-            child: Text('Delete'),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('Delete'),
           ),
         ],
       ),

@@ -185,9 +185,9 @@ class ListPatientsController extends GetxController {
       filteredList = filteredList.where((appointment) {
         if (appointment.updatedAt == null) return false;
         final appointmentDate = DateTime(
-          appointment.updatedAt!.year,
-          appointment.updatedAt!.month,
-          appointment.updatedAt!.day,
+          appointment.updatedAt.year,
+          appointment.updatedAt.month,
+          appointment.updatedAt.day,
         );
         final filterDate = DateTime(
           selectedDate.value!.year,

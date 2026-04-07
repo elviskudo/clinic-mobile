@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class InvoiceView extends StatefulWidget {
-  const InvoiceView({Key? key}) : super(key: key);
+  const InvoiceView({super.key});
 
   @override
   State<InvoiceView> createState() => _InvoiceViewState();

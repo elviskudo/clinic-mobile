@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AppointmentView extends GetView<AppointmentController> {
-  AppointmentView({Key? key}) : super(key: key);
+  const AppointmentView({super.key});
 
   @override
   Widget build(BuildContext context) {

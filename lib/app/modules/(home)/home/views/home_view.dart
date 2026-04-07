@@ -16,7 +16,7 @@ import 'package:intl/intl.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
-  HomeView({Key? key}) : super(key: key);
+  HomeView({super.key});
   final ProfileController profileCtrl = Get.find<ProfileController>();
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,7 @@ class HomeView extends GetView<HomeController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
+              SizedBox(
                 width: 50,
                 height: 50,
                 child: InkWell(
@@ -147,7 +147,7 @@ class HomeView extends GetView<HomeController> {
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(Get.context!).colorScheme.onBackground,
+                      color: Theme.of(Get.context!).colorScheme.onSurface,
                     ),
                   );
                 }),
@@ -265,7 +265,7 @@ class HomeView extends GetView<HomeController> {
             // Format Tanggal
             String formattedDate = scheduleDate?.scheduleDate != null
                 ? DateFormat('dd MMM yyyy').format(
-                    DateTime.parse(scheduleDate!.scheduleDate!.toString()))
+                    DateTime.parse(scheduleDate!.scheduleDate.toString()))
                 : 'Unknown Date';
 
             return SingleChildScrollView(

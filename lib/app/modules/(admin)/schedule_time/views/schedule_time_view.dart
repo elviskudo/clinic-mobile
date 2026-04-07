@@ -114,18 +114,18 @@ class ScheduleTimeView extends GetView<ScheduleTimeController> {
           : '';
     }
 
-    bool _isTimeRangeValid(TimeOfDay start, TimeOfDay end) {
+    bool isTimeRangeValid(TimeOfDay start, TimeOfDay end) {
       final startMinutes = start.hour * 60 + start.minute;
       final endMinutes = end.hour * 60 + end.minute;
       return endMinutes > startMinutes; // End time must be after start time
     }
 
     final isFormValid = RxBool(controller.selectedDateId.value.isNotEmpty &&
-        _isTimeRangeValid(selectedStartTime.value, selectedEndTime.value));
+        isTimeRangeValid(selectedStartTime.value, selectedEndTime.value));
 
     void validateForm() {
       isFormValid.value = controller.selectedDateId.value.isNotEmpty &&
-          _isTimeRangeValid(selectedStartTime.value, selectedEndTime.value);
+          isTimeRangeValid(selectedStartTime.value, selectedEndTime.value);
     }
 
     // Function to validate time range
@@ -184,7 +184,7 @@ class ScheduleTimeView extends GetView<ScheduleTimeController> {
                   )),
 
               // Validation error message
-              Obx(() => !_isTimeRangeValid(
+              Obx(() => !isTimeRangeValid(
                       selectedStartTime.value, selectedEndTime.value)
                   ? Container(
                       padding: EdgeInsets.symmetric(vertical: 8),
@@ -198,7 +198,7 @@ class ScheduleTimeView extends GetView<ScheduleTimeController> {
               SizedBox(height: 10),
               Obx(
                 () => DropdownButtonFormField<String>(
-                  value: controller.selectedDateId.value.isEmpty
+                  initialValue: controller.selectedDateId.value.isEmpty
                       ? null
                       : controller.selectedDateId.value,
                   onChanged: (value) {
@@ -212,7 +212,7 @@ class ScheduleTimeView extends GetView<ScheduleTimeController> {
                       .map((date) => DropdownMenuItem(
                             value: date.id,
                             child: Text(
-                                '${date.scheduleDate.toString().split(' ')[0]}'),
+                                date.scheduleDate.toString().split(' ')[0]),
                           ))
                       .toList(),
                 ),
@@ -297,8 +297,8 @@ class ScheduleTimeView extends GetView<ScheduleTimeController> {
               controller.deleteScheduleTime(id);
               Get.back();
             },
-            child: Text('Delete'),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('Delete'),
           ),
         ],
       ),

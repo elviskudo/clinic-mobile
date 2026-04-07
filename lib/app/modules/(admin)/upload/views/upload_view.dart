@@ -187,15 +187,15 @@ class UploadView extends GetView<UploadController> {
                                   color: Colors.grey.shade200,
                                   borderRadius: BorderRadius.circular(8),
                                   image: (file.fileName != null &&
-                                          file.fileName!.startsWith('http'))
+                                          file.fileName.startsWith('http'))
                                       ? DecorationImage(
-                                          image: NetworkImage(file.fileName!),
+                                          image: NetworkImage(file.fileName),
                                           fit: BoxFit.cover,
                                         )
                                       : null,
                                 ),
                                 child: (file.fileName == null ||
-                                        !file.fileName!.startsWith('http'))
+                                        !file.fileName.startsWith('http'))
                                     ? const Icon(Icons.description,
                                         color: Colors.grey)
                                     : null,

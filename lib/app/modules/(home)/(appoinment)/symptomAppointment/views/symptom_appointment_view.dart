@@ -8,8 +8,7 @@ import '../controllers/symptom_appointment_controller.dart';
 class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
   final VoidCallback onTabChange; // Tambahkan callback
 
-  const SymptomAppointmentView({Key? key, required this.onTabChange})
-      : super(key: key); // Inisialisasi callback
+  const SymptomAppointmentView({super.key, required this.onTabChange}); // Inisialisasi callback
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
     // Pindahkan pemanggilan loadExistingSymptoms() ke onInit controller
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
           return SingleChildScrollView(
@@ -55,7 +54,7 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
                     }
                   }),
                   SizedBox(height: viewportConstraints.maxHeight * 0.03),
-                  Container(
+                  SizedBox(
                     height: 150, // Fixed height for the description field
                     child: TextFormField(
                       decoration: const InputDecoration(
@@ -91,7 +90,7 @@ class SymptomAppointmentView extends GetView<SymptomAppointmentController> {
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
                             disabledBackgroundColor:
-                                Theme.of(context).colorScheme.surfaceVariant,
+                                Theme.of(context).colorScheme.surfaceContainerHighest,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),

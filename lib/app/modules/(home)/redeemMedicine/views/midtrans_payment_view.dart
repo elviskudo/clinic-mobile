@@ -12,10 +12,10 @@ class MidtransPaymentView extends StatefulWidget {
   final String appointmentId;
 
   const MidtransPaymentView({
-    Key? key,
+    super.key,
     required this.paymentUrl,
     required this.appointmentId,
-  }) : super(key: key);
+  });
 
   @override
   State<MidtransPaymentView> createState() => _MidtransPaymentViewState();

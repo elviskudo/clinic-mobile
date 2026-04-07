@@ -9,12 +9,12 @@ class AnimatedAIResponse extends StatefulWidget {
   final bool animate; // Add this parameter to control animation
 
   const AnimatedAIResponse({
-    Key? key,
+    super.key,
     required this.response,
     this.fontSize = 14,
     this.lineHeight = 1.5,
     this.animate = true, // Default to true for backward compatibility
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedAIResponse> createState() => _AnimatedAIResponseState();

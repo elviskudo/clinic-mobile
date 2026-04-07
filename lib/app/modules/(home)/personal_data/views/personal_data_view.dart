@@ -6,7 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import '../controllers/personal_data_controller.dart';
 
 class PersonalDataView extends GetView<PersonalDataController> {
-  const PersonalDataView({Key? key}) : super(key: key);
+  const PersonalDataView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -462,7 +462,7 @@ class PersonalDataView extends GetView<PersonalDataController> {
 }
 
 class LoadingSkeleton extends StatelessWidget {
-  const LoadingSkeleton({Key? key}) : super(key: key);
+  const LoadingSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {

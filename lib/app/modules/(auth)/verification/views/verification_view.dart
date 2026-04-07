@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../controllers/verification_controller.dart';
 
 class VerificationView extends GetView<VerificationController> {
-  const VerificationView({Key? key}) : super(key: key);
+  const VerificationView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +169,8 @@ class VerificationView extends GetView<VerificationController> {
 }
 
 class OTPFields extends GetView<VerificationController> {
+  const OTPFields({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Row(

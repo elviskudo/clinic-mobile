@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class VerificationSuccessView extends StatelessWidget {
-  const VerificationSuccessView({Key? key}) : super(key: key);
+  const VerificationSuccessView({super.key});
 
   @override
   Widget build(BuildContext context) {

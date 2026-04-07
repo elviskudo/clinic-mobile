@@ -95,7 +95,7 @@ class InvoiceController extends GetxController {
         final symptomIds = symptomsString.split(',');
         final symptomsResponse =
             await supabase.from('symptoms').select().inFilter('id', symptomIds);
-        if (symptomsResponse != null && symptomsResponse is List) {
+        if (symptomsResponse != null) {
           symptoms.assignAll(
               symptomsResponse.map((json) => Symptom.fromJson(json)).toList());
         }
@@ -106,16 +106,18 @@ class InvoiceController extends GetxController {
           .select()
           .eq('id', appointment.value!.dateId)
           .maybeSingle();
-      if (scheduleDateResponse != null)
+      if (scheduleDateResponse != null) {
         scheduleDate.value = ScheduleDate.fromJson(scheduleDateResponse);
+      }
 
       final scheduleTimeResponse = await supabase
           .from('schedule_times')
           .select()
           .eq('id', appointment.value!.timeId)
           .maybeSingle();
-      if (scheduleTimeResponse != null)
+      if (scheduleTimeResponse != null) {
         scheduleTime.value = ScheduleTime.fromJson(scheduleTimeResponse);
+      }
 
       await fetchDrugsAndFees(appointmentId);
     } catch (e) {
@@ -173,7 +175,7 @@ class InvoiceController extends GetxController {
       List<Map<String, dynamic>> tempDrugs = [];
       double subtotal = 0;
 
-      if (appDrugs != null && appDrugs is List) {
+      if (appDrugs != null) {
         for (var item in appDrugs) {
           var drugData = item['drugs'];
           if (drugData != null) {
@@ -204,7 +206,7 @@ class InvoiceController extends GetxController {
       List<Map<String, dynamic>> tempFees = [];
       double totalFees = 0;
 
-      if (appFees != null && appFees is List) {
+      if (appFees != null) {
         for (var item in appFees) {
           var feeData = item['fees'];
           if (feeData != null) {
@@ -522,7 +524,7 @@ class InvoiceController extends GetxController {
                     ],
                   ),
                 );
-              }).toList(),
+              }),
               pw.SizedBox(height: 24),
 
               // 4. PAYMENT METHOD
@@ -562,7 +564,7 @@ class InvoiceController extends GetxController {
               ...fees
                   .map((fee) => buildSummaryRow(
                       fee['procedure'], currencyFormatter.format(fee['price'])))
-                  .toList(),
+                  ,
               pw.SizedBox(height: 8),
 
               // TOTAL BOLD GREEN

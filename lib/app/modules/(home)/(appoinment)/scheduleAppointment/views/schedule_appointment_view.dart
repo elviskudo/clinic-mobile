@@ -4,7 +4,7 @@ import '../controllers/schedule_appointment_controller.dart';
 import 'package:intl/intl.dart';
 
 class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
-  const ScheduleAppointmentView({Key? key}) : super(key: key);
+  const ScheduleAppointmentView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +39,9 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
 
               // --- 2. POLY ---
               Obx(() {
-                if (!controller.isPolyAvailable.value)
+                if (!controller.isPolyAvailable.value) {
                   return _buildWarning('Tidak ada poli tersedia.');
+                }
                 if (controller.isLoadingPolies.value) return _buildLoading();
 
                 return CustomDropdown(
@@ -60,8 +61,9 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
 
               // --- 3. DOCTOR ---
               Obx(() {
-                if (!controller.isDoctorAvailable.value)
+                if (!controller.isDoctorAvailable.value) {
                   return _buildWarning('Tidak ada dokter tersedia.');
+                }
                 if (controller.isLoadingDoctors.value) return _buildLoading();
 
                 return CustomDropdown(
@@ -85,10 +87,12 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
 
               // --- 4. DATE ---
               Obx(() {
-                if (!controller.isScheduleDateAvailable.value)
+                if (!controller.isScheduleDateAvailable.value) {
                   return _buildWarning('Jadwal dokter kosong.');
-                if (controller.isLoadingScheduleDates.value)
+                }
+                if (controller.isLoadingScheduleDates.value) {
                   return _buildLoading();
+                }
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,10 +109,12 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
 
               // --- 5. TIME ---
               Obx(() {
-                if (!controller.isScheduleTimeAvailable.value)
+                if (!controller.isScheduleTimeAvailable.value) {
                   return _buildWarning('Jam praktek penuh/kosong.');
-                if (controller.isLoadingScheduleTimes.value)
+                }
+                if (controller.isLoadingScheduleTimes.value) {
                   return _buildLoading();
+                }
 
                 return CustomDropdown(
                   label: 'Time',
@@ -191,7 +197,7 @@ class ScheduleAppointmentView extends GetView<ScheduleAppointmentController> {
           ? () async {
               // 1. Ambil daftar tanggal valid dari controller
               final availableDates =
-                  controller.scheduleDates.map((e) => e.scheduleDate!).toList();
+                  controller.scheduleDates.map((e) => e.scheduleDate).toList();
 
               // Urutkan tanggal agar yang paling awal ada di posisi pertama
               availableDates.sort((a, b) => a.compareTo(b));
@@ -265,13 +271,13 @@ class CustomDropdown extends StatefulWidget {
   final bool isEnabled;
 
   const CustomDropdown({
-    Key? key,
+    super.key,
     required this.label,
     required this.items,
     required this.onSelected,
     required this.selectedValue,
     this.isEnabled = true,
-  }) : super(key: key);
+  });
 
   @override
   _CustomDropdownState createState() => _CustomDropdownState();

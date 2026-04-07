@@ -120,7 +120,7 @@ class GrabMedicineView extends GetView<GrabMedicineController> {
 
 // Animasi Centang Versi Biru
 class AnimatedCheckmarkBlue extends StatefulWidget {
-  const AnimatedCheckmarkBlue({Key? key}) : super(key: key);
+  const AnimatedCheckmarkBlue({super.key});
 
   @override
   State<AnimatedCheckmarkBlue> createState() => _AnimatedCheckmarkBlueState();
@@ -207,10 +207,10 @@ class FadeInItem extends StatefulWidget {
   final int delay;
 
   const FadeInItem({
-    Key? key,
+    super.key,
     required this.child,
     required this.delay,
-  }) : super(key: key);
+  });
 
   @override
   State<FadeInItem> createState() => _FadeInItemState();

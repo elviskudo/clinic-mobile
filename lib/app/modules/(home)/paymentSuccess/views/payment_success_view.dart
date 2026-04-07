@@ -12,7 +12,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../controllers/payment_success_controller.dart';
 
 class PaymentSuccessView extends GetView<PaymentSuccessController> {
-  const PaymentSuccessView({Key? key}) : super(key: key);
+  const PaymentSuccessView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +181,7 @@ class PaymentSuccessView extends GetView<PaymentSuccessController> {
 
 // Animasi Centang yang Lebih Dinamis
 class AnimatedCheckmark extends StatefulWidget {
-  const AnimatedCheckmark({Key? key}) : super(key: key);
+  const AnimatedCheckmark({super.key});
 
   @override
   State<AnimatedCheckmark> createState() => _AnimatedCheckmarkState();
@@ -261,10 +261,10 @@ class FadeInItem extends StatefulWidget {
   final int delay;
 
   const FadeInItem({
-    Key? key,
+    super.key,
     required this.child,
     required this.delay,
-  }) : super(key: key);
+  });
 
   @override
   State<FadeInItem> createState() => _FadeInItemState();

@@ -26,20 +26,33 @@ class LoginView extends GetView<LoginController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Clinic AI', style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600, color: const Color(0xFF35693E))),
-                  LanguageSelector(controller: homeController, translationData: <String, RxString>{}),
+                  Text('Clinic AI',
+                      style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF35693E))),
+                  LanguageSelector(
+                      controller: homeController,
+                      translationData: <String, RxString>{}),
                 ],
               ),
               const Gap(30),
 
               // Illustration (Gaya Onboarding)
               Center(
-                child: Image.asset('assets/images/logoOnboarding.png', height: 180, fit: BoxFit.contain),
+                child: Image.asset('assets/images/logoOnboarding.png',
+                    height: 180, fit: BoxFit.contain),
               ),
               const Gap(30),
 
-              Text('Welcome Back', style: GoogleFonts.poppins(fontSize: 28, fontWeight: FontWeight.bold, color: const Color(0xFF35693E))),
-              Text('Enter your details to continue', style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF727970))),
+              Text('Welcome Back',
+                  style: GoogleFonts.poppins(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF35693E))),
+              Text('Enter your details to continue',
+                  style: GoogleFonts.poppins(
+                      fontSize: 14, color: const Color(0xFF727970))),
               const Gap(24),
 
               // Email Field
@@ -52,41 +65,50 @@ class LoginView extends GetView<LoginController> {
 
               // Password Field
               Obx(() => _buildTextField(
-                controller: controller.passwordController,
-                hint: 'Password',
-                icon: Icons.lock_outline,
-                isPassword: true,
-                obscureText: !controller.isPasswordVisible.value,
-                onIconPressed: () => controller.isPasswordVisible.toggle(),
-              )),
-              
+                    controller: controller.passwordController,
+                    hint: 'Password',
+                    icon: Icons.lock_outline,
+                    isPassword: true,
+                    obscureText: !controller.isPasswordVisible.value,
+                    onIconPressed: () => controller.isPasswordVisible.toggle(),
+                  )),
+
               const Gap(24),
 
               // Login Button
               Obx(() => SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: controller.isLoading.value ? null : () => controller.signInWithEmail(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF35693E),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: controller.isLoading.value 
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Sign In', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-              )),
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () => controller.signInWithEmail(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF35693E),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: controller.isLoading.value
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text('Sign In',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                    ),
+                  )),
 
               const Gap(16),
-              const Center(child: Text('OR', style: TextStyle(color: Colors.grey))),
+              const Center(
+                  child: Text('OR', style: TextStyle(color: Colors.grey))),
               const Gap(16),
-
+              
               // Google Button
               _LoginButton(
                 onPressed: () => controller.signInWithGoogle(),
                 iconUrl: 'assets/icons/google.png',
                 text: 'Continue with Google',
+                isPrimary: false,
               ),
             ],
           ),
@@ -109,17 +131,23 @@ class LoginView extends GetView<LoginController> {
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: Icon(icon, color: const Color(0xFF35693E)),
-        suffixIcon: isPassword 
-            ? IconButton(icon: Icon(obscureText ? Icons.visibility_off : Icons.visibility), onPressed: onIconPressed)
+        suffixIcon: isPassword
+            ? IconButton(
+                icon:
+                    Icon(obscureText ? Icons.visibility_off : Icons.visibility),
+                onPressed: onIconPressed)
             : null,
         filled: true,
         fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none),
         contentPadding: const EdgeInsets.symmetric(vertical: 18),
       ),
     );
   }
 }
+
 class _LoginButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String iconUrl;
@@ -130,7 +158,7 @@ class _LoginButton extends StatelessWidget {
     required this.onPressed,
     required this.iconUrl,
     required this.text,
-    this.isPrimary = false,
+    required this.isPrimary,
   });
 
   @override

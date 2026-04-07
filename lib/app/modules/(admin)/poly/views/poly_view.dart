@@ -105,7 +105,7 @@ class PolyView extends GetView<PolyController> {
               const SizedBox(height: 10),
               Obx(
                 () => DropdownButtonFormField<String>(
-                  value: controller.selectedClinicId.value.isEmpty
+                  initialValue: controller.selectedClinicId.value.isEmpty
                       ? null
                       : controller.selectedClinicId.value,
                   onChanged: (value) {

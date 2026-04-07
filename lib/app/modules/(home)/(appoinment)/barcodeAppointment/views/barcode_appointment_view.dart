@@ -18,7 +18,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../controllers/barcode_appointment_controller.dart';
 
 class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
-  const BarcodeAppointmentView({Key? key}) : super(key: key);
+  const BarcodeAppointmentView({super.key});
 
   Future<bool> _requestStoragePermission(BuildContext context) async {
     if (Platform.isAndroid) {
@@ -114,7 +114,7 @@ class BarcodeAppointmentView extends GetView<BarcodeAppointmentController> {
       String dateString = '-';
       if (appointment.date?.scheduleDate != null) {
         dateString = DateFormat('EEEE, d MMMM yyyy')
-            .format(appointment.date!.scheduleDate!);
+            .format(appointment.date!.scheduleDate);
       } else if (appointment.updatedAt != null) {
         // Fallback ke updated_at jika scheduleDate kosong
         dateString =

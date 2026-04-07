@@ -66,7 +66,6 @@ class AppTheme {
       primary: Color(0xFF35693E), // Warna hijau untuk Light Mode
       secondary: Color(0xFFD4E8D1),
       surface: Colors.white,
-      background: Color(0xFFF7FBF2),
       error: Colors.red.shade900,
       primaryContainer: Color(0xFFB7F1BA), // Warna container primary
       secondaryContainer: Color(0xFFD4E8D1),
@@ -158,7 +157,6 @@ class AppTheme {
       primary: Color(0xFFcce8c0), // Warna biru untuk Dark Mode
       secondary: Color(0xFF64B0BC),
       surface: Color(0xFF2c313c),
-      background: Color(0xFF2c313c),
       error: Colors.red.shade200,
       primaryContainer: Color(0xFFcce8c0), // Warna container primary
       secondaryContainer: Color(0xFF64B0BC),

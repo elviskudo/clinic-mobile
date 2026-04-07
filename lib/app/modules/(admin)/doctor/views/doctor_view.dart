@@ -129,7 +129,7 @@ class DoctorView extends GetView<DoctorController> {
               SizedBox(height: 10),
               Obx(
                 () => DropdownButtonFormField<String>(
-                  value: controller.selectedClinicId.value.isEmpty
+                  initialValue: controller.selectedClinicId.value.isEmpty
                       ? null
                       : controller.selectedClinicId.value,
                   onChanged: (value) {
@@ -147,7 +147,7 @@ class DoctorView extends GetView<DoctorController> {
               ),
                 Obx(
                 () => DropdownButtonFormField<String>(
-                  value: controller.selectedUserId.value.isEmpty
+                  initialValue: controller.selectedUserId.value.isEmpty
                       ? null
                       : controller.selectedUserId.value,
                   onChanged: (value) {
@@ -166,7 +166,7 @@ class DoctorView extends GetView<DoctorController> {
               SizedBox(height: 10),
               Obx(
                 () => DropdownButtonFormField<String>(
-                  value: controller.selectedPolyId.value.isEmpty
+                  initialValue: controller.selectedPolyId.value.isEmpty
                       ? null
                       : controller.selectedPolyId.value,
                   onChanged: (value) {
@@ -259,8 +259,8 @@ class DoctorView extends GetView<DoctorController> {
               controller.deleteDoctor(id);
               Get.back();
             },
-            child: Text('Delete'),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('Delete'),
           ),
         ],
       ),

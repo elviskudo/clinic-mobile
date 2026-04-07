@@ -185,7 +185,7 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
 
                     const SizedBox(height: 12),
                     Divider(height: 1, color: Colors.grey.shade300),
@@ -258,7 +258,7 @@ class RedeemMedicineView extends GetView<RedeemMedicineController> {
                       ...controller.extraFees
                           .map((fee) =>
                               _buildPaymentRow(fee['name'], fee['price']))
-                          .toList(),
+                          ,
                     ],
 
                     const SizedBox(height: 16),

@@ -120,10 +120,12 @@ class HomeDoctorController extends GetxController {
                   poly_name: polyData != null ? polyData['name'] : '-',
                 );
 
-                if (timeData != null)
+                if (timeData != null) {
                   appointment.time = ScheduleTime.fromJson(timeData);
-                if (dateData != null)
+                }
+                if (dateData != null) {
                   appointment.date = ScheduleDate.fromJson(dateData);
+                }
               } catch (e) {
                 print("Error details: $e");
               }
@@ -174,7 +176,7 @@ class HomeDoctorController extends GetxController {
             String checkDate = '';
             if (app.date != null && app.date!.scheduleDate != null) {
               checkDate = DateFormat('yyyy-MM-dd')
-                  .format(app.date!.scheduleDate!.toLocal());
+                  .format(app.date!.scheduleDate.toLocal());
             } else {
               checkDate =
                   DateFormat('yyyy-MM-dd').format(app.createdAt.toLocal());

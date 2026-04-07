@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../controllers/list_user_controller.dart';
 
 class ListUserView extends GetView<ListUserController> {
-  ListUserView({Key? key}) : super(key: key);
+  const ListUserView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +169,7 @@ class ListUserView extends GetView<ListUserController> {
                         return Text('No roles available');
                       }
                       return DropdownButtonFormField<String>(
-                        value: controller.selectedRoleId.value.isEmpty
+                        initialValue: controller.selectedRoleId.value.isEmpty
                             ? null
                             : controller.selectedRoleId.value,
                         items: snapshot.data!.map((role) {

@@ -8,10 +8,10 @@ class LanguageSelector extends StatelessWidget {
   final Map<String, RxString> translationData;
 
   const LanguageSelector({
-    Key? key,
+    super.key,
     required this.controller,
     required this.translationData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

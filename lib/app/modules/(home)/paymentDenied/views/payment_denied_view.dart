@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/payment_denied_controller.dart';
 
 class PaymentDeniedView extends GetView<PaymentDeniedController> {
-  const PaymentDeniedView({Key? key}) : super(key: key);
+  const PaymentDeniedView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +88,7 @@ class PaymentDeniedView extends GetView<PaymentDeniedController> {
 
 // Widget Animasi Icon
 class AnimatedRotateIcon extends StatefulWidget {
-  const AnimatedRotateIcon({Key? key}) : super(key: key);
+  const AnimatedRotateIcon({super.key});
 
   @override
   State<AnimatedRotateIcon> createState() => _AnimatedRotateIconState();
@@ -147,10 +147,10 @@ class FadeInItem extends StatefulWidget {
   final int delay;
 
   const FadeInItem({
-    Key? key,
+    super.key,
     required this.child,
     required this.delay,
-  }) : super(key: key);
+  });
 
   @override
   State<FadeInItem> createState() => _FadeInItemState();

@@ -29,15 +29,7 @@ class OnboardingPageController extends GetxController {
     // Implement Google login logic here
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 
   void increment() => count.value++;
 }

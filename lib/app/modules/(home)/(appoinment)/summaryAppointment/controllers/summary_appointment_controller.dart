@@ -241,7 +241,7 @@ class SummaryAppointmentController extends GetxController {
         final symptomsResponse =
             await supabase.from('symptoms').select().inFilter('id', symptomIds);
         print('3. Response symptom $symptomsResponse');
-        if (symptomsResponse != null && symptomsResponse is List) {
+        if (symptomsResponse != null) {
           symptoms.assignAll(
               symptomsResponse.map((json) => Symptom.fromJson(json)).toList());
         } else {
@@ -394,7 +394,7 @@ class SummaryAppointmentController extends GetxController {
       print('User appointments response: $appointmentsResponse');
 
       if (appointmentsResponse == null ||
-          !(appointmentsResponse is List) ||
+          appointmentsResponse is! List ||
           appointmentsResponse.isEmpty) {
         print('No appointments found for user: $_currentUserId');
         return;
@@ -424,7 +424,7 @@ class SummaryAppointmentController extends GetxController {
 
       print('All symptoms response: $symptomsResponse');
 
-      if (symptomsResponse != null && symptomsResponse is List) {
+      if (symptomsResponse != null) {
         symptoms.assignAll(
             symptomsResponse.map((json) => Symptom.fromJson(json)).toList());
         print(

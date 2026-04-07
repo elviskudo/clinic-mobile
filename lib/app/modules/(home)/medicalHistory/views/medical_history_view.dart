@@ -9,19 +9,19 @@ import 'package:intl/intl.dart';
 import '../controllers/medical_history_controller.dart';
 
 class MedicalHistoryView extends GetView<MedicalHistoryController> {
-  const MedicalHistoryView({Key? key}) : super(key: key);
+  const MedicalHistoryView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Medical Record',
           style: GoogleFonts.poppins(
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
@@ -71,7 +71,7 @@ class MedicalHistoryView extends GetView<MedicalHistoryController> {
 
     String formattedDate = scheduleDate?.scheduleDate != null
         ? DateFormat('dd MMM yyyy')
-            .format(DateTime.parse(scheduleDate!.scheduleDate!.toString()))
+            .format(DateTime.parse(scheduleDate!.scheduleDate.toString()))
         : 'Unknown Date';
 
     // --- BUNGKUS DENGAN INKWELL ---

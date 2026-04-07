@@ -4,25 +4,25 @@ import 'package:get/get.dart';
 import '../controllers/medicine_record_view.dart';
 
 class MedicineRecordView extends GetView<MedicineRecordController> {
-  const MedicineRecordView({Key? key}) : super(key: key);
+  const MedicineRecordView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios,
-              color: Theme.of(context).colorScheme.onBackground),
+              color: Theme.of(context).colorScheme.onSurface),
           onPressed: () {
             Get.back();
           },
         ),
         title: Text(
           'Reedem Medicine',
-          style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
         centerTitle: true,
       ),

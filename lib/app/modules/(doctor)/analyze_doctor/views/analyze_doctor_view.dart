@@ -69,8 +69,9 @@ class AnalyzeDoctorView extends GetView<AnalyzeDoctorController> {
         }
 
         final data = controller.appointmentData;
-        if (data.isEmpty)
+        if (data.isEmpty) {
           return const Center(child: Text("Data tidak tersedia"));
+        }
 
         String symptomsText = "Tidak ada gejala terpilih";
         if (data['symptomList'] != null &&
@@ -142,8 +143,9 @@ class AnalyzeDoctorView extends GetView<AnalyzeDoctorController> {
                                       fit: BoxFit.cover,
                                       loadingBuilder:
                                           (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
+                                        if (loadingProgress == null) {
                                           return child;
+                                        }
                                         return const Center(
                                             child: CircularProgressIndicator(
                                                 color: Color(0xff35693E)));
@@ -252,8 +254,9 @@ class AnalyzeDoctorView extends GetView<AnalyzeDoctorController> {
                                     color: Color(0xff35693E))),
                           );
                         }
-                        if (controller.searchResults.isEmpty)
+                        if (controller.searchResults.isEmpty) {
                           return const SizedBox.shrink();
+                        }
 
                         return Container(
                           margin: const EdgeInsets.only(top: 4),
@@ -293,8 +296,9 @@ class AnalyzeDoctorView extends GetView<AnalyzeDoctorController> {
 
                       // 3. List Obat yang Dipilih
                       Obx(() {
-                        if (controller.selectedDrugs.isEmpty)
+                        if (controller.selectedDrugs.isEmpty) {
                           return const SizedBox.shrink();
+                        }
 
                         return Column(
                           children: List.generate(
@@ -438,8 +442,9 @@ class AnalyzeDoctorView extends GetView<AnalyzeDoctorController> {
 
                       // List Biaya Tambahan yang Dipilih (Kotak Hijau)
                       Obx(() {
-                        if (controller.selectedFees.isEmpty)
+                        if (controller.selectedFees.isEmpty) {
                           return const SizedBox.shrink();
+                        }
 
                         return Column(
                           children: List.generate(
@@ -512,8 +517,9 @@ class AnalyzeDoctorView extends GetView<AnalyzeDoctorController> {
                       // Rincian Tambahan (Obat & Fee)
                       Obx(() {
                         if (controller.selectedDrugs.isEmpty &&
-                            controller.selectedFees.isEmpty)
+                            controller.selectedFees.isEmpty) {
                           return const SizedBox.shrink();
+                        }
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

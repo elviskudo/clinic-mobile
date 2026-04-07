@@ -1,4 +1,3 @@
-import 'package:clinic_ai/app/modules/(doctor)/detail-diagnose/controllers/detail_diagnose_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/(appoinment)/summaryAppointment/controllers/summary_appointment_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/personal_data/controllers/personal_data_controller.dart';
 import 'package:clinic_ai/app/modules/(home)/personal_data/views/personal_data_view.dart';

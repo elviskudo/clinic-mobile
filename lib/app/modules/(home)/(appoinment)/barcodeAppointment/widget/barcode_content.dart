@@ -10,10 +10,10 @@ class BarcodeContent extends StatelessWidget {
   final Appointment appointment;
   final VoidCallback onDownloadQrCode;
   const BarcodeContent({
-    Key? key,
+    super.key,
     required this.appointment,
     required this.onDownloadQrCode,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

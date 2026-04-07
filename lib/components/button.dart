@@ -7,11 +7,11 @@ class PrimaryButton extends StatelessWidget {
   final double? width;
 
   const PrimaryButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +46,11 @@ class ButtonOutline extends StatelessWidget {
   final double? width;
 
   const ButtonOutline({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

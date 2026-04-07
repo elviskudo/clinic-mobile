@@ -14,7 +14,7 @@ class CustomInput extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const CustomInput({
-    Key? key,
+    super.key,
     required this.controller,
     required this.labelText,
     required this.hintText,
@@ -25,7 +25,7 @@ class CustomInput extends StatelessWidget {
     this.prefixText,
     this.keyboardType,
     this.validator,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

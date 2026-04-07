@@ -11,7 +11,6 @@ import 'package:clinic_ai/app/modules/(admin)/poly/views/poly_view.dart';
 import 'package:clinic_ai/app/modules/(admin)/schedule_date/controllers/schedule_date_controller.dart';
 import 'package:clinic_ai/app/modules/(admin)/schedule_date/views/schedule_date_view.dart';
 import 'package:clinic_ai/app/modules/(admin)/schedule_time/controllers/schedule_time_controller.dart';
-import 'package:clinic_ai/app/modules/(admin)/schedule_time/views/schedule_time_view.dart';
 import 'package:clinic_ai/app/modules/(admin)/upload/controllers/upload_controller.dart';
 import 'package:clinic_ai/app/modules/(admin)/upload/views/upload_view.dart';
 import 'package:flutter/material.dart';

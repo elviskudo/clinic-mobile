@@ -8,7 +8,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../controllers/summary_appointment_controller.dart';
 
 class SummaryAppointmentView extends StatefulWidget {
-  const SummaryAppointmentView({Key? key}) : super(key: key);
+  const SummaryAppointmentView({super.key});
 
   @override
   State<SummaryAppointmentView> createState() => _SummaryAppointmentViewState();
@@ -36,7 +36,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
@@ -616,7 +616,7 @@ class _SummaryAppointmentViewState extends State<SummaryAppointmentView> {
 
           Color buttonColor = isCompleted
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.surfaceVariant;
+              : Theme.of(context).colorScheme.surfaceContainerHighest;
 
           return GestureDetector(
             onTap: () {

@@ -122,9 +122,9 @@ class UploadController extends GetxController {
         if (decodedBody is List) {
           data = decodedBody;
         } else if (decodedBody is Map<String, dynamic>) {
-          if (decodedBody['data'] is List)
+          if (decodedBody['data'] is List) {
             data = decodedBody['data'];
-          else if (decodedBody['result'] is List) data = decodedBody['result'];
+          } else if (decodedBody['result'] is List) data = decodedBody['result'];
         }
 
         final List<FileModel> files = data.map((jsonItem) {

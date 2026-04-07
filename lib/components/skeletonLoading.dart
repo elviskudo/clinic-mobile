@@ -7,11 +7,11 @@ class SkeletonLoading extends StatelessWidget {
   final double borderRadius;
 
   const SkeletonLoading({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     this.borderRadius = 4,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class SkeletonLoading extends StatelessWidget {
 class ShimmerEffect extends StatelessWidget {
   final Widget child;
 
-  const ShimmerEffect({Key? key, required this.child}) : super(key: key);
+  const ShimmerEffect({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

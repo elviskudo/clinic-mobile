@@ -340,7 +340,7 @@ class ListPatientsView extends GetView<ListPatientsController> {
 
     if (appointment.updatedAt != null) {
       formattedDate = DateFormat('EEEE, MMMM d, yyyy | HH:mm')
-          .format(appointment.updatedAt!);
+          .format(appointment.updatedAt);
     }
 
     return InkWell(

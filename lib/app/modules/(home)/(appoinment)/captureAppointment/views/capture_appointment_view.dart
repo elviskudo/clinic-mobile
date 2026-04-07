@@ -8,7 +8,7 @@ import 'package:clinic_ai/app/modules/(home)/(appoinment)/barcodeAppointment/con
 import 'package:clinic_ai/app/routes/app_pages.dart'; // Pastikan path ini benar
 
 class CaptureAppointmentView extends StatefulWidget {
-  const CaptureAppointmentView({Key? key}) : super(key: key);
+  const CaptureAppointmentView({super.key});
 
   @override
   State<CaptureAppointmentView> createState() => _CaptureAppointmentViewState();
@@ -63,7 +63,7 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
         Get.find<SymptomAppointmentController>(); // Get Symptom Controller
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -205,14 +205,14 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
                                 XFile(captureController
                                     .selectedImage.value!.path),
                                 barcodeController
-                                    .currentAppointment.value!.id!);
+                                    .currentAppointment.value!.id);
 
                             // Navigasi ke SummaryAppointmentView setelah upload selesai
                             Get.toNamed(
                               Routes
                                   .SUMMARY_APPOINTMENT, // Sesuaikan dengan rute yang benar
                               arguments: barcodeController.currentAppointment
-                                  .value!.id!, // Kirimkan ID sebagai argumen
+                                  .value!.id, // Kirimkan ID sebagai argumen
                             );
                           }
                         : null,
@@ -220,7 +220,7 @@ class _CaptureAppointmentViewState extends State<CaptureAppointmentView> {
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       disabledBackgroundColor:
-                          Theme.of(context).colorScheme.surfaceVariant,
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),

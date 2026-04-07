@@ -1,6 +1,5 @@
 import 'package:clinic_ai/app/modules/(doctor)/list_patients/views/list_patients_view.dart';
 import 'package:clinic_ai/app/modules/(doctor)/profile_doctor/views/profile_doctor_view.dart';
-import 'package:clinic_ai/app/routes/app_pages.dart';
 import 'package:clinic_ai/color/color.dart';
 import 'package:clinic_ai/components/skeletonLoading.dart';
 import 'package:clinic_ai/models/appointment_model.dart';

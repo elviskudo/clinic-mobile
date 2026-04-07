@@ -249,7 +249,7 @@ class ScheduleDateView extends GetView<ScheduleDateController> {
               // Dropdown Poly
               Obx(() => DropdownButtonFormField<String>(
                     isExpanded: true, // Agar tidak overflow horizontal
-                    value: controller.selectedPolyId.value.isEmpty
+                    initialValue: controller.selectedPolyId.value.isEmpty
                         ? null
                         : controller.selectedPolyId.value,
                     onChanged: (value) {
@@ -272,7 +272,7 @@ class ScheduleDateView extends GetView<ScheduleDateController> {
               // Dropdown Doctor (FIX OVERFLOW)
               Obx(() => DropdownButtonFormField<String>(
                     isExpanded: true, // Wajib true agar teks bisa dipotong
-                    value: controller.selectedDoctorId.value.isEmpty
+                    initialValue: controller.selectedDoctorId.value.isEmpty
                         ? null
                         : controller.selectedDoctorId.value,
                     onChanged: (value) {

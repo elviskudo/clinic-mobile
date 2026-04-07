@@ -261,7 +261,7 @@ class HomeController extends GetxController {
 
       if (doctorResponse != null) {
         existingDoctor.value = Doctor.fromJson(doctorResponse);
-        await fetchDoctorProfilePicture(existingDoctor.value!.id!);
+        await fetchDoctorProfilePicture(existingDoctor.value!.id);
       } else {
         existingDoctor.value =
             null; // Ensure existingDoctor is null if doctor not found
